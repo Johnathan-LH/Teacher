@@ -49,7 +49,6 @@
             const addLog = (msg) => {
                 setLogs(prev => [...prev.slice(-4), msg]);
             };
-
             useEffect(() => {
                 let newState = {};
                 if (p1 > 500 && p2 > 500) {
