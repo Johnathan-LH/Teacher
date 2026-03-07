@@ -1,23 +1,19 @@
 import os
 from bs4 import BeautifulSoup
+from datetime import datetime
+import pytz
 
 def generate():
-    # 存放分類後的課件數據
     categories = {}
     
     # 遍歷整個倉庫
     for root, dirs, files in os.walk('.'):
-        # 排除隱藏文件夾
         dirs[:] = [d for d in dirs if not d.startswith('.')]
         
         for file in files:
-            # 只處理子文件夾中的 html，且排除 index.html 本身
             if file.endswith('.html') and file != 'index.html':
                 file_path = os.path.join(root, file)
-                # 移除路徑開頭的 './'
                 display_path = file_path.replace('./', '').replace('\\', '/')
-                
-                # 獲取分類名稱
                 category = os.path.dirname(display_path) or "根目錄"
                 
                 try:
@@ -31,29 +27,37 @@ def generate():
                     categories[category] = []
                 categories[category].append({"title": title, "url": display_path})
 
-    # 生成 HTML
+    # 獲取香港時間用於除錯
+    hk_tz = pytz.timezone('Asia/Hong_Kong')
+    update_time = datetime.now(hk_tz).strftime('%Y-%m-%d %H:%M:%S')
+
     sections_html = ""
     for cat, items in sorted(categories.items()):
-        # 關鍵修改：加入 target="_blank" 和 rel="noopener noreferrer"
+        # 確保 target="_blank" 寫在 href 旁邊
         items_html = "".join([
             f'''
-            <a href="{item['url']}" target="_blank" rel="noopener noreferrer" class="group p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-500 hover:shadow-md transition-all text-left">
-                <div class="text-blue-600 font-medium group-hover:text-blue-700 flex justify-between items-center">
-                    <span>{item['title']}</span>
-                    <i class="fas fa-external-link-alt text-xs text-gray-300 group-hover:text-blue-400"></i>
+            <a href="{item['url']}" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
+                        <span class="text-lg">{item['title']}</span>
+                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 font-mono break-all">{item['url']}</p>
                 </div>
-                <div class="text-xs text-gray-400 mt-1">{item['url']}</div>
+                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open in new tab →
+                </div>
             </a>
             ''' for item in items
         ])
         
         sections_html += f'''
-        <section class="mb-10">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <span class="bg-blue-600 w-2 h-6 rounded mr-3"></span>
-                {cat.replace('/', ' / ')}
+        <section class="mb-12">
+            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
+                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
+                {cat.replace('/', ' / ').upper()}
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {items_html}
             </div>
         </section>
@@ -65,20 +69,33 @@ def generate():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Johnathan 的課件門戶</title>
+        <title>Johnathan's Teaching Hub</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
-    <body class="bg-gray-50 min-h-screen p-8">
+    <body class="bg-slate-50 min-h-screen p-6 md:p-12 text-slate-900">
         <div class="max-w-6xl mx-auto">
-            <header class="mb-12 border-b pb-6 flex justify-between items-end">
+            <header class="mb-16 border-b border-slate-200 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Johnathan's Teaching Resources</h1>
-                    <p class="text-gray-500 mt-2">自動識別目錄結構：科目 / 單元 / 課件</p>
+                    <h1 class="text-4xl font-black tracking-tight text-slate-900">Johnathan's Resources</h1>
+                    <p class="text-slate-500 mt-2 font-medium">ICT & Mathematics Interactive Courseware</p>
                 </div>
-                <div class="text-xs text-gray-400">所有鏈接將在新分頁開啟</div>
+                <div class="text-right">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">系統狀態</div>
+                    <div class="text-xs text-green-600 font-mono mt-1 flex items-center justify-end">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                        最後自動更新: {update_time} (HKT)
+                    </div>
+                </div>
             </header>
-            {sections_html if sections_html else "<p class='text-gray-400 italic'>尚未偵測到任何 HTML 課件...</p>"}
+            
+            <div class="space-y-4">
+                {sections_html if sections_html else "<div class='text-center py-20 text-slate-400 italic'>偵測中... 請確認倉庫內已有 HTML 檔案。</div>"}
+            </div>
+
+            <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+                <p>© 2026 Johnathan-LH. 所有的教學資源連結均預設在新分頁開啟。</p>
+            </div>
         </div>
     </body>
     </html>
