@@ -13,7 +13,7 @@ jobs:
       contents: write        # 重要：賦予寫入權限以更新 index.html
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -22,9 +22,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install beautifulsoup4 pytz
+          pip install beautifulsoup4
 
-      - name: Run script
+      - name: Run Scan Script
         run: python generate_index.py
 
       - name: Commit and push changes
@@ -32,6 +32,10 @@ jobs:
           git config --global user.name "Johnathan-Bot"
           git config --global user.email "bot@github.com"
           git add index.html
-          # 只有在 index.html 有變動時才進行提交，避免報錯
-          git commit -m "Auto-update index.html with new tab links [skip ci]" || echo "No changes to commit"
-          git push
+          # 檢查是否有變動，避免空提交導致報錯
+          if git diff --staged --quiet; then
+            echo "No changes in index.html, skipping push."
+          else
+            git commit -m "System: Auto-update portal index with filters [skip ci]"
+            git push
+          fi
