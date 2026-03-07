@@ -1,0 +1,307 @@
+import React, { useState, useEffect } from 'react';
+
+export default function App() {
+  // 定義左右感測器的數值狀態 (範圍 0 - 1023)
+  const [p1, setP1] = useState(600); // 左側感測器
+  const [p2, setP2] = useState(600); // 右側感測器
+
+  // 小車狀態物件
+  const [carState, setCarState] = useState({
+    p12: 0, p16: 0, p8: 0, p0: 0,
+    statusTitle: '',
+    statusText: '',
+    actionType: ''
+  });
+
+  // 根據感測器數值，即時運算小車的引腳狀態（完美對應圖片中的程式碼）
+  useEffect(() => {
+    if (p1 > 500 && p2 > 500) {
+      setCarState({
+        p12: 0, p16: 0, p8: 500, p0: 500,
+        statusTitle: '直線前進',
+        statusText: '左右兩邊都沒有障礙物，小車兩個車輪以相同速度前進。',
+        actionType: 'forward'
+      });
+    } else if (p1 > 500 && p2 <= 500) {
+      setCarState({
+        p12: 1, p16: 1, p8: 100, p0: 300,
+        statusTitle: '向後右轉 (避開右側)',
+        statusText: '當右邊有障礙物，向後右轉，並持續 0.5 秒。',
+        actionType: 'back_right'
+      });
+    } else if (p1 <= 500 && p2 > 500) {
+      setCarState({
+        p12: 1, p16: 1, p8: 300, p0: 100,
+        statusTitle: '向後左轉 (避開左側)',
+        statusText: '當左邊有障礙物，向後左轉，並持續 0.5 秒。',
+        actionType: 'back_left'
+      });
+    } else {
+      setCarState({
+        p12: 0, p16: 0, p8: 0, p0: 0,
+        statusTitle: '停止行駛',
+        statusText: '當不符合以上三個條件 (即左右都有障礙物)，小車便停止行駛。',
+        actionType: 'stop'
+      });
+    }
+  }, [p1, p2]);
+
+  // 繪製車輪動力箭頭的輔助函式
+  const renderWheelArrow = (speed, dir, startX, startY) => {
+    if (speed === 0) return null;
+    
+    // 根據速度 (最大 500) 計算箭頭長度，最長為 80px
+    const length = (speed / 500) * 80;
+    // dir: 0 為前進 (向上)，1 為後退 (向下)
+    const endY = dir === 0 ? startY - length : startY + length;
+    const color = dir === 0 ? '#10b981' : '#ef4444'; // 前進綠色，後退紅色
+    
+    return (
+      <g>
+        <line 
+          x1={startX} y1={startY} 
+          x2={startX} y2={endY} 
+          stroke={color} 
+          strokeWidth="6" 
+          strokeLinecap="round"
+          markerEnd={`url(#arrow-${dir === 0 ? 'up' : 'down'})`} 
+        />
+        {/* 顯示速度數值 */}
+        <text x={startX + (startX > 200 ? 15 : -15)} y={startY + (endY - startY)/2} fill={color} fontSize="14" fontWeight="bold" textAnchor={startX > 200 ? "start" : "end"}>
+          {speed}
+        </text>
+      </g>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-800">
+      <div className="max-w-6xl mx-auto space-y-6">
+        
+        {/* 標題區 */}
+        <header className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-indigo-900 flex items-center gap-3">
+            🤖 避障小車引腳邏輯模擬器
+          </h1>
+          <p className="text-slate-500 mt-2 font-medium">
+            拖曳下方的滑桿改變感測器數值，觀察右側小車的引腳輸出變化與預期動作。
+          </p>
+        </header>
+
+        {/* 主要內容網格 */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* 左側：控制面板與程式邏輯 */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            {/* 1. 感測器輸入區 */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-sm">輸入</span>
+                類比信號讀取 (距離感測)
+              </h2>
+              
+              <div className="space-y-6">
+                {/* P1 左感測器 */}
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <label className="font-bold text-slate-700">P1 (左側感測器)</label>
+                    <span className={`font-bold px-2 py-0.5 rounded ${p1 <= 500 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                      {p1} {p1 <= 500 ? '(有障礙)' : '(安全)'}
+                    </span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="1023" value={p1} 
+                    onChange={(e) => setP1(Number(e.target.value))} 
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>0</span><span>臨界值：500</span><span>1023</span>
+                  </div>
+                </div>
+
+                {/* P2 右感測器 */}
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <label className="font-bold text-slate-700">P2 (右側感測器)</label>
+                    <span className={`font-bold px-2 py-0.5 rounded ${p2 <= 500 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
+                      {p2} {p2 <= 500 ? '(有障礙)' : '(安全)'}
+                    </span>
+                  </div>
+                  <input 
+                    type="range" min="0" max="1023" value={p2} 
+                    onChange={(e) => setP2(Number(e.target.value))} 
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                  />
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>0</span><span>臨界值：500</span><span>1023</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. 引腳輸出狀態區 */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <span className="bg-amber-100 text-amber-700 px-2 py-1 rounded text-sm">輸出</span>
+                馬達控制引腳狀態
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {/* 左側馬達 */}
+                <div className={`p-4 rounded-xl border-2 transition-colors ${carState.p8 > 0 ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200'}`}>
+                  <h3 className="font-bold text-slate-800 border-b pb-2 mb-3">左輪馬達</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-600">方向 (P12)</span>
+                      <span className={`font-mono font-bold px-2 py-1 rounded ${carState.p12 === 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {carState.p12} {carState.p12 === 0 ? '前' : '後'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-600">速度 (P8)</span>
+                      <span className="font-mono font-bold bg-white px-2 py-1 rounded shadow-sm text-indigo-700 border border-slate-100">
+                        {carState.p8}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 右側馬達 */}
+                <div className={`p-4 rounded-xl border-2 transition-colors ${carState.p0 > 0 ? 'bg-indigo-50 border-indigo-200' : 'bg-slate-50 border-slate-200'}`}>
+                  <h3 className="font-bold text-slate-800 border-b pb-2 mb-3">右輪馬達</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-600">方向 (P16)</span>
+                      <span className={`font-mono font-bold px-2 py-1 rounded ${carState.p16 === 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {carState.p16} {carState.p16 === 0 ? '前' : '後'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-600">速度 (P0)</span>
+                      <span className="font-mono font-bold bg-white px-2 py-1 rounded shadow-sm text-indigo-700 border border-slate-100">
+                        {carState.p0}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. 程式碼邏輯標示 */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+               <h2 className="text-lg font-bold mb-4 text-slate-800">當前觸發的程式區塊</h2>
+               <div className="space-y-2">
+                 <div className={`p-3 rounded-lg border-l-4 transition-all ${carState.actionType === 'forward' ? 'bg-emerald-50 border-emerald-500 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-50'}`}>
+                   <code className="text-sm font-bold text-slate-700 block">如果 (P1 {'>'} 500) 且 (P2 {'>'} 500)</code>
+                 </div>
+                 <div className={`p-3 rounded-lg border-l-4 transition-all ${carState.actionType === 'back_right' ? 'bg-indigo-50 border-indigo-500 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-50'}`}>
+                   <code className="text-sm font-bold text-slate-700 block">否則如果 (P1 {'>'} 500) 且 (P2 {'<'} 500)</code>
+                 </div>
+                 <div className={`p-3 rounded-lg border-l-4 transition-all ${carState.actionType === 'back_left' ? 'bg-indigo-50 border-indigo-500 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-50'}`}>
+                   <code className="text-sm font-bold text-slate-700 block">否則如果 (P1 {'<'} 500) 且 (P2 {'>'} 500)</code>
+                 </div>
+                 <div className={`p-3 rounded-lg border-l-4 transition-all ${carState.actionType === 'stop' ? 'bg-red-50 border-red-500 shadow-sm' : 'bg-slate-50 border-slate-200 opacity-50'}`}>
+                   <code className="text-sm font-bold text-slate-700 block">否則 (P1 {'<'} 500) 且 (P2 {'<'} 500)</code>
+                 </div>
+               </div>
+               
+               <div className="mt-4 p-4 bg-amber-50 rounded-xl text-sm text-amber-800 border border-amber-200 flex gap-3">
+                 <span className="text-xl">💡</span>
+                 <p><strong>教學提示：</strong>程式碼中的 <code>暫停 (ms) 500</code> 表示小車會維持馬達輸出的狀態 0.5 秒，確保小車有足夠的時間完成轉彎動作，才重新偵測前方狀況。</p>
+               </div>
+            </div>
+
+          </div>
+
+          {/* 右側：視覺化模擬 */}
+          <div className="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+            <div className="bg-slate-800 text-white p-4 text-center">
+              <h2 className="text-xl font-bold">{carState.statusTitle}</h2>
+              <p className="text-slate-300 text-sm mt-1">{carState.statusText}</p>
+            </div>
+            
+            <div className="flex-1 flex items-center justify-center p-6 bg-slate-100 relative min-h-[400px]">
+              {/* 車輛 SVG 畫布 */}
+              <svg width="400" height="400" viewBox="0 0 400 400" className="max-w-full h-auto drop-shadow-xl">
+                <defs>
+                  {/* 箭頭定義 */}
+                  <marker id="arrow-up" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 10 L 5 0 L 10 10 z" fill="#10b981" />
+                  </marker>
+                  <marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 5 10 L 10 0 z" fill="#ef4444" />
+                  </marker>
+                </defs>
+
+                {/* 障礙物區域 (左側) */}
+                <g className={`transition-opacity duration-300 ${p1 <= 500 ? 'opacity-100' : 'opacity-10'}`}>
+                  <rect x="90" y="40" width="80" height="30" fill="#ef4444" rx="4" />
+                  <text x="130" y="60" fill="white" fontSize="14" fontWeight="bold" textAnchor="middle">障礙物</text>
+                  <line x1="130" y1="70" x2="130" y2="100" stroke="#ef4444" strokeWidth="4" strokeDasharray="5,5" />
+                </g>
+                <g className={`transition-opacity duration-300 ${p1 > 500 ? 'opacity-100' : 'opacity-0'}`}>
+                  <path d="M 110 80 Q 130 60 150 80" fill="none" stroke="#10b981" strokeWidth="3" opacity="0.4" />
+                  <path d="M 100 60 Q 130 30 160 60" fill="none" stroke="#10b981" strokeWidth="3" opacity="0.4" />
+                </g>
+
+                {/* 障礙物區域 (右側) */}
+                <g className={`transition-opacity duration-300 ${p2 <= 500 ? 'opacity-100' : 'opacity-10'}`}>
+                  <rect x="230" y="40" width="80" height="30" fill="#ef4444" rx="4" />
+                  <text x="270" y="60" fill="white" fontSize="14" fontWeight="bold" textAnchor="middle">障礙物</text>
+                  <line x1="270" y1="70" x2="270" y2="100" stroke="#ef4444" strokeWidth="4" strokeDasharray="5,5" />
+                </g>
+                <g className={`transition-opacity duration-300 ${p2 > 500 ? 'opacity-100' : 'opacity-0'}`}>
+                  <path d="M 250 80 Q 270 60 290 80" fill="none" stroke="#10b981" strokeWidth="3" opacity="0.4" />
+                  <path d="M 240 60 Q 270 30 300 60" fill="none" stroke="#10b981" strokeWidth="3" opacity="0.4" />
+                </g>
+
+                {/* 車身底盤 */}
+                <rect x="130" y="110" width="140" height="180" fill="#334155" rx="20" />
+                {/* 車頭標示 */}
+                <path d="M 130 150 L 200 110 L 270 150 Z" fill="#475569" />
+                
+                {/* 裝飾線條 & 主控板位置 */}
+                <rect x="160" y="160" width="80" height="80" fill="#1e293b" rx="8" />
+                <circle cx="200" cy="200" r="15" fill="#38bdf8" opacity={carState.actionType === 'stop' ? 0.3 : 1} />
+
+                {/* 車輪 (左側) */}
+                <rect x="115" y="150" width="24" height="70" fill="#0f172a" rx="4" />
+                <rect x="110" y="160" width="5" height="50" fill="#475569" />
+                
+                {/* 車輪 (右側) */}
+                <rect x="261" y="150" width="24" height="70" fill="#0f172a" rx="4" />
+                <rect x="285" y="160" width="5" height="50" fill="#475569" />
+
+                {/* 狀態圖示 (停止時顯示) */}
+                {carState.actionType === 'stop' && (
+                  <g transform="translate(200, 200)">
+                    <circle cx="0" cy="0" r="30" fill="#ef4444" opacity="0.9" />
+                    <rect x="-15" y="-5" width="30" height="10" fill="white" />
+                  </g>
+                )}
+
+                {/* 動畫箭頭 (表示車輪動力與方向) */}
+                {/* 左輪中心 (127, 185) */}
+                {renderWheelArrow(carState.p8, carState.p12, 127, 185)}
+                
+                {/* 右輪中心 (273, 185) */}
+                {renderWheelArrow(carState.p0, carState.p16, 273, 185)}
+              </svg>
+            </div>
+            
+            <div className="bg-indigo-50 p-4 border-t border-indigo-100 flex items-start gap-3">
+              <span className="text-indigo-500 mt-1">📝</span>
+              <p className="text-sm text-indigo-900 leading-relaxed">
+                <strong>視覺化解說：</strong><br/>
+                綠色箭頭代表馬達正轉（前進），紅色箭頭代表馬達反轉（後退）。箭頭的長度與旁邊的數字代表馬達轉速 (PWM 數值)。<br/>
+                當兩側轉速不同時，小車會產生旋轉（例如：左輪後退快、右輪後退慢，車尾就會向左甩，車頭順勢向右轉避開障礙）。
+              </p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  );
+}
