@@ -1,14 +1,16 @@
 name: Auto Update Multi-Folder Index
 on:
   push:
+    branches: [ main ]
     paths:
-      - "**/*.html"  # 監控所有層級文件夾下的 html 變動
+      - "**/*.html"          # 監控所有目錄下的 HTML 變動
+      - "generate_index.py"  # 監控腳本自身的變動
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 賦予寫入權限以便 push index.html
+      contents: write        # 重要：賦予寫入權限以更新 index.html
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,15 +21,17 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install beautifulsoup4
+        run: |
+          pip install beautifulsoup4 pytz
 
       - name: Run script
         run: python generate_index.py
 
       - name: Commit and push changes
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
+          git config --global user.name "Johnathan-Bot"
+          git config --global user.email "bot@github.com"
           git add index.html
-          git commit -m "Auto-update nested index [skip ci]" || echo "No changes"
+          # 只有在 index.html 有變動時才進行提交，避免報錯
+          git commit -m "Auto-update index.html with new tab links [skip ci]" || echo "No changes to commit"
           git push
