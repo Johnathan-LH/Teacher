@@ -96,7 +96,6 @@
                     </g>
                 );
             };
-
             return (
                 <div className="min-h-screen flex flex-col p-4 md:p-8">
                     {/* Header */}
