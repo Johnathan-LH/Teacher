@@ -4,61 +4,125 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Johnathan 的課件門戶</title>
+        <title>Johnathan's Teaching Hub</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
-    <body class="bg-gray-50 min-h-screen p-8">
+    <body class="bg-slate-50 min-h-screen p-6 md:p-12 text-slate-900">
         <div class="max-w-6xl mx-auto">
-            <header class="mb-12 border-b pb-6">
-                <h1 class="text-3xl font-bold text-gray-900">Johnathan's Teaching Resources</h1>
-                <p class="text-gray-500 mt-2">自動識別目錄結構：科目 / 單元 / 課件</p>
+            <header class="mb-16 border-b border-slate-200 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <h1 class="text-4xl font-black tracking-tight text-slate-900">Johnathan's Resources</h1>
+                    <p class="text-slate-500 mt-2 font-medium">ICT & Mathematics Interactive Courseware</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">系統狀態</div>
+                    <div class="text-xs text-green-600 font-mono mt-1 flex items-center justify-end">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                        最後自動更新: 2026-03-07 22:43:53 (HKT)
+                    </div>
+                </div>
             </header>
             
-        <section class="mb-10">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <span class="bg-blue-600 w-2 h-6 rounded mr-3"></span>
+            <div class="space-y-4">
+                
+        <section class="mb-12">
+            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
+                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
                 ICT
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-            <a href="ICT/cpu_test.html" class="group p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-500 hover:shadow-md transition-all">
-                <div class="text-blue-600 font-medium group-hover:text-blue-700">ICT 基礎測試：CPU 指令週期</div>
-                <div class="text-xs text-gray-400 mt-1">ICT/cpu_test.html</div>
+            <a href="ICT/cpu_test.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
+                        <span class="text-lg">ICT 基礎測試：CPU 指令週期</span>
+                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 font-mono break-all">ICT/cpu_test.html</p>
+                </div>
+                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open in new tab →
+                </div>
             </a>
             
             </div>
         </section>
         
-        <section class="mb-10">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <span class="bg-blue-600 w-2 h-6 rounded mr-3"></span>
-                Math / F1
+        <section class="mb-12">
+            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
+                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
+                ICT / F1
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-            <a href="Math/F1/百分數.html" class="group p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-500 hover:shadow-md transition-all">
-                <div class="text-blue-600 font-medium group-hover:text-blue-700">百分數變化 統一視覺化演示</div>
-                <div class="text-xs text-gray-400 mt-1">Math/F1/百分數.html</div>
+            <a href="ICT/F1/避障車.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
+                        <span class="text-lg">避障車.html</span>
+                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 font-mono break-all">ICT/F1/避障車.html</p>
+                </div>
+                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open in new tab →
+                </div>
             </a>
             
             </div>
         </section>
         
-        <section class="mb-10">
-            <h2 class="text-xl font-bold text-gray-700 mb-4 flex items-center">
-                <span class="bg-blue-600 w-2 h-6 rounded mr-3"></span>
-                Math / F3
+        <section class="mb-12">
+            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
+                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
+                MATH / F1
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-            <a href="Math/F3/SinCosTan.html" class="group p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:border-blue-500 hover:shadow-md transition-all">
-                <div class="text-blue-600 font-medium group-hover:text-blue-700">三角學秘笈：恆等式與特殊角</div>
-                <div class="text-xs text-gray-400 mt-1">Math/F3/SinCosTan.html</div>
+            <a href="Math/F1/百分數.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
+                        <span class="text-lg">百分數變化 統一視覺化演示</span>
+                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 font-mono break-all">Math/F1/百分數.html</p>
+                </div>
+                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open in new tab →
+                </div>
             </a>
             
             </div>
         </section>
         
+        <section class="mb-12">
+            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
+                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
+                MATH / F3
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+            <a href="Math/F3/SinCosTan.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
+                <div>
+                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
+                        <span class="text-lg">三角學秘笈：恆等式與特殊角</span>
+                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
+                    </div>
+                    <p class="text-xs text-gray-400 font-mono break-all">Math/F3/SinCosTan.html</p>
+                </div>
+                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                    Open in new tab →
+                </div>
+            </a>
+            
+            </div>
+        </section>
+        
+            </div>
+
+            <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
+                <p>© 2026 Johnathan-LH. 所有的教學資源連結均預設在新分頁開啟。</p>
+            </div>
         </div>
     </body>
     </html>
