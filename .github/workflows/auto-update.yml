@@ -1,12 +1,14 @@
-name: Auto Update Index
+name: Auto Update Multi-Folder Index
 on:
   push:
     paths:
-      - "*.html"  # 只有當有新的 html 檔案上傳時才觸發
+      - "**/*.html"  # 監控所有層級文件夾下的 html 變動
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 賦予寫入權限以便 push index.html
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -27,5 +29,5 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add index.html
-          git commit -m "Auto-update index.html [skip ci]" || echo "No changes to commit"
+          git commit -m "Auto-update nested index [skip ci]" || echo "No changes"
           git push
