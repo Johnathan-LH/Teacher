@@ -7,123 +7,123 @@
         <title>Johnathan's Teaching Hub</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            .lesson-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .filter-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+            .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        </style>
     </head>
-    <body class="bg-slate-50 min-h-screen p-6 md:p-12 text-slate-900">
-        <div class="max-w-6xl mx-auto">
-            <header class="mb-16 border-b border-slate-200 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+    <body class="bg-[#f8fafc] min-h-screen text-slate-900 font-sans">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            
+            <!-- 頁頭儀表板 -->
+            <header class="mb-12 border-b border-slate-200 pb-8 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div>
-                    <h1 class="text-4xl font-black tracking-tight text-slate-900">Johnathan's Resources</h1>
-                    <p class="text-slate-500 mt-2 font-medium">ICT & Mathematics Interactive Courseware</p>
+                    <h1 class="text-4xl font-black tracking-tight text-slate-900 mb-2 italic">Johnathan's Lab</h1>
+                    <p class="text-slate-500 font-medium underline decoration-blue-500/30">ICT & Mathematics Interactive Learning Hub</p>
                 </div>
-                <div class="text-right">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">系統狀態</div>
-                    <div class="text-xs text-green-600 font-mono mt-1 flex items-center justify-end">
-                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                        最後自動更新: 2026-03-07 22:50:32 (HKT)
+                <div class="flex flex-col items-end">
+                    <div class="flex gap-4 mb-2">
+                        <div class="text-center px-4 py-2 bg-white rounded-xl border border-slate-200 shadow-sm">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">課件總數</div>
+                            <div class="text-xl font-black text-blue-600">4</div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-slate-100 px-3 py-1 rounded-full">
+                        <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                        最後自動更新: 2026-03-08 07:21:51 (HKT)
                     </div>
                 </div>
             </header>
-            
-            <div class="space-y-4">
+
+            <!-- 控制列：過濾器與搜尋 -->
+            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl shadow-lg border border-white mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div id="filter-container" class="flex flex-wrap gap-2">
+                    <button onclick="filterBy('ALL')" class="filter-btn active px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all" data-subject="ALL">ALL</button>
+                    <button onclick="filterBy('ICT')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="ICT">ICT</button><button onclick="filterBy('Math')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="Math">MATH</button>
+                </div>
                 
-        <section class="mb-12">
-            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
-                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
-                ICT
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-            <a href="ICT/cpu_test.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
-                <div>
-                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
-                        <span class="text-lg">ICT 基礎測試：CPU 指令週期</span>
-                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
-                    </div>
-                    <p class="text-xs text-gray-400 font-mono break-all">ICT/cpu_test.html</p>
+                <div class="relative w-full md:w-80">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                    <input type="text" id="search-input" placeholder="搜尋課件關鍵字..." oninput="handleSearch()"
+                           class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-sm">
                 </div>
-                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                    Open in new tab →
-                </div>
-            </a>
-            
-            </div>
-        </section>
-        
-        <section class="mb-12">
-            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
-                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
-                ICT / F1
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-            <a href="ICT/F1/避障車.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
-                <div>
-                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
-                        <span class="text-lg">ICT 實作：避障小車任務控制中心</span>
-                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
-                    </div>
-                    <p class="text-xs text-gray-400 font-mono break-all">ICT/F1/避障車.html</p>
-                </div>
-                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                    Open in new tab →
-                </div>
-            </a>
-            
-            </div>
-        </section>
-        
-        <section class="mb-12">
-            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
-                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
-                MATH / F1
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-            <a href="Math/F1/百分數.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
-                <div>
-                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
-                        <span class="text-lg">百分數變化 統一視覺化演示</span>
-                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
-                    </div>
-                    <p class="text-xs text-gray-400 font-mono break-all">Math/F1/百分數.html</p>
-                </div>
-                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                    Open in new tab →
-                </div>
-            </a>
-            
-            </div>
-        </section>
-        
-        <section class="mb-12">
-            <h2 class="text-xl font-black text-gray-800 mb-5 flex items-center">
-                <span class="bg-blue-600 w-1.5 h-6 rounded-full mr-3"></span>
-                MATH / F3
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-            <a href="Math/F3/SinCosTan.html" target="_blank" rel="noopener noreferrer" class="group p-5 bg-white border border-gray-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between">
-                <div>
-                    <div class="text-blue-600 font-bold group-hover:text-blue-700 flex justify-between items-center mb-2">
-                        <span class="text-lg">三角學秘笈：恆等式與特殊角</span>
-                        <i class="fas fa-external-link-alt text-xs opacity-30 group-hover:opacity-100"></i>
-                    </div>
-                    <p class="text-xs text-gray-400 font-mono break-all">Math/F3/SinCosTan.html</p>
-                </div>
-                <div class="mt-4 text-[10px] text-blue-400 font-semibold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                    Open in new tab →
-                </div>
-            </a>
-            
-            </div>
-        </section>
-        
             </div>
 
-            <footer class="mt-20 pt-8 border-t border-slate-200 text-center text-slate-400 text-xs">
-                <p>© 2026 Johnathan-LH. 所有的教學資源連結均預設在新分頁開啟。</p>
+            <!-- 課件網格 -->
+            <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 內容由 JS 動態渲染 -->
             </div>
+
+            <!-- 空狀態提示 -->
+            <div id="empty-state" class="hidden text-center py-24">
+                <div class="text-6xl mb-6">🛰️</div>
+                <h3 class="text-xl font-bold text-slate-800 italic">找不到符合條件的課件</h3>
+                <p class="text-slate-400 text-sm mt-2">請嘗試更換分類或關鍵字</p>
+            </div>
+
+            <footer class="mt-24 pt-8 border-t border-slate-200 text-center text-slate-300 text-[10px] font-bold uppercase tracking-[0.4em]">
+                Johnathan-LH Learning Hub • CI/CD Automated System
+            </footer>
         </div>
+
+        <script>
+            // 注入由 Python 生成的數據
+            const lessons = [{"title": "\u767e\u5206\u6578\u8b8a\u5316 \u7d71\u4e00\u8996\u89ba\u5316\u6f14\u793a", "url": "Math/F1/\u767e\u5206\u6578.html", "subject": "Math", "path": "Math/F1/\u767e\u5206\u6578.html"}, {"title": "\u4e09\u89d2\u5b78\u79d8\u7b08\uff1a\u6046\u7b49\u5f0f\u8207\u7279\u6b8a\u89d2", "url": "Math/F3/SinCosTan.html", "subject": "Math", "path": "Math/F3/SinCosTan.html"}, {"title": "ICT \u57fa\u790e\u6e2c\u8a66\uff1aCPU \u6307\u4ee4\u9031\u671f", "url": "ICT/cpu_trail_web.html", "subject": "ICT", "path": "ICT/cpu_trail_web.html"}, {"title": "ICT \u5be6\u4f5c\uff1a\u907f\u969c\u5c0f\u8eca\u4efb\u52d9\u63a7\u5236\u4e2d\u5fc3", "url": "ICT/F1/\u907f\u969c\u8eca.html", "subject": "ICT", "path": "ICT/F1/\u907f\u969c\u8eca.html"}];
+            let currentFilter = 'ALL';
+            let searchQuery = '';
+
+            function render() {
+                const grid = document.getElementById('lessons-grid');
+                const empty = document.getElementById('empty-state');
+                grid.innerHTML = '';
+                
+                const filtered = lessons.filter(l => {
+                    const matchFilter = currentFilter === 'ALL' || l.subject === currentFilter;
+                    const matchSearch = l.title.toLowerCase().includes(searchQuery) || l.path.toLowerCase().includes(searchQuery);
+                    return matchFilter && matchSearch;
+                });
+
+                if (filtered.length === 0) {
+                    empty.classList.remove('hidden');
+                } else {
+                    empty.classList.add('hidden');
+                    filtered.forEach(l => {
+                        grid.innerHTML += `
+                            <div class="lesson-card bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div class="flex justify-between items-start mb-6">
+                                        <span class="px-2 py-1 bg-slate-900 text-white text-[9px] font-black uppercase rounded tracking-widest italic group-hover:bg-blue-600 transition-colors">${l.subject}</span>
+                                        <i class="fas fa-external-link-alt text-slate-200 text-[10px]"></i>
+                                    </div>
+                                    <h3 class="text-lg font-black text-slate-800 mb-2 leading-tight">${l.title}</h3>
+                                    <p class="text-[10px] text-slate-400 font-mono truncate mb-6">${l.path}</p>
+                                </div>
+                                <a href="${l.url}" target="_blank" rel="noopener" class="w-full text-center py-3 bg-slate-50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-xl transition-all text-xs tracking-widest shadow-inner hover:shadow-lg">
+                                    LAUNCH LESSON
+                                </a>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            function filterBy(subject) {
+                currentFilter = subject;
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.subject === subject);
+                });
+                render();
+            }
+
+            function handleSearch() {
+                searchQuery = document.getElementById('search-input').value.toLowerCase();
+                render();
+            }
+
+            // 初始渲染
+            window.onload = render;
+        </script>
     </body>
     </html>
     
