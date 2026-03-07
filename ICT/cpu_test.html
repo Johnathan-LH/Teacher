@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT 基礎測試：CPU 指令週期</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+
+    <div class="max-w-4xl mx-auto py-12 px-6">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-4">
+                <i class="fas fa-microchip text-blue-600 mr-2"></i> 中央處理器 (CPU) 知識測試
+            </h1>
+            <p class="text-slate-500 text-lg">對象：中三 ICT 學生 | 單元：電腦系統基礎</p>
+        </header>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8">
+            <h2 class="text-xl font-bold text-slate-700 mb-4 border-l-4 border-blue-500 pl-3">重點筆記：指令週期 (Machine Cycle)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ul class="space-y-3 text-slate-600">
+                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> <strong>Fetch (擷取)</strong>: 從記憶體讀取指令。</li>
+                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> <strong>Decode (解碼)</strong>: CU 翻譯指令為電子訊號。</li>
+                    <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i> <strong>Execute (執行)</strong>: ALU 進行運算或邏輯判斷。</li>
+                </ul>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 italic text-blue-700 text-sm">
+                    提示：不要忘記暫存器 (Registers) 的角色，如 PC (Program Counter) 負責儲存下一個指令的地址。
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-xl font-bold text-slate-700 mb-6 flex items-center">
+                <i class="fas fa-question-circle text-orange-500 mr-2"></i> 自我挑戰題
+            </h2>
+            
+            <div id="quiz-container">
+                <p class="text-slate-800 font-medium mb-4">哪一個組件負責在指令週期中進行算術運算（例如 $1 + 1$）？</p>
+                <div class="space-y-3">
+                    <button onclick="checkAnswer('CU')" class="w-full text-left p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition">
+                        A. Control Unit (控制單元)
+                    </button>
+                    <button onclick="checkAnswer('ALU')" class="w-full text-left p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition">
+                        B. Arithmetic and Logic Unit (算術及邏輯單元)
+                    </button>
+                    <button onclick="checkAnswer('MAR')" class="w-full text-left p-4 rounded-lg border border-slate-200 hover:bg-slate-50 transition">
+                        C. Memory Address Register (記憶體地址暫存器)
+                    </button>
+                </div>
+                <div id="feedback" class="mt-6 hidden p-4 rounded-lg text-center font-bold"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkAnswer(ans) {
+            const feedback = document.getElementById('feedback');
+            feedback.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+            
+            if (ans === 'ALU') {
+                feedback.innerText = "✅ 正確！ALU 負責所有數學運算和邏輯比較。";
+                feedback.classList.add('bg-green-100', 'text-green-700');
+            } else {
+                feedback.innerText = "❌ 再試試看！提示：CU 只負責指揮，ALU 才是「計算機」。";
+                feedback.classList.add('bg-red-100', 'text-red-700');
+            }
+            feedback.classList.remove('hidden');
+        }
+    </script>
+
+</body>
+</html>
