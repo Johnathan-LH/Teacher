@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    # 聲明 GITHUB_TOKEN 的權限，這是修正「紅叉」報錯的關鍵
+    # 聲明寫入權限，這是修正「紅叉」報錯的關鍵
     permissions:
       contents: write
       
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 獲取完整歷史紀錄以利 Git 操作
+          fetch-depth: 0 # 獲取完整歷史紀錄以利 Git 推送
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,11 +37,11 @@ jobs:
           git config --global user.name "Johnathan-Bot"
           git config --global user.email "bot@github.com"
           
-          # 檢查 index.html 是否有變動
+          # 檢查 index.html 是否有實際變動
           git add index.html
           if git diff --staged --quiet; then
-            echo "偵測到 index.html 無變動，跳過提交。"
+            echo "偵測到 index.html 無實質內容變動，跳過提交。"
           else
-            git commit -m "System: Auto-update portal index with subfolder support [skip ci]"
-            git push
+            git commit -m "System: Auto-update portal index with particles and nested folders [skip ci]"
+            git push origin main
           fi
