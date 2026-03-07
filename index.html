@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Johnathan 的 ICT & 數學課件庫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .course-card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <nav class="bg-blue-600 text-white shadow-lg p-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold flex items-center">
+                <i class="fas fa-laptop-code mr-3"></i> Johnathan's Learning Hub
+            </h1>
+            <span class="text-sm bg-blue-700 px-3 py-1 rounded-full">中學 ICT & 數學</span>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-12">
+        <header class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800">📚 互動課件目錄</h2>
+            <p class="text-gray-600 mt-2">點擊下方的卡片開始學習。本頁面會隨課程進度持續更新。</p>
+        </header>
+
+        <div id="course-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+    </main>
+
+    <footer class="text-center py-12 text-gray-400 text-sm">
+        <p>© 2026 Johnathan-LH. Powered by GitHub Pages.</p>
+    </footer>
+
+    <script>
+        // 【以後你只需要修改這裡！】
+        // 每增加一個新檔案，就在這裡加一個對象 {}
+        const lessons = [
+            {
+                title: "百分數變化 (F1 賽車版)",
+                desc: "結合 F1 賽車數據，學習百分比增加與減少的底層邏輯。",
+                url: "f1_percent.html", // 這是你之後製作的檔案名
+                icon: "fa-car-side",
+                category: "數學 / 百分數"
+            },
+            {
+                title: "盈虧與折扣演示",
+                desc: "直觀演示成本、售價與標價之間的關係。",
+                url: "profit_loss.html",
+                icon: "fa-tags",
+                category: "數學 / 商業應用"
+            },
+            {
+                title: "Python 繪圖基礎",
+                desc: "利用 Python 進行數據可視化，探索教學應用。",
+                url: "python_viz.html",
+                icon: "fa-code",
+                category: "ICT / Programming"
+            }
+        ];
+
+        // 自動生成卡片的邏輯
+        const container = document.getElementById('course-list');
+        
+        lessons.forEach(lesson => {
+            const card = `
+                <div class="course-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 flex flex-col">
+                    <div class="p-6 flex-grow">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="bg-blue-50 text-blue-600 p-3 rounded-lg text-2xl">
+                                <i class="fas ${lesson.icon}"></i>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">${lesson.category}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${lesson.title}</h3>
+                        <p class="text-gray-600 text-sm">${lesson.desc}</p>
+                    </div>
+                    <a href="${lesson.url}" class="block bg-gray-50 hover:bg-blue-600 hover:text-white text-center py-4 font-semibold text-blue-600 transition-colors">
+                        進入學習 <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    </script>
+</body>
+</html>
