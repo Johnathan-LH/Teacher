@@ -9,67 +9,69 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
             .lesson-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-            .filter-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+            .filter-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
             .glass-effect { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+            ::-webkit-scrollbar { width: 6px; }
+            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         </style>
     </head>
     <body class="bg-[#f8fafc] min-h-screen text-slate-900 font-sans">
         <div class="max-w-7xl mx-auto px-4 py-12">
             
-            <!-- 頁頭儀表板 -->
+            <!-- 頁頭部分 -->
             <header class="mb-12 border-b border-slate-200 pb-8 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div>
-                    <h1 class="text-4xl font-black tracking-tight text-slate-900 mb-2 italic">Johnathan's Lab</h1>
-                    <p class="text-slate-500 font-medium underline decoration-blue-500/30">ICT & Mathematics Interactive Learning Hub</p>
+                    <h1 class="text-4xl font-black tracking-tighter text-slate-900 mb-2 italic">JOHNATHAN'S LAB</h1>
+                    <p class="text-slate-500 font-medium border-l-4 border-blue-500 pl-4">ICT & Mathematics Interactive Learning Hub</p>
                 </div>
                 <div class="flex flex-col items-end">
                     <div class="flex gap-4 mb-2">
                         <div class="text-center px-4 py-2 bg-white rounded-xl border border-slate-200 shadow-sm">
-                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">課件總數</div>
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Lessons</div>
                             <div class="text-xl font-black text-blue-600">4</div>
                         </div>
                     </div>
-                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-slate-100 px-3 py-1 rounded-full">
+                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
                         <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                        最後自動更新: 2026-03-08 07:21:51 (HKT)
+                        LAST SYNC: 2026-03-08 07:27:19 (HKT)
                     </div>
                 </div>
             </header>
 
-            <!-- 控制列：過濾器與搜尋 -->
-            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl shadow-lg border border-white mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div id="filter-container" class="flex flex-wrap gap-2">
-                    <button onclick="filterBy('ALL')" class="filter-btn active px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all" data-subject="ALL">ALL</button>
-                    <button onclick="filterBy('ICT')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="ICT">ICT</button><button onclick="filterBy('Math')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="Math">MATH</button>
-                </div>
-                
-                <div class="relative w-full md:w-80">
-                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
-                    <input type="text" id="search-input" placeholder="搜尋課件關鍵字..." oninput="handleSearch()"
-                           class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-sm">
+            <!-- 控制面板 (過濾器與搜尋) -->
+            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl shadow-xl border border-white/50 mb-10 flex flex-col gap-4">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div id="filter-container" class="flex flex-wrap gap-2">
+                        <button onclick="filterBy('ALL')" class="filter-btn active px-4 py-1.5 rounded-lg border border-slate-200 text-[10px] font-black tracking-widest transition-all" data-subject="ALL">ALL</button>
+                        <button onclick="filterBy('ICT')" class="filter-btn px-4 py-1.5 rounded-lg border border-slate-200 text-[10px] font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="ICT">ICT</button><button onclick="filterBy('ICT / F1')" class="filter-btn px-4 py-1.5 rounded-lg border border-slate-200 text-[10px] font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="ICT / F1">ICT / F1</button><button onclick="filterBy('MATH / F1')" class="filter-btn px-4 py-1.5 rounded-lg border border-slate-200 text-[10px] font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="MATH / F1">MATH / F1</button><button onclick="filterBy('MATH / F3')" class="filter-btn px-4 py-1.5 rounded-lg border border-slate-200 text-[10px] font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-subject="MATH / F3">MATH / F3</button>
+                    </div>
+                    
+                    <div class="relative w-full md:w-72">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
+                        <input type="text" id="search-input" placeholder="Search keywords..." oninput="handleSearch()"
+                               class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-xs">
+                    </div>
                 </div>
             </div>
 
-            <!-- 課件網格 -->
+            <!-- 課件列表 -->
             <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 內容由 JS 動態渲染 -->
+                <!-- 由 JavaScript 動態生成 -->
             </div>
 
-            <!-- 空狀態提示 -->
-            <div id="empty-state" class="hidden text-center py-24">
-                <div class="text-6xl mb-6">🛰️</div>
-                <h3 class="text-xl font-bold text-slate-800 italic">找不到符合條件的課件</h3>
-                <p class="text-slate-400 text-sm mt-2">請嘗試更換分類或關鍵字</p>
+            <!-- 無內容提示 -->
+            <div id="empty-state" class="hidden text-center py-32">
+                <div class="text-6xl mb-6 opacity-20">🛰️</div>
+                <h3 class="text-xl font-bold text-slate-800 italic">No courseware found matching your criteria.</h3>
             </div>
 
             <footer class="mt-24 pt-8 border-t border-slate-200 text-center text-slate-300 text-[10px] font-bold uppercase tracking-[0.4em]">
-                Johnathan-LH Learning Hub • CI/CD Automated System
+                Johnathan-LH Learning Hub • Automated CI/CD System
             </footer>
         </div>
 
         <script>
-            // 注入由 Python 生成的數據
-            const lessons = [{"title": "\u767e\u5206\u6578\u8b8a\u5316 \u7d71\u4e00\u8996\u89ba\u5316\u6f14\u793a", "url": "Math/F1/\u767e\u5206\u6578.html", "subject": "Math", "path": "Math/F1/\u767e\u5206\u6578.html"}, {"title": "\u4e09\u89d2\u5b78\u79d8\u7b08\uff1a\u6046\u7b49\u5f0f\u8207\u7279\u6b8a\u89d2", "url": "Math/F3/SinCosTan.html", "subject": "Math", "path": "Math/F3/SinCosTan.html"}, {"title": "ICT \u57fa\u790e\u6e2c\u8a66\uff1aCPU \u6307\u4ee4\u9031\u671f", "url": "ICT/cpu_trail_web.html", "subject": "ICT", "path": "ICT/cpu_trail_web.html"}, {"title": "ICT \u5be6\u4f5c\uff1a\u907f\u969c\u5c0f\u8eca\u4efb\u52d9\u63a7\u5236\u4e2d\u5fc3", "url": "ICT/F1/\u907f\u969c\u8eca.html", "subject": "ICT", "path": "ICT/F1/\u907f\u969c\u8eca.html"}];
+            const lessons = [{"title": "\u767e\u5206\u6578\u8b8a\u5316 \u7d71\u4e00\u8996\u89ba\u5316\u6f14\u793a", "url": "Math/F1/\u767e\u5206\u6578.html", "subject": "MATH / F1", "path": "Math/F1/\u767e\u5206\u6578.html"}, {"title": "\u4e09\u89d2\u5b78\u79d8\u7b08\uff1a\u6046\u7b49\u5f0f\u8207\u7279\u6b8a\u89d2", "url": "Math/F3/SinCosTan.html", "subject": "MATH / F3", "path": "Math/F3/SinCosTan.html"}, {"title": "ICT \u57fa\u790e\u6e2c\u8a66\uff1aCPU \u6307\u4ee4\u9031\u671f", "url": "ICT/cpu_trail_web.html", "subject": "ICT", "path": "ICT/cpu_trail_web.html"}, {"title": "ICT \u5be6\u4f5c\uff1a\u907f\u969c\u5c0f\u8eca\u4efb\u52d9\u63a7\u5236\u4e2d\u5fc3", "url": "ICT/F1/\u907f\u969c\u8eca.html", "subject": "ICT / F1", "path": "ICT/F1/\u907f\u969c\u8eca.html"}];
             let currentFilter = 'ALL';
             let searchQuery = '';
 
@@ -93,13 +95,13 @@
                             <div class="lesson-card bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all flex flex-col justify-between group">
                                 <div>
                                     <div class="flex justify-between items-start mb-6">
-                                        <span class="px-2 py-1 bg-slate-900 text-white text-[9px] font-black uppercase rounded tracking-widest italic group-hover:bg-blue-600 transition-colors">${l.subject}</span>
+                                        <span class="px-2 py-0.5 bg-slate-900 text-white text-[9px] font-black uppercase rounded tracking-widest italic group-hover:bg-blue-600 transition-colors">${l.subject}</span>
                                         <i class="fas fa-external-link-alt text-slate-200 text-[10px]"></i>
                                     </div>
-                                    <h3 class="text-lg font-black text-slate-800 mb-2 leading-tight">${l.title}</h3>
+                                    <h3 class="text-lg font-black text-slate-800 mb-2 leading-tight tracking-tight">${l.title}</h3>
                                     <p class="text-[10px] text-slate-400 font-mono truncate mb-6">${l.path}</p>
                                 </div>
-                                <a href="${l.url}" target="_blank" rel="noopener" class="w-full text-center py-3 bg-slate-50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-xl transition-all text-xs tracking-widest shadow-inner hover:shadow-lg">
+                                <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-3 bg-slate-50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-xl transition-all text-[10px] tracking-[0.2em] shadow-inner hover:shadow-lg">
                                     LAUNCH LESSON
                                 </a>
                             </div>
@@ -121,7 +123,6 @@
                 render();
             }
 
-            // 初始渲染
             window.onload = render;
         </script>
     </body>
