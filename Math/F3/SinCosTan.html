@@ -6,9 +6,22 @@
     <title>三角學秘笈：恆等式與特殊角</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- 引入 MathJax 渲染靜態數學公式 -->
+    
+    <!-- 1. MathJax 配置：必須在載入腳本前定義 -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
     <style>
         .math-fraction { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; line-height: 1.2; margin: 0 4px; }
         .math-fraction span:first-child { border-bottom: 1px solid currentColor; padding: 0 2px; }
@@ -16,7 +29,7 @@
         .tab-active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
         .tab-inactive { background-color: white; color: #4b5563; border-color: #d1d5db; }
         .tab-inactive:hover { background-color: #f3f4f6; }
-        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
+        .transition-all { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans pb-20">
@@ -33,7 +46,7 @@
 
     <div class="max-w-5xl mx-auto px-4 space-y-12">
 
-        <!-- 模組 1：三角恆等式 (數據儀表板) -->
+        <!-- 模組 1：三角恆等式 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-purple-100 px-6 py-4 border-b border-purple-200 flex justify-between items-center">
                 <h2 class="text-xl font-bold text-purple-800"><i class="fas fa-sliders-h mr-2"></i> 1. 三角恆等式 (Trigonometric Identities)</h2>
@@ -44,167 +57,146 @@
             
             <div class="p-8">
                 <div class="mb-8">
-                    <label class="block text-slate-700 font-bold mb-4">拖動滑塊改變角度 $\theta$：<span id="angle-display" class="text-2xl text-purple-600 ml-2">45°</span></label>
+                    <label class="block text-slate-700 font-bold mb-4 italic">
+                        拖動滑塊改變角度 $\theta$：<span id="angle-display" class="text-3xl text-purple-600 ml-2 not-italic">45°</span>
+                    </label>
                     <input type="range" id="angle-slider" min="0" max="90" value="45" step="1" class="w-full h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- 證明 1: sin^2 + cos^2 = 1 -->
                     <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
                         <h3 class="font-bold text-slate-700 mb-4 text-center">恆等式 (b) 的視覺化證明</h3>
                         
-                        <div class="flex justify-between text-sm mb-2">
+                        <div class="flex justify-between text-sm mb-2 font-mono">
                             <span class="text-blue-600 font-bold">$\sin^2\theta$ = <span id="sin2-val">0.500</span></span>
                             <span class="text-green-600 font-bold">$\cos^2\theta$ = <span id="cos2-val">0.500</span></span>
                         </div>
                         
-                        <!-- 動態進度條 -->
                         <div class="h-8 bg-slate-200 rounded-full overflow-hidden flex w-full mb-4 shadow-inner">
-                            <div id="sin-bar" class="h-full bg-blue-500 transition-all duration-200 flex items-center justify-center text-xs text-white font-bold" style="width: 50%;"></div>
-                            <div id="cos-bar" class="h-full bg-green-500 transition-all duration-200 flex items-center justify-center text-xs text-white font-bold" style="width: 50%;"></div>
+                            <div id="sin-bar" class="h-full bg-blue-500 transition-all duration-200"></div>
+                            <div id="cos-bar" class="h-full bg-green-500 transition-all duration-200"></div>
                         </div>
                         <div class="text-center font-mono text-lg text-slate-800">
                             <span class="text-blue-600" id="sin2-txt">0.500</span> + <span class="text-green-600" id="cos2-txt">0.500</span> = <strong class="text-purple-600">1.000</strong>
                         </div>
                     </div>
 
-                    <!-- 證明 2: tan = sin / cos -->
                     <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-center items-center">
                         <h3 class="font-bold text-slate-700 mb-6 w-full text-center">恆等式 (a)：$\tan\theta = \frac{\sin\theta}{\cos\theta}$</h3>
                         <div class="flex items-center text-xl font-mono">
-                            <div class="text-orange-600 font-bold mr-4">$\tan\theta$ <br><span class="text-sm text-slate-500" id="tan-val">1.000</span></div>
-                            <div class="mr-4">=</div>
-                            <div class="math-fraction text-lg">
-                                <span class="text-blue-600 font-bold border-slate-400" id="sin-val">0.707</span>
-                                <span class="text-green-600 font-bold" id="cos-val">0.707</span>
+                            <div class="text-orange-600 font-bold text-center">
+                                $\tan\theta$<br>
+                                <span class="text-sm text-slate-400" id="tan-val">1.000</span>
                             </div>
-                            <div class="ml-4">= <strong class="text-purple-600" id="tan-calc">1.000</strong></div>
+                            <div class="mx-4 text-slate-400">=</div>
+                            <div class="flex flex-col items-center">
+                                <span class="text-blue-600 font-bold border-b-2 border-slate-300 px-2" id="sin-val">0.707</span>
+                                <span class="text-green-600 font-bold px-2" id="cos-val">0.707</span>
+                            </div>
+                            <div class="mx-4 text-slate-400">=</div>
+                            <div class="text-purple-600 font-bold" id="tan-calc">1.000</div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 模組 2：餘角的三角比 (視角切換) -->
+        <!-- 模組 2：餘角的三角比 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-teal-100 px-6 py-4 border-b border-teal-200">
                 <h2 class="text-xl font-bold text-teal-800"><i class="fas fa-exchange-alt mr-2"></i> 2. 餘角的三角比 (Complementary Angles)</h2>
             </div>
             
             <div class="p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <!-- 互動圖形區 -->
                 <div class="relative w-full aspect-video bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center p-8">
-                    <!-- SVG 直角三角形 -->
                     <svg viewBox="0 0 200 150" class="w-full h-full max-w-xs overflow-visible">
                         <polygon points="20,130 180,130 180,20" fill="none" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>
-                        <!-- 直角標記 -->
                         <polyline points="165,130 165,115 180,115" fill="none" stroke="#334155" stroke-width="2"/>
                         
-                        <!-- 角度 A -->
                         <path d="M 50 130 A 30 30 0 0 0 45 113" fill="none" stroke="#ef4444" stroke-width="3"/>
-                        <text x="60" y="125" fill="#ef4444" font-weight="bold" font-family="serif" font-style="italic">θ</text>
+                        <text x="55" y="123" fill="#ef4444" font-weight="bold" font-family="serif">θ</text>
                         
-                        <!-- 角度 B -->
                         <path d="M 180 50 A 30 30 0 0 0 163 45" fill="none" stroke="#0ea5e9" stroke-width="3"/>
-                        <text x="140" y="40" fill="#0ea5e9" font-weight="bold" font-size="12">90° - θ</text>
+                        <text x="135" y="42" fill="#0ea5e9" font-weight="bold" font-size="12">90° - θ</text>
 
-                        <!-- 邊長標籤 -->
-                        <text x="100" y="145" fill="#64748b" font-weight="bold" id="side-adj">鄰邊 (b)</text>
-                        <text x="190" y="80" fill="#64748b" font-weight="bold" writing-mode="vertical-rl" id="side-opp">對邊 (a)</text>
+                        <text x="100" y="145" fill="#64748b" font-weight="bold" text-anchor="middle" id="side-adj">鄰邊 (b)</text>
+                        <text x="190" y="80" fill="#64748b" font-weight="bold" dominant-baseline="middle" id="side-opp">對邊 (a)</text>
                         <text x="80" y="65" fill="#64748b" font-weight="bold" transform="rotate(-34.5 100 75)">斜邊 (c)</text>
                     </svg>
                 </div>
 
-                <!-- 控制與說明區 -->
                 <div class="space-y-6">
-                    <p class="text-slate-600 mb-4">選擇你的「觀察視角」，看看對邊和鄰邊是如何互換的：</p>
+                    <p class="text-slate-600 mb-4 font-medium">切換視角，理解邊與角的對應關係：</p>
                     
-                    <div class="flex space-x-4 mb-6">
-                        <button onclick="setPerspective('theta')" id="btn-theta" class="flex-1 py-3 px-4 rounded-lg border-2 tab-active font-bold flex items-center justify-center transition-colors">
-                            <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span> 視角：紅角 (θ)
+                    <div class="flex space-x-4">
+                        <button onclick="setPerspective('theta')" id="btn-theta" class="flex-1 py-3 px-4 rounded-xl border-2 tab-active font-bold transition-all shadow-sm">
+                            <i class="fas fa-eye mr-2"></i> 視角：紅角 (θ)
                         </button>
-                        <button onclick="setPerspective('comp')" id="btn-comp" class="flex-1 py-3 px-4 rounded-lg border-2 tab-inactive font-bold flex items-center justify-center transition-colors">
-                            <span class="w-3 h-3 rounded-full bg-sky-500 mr-2"></span> 視角：藍角 (90°-θ)
+                        <button onclick="setPerspective('comp')" id="btn-comp" class="flex-1 py-3 px-4 rounded-xl border-2 tab-inactive font-bold transition-all shadow-sm">
+                            <i class="fas fa-eye mr-2"></i> 視角：藍角 (90°-θ)
                         </button>
                     </div>
 
-                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 text-lg font-mono space-y-4">
-                        <div class="flex justify-between items-center pb-2 border-b border-slate-200">
-                            <div class="text-red-600" id="form-theta-sin">$\sin\theta = \frac{a}{c}$</div>
-                            <i class="fas fa-arrows-alt-h text-slate-400"></i>
-                            <div class="text-sky-600" id="form-comp-cos">$\cos(90^\circ-\theta) = \frac{a}{c}$</div>
+                    <div class="bg-slate-900 text-white p-6 rounded-xl font-mono space-y-4 shadow-inner">
+                        <div class="flex justify-between items-center pb-3 border-b border-slate-700">
+                            <div class="text-red-400" id="form-left-1">$\sin\theta = \frac{a}{c}$</div>
+                            <div class="text-slate-500">對應</div>
+                            <div class="text-sky-400" id="form-right-1">$\cos(90^\circ-\theta) = \frac{a}{c}$</div>
                         </div>
-                        <div class="flex justify-between items-center pb-2 border-b border-slate-200">
-                            <div class="text-red-600" id="form-theta-cos">$\cos\theta = \frac{b}{c}$</div>
-                            <i class="fas fa-arrows-alt-h text-slate-400"></i>
-                            <div class="text-sky-600" id="form-comp-sin">$\sin(90^\circ-\theta) = \frac{b}{c}$</div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-red-400" id="form-left-2">$\cos\theta = \frac{b}{c}$</div>
+                            <div class="text-slate-500">對應</div>
+                            <div class="text-sky-400" id="form-right-2">$\sin(90^\circ-\theta) = \frac{b}{c}$</div>
                         </div>
-                        <div class="text-center text-sm font-sans text-slate-500 mt-2">
-                            💡 結論：從紅角看的 $\sin$ (對/斜)，正好等於從藍角看的 $\cos$ (鄰/斜)！
-                        </div>
+                    </div>
+                    <div class="text-sm bg-yellow-50 text-yellow-800 p-3 rounded-lg border border-yellow-100 italic">
+                        💡 技巧：紅角的「對邊」就是藍角的「鄰邊」，所以紅角的 $\sin$ 等於藍角的 $\cos$！
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 模組 3：特殊角的三角比 -->
+        <!-- 模組 3：特殊角 -->
         <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="bg-orange-100 px-6 py-4 border-b border-orange-200">
                 <h2 class="text-xl font-bold text-orange-800"><i class="fas fa-star mr-2"></i> 3. 特殊角的三角比 (Special Angles)</h2>
             </div>
             
             <div class="p-8">
-                <p class="text-slate-600 mb-6 text-center">點擊角度，高亮顯示對應的數值。記住：它們都來自兩個特殊的直角三角形！</p>
-
-                <!-- 角度選擇器 -->
-                <div class="flex justify-center space-x-4 mb-8">
-                    <button onclick="selectAngle(30)" id="btn-30" class="w-20 py-2 rounded-full border-2 border-orange-500 bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">30°</button>
-                    <button onclick="selectAngle(45)" id="btn-45" class="w-20 py-2 rounded-full border-2 border-slate-300 text-slate-600 font-bold hover:border-orange-500 transition-colors">45°</button>
-                    <button onclick="selectAngle(60)" id="btn-60" class="w-20 py-2 rounded-full border-2 border-slate-300 text-slate-600 font-bold hover:border-orange-500 transition-colors">60°</button>
+                <div class="flex justify-center space-x-4 mb-10">
+                    <button onclick="selectAngle(30)" id="btn-30" class="w-24 py-3 rounded-xl border-2 border-orange-500 bg-orange-500 text-white font-bold transition-all shadow-md">30°</button>
+                    <button onclick="selectAngle(45)" id="btn-45" class="w-24 py-3 rounded-xl border-2 border-slate-200 text-slate-500 font-bold hover:border-orange-500 transition-all">45°</button>
+                    <button onclick="selectAngle(60)" id="btn-60" class="w-24 py-3 rounded-xl border-2 border-slate-200 text-slate-500 font-bold hover:border-orange-500 transition-all">60°</button>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
                     <table class="w-full text-center border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700">
-                                <th class="border p-4 w-1/4">三角比 \ $\theta$</th>
-                                <th id="col-h-30" class="border p-4 w-1/4 bg-orange-50 transition-colors">30°</th>
-                                <th id="col-h-45" class="border p-4 w-1/4 transition-colors">45°</th>
-                                <th id="col-h-60" class="border p-4 w-1/4 transition-colors">60°</th>
+                            <tr class="bg-slate-50 text-slate-500 text-sm uppercase">
+                                <th class="p-4 border-b">三角比 \ $\theta$</th>
+                                <th id="col-h-30" class="p-4 border-b border-l bg-orange-50/50">30°</th>
+                                <th id="col-h-45" class="p-4 border-b border-l">45°</th>
+                                <th id="col-h-60" class="p-4 border-b border-l">60°</th>
                             </tr>
                         </thead>
-                        <tbody class="text-lg">
-                            <tr>
-                                <td class="border p-4 font-bold text-slate-700">$\sin\theta$</td>
-                                <td id="col-1-30" class="border p-4 bg-orange-50 transition-colors">
-                                    <div class="math-fraction"><span>1</span><span>2</span></div>
-                                </td>
-                                <td id="col-1-45" class="border p-4 transition-colors">
-                                    <div class="math-fraction"><span>1</span><span>$\sqrt{2}$</span></div>
-                                </td>
-                                <td id="col-1-60" class="border p-4 transition-colors">
-                                    <div class="math-fraction"><span>$\sqrt{3}$</span><span>2</span></div>
-                                </td>
+                        <tbody class="text-xl font-medium">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-6 border-b text-slate-700 font-bold">$\sin\theta$</td>
+                                <td id="col-1-30" class="p-6 border-b border-l bg-orange-50/50">$\frac{1}{2}$</td>
+                                <td id="col-1-45" class="p-6 border-b border-l">$\frac{1}{\sqrt{2}}$</td>
+                                <td id="col-1-60" class="p-6 border-b border-l">$\frac{\sqrt{3}}{2}$</td>
                             </tr>
-                            <tr>
-                                <td class="border p-4 font-bold text-slate-700">$\cos\theta$</td>
-                                <td id="col-2-30" class="border p-4 bg-orange-50 transition-colors">
-                                    <div class="math-fraction"><span>$\sqrt{3}$</span><span>2</span></div>
-                                </td>
-                                <td id="col-2-45" class="border p-4 transition-colors">
-                                    <div class="math-fraction"><span>1</span><span>$\sqrt{2}$</span></div>
-                                </td>
-                                <td id="col-2-60" class="border p-4 transition-colors">
-                                    <div class="math-fraction"><span>1</span><span>2</span></div>
-                                </td>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-6 border-b text-slate-700 font-bold">$\cos\theta$</td>
+                                <td id="col-2-30" class="p-6 border-b border-l bg-orange-50/50">$\frac{\sqrt{3}}{2}$</td>
+                                <td id="col-2-45" class="p-6 border-b border-l">$\frac{1}{\sqrt{2}}$</td>
+                                <td id="col-2-60" class="p-6 border-b border-l">$\frac{1}{2}$</td>
                             </tr>
-                            <tr>
-                                <td class="border p-4 font-bold text-slate-700">$\tan\theta$</td>
-                                <td id="col-3-30" class="border p-4 bg-orange-50 transition-colors">
-                                    <div class="math-fraction"><span>1</span><span>$\sqrt{3}$</span></div>
-                                </td>
-                                <td id="col-3-45" class="border p-4 transition-colors">1</td>
-                                <td id="col-3-60" class="border p-4 transition-colors">$\sqrt{3}$</td>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-6 text-slate-700 font-bold">$\tan\theta$</td>
+                                <td id="col-3-30" class="p-6 border-l bg-orange-50/50">$\frac{1}{\sqrt{3}}$</td>
+                                <td id="col-3-45" class="p-6 border-l text-2xl">1</td>
+                                <td id="col-3-60" class="p-6 border-l">$\sqrt{3}$</td>
                             </tr>
                         </tbody>
                     </table>
@@ -214,26 +206,30 @@
 
     </div>
 
-    <!-- 腳本邏輯 -->
     <script>
-        // 模組 1：三角恆等式邏輯
         const angleSlider = document.getElementById('angle-slider');
         const angleDisplay = document.getElementById('angle-display');
         
+        // 渲染數學公式的輔助函式
+        function renderMath() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise();
+            }
+        }
+
         function updateIdentities() {
             const theta = parseInt(angleSlider.value);
             const rad = theta * (Math.PI / 180);
             
             const sinVal = Math.sin(rad);
             const cosVal = Math.cos(rad);
-            let tanVal = Math.tan(rad);
+            const tanVal = Math.tan(rad);
             
             const sin2 = sinVal * sinVal;
             const cos2 = cosVal * cosVal;
 
             angleDisplay.innerText = theta + '°';
 
-            // 更新 sin^2 + cos^2 = 1 區塊
             document.getElementById('sin2-val').innerText = sin2.toFixed(3);
             document.getElementById('cos2-val').innerText = cos2.toFixed(3);
             document.getElementById('sin2-txt').innerText = sin2.toFixed(3);
@@ -242,21 +238,19 @@
             document.getElementById('sin-bar').style.width = (sin2 * 100) + '%';
             document.getElementById('cos-bar').style.width = (cos2 * 100) + '%';
 
-            // 處理 Tan 90 度的無限大問題
-            let tanDisplay = theta === 90 ? '未定義' : tanVal.toFixed(3);
-            let cosDisplay = theta === 90 ? '0.000 (不可除以0)' : cosVal.toFixed(3);
+            let tanDisplay = theta === 90 ? '∞' : tanVal.toFixed(3);
+            let cosDisplay = theta === 90 ? '0.000 (不可除)' : cosVal.toFixed(3);
 
-            // 更新 tan = sin/cos 區塊
             document.getElementById('tan-val').innerText = tanDisplay;
             document.getElementById('sin-val').innerText = sinVal.toFixed(3);
             document.getElementById('cos-val').innerText = cosDisplay;
             document.getElementById('tan-calc').innerText = tanDisplay;
+            
+            renderMath();
         }
 
         angleSlider.addEventListener('input', updateIdentities);
-        updateIdentities(); // 初始化
 
-        // 模組 2：視角切換邏輯
         function setPerspective(view) {
             const btnTheta = document.getElementById('btn-theta');
             const btnComp = document.getElementById('btn-comp');
@@ -264,45 +258,53 @@
             const sideAdj = document.getElementById('side-adj');
 
             if (view === 'theta') {
-                btnTheta.className = "flex-1 py-3 px-4 rounded-lg border-2 tab-active font-bold flex items-center justify-center transition-colors";
-                btnComp.className = "flex-1 py-3 px-4 rounded-lg border-2 tab-inactive font-bold flex items-center justify-center transition-colors";
+                btnTheta.className = "flex-1 py-3 px-4 rounded-xl border-2 tab-active font-bold transition-all shadow-sm";
+                btnComp.className = "flex-1 py-3 px-4 rounded-xl border-2 tab-inactive font-bold transition-all shadow-sm";
+                sideOpp.innerHTML = "對邊 (a) <tspan font-size='10' fill='#ef4444'>← 紅角對面</tspan>";
+                sideAdj.innerHTML = "鄰邊 (b) <tspan font-size='10' fill='#ef4444'>← 紅角旁邊</tspan>";
                 
-                sideOpp.innerHTML = "對邊 (a) <tspan fill='#ef4444'>← 紅角的對面</tspan>";
-                sideAdj.innerHTML = "鄰邊 (b) <tspan fill='#ef4444'>← 紅角的旁邊</tspan>";
+                document.getElementById('form-left-1').innerHTML = "$\\sin\\theta = \\frac{a}{c}$";
+                document.getElementById('form-right-1').innerHTML = "$\\cos(90^\\circ-\\theta) = \\frac{a}{c}$";
             } else {
-                btnComp.className = "flex-1 py-3 px-4 rounded-lg border-2 tab-active font-bold flex items-center justify-center transition-colors bg-sky-500 border-sky-500";
-                btnTheta.className = "flex-1 py-3 px-4 rounded-lg border-2 tab-inactive font-bold flex items-center justify-center transition-colors";
+                btnComp.className = "flex-1 py-3 px-4 rounded-xl border-2 tab-active font-bold transition-all shadow-sm bg-sky-500 border-sky-500";
+                btnTheta.className = "flex-1 py-3 px-4 rounded-xl border-2 tab-inactive font-bold transition-all shadow-sm";
+                sideOpp.innerHTML = "鄰邊 (a) <tspan font-size='10' fill='#0ea5e9'>← 藍角旁邊</tspan>";
+                sideAdj.innerHTML = "對邊 (b) <tspan font-size='10' fill='#0ea5e9'>← 藍角對面</tspan>";
                 
-                sideOpp.innerHTML = "鄰邊 (a) <tspan fill='#0ea5e9'>← 藍角的旁邊</tspan>";
-                sideAdj.innerHTML = "對邊 (b) <tspan fill='#0ea5e9'>← 藍角的對面</tspan>";
+                document.getElementById('form-left-1').innerHTML = "$\\cos\\theta = \\frac{b}{c}$";
+                document.getElementById('form-right-1').innerHTML = "$\\sin(90^\\circ-\\theta) = \\frac{b}{c}$";
             }
+            renderMath();
         }
-        // 初始化 SVG 標籤
-        document.getElementById('side-opp').innerHTML = "對邊 (a) <tspan fill='#ef4444'>← 紅角的對面</tspan>";
-        document.getElementById('side-adj').innerHTML = "鄰邊 (b) <tspan fill='#ef4444'>← 紅角的旁邊</tspan>";
 
-
-        // 模組 3：特殊角表格高亮邏輯
         const angles = [30, 45, 60];
         function selectAngle(selected) {
             angles.forEach(angle => {
-                // 按鈕樣式
                 const btn = document.getElementById('btn-' + angle);
-                if (angle === selected) {
-                    btn.className = "w-20 py-2 rounded-full border-2 border-orange-500 bg-orange-500 text-white font-bold transition-colors";
+                const isMatch = angle === selected;
+                
+                if (isMatch) {
+                    btn.className = "w-24 py-3 rounded-xl border-2 border-orange-500 bg-orange-500 text-white font-bold transition-all shadow-md";
                 } else {
-                    btn.className = "w-20 py-2 rounded-full border-2 border-slate-300 text-slate-600 font-bold hover:border-orange-500 transition-colors bg-white";
+                    btn.className = "w-24 py-3 rounded-xl border-2 border-slate-200 text-slate-500 font-bold hover:border-orange-500 transition-all";
                 }
 
-                // 表格高亮
-                const isMatch = angle === selected;
-                const bgClass = isMatch ? 'bg-orange-50' : 'bg-transparent';
-                
+                const bgClass = isMatch ? 'bg-orange-50/50' : 'bg-transparent';
                 ['h', '1', '2', '3'].forEach(prefix => {
-                    document.getElementById(`col-${prefix}-${angle}`).className = `border p-4 transition-colors ${bgClass} ${isMatch ? 'font-bold scale-105 shadow-sm' : ''}`;
+                    const el = document.getElementById(`col-${prefix}-${angle}`);
+                    el.className = `p-6 border-l transition-colors ${bgClass} ${isMatch ? 'text-orange-600 font-bold' : 'text-slate-600'}`;
+                    if (prefix === 'h') el.className = `p-4 border-b border-l transition-colors ${bgClass} font-bold`;
                 });
             });
+            renderMath();
         }
+
+        // 初始化
+        window.onload = () => {
+            updateIdentities();
+            setPerspective('theta');
+            selectAngle(30);
+        };
     </script>
 </body>
 </html>
