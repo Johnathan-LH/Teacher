@@ -103,13 +103,17 @@ def generate():
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
+            #bg-canvas {{ position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; background: #f8fafc; }}
             .lesson-card {{ transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }}
             .filter-btn.active {{ background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }}
-            .glass-effect {{ background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); }}
+            .glass-effect {{ background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }}
+            .card-glow:hover {{ box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.2); }}
         </style>
     </head>
-    <body class="bg-[#f8fafc] min-h-screen text-slate-900 font-sans">
-        <div class="max-w-7xl mx-auto px-4 py-12">
+    <body class="min-h-screen text-slate-900 font-sans">
+        <canvas id="bg-canvas"></canvas>
+
+        <div class="max-w-7xl mx-auto px-4 py-12 relative z-10">
             
             <header class="mb-12 border-b border-slate-200 pb-8 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div>
@@ -117,15 +121,15 @@ def generate():
                     <p class="text-slate-500 font-medium border-l-4 border-blue-500 pl-4 uppercase text-xs tracking-widest">Interactive Learning Resources Portfolio</p>
                 </div>
                 <div class="flex flex-col items-end">
-                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-white/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
                         <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
                         SYNCED: {update_time} (HKT)
                     </div>
                 </div>
             </header>
 
-            <!-- 導航列：下拉選單 -->
-            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl shadow-xl border border-white/50 mb-10">
+            <!-- 導航列 -->
+            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl shadow-xl mb-10">
                 <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
                     <div id="filter-container" class="flex flex-wrap gap-3">
                         <button onclick="filterBy('ALL', 'ALL')" class="filter-btn active px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all" data-main="ALL">ALL</button>
@@ -135,7 +139,7 @@ def generate():
                     <div class="relative w-full md:w-64">
                         <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
                         <input type="text" id="search-input" placeholder="Search lessons..." oninput="handleSearch()"
-                               class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-xs font-bold">
+                               class="w-full pl-10 pr-4 py-2 bg-white/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-xs font-bold">
                     </div>
                 </div>
             </div>
@@ -153,6 +157,78 @@ def generate():
         </div>
 
         <script>
+            // 背景粒子系統
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const mouse = { x: null, y: null, radius: 150 };
+
+            window.addEventListener('mousemove', (e) => {
+                mouse.x = e.x;
+                mouse.y = e.y;
+            });
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 1;
+                    this.baseX = this.x;
+                    this.baseY = this.y;
+                    this.density = (Math.random() * 30) + 1;
+                    this.speedX = Math.random() * 0.5 - 0.25;
+                    this.speedY = Math.random() * 0.5 - 0.25;
+                }
+                draw() {
+                    ctx.fillStyle = 'rgba(37, 99, 235, 0.2)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        ctx.strokeStyle = `rgba(37, 99, 235, ${1 - distance/mouse.radius})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            function init() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                particles = [];
+                for (let i = 0; i < 80; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].draw();
+                    particles[i].update();
+                }
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', init);
+            init();
+            animate();
+
+            // 課件渲染邏輯
             const lessons = {lessons_json};
             let currentMain = 'ALL';
             let currentSub = 'ALL';
@@ -176,19 +252,19 @@ def generate():
                     empty.classList.add('hidden');
                     filtered.forEach(l => {{
                         grid.innerHTML += `
-                            <div class="lesson-card bg-white p-7 rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all flex flex-col justify-between group">
+                            <div class="lesson-card glass-effect p-7 rounded-3xl shadow-sm hover:shadow-2xl card-glow hover:-translate-y-2 transition-all flex flex-col justify-between group">
                                 <div>
                                     <div class="flex justify-between items-start mb-6">
                                         <div class="flex gap-2">
                                             <span class="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-black uppercase rounded tracking-widest group-hover:bg-blue-600 transition-colors">${{l.subject}}</span>
-                                            <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[8px] font-black uppercase rounded tracking-widest">${{l.sub}}</span>
+                                            <span class="px-2 py-0.5 bg-white/50 text-slate-500 text-[8px] font-black uppercase rounded tracking-widest border border-slate-100">${{l.sub}}</span>
                                         </div>
-                                        <i class="fas fa-external-link-alt text-slate-200 text-[10px]"></i>
+                                        <i class="fas fa-external-link-alt text-slate-300 text-[10px]"></i>
                                     </div>
                                     <h3 class="text-xl font-black text-slate-800 mb-2 leading-tight tracking-tight">${{l.title}}</h3>
                                     <p class="text-[10px] text-slate-400 font-mono truncate mb-6 opacity-60">${{l.path}}</p>
                                 </div>
-                                <a href="${{l.url}}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-4 bg-slate-50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-2xl transition-all text-[10px] tracking-[0.2em] shadow-inner hover:shadow-blue-500/30">
+                                <a href="${{l.url}}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-4 bg-white/50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-2xl transition-all text-[10px] tracking-[0.2em] shadow-inner border border-slate-100 group-hover:border-transparent">
                                     LAUNCH LESSON
                                 </a>
                             </div>
@@ -200,12 +276,9 @@ def generate():
             function filterBy(main, sub) {{
                 currentMain = main;
                 currentSub = sub;
-                
-                // 更新按鈕樣式
                 document.querySelectorAll('.filter-btn').forEach(btn => {{
                     btn.classList.toggle('active', btn.dataset.main === main);
                 }});
-                
                 render();
             }}
 
