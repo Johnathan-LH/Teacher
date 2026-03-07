@@ -46,7 +46,7 @@ def generate():
                     hierarchy[main_subject] = set()
                 hierarchy[main_subject].add(sub_category)
 
-    # 2. 計算香港時間
+    # 2. 計算香港時間 (HKT)
     now_utc = datetime.utcnow()
     now_hkt = now_utc + timedelta(hours=8)
     update_time = now_hkt.strftime('%Y-%m-%d %H:%M:%S')
@@ -79,7 +79,7 @@ def generate():
             <button onclick="filterBy('{main}', 'ALL')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-main="{main}">{main}</button>
             '''
 
-    # 4. 生成完整網頁 (注意：Python f-string 中的所有 JS/CSS 大括號必須雙寫 {{ }})
+    # 4. 生成完整網頁 (使用雙大括號 {{ }} 轉義 Python f-string)
     full_html = f'''
     <!DOCTYPE html>
     <html lang="zh-Hant">
@@ -233,15 +233,15 @@ def generate():
                                 <div>
                                     <div class="flex justify-between items-start mb-6">
                                         <div class="flex gap-2">
-                                            <span class="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-black uppercase rounded tracking-widest group-hover:bg-blue-600 transition-colors">\${l.subject}</span>
-                                            <span class="px-2 py-0.5 bg-white/50 text-slate-500 text-[8px] font-black uppercase rounded tracking-widest border border-slate-100">\${l.sub}</span>
+                                            <span class="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-black uppercase rounded tracking-widest group-hover:bg-blue-600 transition-colors">\${{l.subject}}</span>
+                                            <span class="px-2 py-0.5 bg-white/50 text-slate-500 text-[8px] font-black uppercase rounded tracking-widest border border-slate-100">\${{l.sub}}</span>
                                         </div>
                                         <i class="fas fa-external-link-alt text-slate-300 text-[10px]"></i>
                                     </div>
-                                    <h3 class="text-xl font-black text-slate-800 mb-2 leading-tight tracking-tight">\${l.title}</h3>
-                                    <p class="text-[10px] text-slate-400 font-mono truncate mb-6 opacity-60">\${l.path}</p>
+                                    <h3 class="text-xl font-black text-slate-800 mb-2 leading-tight tracking-tight">\${{l.title}}</h3>
+                                    <p class="text-[10px] text-slate-400 font-mono truncate mb-6 opacity-60">\${{l.path}}</p>
                                 </div>
-                                <a href="\${l.url}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-4 bg-white/50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-2xl transition-all text-[10px] tracking-[0.2em] shadow-inner border border-slate-100 group-hover:border-transparent">
+                                <a href="\${{l.url}}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-4 bg-white/50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-2xl transition-all text-[10px] tracking-[0.2em] shadow-inner border border-slate-100 group-hover:border-transparent">
                                     LAUNCH LESSON
                                 </a>
                             </div>
