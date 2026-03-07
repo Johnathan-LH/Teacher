@@ -9,14 +9,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    # 聲明 GITHUB_TOKEN 的權限，這是修正「紅叉」報錯的關鍵
     permissions:
-      contents: write        # 重要：賦予寫入權限以更新 index.html
+      contents: write
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 獲取完整歷史紀錄以利 Git 操作
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
@@ -31,11 +36,12 @@ jobs:
         run: |
           git config --global user.name "Johnathan-Bot"
           git config --global user.email "bot@github.com"
+          
+          # 檢查 index.html 是否有變動
           git add index.html
-          # 檢查是否有變動，避免空提交導致報錯
           if git diff --staged --quiet; then
-            echo "No changes in index.html, skipping push."
+            echo "偵測到 index.html 無變動，跳過提交。"
           else
-            git commit -m "System: Auto-update portal index with filters [skip ci]"
+            git commit -m "System: Auto-update portal index with subfolder support [skip ci]"
             git push
           fi
