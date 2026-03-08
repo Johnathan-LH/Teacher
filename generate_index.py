@@ -392,22 +392,22 @@ def generate():
                 }} else {{
                     empty.classList.add('hidden');
                     filtered.forEach(l => {{
-                        // 完全使用無轉義的 JS 變量插入，解決畫面出現 ${{l.title}} 的問題
+                        // 修復：在 Python f-string 內部要輸出 JS 的 template literal 變數，必須雙寫大括號，如 ${{l.title}}
                         grid.innerHTML += `
                             <div class="data-card p-6 cyber-clip group flex flex-col justify-between h-48">
                                 <div>
                                     <div class="flex justify-between items-start mb-4">
                                         <div class="text-[8px] text-cyan-500 font-bold uppercase tracking-widest bg-cyan-950 px-2 py-1 border border-cyan-800">
-                                            ID: \${l.subject}-\${l.sub}
+                                            ID: ${{l.subject}}-${{l.sub}}
                                         </div>
                                         <i class="fas fa-satellite-dish text-slate-600 group-hover:text-cyan-400 group-hover:animate-ping transition-colors text-[10px]"></i>
                                     </div>
-                                    <h3 class="text-lg orbitron font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors leading-snug line-clamp-2">\${l.title}</h3>
-                                    <p class="text-[10px] text-cyan-700 font-mono truncate">>\${l.path}</p>
+                                    <h3 class="text-lg orbitron font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors leading-snug line-clamp-2">${{l.title}}</h3>
+                                    <p class="text-[10px] text-cyan-700 font-mono truncate">>${{l.path}}</p>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-cyan-900/50 flex justify-between items-center opacity-70 group-hover:opacity-100 transition-opacity">
                                     <div class="text-[8px] text-cyan-600 tracking-widest uppercase">Size: 4.2KB</div>
-                                    <a href="\${l.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-cyan-400 hover:text-white hover:bg-cyan-600 px-3 py-1.5 border border-cyan-500 transition-all cyber-clip shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                                    <a href="${{l.url}}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-cyan-400 hover:text-white hover:bg-cyan-600 px-3 py-1.5 border border-cyan-500 transition-all cyber-clip shadow-[0_0_10px_rgba(6,182,212,0.2)]">
                                         EXECUTE <i class="fas fa-play ml-1 text-[8px]"></i>
                                     </a>
                                 </div>
