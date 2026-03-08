@@ -54,11 +54,11 @@ def generate():
     # 3. 數據準備
     lessons_json = json.dumps(all_lessons)
     
-    # 科技感左側樹狀圖 (Tree Directory)
+    # 科技感左側樹狀圖 (Tree Directory) - 支援顏色分類
     sidebar_html = f'''
     <div class="mb-6">
-        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 bg-cyan-500/10 border border-cyan-500 text-cyan-400 font-['Orbitron'] tracking-[0.2em] text-sm uppercase transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-500/20 cyber-clip flex items-center group">
-            <i class="fas fa-network-wired mr-3 group-hover:animate-pulse"></i> SYS.ROOT_DIR
+        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-500 text-slate-200 font-['Orbitron'] tracking-[0.2em] text-sm uppercase transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:bg-slate-700 cyber-clip flex items-center group active-all">
+            <i class="fas fa-network-wired mr-3 group-hover:animate-pulse text-emerald-400"></i> SYS.ROOT_DIR
         </button>
     </div>
     <div class="space-y-6 font-['Share_Tech_Mono']">
@@ -68,6 +68,13 @@ def generate():
     for main in sorted_main:
         subs = sorted(list(hierarchy[main]))
         
+        # 根據科目決定 UI 顏色 (ICT = Cyan, MATH = Purple, 預設 = Blue)
+        color_theme = "blue"
+        if main == "ICT":
+            color_theme = "cyan"
+        elif main == "MATH":
+            color_theme = "purple"
+            
         sub_items_html = ""
         for idx, s in enumerate(subs):
             is_last = (idx == len(subs) - 1)
@@ -75,17 +82,17 @@ def generate():
             tree_branch = "└──" if is_last else "├──"
             
             sub_items_html += f'''
-            <div class="flex items-center text-slate-500 mt-2">
-                <span class="mr-2 text-cyan-800">{tree_branch}</span>
-                <button onclick="filterBy('{main}', '{s}')" id="btn-{main}-{s}" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all flex items-center group">
-                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> {display_name}
+            <div class="flex items-center text-slate-600 mt-2">
+                <span class="mr-2 text-{color_theme}-900">{tree_branch}</span>
+                <button onclick="filterBy('{main}', '{s}')" id="btn-{main}-{s}" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-{color_theme}-300 hover:border-{color_theme}-500/30 hover:bg-{color_theme}-500/10 transition-all flex items-center group" data-color="{color_theme}">
+                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-{color_theme}-400"></i> {display_name}
                 </button>
             </div>
             '''
             
         sidebar_html += f'''
         <div>
-            <div class="text-sm font-bold text-cyan-600 uppercase tracking-widest px-2 flex items-center bg-slate-900/50 py-1 border-l-2 border-cyan-600">
+            <div class="text-sm font-bold text-{color_theme}-500 uppercase tracking-widest px-2 flex items-center bg-slate-900/80 py-1 border-l-2 border-{color_theme}-500">
                 <i class="fas fa-database mr-2 text-xs"></i> {main}
             </div>
             <div class="pl-2 ml-1 border-l border-slate-800/80">
@@ -105,13 +112,10 @@ def generate():
         <title>JOHNATHAN // NEXUS_LAB</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <!-- 引入科幻字體 -->
         <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
         
         <style>
             :root {{
-                --neon-cyan: #06b6d4;
-                --neon-purple: #8b5cf6;
                 --dark-bg: #030712;
             }}
             body {{
@@ -124,51 +128,48 @@ def generate():
             
             #bg-canvas {{ position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }}
             
-            /* 掃描線特效 */
             .scanlines {{
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
-                background-size: 100% 4px; z-index: 50; pointer-events: none; opacity: 0.3;
+                background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.25));
+                background-size: 100% 4px; z-index: 50; pointer-events: none; opacity: 0.4;
             }}
             
-            /* HUD 玻璃面板 */
             .cyber-panel {{
-                background: rgba(3, 7, 18, 0.7); backdrop-filter: blur(10px);
-                border: 1px solid rgba(6, 182, 212, 0.2);
-                box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.05);
+                background: rgba(3, 7, 18, 0.75); backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }}
             
-            /* 賽博切角設計 */
             .cyber-clip {{ clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }}
             
-            /* 課件卡片特效 */
+            /* 動態顏色卡片 */
             .data-card {{
                 transition: all 0.3s ease; position: relative;
-                border: 1px solid rgba(6, 182, 212, 0.3);
+                border: 1px solid var(--theme-dim);
                 background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(3,7,18,0.9) 100%);
             }}
             .data-card:hover {{
-                border-color: var(--neon-cyan);
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2), inset 0 0 15px rgba(6, 182, 212, 0.1);
-                transform: translateY(-5px);
+                border-color: var(--theme-color);
+                box-shadow: 0 0 20px var(--theme-glow), inset 0 0 15px var(--theme-dim);
+                transform: translateY(-4px);
             }}
             .data-card::before {{
                 content: ''; position: absolute; top: -1px; left: -1px; width: 20px; height: 20px;
-                border-top: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan);
+                border-top: 2px solid var(--theme-color); border-left: 2px solid var(--theme-color);
                 transition: all 0.3s ease;
             }}
-            .data-card:hover::before {{ width: 100%; height: 100%; border-color: var(--neon-cyan); opacity: 0.5; }}
+            .data-card:hover::before {{ width: 100%; height: 100%; opacity: 0.3; }}
             
-            /* 閃爍游標 */
             .blinking-cursor {{ animation: blink 1s step-end infinite; }}
             @keyframes blink {{ 0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0; }} }}
             
-            /* 活躍按鈕狀態 */
-            .filter-btn.active {{ color: var(--neon-cyan); border-color: var(--neon-cyan); background: rgba(6, 182, 212, 0.1); text-shadow: 0 0 8px var(--neon-cyan); }}
+            /* 側邊欄活躍按鈕動態顏色 */
+            .filter-btn.active-cyan {{ color: #22d3ee; border-color: #06b6d4; background: rgba(6, 182, 212, 0.15); text-shadow: 0 0 8px #06b6d4; }}
+            .filter-btn.active-purple {{ color: #d8b4fe; border-color: #a855f7; background: rgba(168, 85, 247, 0.15); text-shadow: 0 0 8px #a855f7; }}
+            .filter-btn.active-blue {{ color: #93c5fd; border-color: #3b82f6; background: rgba(59, 130, 246, 0.15); text-shadow: 0 0 8px #3b82f6; }}
             
             ::-webkit-scrollbar {{ width: 4px; }}
             ::-webkit-scrollbar-track {{ background: #0f172a; }}
-            ::-webkit-scrollbar-thumb {{ background: #06b6d4; }}
+            ::-webkit-scrollbar-thumb {{ background: #475569; }}
         </style>
     </head>
     <body class="flex flex-col min-h-screen">
@@ -177,94 +178,84 @@ def generate():
 
         <div class="flex-1 w-full max-w-screen-2xl mx-auto p-4 md:p-6 flex flex-col h-screen z-10 relative">
             
-            <!-- 頂部遙測儀表板 (Telemetry HUD) -->
-            <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0 border-b border-cyan-900/50 pb-4">
+            <!-- 頂部遙測儀表板 -->
+            <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0 border-b border-slate-800 pb-4">
                 <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 bg-cyan-950 border border-cyan-500 flex items-center justify-center rounded cyber-clip shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                        <i class="fas fa-satellite-dish text-cyan-400 text-2xl animate-pulse"></i>
+                    <div class="w-16 h-16 bg-slate-900 border border-slate-600 flex items-center justify-center rounded cyber-clip shadow-lg">
+                        <i class="fas fa-satellite-dish text-slate-300 text-2xl animate-pulse"></i>
                     </div>
                     <div>
                         <h1 class="text-3xl md:text-4xl font-black tracking-widest text-white orbitron">
-                            J0HNATHAN <span class="text-cyan-400">//</span> LAB<span class="blinking-cursor text-cyan-400">_</span>
+                            J0HNATHAN <span class="text-slate-500">//</span> LAB<span class="blinking-cursor text-slate-500">_</span>
                         </h1>
-                        <p class="text-cyan-600 font-bold text-[10px] tracking-[0.3em] uppercase mt-1">Global Learning Network Node &bull; Authorized Access Only</p>
+                        <p class="text-slate-500 font-bold text-[10px] tracking-[0.3em] uppercase mt-1">Global Learning Network Node &bull; Authorized Access Only</p>
                     </div>
                 </div>
                 
                 <div class="flex gap-3">
-                    <div class="cyber-panel px-4 py-2 border-cyan-500/30">
-                        <div class="text-[8px] text-cyan-500 uppercase tracking-widest mb-1">Status</div>
+                    <div class="cyber-panel px-4 py-2">
+                        <div class="text-[8px] text-slate-400 uppercase tracking-widest mb-1">System Status</div>
                         <div class="text-emerald-400 text-xs font-bold tracking-widest flex items-center">
                             <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-2 shadow-[0_0_5px_#34d399]"></span>ONLINE
                         </div>
                     </div>
-                    <div class="cyber-panel px-4 py-2 border-cyan-500/30">
-                        <div class="text-[8px] text-cyan-500 uppercase tracking-widest mb-1">Last Sync (HKT)</div>
-                        <div class="text-cyan-300 text-xs font-bold tracking-widest">{update_time}</div>
+                    <div class="cyber-panel px-4 py-2">
+                        <div class="text-[8px] text-slate-400 uppercase tracking-widest mb-1">Last Sync (HKT)</div>
+                        <div class="text-slate-300 text-xs font-bold tracking-widest">{update_time}</div>
                     </div>
                 </div>
             </header>
 
-            <!-- 核心終端機介面 -->
-            <main class="flex-1 cyber-panel flex flex-col md:flex-row overflow-hidden relative cyber-clip border-cyan-800">
+            <main class="flex-1 cyber-panel flex flex-col md:flex-row overflow-hidden relative cyber-clip border-slate-700">
                 
-                <!-- 裝飾用角標 -->
-                <div class="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-cyan-500/30 m-1 pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 w-20 h-20 border-b-4 border-l-4 border-cyan-500/30 m-1 pointer-events-none"></div>
-
-                <!-- 左側資料夾樹 (Sidebar) -->
-                <aside class="w-full md:w-64 bg-slate-950/80 border-r border-cyan-900/50 p-6 overflow-y-auto shrink-0 z-10">
-                    <div class="text-[10px] text-cyan-500 mb-6 font-bold tracking-widest border-b border-cyan-900/50 pb-2">
+                <aside class="w-full md:w-64 bg-slate-950/90 border-r border-slate-800 p-6 overflow-y-auto shrink-0 z-10">
+                    <div class="text-[10px] text-slate-500 mb-6 font-bold tracking-widest border-b border-slate-800 pb-2">
                         > DIRECTORY_TREE
                     </div>
                     {sidebar_html}
                 </aside>
 
-                <!-- 右側數據顯示區 -->
                 <section class="flex-1 flex flex-col relative overflow-hidden z-10">
                     
-                    <!-- 指令搜尋列 -->
-                    <div class="p-4 border-b border-cyan-900/50 flex flex-col sm:flex-row justify-between items-center bg-slate-900/50 shrink-0 gap-4">
-                        <div class="text-xs font-bold text-cyan-500 tracking-widest flex items-center">
-                            <i class="fas fa-terminal mr-2"></i> 
+                    <div class="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center bg-slate-900/60 shrink-0 gap-4">
+                        <div class="text-xs font-bold text-slate-400 tracking-widest flex items-center">
+                            <i class="fas fa-terminal mr-2 text-slate-500"></i> 
                             <span class="text-white mr-2">QUERY:</span> 
-                            <span id="file-count" class="text-cyan-300">0</span> DATABLOCKS FOUND
+                            <span id="file-count" class="text-slate-300">0</span> DATABLOCKS FOUND
                         </div>
                         <div class="relative w-full sm:w-80">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500 font-bold">>_</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">>_</span>
                             <input type="text" id="search-input" placeholder="ENTER SEARCH PARAMETER..." oninput="handleSearch()"
-                                   class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-cyan-800 focus:outline-none focus:border-cyan-400 focus:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all text-xs font-bold text-cyan-100 placeholder-cyan-800 cyber-clip">
+                                   class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-700 focus:outline-none focus:border-slate-400 transition-all text-xs font-bold text-white placeholder-slate-700 cyber-clip">
                         </div>
                     </div>
 
-                    <!-- 課件數據網格 -->
-                    <div class="p-6 overflow-y-auto flex-1 bg-gradient-to-br from-slate-900/50 to-transparent">
+                    <div class="p-6 overflow-y-auto flex-1 bg-gradient-to-br from-slate-900/30 to-transparent">
                         <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             <!-- JS 動態生成 -->
                         </div>
                         
-                        <!-- 找不到檔案 -->
-                        <div id="empty-state" class="hidden h-full flex flex-col items-center justify-center opacity-50">
-                            <i class="fas fa-exclamation-triangle text-6xl mb-6 text-red-500 shadow-[0_0_30px_#ef4444]"></i>
+                        <div id="empty-state" class="hidden h-full flex flex-col items-center justify-center opacity-40">
+                            <i class="fas fa-exclamation-triangle text-6xl mb-6 text-red-500"></i>
                             <h3 class="text-2xl font-bold text-red-500 orbitron tracking-[0.2em] mb-2">ERR_404</h3>
-                            <p class="text-cyan-600 tracking-widest text-sm">NO CORRESPONDING DATA BLOCKS LOCATED.</p>
+                            <p class="text-slate-400 tracking-widest text-sm">NO CORRESPONDING DATA BLOCKS LOCATED.</p>
                         </div>
                     </div>
                 </section>
             </main>
             
-            <footer class="mt-4 flex justify-between items-center text-cyan-700 text-[10px] font-bold uppercase tracking-[0.3em] shrink-0">
+            <footer class="mt-4 flex justify-between items-center text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em] shrink-0">
                 <span>> SYS.MAINTAINER: JOHNATHAN-LH</span>
                 <span>SECURE CONNECTION ESTABLISHED // PORT 443</span>
             </footer>
         </div>
 
         <script>
-            // --- 量子引力粒子系統 (Quantum Gravity Mesh) ---
+            // --- 高效能粒子系統 (FPS Optimized) ---
             const canvas = document.getElementById('bg-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
-            const mouse = {{ x: null, y: null, radius: 250 }}; // 擴大引力範圍
+            const mouse = {{ x: null, y: null, radius: 200 }};
 
             window.addEventListener('mousemove', (e) => {{ mouse.x = e.x; mouse.y = e.y; }});
             window.addEventListener('mouseout', () => {{ mouse.x = null; mouse.y = null; }});
@@ -273,43 +264,32 @@ def generate():
                 constructor() {{
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 0.5;
-                    this.baseX = this.x;
-                    this.baseY = this.y;
-                    this.density = (Math.random() * 30) + 1;
-                    this.speedX = (Math.random() - 0.5) * 0.8;
-                    this.speedY = (Math.random() - 0.5) * 0.8;
+                    this.size = Math.random() * 1.5 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.5; // 降低速度更優雅
+                    this.speedY = (Math.random() - 0.5) * 0.5;
                 }}
                 draw() {{
-                    ctx.fillStyle = 'rgba(6, 182, 212, 0.8)'; // 明亮的青色
+                    ctx.fillStyle = 'rgba(99, 102, 241, 0.6)'; // 基礎粒子使用靛藍色，低調不搶戲
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
-                    // 發光效果
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = '#06b6d4';
                 }}
                 update() {{
-                    // 1. 基本移動
                     this.x += this.speedX; this.y += this.speedY;
                     if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
                     if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
 
-                    // 2. 磁吸引力互動 (Magnetic Attraction)
+                    // 滑鼠互動 (輕量化)
                     if (mouse.x != null) {{
                         let dx = mouse.x - this.x;
                         let dy = mouse.y - this.y;
-                        let distance = Math.sqrt(dx * dx + dy * dy);
-                        let forceDirectionX = dx / distance;
-                        let forceDirectionY = dy / distance;
-                        let maxDistance = mouse.radius;
-                        let force = (maxDistance - distance) / maxDistance;
-                        let directionX = forceDirectionX * force * this.density;
-                        let directionY = forceDirectionY * force * this.density;
-
-                        if (distance < mouse.radius) {{
-                            this.x += directionX * 0.05; // 吸向鼠標
-                            this.y += directionY * 0.05;
+                        // 空間裁剪：如果不夠靠近，直接跳過耗時的 Math.sqrt
+                        if (Math.abs(dx) < mouse.radius && Math.abs(dy) < mouse.radius) {{
+                            let distance = Math.sqrt(dx * dx + dy * dy);
+                            if (distance < mouse.radius) {{
+                                this.x += dx * 0.01;
+                                this.y += dy * 0.01;
+                            }}
                         }}
                     }}
                 }}
@@ -319,8 +299,9 @@ def generate():
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 particles = [];
-                let numberOfParticles = Math.floor((canvas.width * canvas.height) / 10000);
-                if(numberOfParticles > 150) numberOfParticles = 150; 
+                // 限制最高粒子數，保護效能 (最大 70 顆)
+                let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
+                if(numberOfParticles > 70) numberOfParticles = 70; 
                 for (let i = 0; i < numberOfParticles; i++) particles.push(new Particle());
             }}
 
@@ -330,15 +311,19 @@ def generate():
                     particles[i].update(); 
                     particles[i].draw();
                     
-                    // 粒子間的網路連線
-                    for (let j = i; j < particles.length; j++) {{
+                    // 粒子連線最佳化
+                    for (let j = i + 1; j < particles.length; j++) {{
                         let dx = particles[i].x - particles[j].x;
                         let dy = particles[i].y - particles[j].y;
+                        
+                        // 空間裁剪：避免多餘計算
+                        if (Math.abs(dx) > 120 || Math.abs(dy) > 120) continue;
+                        
                         let distance = Math.sqrt(dx * dx + dy * dy);
-                        if (distance < 100) {{
+                        if (distance < 120) {{
                             ctx.beginPath();
-                            ctx.strokeStyle = `rgba(6, 182, 212, ${{0.3 - distance/333}})`;
-                            ctx.lineWidth = 1;
+                            ctx.strokeStyle = `rgba(99, 102, 241, ${{0.2 - distance/600}})`;
+                            ctx.lineWidth = 0.5;
                             ctx.moveTo(particles[i].x, particles[i].y); 
                             ctx.lineTo(particles[j].x, particles[j].y);
                             ctx.stroke();
@@ -346,31 +331,44 @@ def generate():
                     }}
                     
                     // 鼠標雷射連線
-                    if (mouse.x != null && mouse.y != null) {{
+                    if (mouse.x != null) {{
                         let dxMouse = mouse.x - particles[i].x;
                         let dyMouse = mouse.y - particles[i].y;
-                        let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-                        if (distMouse < mouse.radius * 0.8) {{
-                            ctx.beginPath();
-                            ctx.strokeStyle = `rgba(6, 182, 212, ${{0.8 - distMouse/mouse.radius}})`;
-                            ctx.lineWidth = 1.5;
-                            ctx.moveTo(particles[i].x, particles[i].y); 
-                            ctx.lineTo(mouse.x, mouse.y);
-                            ctx.stroke();
+                        if (Math.abs(dxMouse) < mouse.radius && Math.abs(dyMouse) < mouse.radius) {{
+                            let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                            if (distMouse < mouse.radius * 0.7) {{
+                                ctx.beginPath();
+                                ctx.strokeStyle = `rgba(6, 182, 212, ${{0.6 - distMouse/mouse.radius}})`; // 雷射保持青色
+                                ctx.lineWidth = 1;
+                                ctx.moveTo(particles[i].x, particles[i].y); 
+                                ctx.lineTo(mouse.x, mouse.y);
+                                ctx.stroke();
+                            }}
                         }}
                     }}
                 }}
                 requestAnimationFrame(animate);
             }}
 
-            window.addEventListener('resize', init);
+            let resizeTimer;
+            window.addEventListener('resize', () => {{
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(init, 200); // 避免調整視窗時瘋狂觸發
+            }});
             init(); animate();
 
-            // --- 檔案系統渲染邏輯 ---
+            // --- 色彩管理與渲染邏輯 ---
             const lessons = {lessons_json};
             let currentMain = 'ALL';
             let currentSub = 'ALL';
             let searchQuery = '';
+
+            // 定義科目專屬色彩
+            const themeMap = {{
+                'ICT': {{ color: '#06b6d4', dim: 'rgba(6,182,212,0.3)', glow: 'rgba(6,182,212,0.2)', bg: 'rgba(6,182,212,0.1)' }},   // Cyan
+                'MATH': {{ color: '#a855f7', dim: 'rgba(168,85,247,0.3)', glow: 'rgba(168,85,247,0.2)', bg: 'rgba(168,85,247,0.1)' }}, // Purple
+                'DEFAULT': {{ color: '#3b82f6', dim: 'rgba(59,130,246,0.3)', glow: 'rgba(59,130,246,0.2)', bg: 'rgba(59,130,246,0.1)' }} // Blue
+            }};
 
             function render() {{
                 const grid = document.getElementById('lessons-grid');
@@ -392,22 +390,31 @@ def generate():
                 }} else {{
                     empty.classList.add('hidden');
                     filtered.forEach(l => {{
-                        // 修復：在 Python f-string 內部要輸出 JS 的 template literal 變數，必須雙寫大括號，如 ${{l.title}}
+                        // 取得該科目的專屬顏色
+                        const theme = themeMap[l.subject] || themeMap['DEFAULT'];
+                        
                         grid.innerHTML += `
-                            <div class="data-card p-6 cyber-clip group flex flex-col justify-between h-48">
+                            <div class="data-card p-6 cyber-clip group flex flex-col justify-between h-48" 
+                                 style="--theme-color: ${{theme.color}}; --theme-dim: ${{theme.dim}}; --theme-glow: ${{theme.glow}}; --theme-bg: ${{theme.bg}};">
                                 <div>
                                     <div class="flex justify-between items-start mb-4">
-                                        <div class="text-[8px] text-cyan-500 font-bold uppercase tracking-widest bg-cyan-950 px-2 py-1 border border-cyan-800">
-                                            ID: ${{l.subject}}-${{l.sub}}
+                                        <div class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 border" 
+                                             style="color: ${{theme.color}}; border-color: ${{theme.color}}; background: ${{theme.bg}};">
+                                            SYS_\${{l.subject}} / \${{l.sub}}
                                         </div>
-                                        <i class="fas fa-satellite-dish text-slate-600 group-hover:text-cyan-400 group-hover:animate-ping transition-colors text-[10px]"></i>
+                                        <i class="fas fa-file-code opacity-40 group-hover:opacity-100 transition-all text-lg" style="color: ${{theme.color}};"></i>
                                     </div>
-                                    <h3 class="text-lg orbitron font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors leading-snug line-clamp-2">${{l.title}}</h3>
-                                    <p class="text-[10px] text-cyan-700 font-mono truncate">>${{l.path}}</p>
+                                    <h3 class="text-lg orbitron font-bold text-white mb-2 transition-colors leading-snug line-clamp-2" 
+                                        style="text-shadow: 0 0 10px ${{theme.glow}};">\${{l.title}}</h3>
+                                    <p class="text-[10px] text-slate-500 font-mono truncate">>\${{l.path}}</p>
                                 </div>
-                                <div class="mt-4 pt-4 border-t border-cyan-900/50 flex justify-between items-center opacity-70 group-hover:opacity-100 transition-opacity">
-                                    <div class="text-[8px] text-cyan-600 tracking-widest uppercase">Size: 4.2KB</div>
-                                    <a href="${{l.url}}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-cyan-400 hover:text-white hover:bg-cyan-600 px-3 py-1.5 border border-cyan-500 transition-all cyber-clip shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                                <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center opacity-70 group-hover:opacity-100 transition-opacity">
+                                    <div class="text-[8px] text-slate-500 tracking-widest uppercase">DATABLOCK_READY</div>
+                                    <a href="\${{l.url}}" target="_blank" rel="noopener noreferrer" 
+                                       class="text-xs font-bold px-3 py-1.5 border transition-all cyber-clip"
+                                       style="color: ${{theme.color}}; border-color: ${{theme.color}};"
+                                       onmouseover="this.style.backgroundColor='${{theme.color}}'; this.style.color='#fff';"
+                                       onmouseout="this.style.backgroundColor='transparent'; this.style.color='${{theme.color}}';">
                                         EXECUTE <i class="fas fa-play ml-1 text-[8px]"></i>
                                     </a>
                                 </div>
@@ -423,17 +430,19 @@ def generate():
                 
                 // 重設按鈕樣式
                 document.querySelectorAll('.filter-btn').forEach(btn => {{
-                    btn.classList.remove('active', 'text-cyan-300', 'bg-cyan-500/10', 'border-cyan-500/50');
-                    if(btn.id !== 'btn-ALL-ALL') btn.classList.remove('text-cyan-300'); 
+                    btn.classList.remove('active-cyan', 'active-purple', 'active-blue', 'bg-slate-700');
+                    if(btn.id === 'btn-ALL-ALL') btn.classList.remove('shadow-[0_0_15px_rgba(255,255,255,0.1)]');
                 }});
 
                 const activeId = main === 'ALL' ? 'btn-ALL-ALL' : `btn-${{main}}-${{sub}}`;
                 const activeBtn = document.getElementById(activeId);
                 
                 if (activeBtn) {{
-                    activeBtn.classList.add('active');
-                    if (main !== 'ALL') {{
-                        activeBtn.classList.add('text-cyan-300', 'bg-cyan-500/10', 'border-cyan-500/50');
+                    if (main === 'ALL') {{
+                        activeBtn.classList.add('bg-slate-700', 'shadow-[0_0_15px_rgba(255,255,255,0.1)]');
+                    }} else {{
+                        const colorTheme = activeBtn.getAttribute('data-color') || 'blue';
+                        activeBtn.classList.add(`active-${{colorTheme}}`);
                     }}
                 }}
 
