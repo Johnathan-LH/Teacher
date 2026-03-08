@@ -57,11 +57,11 @@ def generate():
     # 科技感左側樹狀圖 (Tree Directory) - 支援顏色分類
     sidebar_html = f'''
     <div class="mb-6">
-        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-500 text-slate-200 font-['Orbitron'] tracking-[0.2em] text-sm uppercase transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:bg-slate-700 cyber-clip flex items-center group active-all">
+        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-500 text-slate-200 font-black tracking-[0.1em] text-sm uppercase transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:bg-slate-700 cyber-clip flex items-center group active-all">
             <i class="fas fa-network-wired mr-3 group-hover:animate-pulse text-emerald-400"></i> SYS.ROOT_DIR
         </button>
     </div>
-    <div class="space-y-6 font-['Share_Tech_Mono']">
+    <div class="space-y-6 font-mono">
     '''
     
     sorted_main = sorted(hierarchy.keys())
@@ -92,7 +92,7 @@ def generate():
             
         sidebar_html += f'''
         <div>
-            <div class="text-sm font-bold text-{color_theme}-500 uppercase tracking-widest px-2 flex items-center bg-slate-900/80 py-1 border-l-2 border-{color_theme}-500">
+            <div class="text-sm font-black text-{color_theme}-500 uppercase tracking-widest px-2 flex items-center bg-slate-900/80 py-1 border-l-2 border-{color_theme}-500">
                 <i class="fas fa-database mr-2 text-xs"></i> {main}
             </div>
             <div class="pl-2 ml-1 border-l border-slate-800/80">
@@ -112,7 +112,6 @@ def generate():
         <title>JOHNATHAN // NEXUS_LAB</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
         
         <style>
             :root {{
@@ -121,10 +120,8 @@ def generate():
             body {{
                 background-color: var(--dark-bg);
                 color: #e2e8f0;
-                font-family: 'Share Tech Mono', monospace;
                 overflow-x: hidden;
             }}
-            h1, h2, h3, .orbitron {{ font-family: 'Orbitron', sans-serif; }}
             
             #bg-canvas {{ position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }}
             
@@ -172,7 +169,7 @@ def generate():
             ::-webkit-scrollbar-thumb {{ background: #475569; }}
         </style>
     </head>
-    <body class="flex flex-col min-h-screen">
+    <body class="flex flex-col min-h-screen font-sans">
         <div class="scanlines"></div>
         <canvas id="bg-canvas"></canvas>
 
@@ -185,21 +182,21 @@ def generate():
                         <i class="fas fa-satellite-dish text-slate-300 text-2xl animate-pulse"></i>
                     </div>
                     <div>
-                        <h1 class="text-3xl md:text-4xl font-black tracking-widest text-white orbitron">
-                            J0HNATHAN <span class="text-slate-500">//</span> LAB<span class="blinking-cursor text-slate-500">_</span>
+                        <h1 class="text-3xl md:text-4xl font-black tracking-widest text-white">
+                            JOHNATHAN <span class="text-slate-500">//</span> LAB<span class="blinking-cursor text-slate-500">_</span>
                         </h1>
-                        <p class="text-slate-500 font-bold text-[10px] tracking-[0.3em] uppercase mt-1">Global Learning Network Node &bull; Authorized Access Only</p>
+                        <p class="text-slate-400 font-bold text-[10px] tracking-[0.3em] uppercase mt-1 font-mono">Global Learning Network Node &bull; Authorized Access Only</p>
                     </div>
                 </div>
                 
                 <div class="flex gap-3">
-                    <div class="cyber-panel px-4 py-2">
+                    <div class="cyber-panel px-4 py-2 font-mono">
                         <div class="text-[8px] text-slate-400 uppercase tracking-widest mb-1">System Status</div>
                         <div class="text-emerald-400 text-xs font-bold tracking-widest flex items-center">
                             <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-2 shadow-[0_0_5px_#34d399]"></span>ONLINE
                         </div>
                     </div>
-                    <div class="cyber-panel px-4 py-2">
+                    <div class="cyber-panel px-4 py-2 font-mono">
                         <div class="text-[8px] text-slate-400 uppercase tracking-widest mb-1">Last Sync (HKT)</div>
                         <div class="text-slate-300 text-xs font-bold tracking-widest">{update_time}</div>
                     </div>
@@ -209,7 +206,7 @@ def generate():
             <main class="flex-1 cyber-panel flex flex-col md:flex-row overflow-hidden relative cyber-clip border-slate-700">
                 
                 <aside class="w-full md:w-64 bg-slate-950/90 border-r border-slate-800 p-6 overflow-y-auto shrink-0 z-10">
-                    <div class="text-[10px] text-slate-500 mb-6 font-bold tracking-widest border-b border-slate-800 pb-2">
+                    <div class="text-[10px] text-slate-500 mb-6 font-bold tracking-widest border-b border-slate-800 pb-2 font-mono">
                         > DIRECTORY_TREE
                     </div>
                     {sidebar_html}
@@ -217,7 +214,7 @@ def generate():
 
                 <section class="flex-1 flex flex-col relative overflow-hidden z-10">
                     
-                    <div class="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center bg-slate-900/60 shrink-0 gap-4">
+                    <div class="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center bg-slate-900/60 shrink-0 gap-4 font-mono">
                         <div class="text-xs font-bold text-slate-400 tracking-widest flex items-center">
                             <i class="fas fa-terminal mr-2 text-slate-500"></i> 
                             <span class="text-white mr-2">QUERY:</span> 
@@ -237,14 +234,14 @@ def generate():
                         
                         <div id="empty-state" class="hidden h-full flex flex-col items-center justify-center opacity-40">
                             <i class="fas fa-exclamation-triangle text-6xl mb-6 text-red-500"></i>
-                            <h3 class="text-2xl font-bold text-red-500 orbitron tracking-[0.2em] mb-2">ERR_404</h3>
-                            <p class="text-slate-400 tracking-widest text-sm">NO CORRESPONDING DATA BLOCKS LOCATED.</p>
+                            <h3 class="text-2xl font-black text-red-500 tracking-[0.2em] mb-2 font-mono">ERR_404</h3>
+                            <p class="text-slate-400 tracking-widest text-sm font-mono">NO CORRESPONDING DATA BLOCKS LOCATED.</p>
                         </div>
                     </div>
                 </section>
             </main>
             
-            <footer class="mt-4 flex justify-between items-center text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em] shrink-0">
+            <footer class="mt-4 flex justify-between items-center text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em] shrink-0 font-mono">
                 <span>> SYS.MAINTAINER: JOHNATHAN-LH</span>
                 <span>SECURE CONNECTION ESTABLISHED // PORT 443</span>
             </footer>
@@ -265,11 +262,11 @@ def generate():
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
                     this.size = Math.random() * 1.5 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.5; // 降低速度更優雅
+                    this.speedX = (Math.random() - 0.5) * 0.5; 
                     this.speedY = (Math.random() - 0.5) * 0.5;
                 }}
                 draw() {{
-                    ctx.fillStyle = 'rgba(99, 102, 241, 0.6)'; // 基礎粒子使用靛藍色，低調不搶戲
+                    ctx.fillStyle = 'rgba(99, 102, 241, 0.6)'; 
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
@@ -279,11 +276,9 @@ def generate():
                     if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
                     if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
 
-                    // 滑鼠互動 (輕量化)
                     if (mouse.x != null) {{
                         let dx = mouse.x - this.x;
                         let dy = mouse.y - this.y;
-                        // 空間裁剪：如果不夠靠近，直接跳過耗時的 Math.sqrt
                         if (Math.abs(dx) < mouse.radius && Math.abs(dy) < mouse.radius) {{
                             let distance = Math.sqrt(dx * dx + dy * dy);
                             if (distance < mouse.radius) {{
@@ -299,7 +294,6 @@ def generate():
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 particles = [];
-                // 限制最高粒子數，保護效能 (最大 70 顆)
                 let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
                 if(numberOfParticles > 70) numberOfParticles = 70; 
                 for (let i = 0; i < numberOfParticles; i++) particles.push(new Particle());
@@ -311,12 +305,10 @@ def generate():
                     particles[i].update(); 
                     particles[i].draw();
                     
-                    // 粒子連線最佳化
                     for (let j = i + 1; j < particles.length; j++) {{
                         let dx = particles[i].x - particles[j].x;
                         let dy = particles[i].y - particles[j].y;
                         
-                        // 空間裁剪：避免多餘計算
                         if (Math.abs(dx) > 120 || Math.abs(dy) > 120) continue;
                         
                         let distance = Math.sqrt(dx * dx + dy * dy);
@@ -330,7 +322,6 @@ def generate():
                         }}
                     }}
                     
-                    // 鼠標雷射連線
                     if (mouse.x != null) {{
                         let dxMouse = mouse.x - particles[i].x;
                         let dyMouse = mouse.y - particles[i].y;
@@ -338,7 +329,7 @@ def generate():
                             let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
                             if (distMouse < mouse.radius * 0.7) {{
                                 ctx.beginPath();
-                                ctx.strokeStyle = `rgba(6, 182, 212, ${{0.6 - distMouse/mouse.radius}})`; // 雷射保持青色
+                                ctx.strokeStyle = `rgba(6, 182, 212, ${{0.6 - distMouse/mouse.radius}})`;
                                 ctx.lineWidth = 1;
                                 ctx.moveTo(particles[i].x, particles[i].y); 
                                 ctx.lineTo(mouse.x, mouse.y);
@@ -353,7 +344,7 @@ def generate():
             let resizeTimer;
             window.addEventListener('resize', () => {{
                 clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(init, 200); // 避免調整視窗時瘋狂觸發
+                resizeTimer = setTimeout(init, 200); 
             }});
             init(); animate();
 
@@ -363,11 +354,10 @@ def generate():
             let currentSub = 'ALL';
             let searchQuery = '';
 
-            // 定義科目專屬色彩
             const themeMap = {{
-                'ICT': {{ color: '#06b6d4', dim: 'rgba(6,182,212,0.3)', glow: 'rgba(6,182,212,0.2)', bg: 'rgba(6,182,212,0.1)' }},   // Cyan
-                'MATH': {{ color: '#a855f7', dim: 'rgba(168,85,247,0.3)', glow: 'rgba(168,85,247,0.2)', bg: 'rgba(168,85,247,0.1)' }}, // Purple
-                'DEFAULT': {{ color: '#3b82f6', dim: 'rgba(59,130,246,0.3)', glow: 'rgba(59,130,246,0.2)', bg: 'rgba(59,130,246,0.1)' }} // Blue
+                'ICT': {{ color: '#06b6d4', dim: 'rgba(6,182,212,0.3)', glow: 'rgba(6,182,212,0.2)', bg: 'rgba(6,182,212,0.1)' }},   
+                'MATH': {{ color: '#a855f7', dim: 'rgba(168,85,247,0.3)', glow: 'rgba(168,85,247,0.2)', bg: 'rgba(168,85,247,0.1)' }}, 
+                'DEFAULT': {{ color: '#3b82f6', dim: 'rgba(59,130,246,0.3)', glow: 'rgba(59,130,246,0.2)', bg: 'rgba(59,130,246,0.1)' }} 
             }};
 
             function render() {{
@@ -390,32 +380,32 @@ def generate():
                 }} else {{
                     empty.classList.add('hidden');
                     filtered.forEach(l => {{
-                        // 取得該科目的專屬顏色
                         const theme = themeMap[l.subject] || themeMap['DEFAULT'];
                         
+                        // 修復重點：使用 ${{l.變數}} 來讓 Javascript 正確解析範本字串
                         grid.innerHTML += `
                             <div class="data-card p-6 cyber-clip group flex flex-col justify-between h-48" 
                                  style="--theme-color: ${{theme.color}}; --theme-dim: ${{theme.dim}}; --theme-glow: ${{theme.glow}}; --theme-bg: ${{theme.bg}};">
                                 <div>
                                     <div class="flex justify-between items-start mb-4">
-                                        <div class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 border" 
+                                        <div class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 border font-mono" 
                                              style="color: ${{theme.color}}; border-color: ${{theme.color}}; background: ${{theme.bg}};">
-                                            SYS_\${{l.subject}} / \${{l.sub}}
+                                            SYS_${{l.subject}} / ${{l.sub}}
                                         </div>
                                         <i class="fas fa-file-code opacity-40 group-hover:opacity-100 transition-all text-lg" style="color: ${{theme.color}};"></i>
                                     </div>
-                                    <h3 class="text-lg orbitron font-bold text-white mb-2 transition-colors leading-snug line-clamp-2" 
-                                        style="text-shadow: 0 0 10px ${{theme.glow}};">\${{l.title}}</h3>
-                                    <p class="text-[10px] text-slate-500 font-mono truncate">>\${{l.path}}</p>
+                                    <h3 class="text-xl font-black text-white mb-2 transition-colors leading-snug line-clamp-2" 
+                                        style="text-shadow: 0 0 10px ${{theme.glow}};">${{l.title}}</h3>
+                                    <p class="text-[10px] text-slate-500 font-mono truncate">>${{l.path}}</p>
                                 </div>
                                 <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center opacity-70 group-hover:opacity-100 transition-opacity">
-                                    <div class="text-[8px] text-slate-500 tracking-widest uppercase">DATABLOCK_READY</div>
-                                    <a href="\${{l.url}}" target="_blank" rel="noopener noreferrer" 
-                                       class="text-xs font-bold px-3 py-1.5 border transition-all cyber-clip"
+                                    <div class="text-[8px] text-slate-500 tracking-widest uppercase font-mono">DATABLOCK_READY</div>
+                                    <a href="${{l.url}}" target="_blank" rel="noopener noreferrer" 
+                                       class="text-xs font-black tracking-widest px-4 py-2 border transition-all cyber-clip font-mono"
                                        style="color: ${{theme.color}}; border-color: ${{theme.color}};"
                                        onmouseover="this.style.backgroundColor='${{theme.color}}'; this.style.color='#fff';"
                                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='${{theme.color}}';">
-                                        EXECUTE <i class="fas fa-play ml-1 text-[8px]"></i>
+                                        EXECUTE <i class="fas fa-play ml-2 text-[10px]"></i>
                                     </a>
                                 </div>
                             </div>
@@ -428,7 +418,6 @@ def generate():
                 currentMain = main;
                 currentSub = sub;
                 
-                // 重設按鈕樣式
                 document.querySelectorAll('.filter-btn').forEach(btn => {{
                     btn.classList.remove('active-cyan', 'active-purple', 'active-blue', 'bg-slate-700');
                     if(btn.id === 'btn-ALL-ALL') btn.classList.remove('shadow-[0_0_15px_rgba(255,255,255,0.1)]');
