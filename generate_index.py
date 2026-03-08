@@ -60,26 +60,26 @@ def generate():
         subs = sorted(list(hierarchy[main]))
         if len(subs) > 1 or (len(subs) == 1 and subs[0] != "全部"):
             sub_items = "".join([
-                f'<button onclick="filterBy(\'{main}\', \'{s}\')" class="block w-full text-left px-4 py-2 text-[10px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors uppercase tracking-widest">{s}</button>'
+                f'<button onclick="filterBy(\'{main}\', \'{s}\')" class="block w-full text-left px-4 py-2 text-[10px] font-bold text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors uppercase tracking-widest">{s}</button>'
                 for s in subs
             ])
             nav_html += f'''
             <div class="relative group">
-                <button onclick="filterBy('{main}', 'ALL')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400 flex items-center gap-2" data-main="{main}">
+                <button onclick="filterBy('{main}', 'ALL')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-indigo-400 flex items-center gap-2" data-main="{main}">
                     {main} <i class="fas fa-chevron-down text-[8px] opacity-50 group-hover:rotate-180 transition-transform"></i>
                 </button>
-                <div class="absolute top-full left-0 mt-2 w-32 bg-white border border-slate-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 py-2 border-t-4 border-t-blue-500">
-                    <button onclick="filterBy('{main}', 'ALL')" class="block w-full text-left px-4 py-2 text-[10px] font-black text-blue-600 border-b border-slate-50 mb-1 italic">VIEW ALL</button>
+                <div class="absolute top-full left-0 mt-2 w-32 bg-white border border-slate-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 py-2 border-t-4 border-t-indigo-500">
+                    <button onclick="filterBy('{main}', 'ALL')" class="block w-full text-left px-4 py-2 text-[10px] font-black text-indigo-600 border-b border-slate-50 mb-1 italic">VIEW ALL</button>
                     {sub_items}
                 </div>
             </div>
             '''
         else:
             nav_html += f'''
-            <button onclick="filterBy('{main}', 'ALL')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-blue-400" data-main="{main}">{main}</button>
+            <button onclick="filterBy('{main}', 'ALL')" class="filter-btn px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all text-slate-500 hover:border-indigo-400" data-main="{main}">{main}</button>
             '''
 
-    # 4. 生成完整網頁 (使用雙大括號 {{ }} 轉義 Python f-string)
+    # 4. 生成完整網頁 (修正了 JS 模板字串轉義，並升級粒子網路)
     full_html = f'''
     <!DOCTYPE html>
     <html lang="zh-Hant">
@@ -90,75 +90,85 @@ def generate():
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
-            #bg-canvas {{ position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; background: #f8fafc; }}
+            #bg-canvas {{ position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; background: #f8fafc; pointer-events: none; }}
             .lesson-card {{ transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }}
-            .filter-btn.active {{ background-color: #2563eb; color: white; border-color: #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }}
-            .glass-effect {{ background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }}
-            .card-glow:hover {{ box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.2); }}
+            .filter-btn.active {{ background-color: #4f46e5; color: white; border-color: #4f46e5; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }}
+            .glass-effect {{ background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); }}
+            .card-glow:hover {{ box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.25); border-color: rgba(79, 70, 229, 0.2); }}
         </style>
     </head>
-    <body class="min-h-screen text-slate-900 font-sans">
+    <body class="min-h-screen text-slate-900 font-sans relative">
         <canvas id="bg-canvas"></canvas>
 
         <div class="max-w-7xl mx-auto px-4 py-12 relative z-10">
-            <header class="mb-12 border-b border-slate-200 pb-8 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+            <header class="mb-12 border-b border-slate-200/60 pb-8 flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
                 <div>
                     <h1 class="text-4xl font-black tracking-tighter text-slate-900 mb-2 italic">JOHNATHAN'S LAB</h1>
-                    <p class="text-slate-500 font-medium border-l-4 border-blue-500 pl-4 uppercase text-xs tracking-widest">Interactive Learning Resources Portfolio</p>
+                    <p class="text-slate-500 font-medium border-l-4 border-indigo-500 pl-4 uppercase text-xs tracking-widest">Interactive Learning Resources Portfolio</p>
                 </div>
                 <div class="flex flex-col items-end">
-                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-white/50 backdrop-blur-sm px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
-                        <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                    <div class="text-[10px] text-slate-400 font-mono flex items-center bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/50 shadow-sm">
+                        <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
                         SYNCED: {update_time} (HKT)
                     </div>
                 </div>
             </header>
 
-            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl shadow-xl mb-10">
+            <div class="sticky top-6 z-30 glass-effect p-4 rounded-2xl mb-10">
                 <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
                     <div id="filter-container" class="flex flex-wrap gap-3">
                         <button onclick="filterBy('ALL', 'ALL')" class="filter-btn active px-5 py-2 rounded-xl border border-slate-200 text-xs font-black tracking-widest transition-all" data-main="ALL">ALL</button>
                         {nav_html}
                     </div>
                     <div class="relative w-full md:w-64">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-xs"></i>
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" id="search-input" placeholder="Search lessons..." oninput="handleSearch()"
-                               class="w-full pl-10 pr-4 py-2 bg-white/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all text-xs font-bold">
+                               class="w-full pl-10 pr-4 py-2 bg-white/80 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/15 focus:border-indigo-400 transition-all text-xs font-bold shadow-sm">
                     </div>
                 </div>
             </div>
 
             <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            
             <div id="empty-state" class="hidden text-center py-32">
                 <div class="text-6xl mb-6 opacity-20">🛰️</div>
                 <h3 class="text-xl font-bold text-slate-400 italic font-mono uppercase">Target Not Found</h3>
             </div>
-            <footer class="mt-24 pt-8 border-t border-slate-200 text-center text-slate-300 text-[10px] font-bold uppercase tracking-[0.4em]">
+            
+            <footer class="mt-24 pt-8 border-t border-slate-200/60 text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.4em]">
                 Johnathan-LH Lab • Automated Deployment System
             </footer>
         </div>
 
         <script>
+            // --- 高級互動粒子網路系統 ---
             const canvas = document.getElementById('bg-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
-            const mouse = {{ x: null, y: null, radius: 150 }};
+            
+            // 滑鼠位置物件
+            const mouse = {{ x: null, y: null, radius: 180 }};
 
+            // 監聽滑鼠移動與離開
             window.addEventListener('mousemove', (e) => {{
                 mouse.x = e.x;
                 mouse.y = e.y;
+            }});
+            window.addEventListener('mouseout', () => {{
+                mouse.x = null;
+                mouse.y = null;
             }});
 
             class Particle {{
                 constructor() {{
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 1;
-                    this.speedX = Math.random() * 0.5 - 0.25;
-                    this.speedY = Math.random() * 0.5 - 0.25;
+                    this.size = Math.random() * 2 + 1; // 粒子大小
+                    this.speedX = (Math.random() - 0.5) * 1.2; // 緩慢漂浮
+                    this.speedY = (Math.random() - 0.5) * 1.2;
                 }}
                 draw() {{
-                    ctx.fillStyle = 'rgba(37, 99, 235, 0.2)';
+                    ctx.fillStyle = 'rgba(79, 70, 229, 0.5)'; // 靛藍色粒子
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.closePath();
@@ -167,20 +177,10 @@ def generate():
                 update() {{
                     this.x += this.speedX;
                     this.y += this.speedY;
+                    
+                    // 邊界反彈
                     if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
                     if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
-
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouse.radius) {{
-                        ctx.strokeStyle = `rgba(37, 99, 235, ${{1 - distance/mouse.radius}})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(this.x, this.y);
-                        ctx.lineTo(mouse.x, mouse.y);
-                        ctx.stroke();
-                    }}
                 }}
             }}
 
@@ -188,16 +188,54 @@ def generate():
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 particles = [];
-                for (let i = 0; i < 80; i++) {{
+                // 根據螢幕寬度決定粒子數量，避免手機卡頓
+                let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
+                if(numberOfParticles > 100) numberOfParticles = 100; 
+
+                for (let i = 0; i < numberOfParticles; i++) {{
                     particles.push(new Particle());
                 }}
             }}
 
             function animate() {{
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
                 for (let i = 0; i < particles.length; i++) {{
-                    particles[i].draw();
                     particles[i].update();
+                    particles[i].draw();
+
+                    // 1. 粒子與粒子之間的連線 (網路效果)
+                    for (let j = i; j < particles.length; j++) {{
+                        let dx = particles[i].x - particles[j].x;
+                        let dy = particles[i].y - particles[j].y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        // 當粒子靠近時連線
+                        if (distance < 120) {{
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(148, 163, 184, ${{0.2 - distance/600}})`; // 灰色淡線
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }}
+                    }}
+
+                    // 2. 粒子與鼠標之間的連線 (引力效果)
+                    if (mouse.x != null && mouse.y != null) {{
+                        let dxMouse = mouse.x - particles[i].x;
+                        let dyMouse = mouse.y - particles[i].y;
+                        let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                        
+                        if (distMouse < mouse.radius) {{
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(79, 70, 229, ${{0.6 - distMouse/mouse.radius}})`; // 靛藍色強化線
+                            ctx.lineWidth = 1;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(mouse.x, mouse.y);
+                            ctx.stroke();
+                        }}
+                    }}
                 }}
                 requestAnimationFrame(animate);
             }}
@@ -206,6 +244,7 @@ def generate():
             init();
             animate();
 
+            // --- 課件資料與渲染邏輯 ---
             const lessons = {lessons_json};
             let currentMain = 'ALL';
             let currentSub = 'ALL';
@@ -228,20 +267,21 @@ def generate():
                 }} else {{
                     empty.classList.add('hidden');
                     filtered.forEach(l => {{
+                        // 注意：這裡已經修復了變數轉義問題！
                         grid.innerHTML += `
-                            <div class="lesson-card glass-effect p-7 rounded-3xl shadow-sm hover:shadow-2xl card-glow hover:-translate-y-2 transition-all flex flex-col justify-between group">
+                            <div class="lesson-card glass-effect p-7 rounded-3xl card-glow transition-all flex flex-col justify-between group bg-white/60">
                                 <div>
                                     <div class="flex justify-between items-start mb-6">
                                         <div class="flex gap-2">
-                                            <span class="px-2 py-0.5 bg-slate-900 text-white text-[8px] font-black uppercase rounded tracking-widest group-hover:bg-blue-600 transition-colors">\${{l.subject}}</span>
-                                            <span class="px-2 py-0.5 bg-white/50 text-slate-500 text-[8px] font-black uppercase rounded tracking-widest border border-slate-100">\${{l.sub}}</span>
+                                            <span class="px-2 py-0.5 bg-slate-800 text-white text-[9px] font-black uppercase rounded tracking-widest group-hover:bg-indigo-600 transition-colors">${{l.subject}}</span>
+                                            <span class="px-2 py-0.5 bg-white border border-slate-200 text-slate-500 text-[9px] font-black uppercase rounded tracking-widest">${{l.sub}}</span>
                                         </div>
-                                        <i class="fas fa-external-link-alt text-slate-300 text-[10px]"></i>
+                                        <i class="fas fa-external-link-alt text-slate-300 text-[10px] group-hover:text-indigo-400 transition-colors"></i>
                                     </div>
-                                    <h3 class="text-xl font-black text-slate-800 mb-2 leading-tight tracking-tight">\${{l.title}}</h3>
-                                    <p class="text-[10px] text-slate-400 font-mono truncate mb-6 opacity-60">\${{l.path}}</p>
+                                    <h3 class="text-xl font-black text-slate-800 mb-2 leading-tight tracking-tight">${{l.title}}</h3>
+                                    <p class="text-[10px] text-slate-500 font-mono truncate mb-6 opacity-70">${{l.path}}</p>
                                 </div>
-                                <a href="\${{l.url}}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-4 bg-white/50 hover:bg-blue-600 hover:text-white text-blue-600 font-black rounded-2xl transition-all text-[10px] tracking-[0.2em] shadow-inner border border-slate-100 group-hover:border-transparent">
+                                <a href="${{l.url}}" target="_blank" rel="noopener noreferrer" class="w-full text-center py-4 bg-white hover:bg-indigo-600 hover:text-white text-indigo-600 font-black rounded-2xl transition-all text-[10px] tracking-[0.2em] shadow-sm border border-indigo-100 group-hover:border-transparent">
                                     LAUNCH LESSON
                                 </a>
                             </div>
