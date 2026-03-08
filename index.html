@@ -4,145 +4,222 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Johnathan's OS Lab</title>
+        <title>JOHNATHAN // NEXUS_LAB</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <!-- 引入科幻字體 -->
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+        
         <style>
-            #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; background: #f0f4f8; pointer-events: none; }
-            .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
+            :root {
+                --neon-cyan: #06b6d4;
+                --neon-purple: #8b5cf6;
+                --dark-bg: #030712;
+            }
+            body {
+                background-color: var(--dark-bg);
+                color: #e2e8f0;
+                font-family: 'Share Tech Mono', monospace;
+                overflow-x: hidden;
+            }
+            h1, h2, h3, .orbitron { font-family: 'Orbitron', sans-serif; }
             
-            /* 自訂卷軸，讓它看起來像作業系統 */
-            ::-webkit-scrollbar { width: 6px; }
-            ::-webkit-scrollbar-track { background: transparent; }
-            ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-            ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+            #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+            
+            /* 掃描線特效 */
+            .scanlines {
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+                background-size: 100% 4px; z-index: 50; pointer-events: none; opacity: 0.3;
+            }
+            
+            /* HUD 玻璃面板 */
+            .cyber-panel {
+                background: rgba(3, 7, 18, 0.7); backdrop-filter: blur(10px);
+                border: 1px solid rgba(6, 182, 212, 0.2);
+                box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.05);
+            }
+            
+            /* 賽博切角設計 */
+            .cyber-clip { clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+            
+            /* 課件卡片特效 */
+            .data-card {
+                transition: all 0.3s ease; position: relative;
+                border: 1px solid rgba(6, 182, 212, 0.3);
+                background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(3,7,18,0.9) 100%);
+            }
+            .data-card:hover {
+                border-color: var(--neon-cyan);
+                box-shadow: 0 0 20px rgba(6, 182, 212, 0.2), inset 0 0 15px rgba(6, 182, 212, 0.1);
+                transform: translateY(-5px);
+            }
+            .data-card::before {
+                content: ''; position: absolute; top: -1px; left: -1px; width: 20px; height: 20px;
+                border-top: 2px solid var(--neon-cyan); border-left: 2px solid var(--neon-cyan);
+                transition: all 0.3s ease;
+            }
+            .data-card:hover::before { width: 100%; height: 100%; border-color: var(--neon-cyan); opacity: 0.5; }
+            
+            /* 閃爍游標 */
+            .blinking-cursor { animation: blink 1s step-end infinite; }
+            @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+            
+            /* 活躍按鈕狀態 */
+            .filter-btn.active { color: var(--neon-cyan); border-color: var(--neon-cyan); background: rgba(6, 182, 212, 0.1); text-shadow: 0 0 8px var(--neon-cyan); }
+            
+            ::-webkit-scrollbar { width: 4px; }
+            ::-webkit-scrollbar-track { background: #0f172a; }
+            ::-webkit-scrollbar-thumb { background: #06b6d4; }
         </style>
     </head>
-    <body class="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col">
+    <body class="flex flex-col min-h-screen">
+        <div class="scanlines"></div>
         <canvas id="bg-canvas"></canvas>
 
-        <div class="flex-1 w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col h-screen">
+        <div class="flex-1 w-full max-w-screen-2xl mx-auto p-4 md:p-6 flex flex-col h-screen z-10 relative">
             
-            <!-- 標題列 -->
-            <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0">
-                <div>
-                    <h1 class="text-3xl font-black tracking-tighter text-slate-800 italic flex items-center">
-                        <i class="fas fa-terminal text-indigo-600 mr-3"></i> JOHNATHAN'S LAB
-                    </h1>
-                    <p class="text-slate-500 font-medium text-xs tracking-widest uppercase mt-1">Interactive OS Explorer / v2.0</p>
+            <!-- 頂部遙測儀表板 (Telemetry HUD) -->
+            <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0 border-b border-cyan-900/50 pb-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-cyan-950 border border-cyan-500 flex items-center justify-center rounded cyber-clip shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                        <i class="fas fa-satellite-dish text-cyan-400 text-2xl animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-black tracking-widest text-white orbitron">
+                            J0HNATHAN <span class="text-cyan-400">//</span> LAB<span class="blinking-cursor text-cyan-400">_</span>
+                        </h1>
+                        <p class="text-cyan-600 font-bold text-[10px] tracking-[0.3em] uppercase mt-1">Global Learning Network Node &bull; Authorized Access Only</p>
+                    </div>
                 </div>
-                <div class="text-[10px] text-slate-500 font-mono flex items-center bg-white/60 backdrop-blur-md px-4 py-2 rounded-lg border border-slate-200">
-                    <span class="inline-block w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
-                    SYSTEM SYNC: 2026-03-08 08:17:49 (HKT)
+                
+                <div class="flex gap-3">
+                    <div class="cyber-panel px-4 py-2 border-cyan-500/30">
+                        <div class="text-[8px] text-cyan-500 uppercase tracking-widest mb-1">Status</div>
+                        <div class="text-emerald-400 text-xs font-bold tracking-widest flex items-center">
+                            <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-2 shadow-[0_0_5px_#34d399]"></span>ONLINE
+                        </div>
+                    </div>
+                    <div class="cyber-panel px-4 py-2 border-cyan-500/30">
+                        <div class="text-[8px] text-cyan-500 uppercase tracking-widest mb-1">Last Sync (HKT)</div>
+                        <div class="text-cyan-300 text-xs font-bold tracking-widest">2026-03-08 08:38:29</div>
+                    </div>
                 </div>
             </header>
 
-            <!-- 模擬 OS 視窗主體 -->
-            <main class="flex-1 glass-panel rounded-2xl border border-white flex flex-col overflow-hidden shadow-2xl relative">
+            <!-- 核心終端機介面 -->
+            <main class="flex-1 cyber-panel flex flex-col md:flex-row overflow-hidden relative cyber-clip border-cyan-800">
                 
-                <!-- 視窗標題列 (Mac Style) -->
-                <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between shrink-0">
-                    <div class="flex space-x-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_5px_rgba(234,179,8,0.5)]"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>
-                    </div>
-                    <div class="text-[10px] font-mono text-slate-400 font-bold tracking-widest flex items-center" id="window-path">
-                        <i class="fas fa-hdd mr-2 text-slate-500"></i> /root/
-                    </div>
-                    <div class="w-10"></div> <!-- 佔位平衡 -->
-                </div>
+                <!-- 裝飾用角標 -->
+                <div class="absolute top-0 right-0 w-20 h-20 border-t-4 border-r-4 border-cyan-500/30 m-1 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-20 h-20 border-b-4 border-l-4 border-cyan-500/30 m-1 pointer-events-none"></div>
 
-                <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+                <!-- 左側資料夾樹 (Sidebar) -->
+                <aside class="w-full md:w-64 bg-slate-950/80 border-r border-cyan-900/50 p-6 overflow-y-auto shrink-0 z-10">
+                    <div class="text-[10px] text-cyan-500 mb-6 font-bold tracking-widest border-b border-cyan-900/50 pb-2">
+                        > DIRECTORY_TREE
+                    </div>
                     
-                    <!-- 左側資料夾列 -->
-                    <aside class="w-full md:w-64 bg-slate-50/50 border-r border-slate-200/60 p-6 overflow-y-auto shrink-0">
-                        
-    <div class="mb-4">
-        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 rounded-xl text-sm font-black tracking-widest transition-all bg-indigo-600 text-white shadow-md flex items-center group">
-            <i class="fas fa-server mr-3 group-hover:animate-pulse"></i> ROOT_SYSTEM
+    <div class="mb-6">
+        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 bg-cyan-500/10 border border-cyan-500 text-cyan-400 font-['Orbitron'] tracking-[0.2em] text-sm uppercase transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:bg-cyan-500/20 cyber-clip flex items-center group">
+            <i class="fas fa-network-wired mr-3 group-hover:animate-pulse"></i> SYS.ROOT_DIR
         </button>
     </div>
-    <div class="space-y-6 mt-6">
+    <div class="space-y-6 font-['Share_Tech_Mono']">
     
         <div>
-            <div class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 px-4 flex items-center">
-                <i class="fas fa-database mr-2"></i> ICT
+            <div class="text-sm font-bold text-cyan-600 uppercase tracking-widest px-2 flex items-center bg-slate-900/50 py-1 border-l-2 border-cyan-600">
+                <i class="fas fa-database mr-2 text-xs"></i> ICT
             </div>
-            <div class="pl-2 border-l-2 border-slate-200/60 ml-5">
+            <div class="pl-2 ml-1 border-l border-slate-800/80">
                 
-            <button onclick="filterBy('ICT', 'F1')" id="btn-ICT-F1" class="filter-btn w-full text-left px-4 py-2 mt-1 rounded-lg text-xs font-bold text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center group">
-                <i class="fas fa-folder mr-3 opacity-50 group-hover:opacity-100 group-hover:text-indigo-500 transition-colors"></i> F1
-            </button>
+            <div class="flex items-center text-slate-500 mt-2">
+                <span class="mr-2 text-cyan-800">├──</span>
+                <button onclick="filterBy('ICT', 'F1')" id="btn-ICT-F1" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all flex items-center group">
+                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> F1
+                </button>
+            </div>
             
-            <button onclick="filterBy('ICT', '全部')" id="btn-ICT-全部" class="filter-btn w-full text-left px-4 py-2 mt-1 rounded-lg text-xs font-bold text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center group">
-                <i class="fas fa-folder-open mr-3 opacity-50 group-hover:opacity-100 group-hover:text-indigo-500 transition-colors"></i> VIEW ALL
-            </button>
+            <div class="flex items-center text-slate-500 mt-2">
+                <span class="mr-2 text-cyan-800">└──</span>
+                <button onclick="filterBy('ICT', '全部')" id="btn-ICT-全部" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all flex items-center group">
+                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> VIEW_ALL
+                </button>
+            </div>
             
             </div>
         </div>
         
         <div>
-            <div class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 px-4 flex items-center">
-                <i class="fas fa-database mr-2"></i> MATH
+            <div class="text-sm font-bold text-cyan-600 uppercase tracking-widest px-2 flex items-center bg-slate-900/50 py-1 border-l-2 border-cyan-600">
+                <i class="fas fa-database mr-2 text-xs"></i> MATH
             </div>
-            <div class="pl-2 border-l-2 border-slate-200/60 ml-5">
+            <div class="pl-2 ml-1 border-l border-slate-800/80">
                 
-            <button onclick="filterBy('MATH', 'F1')" id="btn-MATH-F1" class="filter-btn w-full text-left px-4 py-2 mt-1 rounded-lg text-xs font-bold text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center group">
-                <i class="fas fa-folder mr-3 opacity-50 group-hover:opacity-100 group-hover:text-indigo-500 transition-colors"></i> F1
-            </button>
+            <div class="flex items-center text-slate-500 mt-2">
+                <span class="mr-2 text-cyan-800">├──</span>
+                <button onclick="filterBy('MATH', 'F1')" id="btn-MATH-F1" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all flex items-center group">
+                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> F1
+                </button>
+            </div>
             
-            <button onclick="filterBy('MATH', 'F3')" id="btn-MATH-F3" class="filter-btn w-full text-left px-4 py-2 mt-1 rounded-lg text-xs font-bold text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center group">
-                <i class="fas fa-folder mr-3 opacity-50 group-hover:opacity-100 group-hover:text-indigo-500 transition-colors"></i> F3
-            </button>
+            <div class="flex items-center text-slate-500 mt-2">
+                <span class="mr-2 text-cyan-800">└──</span>
+                <button onclick="filterBy('MATH', 'F3')" id="btn-MATH-F3" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all flex items-center group">
+                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> F3
+                </button>
+            </div>
             
             </div>
         </div>
         </div>
-                    </aside>
+                </aside>
 
-                    <!-- 右側檔案列表 -->
-                    <section class="flex-1 flex flex-col bg-white/40 relative overflow-hidden">
-                        
-                        <!-- 搜尋與工具列 -->
-                        <div class="p-4 border-b border-slate-200/60 flex justify-between items-center bg-white/50 backdrop-blur-sm shrink-0">
-                            <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">
-                                <span id="file-count">0</span> Items found
-                            </div>
-                            <div class="relative w-64">
-                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                <input type="text" id="search-input" placeholder="Search system files..." oninput="handleSearch()"
-                                       class="w-full pl-9 pr-4 py-1.5 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-xs font-mono shadow-sm">
-                            </div>
+                <!-- 右側數據顯示區 -->
+                <section class="flex-1 flex flex-col relative overflow-hidden z-10">
+                    
+                    <!-- 指令搜尋列 -->
+                    <div class="p-4 border-b border-cyan-900/50 flex flex-col sm:flex-row justify-between items-center bg-slate-900/50 shrink-0 gap-4">
+                        <div class="text-xs font-bold text-cyan-500 tracking-widest flex items-center">
+                            <i class="fas fa-terminal mr-2"></i> 
+                            <span class="text-white mr-2">QUERY:</span> 
+                            <span id="file-count" class="text-cyan-300">0</span> DATABLOCKS FOUND
                         </div>
+                        <div class="relative w-full sm:w-80">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500 font-bold">>_</span>
+                            <input type="text" id="search-input" placeholder="ENTER SEARCH PARAMETER..." oninput="handleSearch()"
+                                   class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-cyan-800 focus:outline-none focus:border-cyan-400 focus:shadow-[0_0_10px_rgba(6,182,212,0.3)] transition-all text-xs font-bold text-cyan-100 placeholder-cyan-800 cyber-clip">
+                        </div>
+                    </div>
 
-                        <!-- 檔案網格 -->
-                        <div class="p-6 overflow-y-auto flex-1">
-                            <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                                <!-- 內容由 JS 動態生成 -->
-                            </div>
-                            
-                            <div id="empty-state" class="hidden h-full flex flex-col items-center justify-center opacity-40">
-                                <i class="fas fa-ghost text-6xl mb-4 text-slate-400"></i>
-                                <h3 class="text-lg font-bold text-slate-600 font-mono">ERR_FILE_NOT_FOUND</h3>
-                            </div>
+                    <!-- 課件數據網格 -->
+                    <div class="p-6 overflow-y-auto flex-1 bg-gradient-to-br from-slate-900/50 to-transparent">
+                        <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <!-- JS 動態生成 -->
                         </div>
                         
-                    </section>
-                </div>
+                        <!-- 找不到檔案 -->
+                        <div id="empty-state" class="hidden h-full flex flex-col items-center justify-center opacity-50">
+                            <i class="fas fa-exclamation-triangle text-6xl mb-6 text-red-500 shadow-[0_0_30px_#ef4444]"></i>
+                            <h3 class="text-2xl font-bold text-red-500 orbitron tracking-[0.2em] mb-2">ERR_404</h3>
+                            <p class="text-cyan-600 tracking-widest text-sm">NO CORRESPONDING DATA BLOCKS LOCATED.</p>
+                        </div>
+                    </div>
+                </section>
             </main>
             
-            <footer class="mt-4 text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.4em] shrink-0">
-                Johnathan-LH Lab • Automated File System Interface
+            <footer class="mt-4 flex justify-between items-center text-cyan-700 text-[10px] font-bold uppercase tracking-[0.3em] shrink-0">
+                <span>> SYS.MAINTAINER: JOHNATHAN-LH</span>
+                <span>SECURE CONNECTION ESTABLISHED // PORT 443</span>
             </footer>
         </div>
 
         <script>
-            // --- 背景粒子網路系統 (與之前相同) ---
+            // --- 量子引力粒子系統 (Quantum Gravity Mesh) ---
             const canvas = document.getElementById('bg-canvas');
             const ctx = canvas.getContext('2d');
             let particles = [];
-            const mouse = { x: null, y: null, radius: 180 };
+            const mouse = { x: null, y: null, radius: 250 }; // 擴大引力範圍
 
             window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
             window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
@@ -151,20 +228,45 @@
                 constructor() {
                     this.x = Math.random() * canvas.width;
                     this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2 + 1;
-                    this.speedX = (Math.random() - 0.5) * 1.2;
-                    this.speedY = (Math.random() - 0.5) * 1.2;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.baseX = this.x;
+                    this.baseY = this.y;
+                    this.density = (Math.random() * 30) + 1;
+                    this.speedX = (Math.random() - 0.5) * 0.8;
+                    this.speedY = (Math.random() - 0.5) * 0.8;
                 }
                 draw() {
-                    ctx.fillStyle = 'rgba(79, 70, 229, 0.4)';
+                    ctx.fillStyle = 'rgba(6, 182, 212, 0.8)'; // 明亮的青色
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                     ctx.fill();
+                    // 發光效果
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#06b6d4';
                 }
                 update() {
+                    // 1. 基本移動
                     this.x += this.speedX; this.y += this.speedY;
                     if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
                     if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+                    // 2. 磁吸引力互動 (Magnetic Attraction)
+                    if (mouse.x != null) {
+                        let dx = mouse.x - this.x;
+                        let dy = mouse.y - this.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        let forceDirectionX = dx / distance;
+                        let forceDirectionY = dy / distance;
+                        let maxDistance = mouse.radius;
+                        let force = (maxDistance - distance) / maxDistance;
+                        let directionX = forceDirectionX * force * this.density;
+                        let directionY = forceDirectionY * force * this.density;
+
+                        if (distance < mouse.radius) {
+                            this.x += directionX * 0.05; // 吸向鼠標
+                            this.y += directionY * 0.05;
+                        }
+                    }
                 }
             }
 
@@ -172,34 +274,43 @@
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 particles = [];
-                let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
-                if(numberOfParticles > 100) numberOfParticles = 100; 
+                let numberOfParticles = Math.floor((canvas.width * canvas.height) / 10000);
+                if(numberOfParticles > 150) numberOfParticles = 150; 
                 for (let i = 0; i < numberOfParticles; i++) particles.push(new Particle());
             }
 
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 for (let i = 0; i < particles.length; i++) {
-                    particles[i].update(); particles[i].draw();
+                    particles[i].update(); 
+                    particles[i].draw();
+                    
+                    // 粒子間的網路連線
                     for (let j = i; j < particles.length; j++) {
-                        let dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+                        let dx = particles[i].x - particles[j].x;
+                        let dy = particles[i].y - particles[j].y;
                         let distance = Math.sqrt(dx * dx + dy * dy);
-                        if (distance < 120) {
+                        if (distance < 100) {
                             ctx.beginPath();
-                            ctx.strokeStyle = `rgba(148, 163, 184, ${0.2 - distance/600})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(6, 182, 212, ${0.3 - distance/333})`;
+                            ctx.lineWidth = 1;
+                            ctx.moveTo(particles[i].x, particles[i].y); 
+                            ctx.lineTo(particles[j].x, particles[j].y);
                             ctx.stroke();
                         }
                     }
+                    
+                    // 鼠標雷射連線
                     if (mouse.x != null && mouse.y != null) {
-                        let dxMouse = mouse.x - particles[i].x, dyMouse = mouse.y - particles[i].y;
+                        let dxMouse = mouse.x - particles[i].x;
+                        let dyMouse = mouse.y - particles[i].y;
                         let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-                        if (distMouse < mouse.radius) {
+                        if (distMouse < mouse.radius * 0.8) {
                             ctx.beginPath();
-                            ctx.strokeStyle = `rgba(79, 70, 229, ${0.6 - distMouse/mouse.radius})`;
-                            ctx.lineWidth = 1;
-                            ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(mouse.x, mouse.y);
+                            ctx.strokeStyle = `rgba(6, 182, 212, ${0.8 - distMouse/mouse.radius})`;
+                            ctx.lineWidth = 1.5;
+                            ctx.moveTo(particles[i].x, particles[i].y); 
+                            ctx.lineTo(mouse.x, mouse.y);
                             ctx.stroke();
                         }
                     }
@@ -210,7 +321,7 @@
             window.addEventListener('resize', init);
             init(); animate();
 
-            // --- 模擬檔案系統渲染邏輯 ---
+            // --- 檔案系統渲染邏輯 ---
             const lessons = [{"title": "\u767e\u5206\u6578\u8b8a\u5316 \u7d71\u4e00\u8996\u89ba\u5316\u6f14\u793a", "url": "Math/F1/\u767e\u5206\u6578.html", "subject": "MATH", "sub": "F1", "path": "Math/F1/\u767e\u5206\u6578.html"}, {"title": "\u4e09\u89d2\u5b78\u79d8\u7b08\uff1a\u6046\u7b49\u5f0f\u8207\u7279\u6b8a\u89d2", "url": "Math/F3/SinCosTan.html", "subject": "MATH", "sub": "F3", "path": "Math/F3/SinCosTan.html"}, {"title": "ICT \u57fa\u790e\u6e2c\u8a66\uff1aCPU \u6307\u4ee4\u9031\u671f", "url": "ICT/cpu_trail_web.html", "subject": "ICT", "sub": "\u5168\u90e8", "path": "ICT/cpu_trail_web.html"}, {"title": "ICT \u5be6\u4f5c\uff1a\u907f\u969c\u5c0f\u8eca\u4efb\u52d9\u63a7\u5236\u4e2d\u5fc3", "url": "ICT/F1/\u907f\u969c\u8eca.html", "subject": "ICT", "sub": "F1", "path": "ICT/F1/\u907f\u969c\u8eca.html"}];
             let currentMain = 'ALL';
             let currentSub = 'ALL';
@@ -219,11 +330,9 @@
             function render() {
                 const grid = document.getElementById('lessons-grid');
                 const empty = document.getElementById('empty-state');
-                const pathDisplay = document.getElementById('window-path');
                 const countDisplay = document.getElementById('file-count');
                 grid.innerHTML = '';
                 
-                // 1. 過濾數據
                 const filtered = lessons.filter(l => {
                     const matchMain = currentMain === 'ALL' || l.subject === currentMain;
                     const matchSub = currentSub === 'ALL' || l.sub === currentSub;
@@ -233,40 +342,31 @@
 
                 countDisplay.innerText = filtered.length;
 
-                // 2. 更新終端機路徑
-                let pathText = '<i class="fas fa-hdd mr-2 text-slate-500"></i> /root';
-                if (currentMain !== 'ALL') pathText += '/' + currentMain.toLowerCase();
-                if (currentSub !== 'ALL') pathText += '/' + currentSub.toLowerCase();
-                pathDisplay.innerHTML = pathText + '/';
-
-                // 3. 渲染檔案卡片
                 if (filtered.length === 0) {
                     empty.classList.remove('hidden');
                 } else {
                     empty.classList.add('hidden');
                     filtered.forEach(l => {
+                        // 修復：在 Python f-string 內部要輸出 JS 的 template literal 變數，必須雙寫大括號，如 ${l.title}
                         grid.innerHTML += `
-                            <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="group block bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-lg rounded-xl p-4 transition-all duration-300 relative overflow-hidden">
-                                <!-- 懸停時左側會出現一個藍色條 -->
-                                <div class="absolute left-0 top-0 h-full w-1 bg-indigo-500 transform -translate-x-full group-hover:translate-x-0 transition-transform"></div>
-                                
-                                <div class="flex items-start gap-4">
-                                    <div class="w-12 h-12 rounded-lg bg-slate-50 border border-slate-100 text-indigo-500 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-indigo-50 transition-colors">
-                                        <i class="fas fa-file-code"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0 py-1">
-                                        <h3 class="text-sm font-black text-slate-800 leading-tight mb-1 truncate group-hover:text-indigo-600 transition-colors">${l.title}</h3>
-                                        <div class="flex items-center gap-2 mt-2">
-                                            <span class="text-[9px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded truncate">
-                                                > ${l.path}
-                                            </span>
+                            <div class="data-card p-6 cyber-clip group flex flex-col justify-between h-48">
+                                <div>
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="text-[8px] text-cyan-500 font-bold uppercase tracking-widest bg-cyan-950 px-2 py-1 border border-cyan-800">
+                                            ID: ${l.subject}-${l.sub}
                                         </div>
+                                        <i class="fas fa-satellite-dish text-slate-600 group-hover:text-cyan-400 group-hover:animate-ping transition-colors text-[10px]"></i>
                                     </div>
-                                    <div class="text-slate-300 group-hover:text-indigo-500 flex items-center h-12 transition-colors">
-                                        <i class="fas fa-arrow-right text-xs"></i>
-                                    </div>
+                                    <h3 class="text-lg orbitron font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors leading-snug line-clamp-2">${l.title}</h3>
+                                    <p class="text-[10px] text-cyan-700 font-mono truncate">>${l.path}</p>
                                 </div>
-                            </a>
+                                <div class="mt-4 pt-4 border-t border-cyan-900/50 flex justify-between items-center opacity-70 group-hover:opacity-100 transition-opacity">
+                                    <div class="text-[8px] text-cyan-600 tracking-widest uppercase">Size: 4.2KB</div>
+                                    <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-cyan-400 hover:text-white hover:bg-cyan-600 px-3 py-1.5 border border-cyan-500 transition-all cyber-clip shadow-[0_0_10px_rgba(6,182,212,0.2)]">
+                                        EXECUTE <i class="fas fa-play ml-1 text-[8px]"></i>
+                                    </a>
+                                </div>
+                            </div>
                         `;
                     });
                 }
@@ -276,25 +376,19 @@
                 currentMain = main;
                 currentSub = sub;
                 
-                // 重設所有按鈕樣式為非活躍
+                // 重設按鈕樣式
                 document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-md');
-                    btn.classList.add('text-slate-500');
-                    if(btn.id !== 'btn-ALL-ALL') btn.classList.remove('bg-indigo-50'); // 移除子項目的高亮
+                    btn.classList.remove('active', 'text-cyan-300', 'bg-cyan-500/10', 'border-cyan-500/50');
+                    if(btn.id !== 'btn-ALL-ALL') btn.classList.remove('text-cyan-300'); 
                 });
 
-                // 設定當前活躍的按鈕樣式
                 const activeId = main === 'ALL' ? 'btn-ALL-ALL' : `btn-${main}-${sub}`;
                 const activeBtn = document.getElementById(activeId);
                 
                 if (activeBtn) {
-                    if (main === 'ALL') {
-                        activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-md');
-                        activeBtn.classList.remove('text-slate-500');
-                    } else {
-                        // 子目錄的活躍樣式
-                        activeBtn.classList.add('bg-indigo-100', 'text-indigo-700');
-                        activeBtn.classList.remove('text-slate-500');
+                    activeBtn.classList.add('active');
+                    if (main !== 'ALL') {
+                        activeBtn.classList.add('text-cyan-300', 'bg-cyan-500/10', 'border-cyan-500/50');
                     }
                 }
 
@@ -306,7 +400,6 @@
                 render();
             }
 
-            // 啟動
             window.onload = render;
         </script>
     </body>
