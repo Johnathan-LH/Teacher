@@ -1,0 +1,270 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  ArrowUp, ArrowDown, ArrowLeft, ArrowRight, 
+  FlipHorizontal, FlipVertical, 
+  RotateCcw, RotateCw, RefreshCw, Crosshair
+} from 'lucide-react';
+
+const CoordinateSimulator = () => {
+  const [point, setPoint] = useState({ x: 3, y: 2 });
+  const [history, setHistory] = useState([]);
+  const [message, setMessage] = useState("歡迎來到坐標特工系統！請選擇你要進行的變換。");
+  const [formula, setFormula] = useState("(x, y)");
+
+  // Constants for grid drawing
+  const GRID_SIZE = 10;
+  const PIXEL_PER_UNIT = 20;
+  const CENTER = 250; // 500x500 svg
+
+  const getPx = (val) => CENTER + val * PIXEL_PER_UNIT;
+  const getPy = (val) => CENTER - val * PIXEL_PER_UNIT;
+
+  const handleTransform = (type, action, newPoint, ruleMessage, formulaMsg) => {
+    // Prevent point from going wildly out of bounds visually (clamp between -15 and 15)
+    if (newPoint.x > 12 || newPoint.x < -12 || newPoint.y > 12 || newPoint.y < -12) {
+        setMessage("警告：坐標超出雷達範圍！請重置或往反方向移動。");
+        return;
+    }
+
+    setHistory([...history, point]);
+    setPoint(newPoint);
+    setMessage(ruleMessage);
+    setFormula(formulaMsg);
+  };
+
+  // Translations
+  const translate = (dx, dy, dirName) => {
+    handleTransform(
+      'translation',
+      dirName,
+      { x: point.x + dx, y: point.y + dy },
+      `平移任務：向${dirName}平移 ${Math.abs(dx || dy)} 單位。`,
+      `(x${dx >= 0 ? '+' : ''}${dx !== 0 ? dx : ''}, y${dy >= 0 ? '+' : ''}${dy !== 0 ? dy : ''})`
+    );
+  };
+
+  // Reflections
+  const reflectX = () => {
+    handleTransform('reflection', 'x-axis', { x: point.x, y: -point.y }, "反射任務：沿 x 軸反射 (y 坐標變相反數)", "(x, -y)");
+  };
+  const reflectY = () => {
+    handleTransform('reflection', 'y-axis', { x: -point.x, y: point.y }, "反射任務：沿 y 軸反射 (x 坐標變相反數)", "(-x, y)");
+  };
+
+  // Rotations (Origin)
+  const rotateCCW = (deg) => {
+    let newP = {};
+    let msg, form;
+    if (deg === 90) {
+      newP = { x: -point.y, y: point.x };
+      msg = "旋轉任務：繞原點逆時針旋轉 90°";
+      form = "(-y, x)";
+    } else if (deg === 180) {
+      newP = { x: -point.x, y: -point.y };
+      msg = "旋轉任務：繞原點逆時針旋轉 180°";
+      form = "(-x, -y)";
+    } else if (deg === 270) {
+      newP = { x: point.y, y: -point.x };
+      msg = "旋轉任務：繞原點逆時針旋轉 270°";
+      form = "(y, -x)";
+    }
+    handleTransform('rotation', `ccw${deg}`, newP, msg, form);
+  };
+
+  const rotateCW = (deg) => {
+    let newP = {};
+    let msg, form;
+    if (deg === 90) {
+      newP = { x: point.y, y: -point.x };
+      msg = "旋轉任務：繞原點順時針旋轉 90°";
+      form = "(y, -x)";
+    } else if (deg === 180) {
+      newP = { x: -point.x, y: -point.y };
+      msg = "旋轉任務：繞原點順時針旋轉 180°";
+      form = "(-x, -y)";
+    } else if (deg === 270) {
+      newP = { x: -point.y, y: point.x };
+      msg = "旋轉任務：繞原點順時針旋轉 270°";
+      form = "(-y, x)";
+    }
+    handleTransform('rotation', `cw${deg}`, newP, msg, form);
+  };
+
+  const resetPoint = () => {
+    setPoint({ x: 3, y: 2 });
+    setHistory([]);
+    setMessage("已重置為初始坐標 P(3, 2)。準備接受新指令！");
+    setFormula("(x, y)");
+  };
+
+  const setRandomPoint = () => {
+    const rx = Math.floor(Math.random() * 16) - 8;
+    const ry = Math.floor(Math.random() * 16) - 8;
+    setPoint({ x: rx, y: ry });
+    setHistory([]);
+    setMessage(`已隨機生成新目標 P(${rx}, ${ry})。`);
+    setFormula("(x, y)");
+  };
+
+  // Grid drawing helpers
+  const lines = [];
+  for (let i = -GRID_SIZE; i <= GRID_SIZE; i++) {
+    lines.push(i);
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans p-4 md:p-8 flex flex-col items-center">
+      
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">
+          坐標特工：幾何變換模擬器
+        </h1>
+        <p className="text-slate-400">中一數學 Chapter 10 - 平移、反射與旋轉</p>
+      </div>
+
+      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-12 gap-8">
+        
+        {/* Left Area: Cartesian Grid */}
+        <div className="md:col-span-7 bg-slate-800 rounded-2xl shadow-2xl p-4 border border-slate-700 flex justify-center items-center relative overflow-hidden">
+          
+          <svg width="500" height="500" className="w-full max-w-md h-auto bg-slate-900 rounded-lg border border-slate-700" viewBox="0 0 500 500">
+            {/* Draw Grid Lines */}
+            {lines.map((i) => (
+              <g key={`grid-${i}`}>
+                {/* Vertical lines */}
+                <line x1={getPx(i)} y1={0} x2={getPx(i)} y2={500} stroke="#334155" strokeWidth={i === 0 ? 0 : 1} />
+                {/* Horizontal lines */}
+                <line x1={0} y1={getPy(i)} x2={500} y2={getPy(i)} stroke="#334155" strokeWidth={i === 0 ? 0 : 1} />
+                
+                {/* Labels (skip 0 for clarity, show every 2 units) */}
+                {i !== 0 && i % 2 === 0 && (
+                  <text x={getPx(i)} y={CENTER + 15} fill="#64748b" fontSize="12" textAnchor="middle">{i}</text>
+                )}
+                {i !== 0 && i % 2 === 0 && (
+                  <text x={CENTER - 15} y={getPy(i) + 4} fill="#64748b" fontSize="12" textAnchor="end">{i}</text>
+                )}
+              </g>
+            ))}
+
+            {/* Axes */}
+            <line x1={0} y1={CENTER} x2={500} y2={CENTER} stroke="#94a3b8" strokeWidth="2" />
+            <line x1={CENTER} y1={0} x2={CENTER} y2={500} stroke="#94a3b8" strokeWidth="2" />
+            
+            {/* Origin Label */}
+            <text x={CENTER - 10} y={CENTER + 15} fill="#94a3b8" fontSize="14" fontWeight="bold">O</text>
+            <text x={480} y={CENTER - 10} fill="#94a3b8" fontSize="14" fontWeight="bold">x</text>
+            <text x={CENTER + 10} y={20} fill="#94a3b8" fontSize="14" fontWeight="bold">y</text>
+
+            {/* History Points (Ghost trails) */}
+            {history.map((hPoint, idx) => (
+              <g key={idx} className="opacity-30">
+                <circle cx={getPx(hPoint.x)} cy={getPy(hPoint.y)} r="4" fill="#cbd5e1" />
+                <line 
+                  x1={getPx(hPoint.x)} y1={getPy(hPoint.y)} 
+                  x2={getPx(idx === history.length - 1 ? point.x : history[idx+1].x)} 
+                  y2={getPy(idx === history.length - 1 ? point.y : history[idx+1].y)} 
+                  stroke="#cbd5e1" strokeWidth="2" strokeDasharray="4 4"
+                />
+              </g>
+            ))}
+
+            {/* Current Point */}
+            <circle 
+              cx={getPx(point.x)} 
+              cy={getPy(point.y)} 
+              r="8" 
+              fill="#06b6d4" 
+              className="transition-all duration-500 ease-in-out drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]"
+            />
+            
+            {/* Coordinate Label next to point */}
+            <g className="transition-all duration-500 ease-in-out" style={{ transform: `translate(${getPx(point.x)}px, ${getPy(point.y)}px)` }}>
+                <rect x="12" y="-20" width="60" height="24" rx="4" fill="rgba(15, 23, 42, 0.8)" border="1" />
+                <text x="16" y="-3" fill="#22d3ee" fontSize="14" fontWeight="bold" className="font-mono">
+                ({point.x}, {point.y})
+                </text>
+            </g>
+
+          </svg>
+        </div>
+
+        {/* Right Area: Control Panel */}
+        <div className="md:col-span-5 flex flex-col gap-4">
+          
+          {/* Status Display */}
+          <div className="bg-slate-800 rounded-2xl shadow-lg p-5 border border-slate-700">
+            <h2 className="text-sm text-slate-400 uppercase tracking-wider mb-1">目標當前坐標</h2>
+            <div className="text-4xl font-bold text-cyan-400 font-mono mb-4">
+              P({point.x}, {point.y})
+            </div>
+            
+            <div className="bg-slate-900 rounded-lg p-3 border border-slate-700 h-24 flex flex-col justify-center">
+              <p className="text-sm text-slate-300">{message}</p>
+              <div className="mt-2 text-yellow-400 font-mono font-bold">
+                轉換公式：{formula}
+              </div>
+            </div>
+          </div>
+
+          {/* Controls Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            
+            {/* Translation */}
+            <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700 col-span-2">
+              <h3 className="text-sm text-slate-400 mb-3 flex items-center"><Crosshair className="w-4 h-4 mr-2"/> 平移 (Translation)</h3>
+              <div className="grid grid-cols-4 gap-2">
+                <button onClick={() => translate(0, 1, '上')} className="flex flex-col items-center justify-center bg-slate-700 hover:bg-cyan-600 hover:text-white transition p-2 rounded-lg"><ArrowUp className="w-5 h-5 mb-1"/>上 1</button>
+                <button onClick={() => translate(0, -1, '下')} className="flex flex-col items-center justify-center bg-slate-700 hover:bg-cyan-600 hover:text-white transition p-2 rounded-lg"><ArrowDown className="w-5 h-5 mb-1"/>下 1</button>
+                <button onClick={() => translate(-1, 0, '左')} className="flex flex-col items-center justify-center bg-slate-700 hover:bg-cyan-600 hover:text-white transition p-2 rounded-lg"><ArrowLeft className="w-5 h-5 mb-1"/>左 1</button>
+                <button onClick={() => translate(1, 0, '右')} className="flex flex-col items-center justify-center bg-slate-700 hover:bg-cyan-600 hover:text-white transition p-2 rounded-lg"><ArrowRight className="w-5 h-5 mb-1"/>右 1</button>
+              </div>
+            </div>
+
+            {/* Reflection */}
+            <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+              <h3 className="text-sm text-slate-400 mb-3 flex items-center"><FlipHorizontal className="w-4 h-4 mr-2"/> 反射 (Reflection)</h3>
+              <div className="flex flex-col gap-2">
+                <button onClick={reflectX} className="bg-slate-700 hover:bg-pink-600 transition p-2 rounded-lg text-sm">沿 x 軸反射</button>
+                <button onClick={reflectY} className="bg-slate-700 hover:bg-pink-600 transition p-2 rounded-lg text-sm">沿 y 軸反射</button>
+              </div>
+            </div>
+
+            {/* Rotation */}
+            <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+              <h3 className="text-sm text-slate-400 mb-3 flex items-center"><RotateCcw className="w-4 h-4 mr-2"/> 旋轉 (Rotation)</h3>
+              <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-2 gap-1 text-xs text-center text-slate-400 mb-1">
+                  <span>逆時針</span><span>順時針</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button onClick={() => rotateCCW(90)} className="bg-slate-700 hover:bg-indigo-600 transition p-2 rounded-lg text-sm flex justify-center"><RotateCcw className="w-4 h-4 mr-1"/> 90°</button>
+                  <button onClick={() => rotateCW(90)} className="bg-slate-700 hover:bg-indigo-600 transition p-2 rounded-lg text-sm flex justify-center"><RotateCw className="w-4 h-4 mr-1"/> 90°</button>
+                </div>
+                <button onClick={() => rotateCCW(180)} className="bg-slate-700 hover:bg-indigo-600 transition p-2 rounded-lg text-sm col-span-2">旋轉 180°</button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button onClick={() => rotateCCW(270)} className="bg-slate-700 hover:bg-indigo-600 transition p-2 rounded-lg text-sm flex justify-center"><RotateCcw className="w-4 h-4 mr-1"/> 270°</button>
+                  <button onClick={() => rotateCW(270)} className="bg-slate-700 hover:bg-indigo-600 transition p-2 rounded-lg text-sm flex justify-center"><RotateCw className="w-4 h-4 mr-1"/> 270°</button>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="col-span-2 flex gap-4 mt-2">
+              <button onClick={setRandomPoint} className="flex-1 bg-slate-600 hover:bg-slate-500 transition p-3 rounded-xl font-bold flex items-center justify-center">
+                 隨機新座標
+              </button>
+              <button onClick={resetPoint} className="flex-1 bg-red-900/50 hover:bg-red-600 transition border border-red-700 p-3 rounded-xl font-bold flex items-center justify-center text-red-200">
+                <RefreshCw className="w-5 h-5 mr-2"/> 系統重置
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  );
+};
+
+export default CoordinateSimulator;
