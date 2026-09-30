@@ -1,0 +1,2914 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第2章 與三角形及多邊形相關的角｜中二數學互動課件</title>
+<meta name="description" content="中二數學第 2 章互動課件：相交線、平行線、三角形內角和與外角、等腰及等邊三角形、多邊形內角和與外角和。配合課堂工作紙 2.0 至 2.3B。">
+<style>
+/* ===== 顏色及基本設定 ===== */
+:root{
+  color-scheme: light;
+  --bg:#FFF7EA; --bg2:#FFEFD6; --card:#FFFFFF; --ink:#2B2D42; --muted:#6B6F80; --line:#EADFCB;
+  --pri:#FF7F50; --pri-soft:#FFE3D6; --teal:#2BA89A; --teal-soft:#D8F3EF; --sun:#FFC93C; --sun-soft:#FFF3C4;
+  --sky:#4D96E0; --sky-soft:#DDEBFA; --ok:#23895B; --ok-soft:#DDF5E8; --bad:#C8384F; --bad-soft:#FBE1E5;
+  --radius:18px; --fs:18px;
+  --math:"Times New Roman","Times","Noto Serif",serif;
+  --ui:"Noto Sans TC","Noto Sans HK","PingFang TC","PingFang HK","Microsoft JhengHei","Heiti TC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);line-height:1.6;overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+i.v,.v{font-family:var(--math);font-style:italic;font-size:1.08em;letter-spacing:.01em}
+.up{font-family:var(--math);font-style:normal}
+.hidden{display:none!important}
+
+/* ===== 頁首 ===== */
+.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#FFB38A 0%,#FFD36E 55%,#9EE0D5 100%);
+  box-shadow:0 3px 0 rgba(43,45,66,.08);padding:.45rem .8rem .5rem}
+.top-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;max-width:1180px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:.55rem;min-width:0;flex:1 1 280px}
+.brand-badge{flex:none;width:2.4rem;height:2.4rem;border-radius:14px;background:#fff;display:grid;place-items:center;
+  box-shadow:0 2px 0 rgba(43,45,66,.12)}
+.brand h1{margin:0;font-size:1.05rem;line-height:1.25;font-weight:800}
+.brand small{display:block;font-weight:600;font-size:.72rem;color:#5b4a3a}
+.tools{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center}
+.chip{border:none;background:rgba(255,255,255,.88);border-radius:999px;padding:.28rem .7rem;font-size:.78rem;font-weight:700;
+  box-shadow:0 2px 0 rgba(43,45,66,.12);display:inline-flex;align-items:center;gap:.3rem;white-space:nowrap}
+.chip:hover{background:#fff}
+.chip.on{background:var(--ink);color:#fff}
+.prog{display:flex;align-items:center;gap:.45rem;font-size:.75rem;font-weight:700;background:rgba(255,255,255,.7);
+  border-radius:999px;padding:.2rem .7rem}
+.prog-bar{width:90px;height:9px;border-radius:9px;background:#fff;overflow:hidden;border:1.5px solid var(--ink)}
+.prog-bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--teal) 0 5px,#56c4b6 5px 10px);width:0}
+
+/* ===== 分頁 ===== */
+.tabs{max-width:1180px;margin:.7rem auto 0;padding:0 .8rem;display:flex;gap:.4rem;overflow-x:auto;scrollbar-width:thin}
+.tab{flex:none;border:2.5px solid var(--ink);background:#fff;border-radius:14px 14px 14px 14px;padding:.35rem .8rem;
+  font-weight:800;font-size:.86rem;line-height:1.2;text-align:left}
+.tab small{display:block;font-weight:600;font-size:.68rem;color:var(--muted)}
+.tab.on{background:var(--ink);color:#fff}
+.tab.on small{color:#e6e6ee}
+.tab .dot{display:inline-block;min-width:1.4em;font-size:.68rem;padding:0 .3em;border-radius:9px;background:var(--sun);color:var(--ink);margin-left:.3em;text-align:center}
+.tab.teacher-only{border-style:dashed}
+.subtabs{max-width:1180px;margin:.55rem auto 0;padding:0 .8rem;display:flex;gap:.35rem;overflow-x:auto;scrollbar-width:thin}
+.stab{flex:none;border:2px solid var(--line);background:var(--card);border-radius:999px;padding:.25rem .8rem;font-weight:700;font-size:.8rem}
+.stab.on{border-color:var(--pri);background:var(--pri-soft)}
+.stab .ok{color:var(--ok);font-weight:900}
+main{max-width:1180px;margin:0 auto;padding:.8rem .8rem 4rem}
+
+/* ===== 知識框（仿工作紙灰框） ===== */
+.sec-title{display:flex;align-items:center;gap:.6rem;margin:.4rem 0 .7rem}
+.sec-num{flex:none;width:2.2rem;height:2.2rem;border:2.5px solid var(--ink);border-radius:12px;display:grid;place-items:center;
+  font-weight:900;background:#fff;box-shadow:3px 3px 0 var(--ink)}
+.sec-title h2{margin:0;font-size:1.12rem}
+.goal{font-size:.82rem;color:var(--muted);margin:-.3rem 0 .8rem}
+.notes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;background:#F3F1EC;border:2.5px solid var(--ink);
+  border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:1rem;position:relative}
+.notes.single{grid-template-columns:1fr}
+.notes::before{content:"重點";position:absolute;top:-.75rem;left:1rem;background:var(--sun);border:2px solid var(--ink);
+  border-radius:9px;font-size:.72rem;font-weight:800;padding:0 .5rem}
+.note-item{margin-bottom:.7rem}
+.note-item:last-child{margin-bottom:0}
+.note-item h3{margin:0 0 .15rem;font-size:.95rem}
+.note-item p{margin:.1rem 0}
+.memo{display:inline-block;margin-top:.2rem;background:#fff;border:1.5px dashed var(--ink);border-radius:8px;padding:0 .45rem;font-size:.85rem}
+.memo b{font-weight:800}
+
+/* ===== 探索區 ===== */
+.explore{background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:.7rem .8rem}
+.explore h4{margin:0 0 .3rem;font-size:.86rem;display:flex;align-items:center;gap:.35rem}
+.explore h4::before{content:"";width:.8rem;height:.8rem;border-radius:4px;background:var(--teal);display:inline-block}
+.explore .hint-s{font-size:.75rem;color:var(--muted);margin:.1rem 0 .3rem}
+.ex-ctrl{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;margin:.3rem 0;font-size:.82rem}
+.ex-ctrl label{display:inline-flex;align-items:center;gap:.3rem}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{border:none;background:#fff;padding:.18rem .6rem;font-size:.78rem;font-weight:700}
+.seg button.on{background:var(--ink);color:#fff}
+.readout{font-family:var(--math);font-size:1.05rem;background:var(--sun-soft);border-radius:10px;padding:.25rem .55rem;margin-top:.3rem}
+.readout .ui{font-family:var(--ui);font-size:.8rem}
+svg.fig{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+input[type=range]{accent-color:var(--pri);width:9rem}
+
+/* ===== 題目卡 ===== */
+.group{margin:1.4rem 0 .4rem}
+.group-head{display:flex;gap:.5rem;align-items:baseline;margin-bottom:.5rem}
+.qno{flex:none;font-weight:900;font-size:1.05rem;background:var(--ink);color:#fff;border-radius:10px;padding:0 .5rem}
+.stem{font-weight:600}
+.card{background:var(--card);border:2.5px solid var(--ink);border-radius:var(--radius);padding:.8rem .9rem;margin:.6rem 0 1rem;
+  box-shadow:4px 4px 0 rgba(43,45,66,.12)}
+.card.done{border-color:var(--ok);box-shadow:4px 4px 0 rgba(35,137,91,.25)}
+.card-head{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem}
+.card-tag{font-weight:800;font-size:.8rem;background:var(--sky-soft);border:1.5px solid var(--sky);border-radius:8px;padding:0 .45rem}
+.card-tag.extra{background:var(--sun-soft);border-color:#d19b00}
+.status{margin-left:auto;font-size:.78rem;font-weight:800;border-radius:999px;padding:.05rem .6rem;border:2px solid var(--line);color:var(--muted)}
+.status.ok{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.card-sub{font-weight:600;margin:.1rem 0 .4rem}
+.qgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:1rem;align-items:start}
+.qgrid.nofig{grid-template-columns:1fr}
+.figbox{background:#fff;border:2px solid var(--line);border-radius:14px;padding:.3rem;position:relative}
+.figbox .fig{max-height:330px}
+.panel{border-radius:14px;padding:.55rem .7rem;margin-bottom:.6rem}
+.panel h5{margin:0 0 .3rem;font-size:.82rem;display:flex;align-items:center;gap:.4rem}
+.panel h5 .n{display:inline-grid;place-items:center;width:1.3rem;height:1.3rem;border-radius:50%;background:var(--ink);color:#fff;font-size:.7rem}
+.try{background:var(--teal-soft)}
+.steps{background:var(--sun-soft)}
+.copy{background:var(--ok-soft);border:2px dashed var(--ok)}
+.varrow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-bottom:.35rem}
+.var{display:inline-flex;align-items:center;gap:.25rem;background:#fff;border-radius:12px;padding:.15rem .35rem;border:2px solid var(--ink)}
+.var{max-width:100%;flex-wrap:wrap}
+.qgrid>*{min-width:0}
+.explore svg.fig{max-height:320px}
+.var .vl{font-family:var(--math);font-style:italic;font-size:1.1rem;padding:0 .2rem;white-space:nowrap}
+.var input{width:4.2rem;border:none;border-bottom:2px solid var(--ink);text-align:center;font-family:var(--math);font-size:1.1rem;background:transparent;padding:0}
+.var button{border:none;background:var(--bg2);border-radius:8px;padding:0 .35rem;font-weight:800;font-size:.8rem;min-width:1.9rem;line-height:1.6}
+.var button:active{transform:translateY(1px)}
+.var .u{font-family:var(--math)}
+.boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.45rem}
+.board{background:#fff;border-radius:12px;border:2px solid #b9e6df;padding:.3rem .4rem}
+.board.fit{border-color:var(--ok)}
+.board .bt{font-size:.74rem;font-weight:700;color:var(--muted);margin-bottom:.1rem}
+.board .bm{font-size:.8rem;font-weight:800;margin-top:.1rem}
+.board .bm.ok{color:var(--ok)} .board .bm.bad{color:var(--bad)}
+.board svg{display:block;width:100%;height:auto;max-height:190px}
+.found{font-weight:800;color:var(--ok);font-size:.85rem;margin-top:.3rem}
+
+/* 步驟 */
+.sl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);column-gap:.7rem;align-items:center;margin:.15rem 0;font-size:1.02rem}
+.sl.full{grid-template-columns:1fr}
+.sl .eq{font-family:var(--math);white-space:normal}
+.sl .eq .zh,.sl .rs .zh{font-family:var(--ui);font-size:.95rem}
+.sl .rs{font-size:.92rem;color:#3a3c55}
+.ind1{padding-left:1.6em}.ind2{padding-left:3.2em}.ind3{padding-left:4.8em}
+.blank{display:inline-flex;align-items:center;vertical-align:middle;margin:0 .1rem}
+.blank input{width:4.3em;border:none;border-bottom:2.5px solid var(--ink);background:#fff;border-radius:6px 6px 0 0;text-align:center;
+  font-family:var(--math);font-size:1.02rem;padding:.05rem .1rem}
+.blank input.txt{width:3.6em;font-style:italic}
+.blank select{border:2px solid var(--ink);border-radius:8px;background:#fff;font-size:.86rem;padding:.05rem .2rem;max-width:12.5em}
+.blank .mk:empty{width:.15em}
+.blank .mk{display:inline-block;width:1.1em;text-align:center;font-weight:900;font-family:var(--ui);font-size:.9rem}
+.blank.ok input,.blank.ok select{background:var(--ok-soft);border-color:var(--ok)}
+.blank.ok .mk{color:var(--ok)}
+.blank.bad input,.blank.bad select{background:var(--bad-soft);border-color:var(--bad);border-bottom-style:dashed}
+.blank.bad .mk{color:var(--bad)}
+.blank.fin input{border-bottom:5px double var(--ink)}
+.chs{display:inline-flex;gap:.25rem}
+.chs button{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:0 .55rem;font-size:.85rem;font-family:var(--ui)}
+.chs button.on{background:var(--ink);color:#fff}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .15rem}
+.frac>span{padding:0 .2rem}
+.frac>span:first-child{border-bottom:2px solid var(--ink)}
+.btnrow{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.btn{border:2.5px solid var(--ink);background:#fff;border-radius:12px;padding:.25rem .8rem;font-weight:800;font-size:.85rem;
+  box-shadow:0 3px 0 var(--ink)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.btn.pri{background:var(--pri);color:#fff}
+.btn.teal{background:var(--teal);color:#fff}
+.btn.ghost{box-shadow:none;border-width:2px}
+.btn[disabled]{opacity:.45;cursor:default}
+.msg{font-size:.85rem;font-weight:700;margin-top:.35rem}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+.hintbox{margin-top:.45rem;background:#fff;border:2px solid var(--sun);border-radius:12px;padding:.35rem .6rem;font-size:.88rem}
+.hintbox .hl-t{font-weight:800}
+.hintbox div+div{margin-top:.25rem;border-top:1px dashed var(--line);padding-top:.25rem}
+
+/* 抄寫版 */
+.copy .sl{font-size:1.05rem}
+.copy .fv{font-family:var(--math);padding:0 .2em;border-bottom:1.5px solid var(--ink)}
+.copy .fv.fin{border-bottom:4px double var(--ink)}
+.copy .rv{font-family:var(--ui)}
+.copy .sl.hid{visibility:hidden}
+.copy-head{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.copy-head .btn{padding:.1rem .6rem;font-size:.78rem}
+
+/* 勾選題 */
+.ticks{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.3rem 0}
+.tk{display:inline-flex;align-items:center;gap:.35rem;font-size:1rem}
+.tk .lb{font-family:var(--math);font-style:italic;font-size:1.15rem}
+.tk .lb.zh{font-family:var(--math);font-style:normal}
+.box{width:2.1rem;height:2.1rem;border:2.5px solid var(--ink);border-radius:8px;background:#fff;font-weight:900;font-size:1.1rem;display:grid;place-items:center;padding:0}
+.tk.ok .box{background:var(--ok-soft);border-color:var(--ok)}
+.tk.bad .box{background:var(--bad-soft);border-color:var(--bad);border-style:dashed}
+.tk .mk{font-weight:900;width:1em}
+.tk.ok .mk{color:var(--ok)} .tk.bad .mk{color:var(--bad)}
+.list-ticks{display:flex;flex-direction:column;gap:.35rem}
+
+/* 例題 */
+.example{background:#fff;border:2.5px dashed var(--pri);border-radius:var(--radius);padding:.7rem .9rem;margin:0 0 1rem}
+.example .card-tag{background:var(--pri-soft);border-color:var(--pri)}
+
+/* 練習 */
+.lock{background:#fff;border:2.5px dashed var(--line);border-radius:var(--radius);padding:1rem;text-align:center;color:var(--muted);font-weight:700}
+.streak{font-weight:800;font-size:.85rem}
+
+/* 圖形元素 */
+.fig .ln{stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round}
+.fig .ln.thin{stroke-width:1.3}
+.fig .ln.dash{stroke-dasharray:5 4}
+.fig .ln.gray{stroke:#8a8c99}
+.fig .mark{stroke:var(--ink);stroke-width:1.6;fill:none}
+.fig .arrowmk{fill:var(--ink);stroke:none}
+.fig .arc{stroke:var(--ink);stroke-width:1.5;fill:none}
+.fig .sector{fill:transparent;stroke:none}
+.fig .sector.shade{fill:#c9c9c9}
+.fig .lbl{font-family:var(--math);font-size:15px;fill:var(--ink)}
+.fig .plbl{font-family:var(--math);font-style:italic;font-size:15.5px;fill:var(--ink)}
+.fig .zh{font-family:var(--ui);font-size:12.5px;fill:var(--ink)}
+.fig .hl .arc{stroke-width:3.2}
+.fig .hl .sector{fill:url(#hatchHL)}
+.fig .ln.hl{stroke-width:4.5}
+.fig .hintonly{display:none}
+.fig .hintonly.hl{display:inline}
+.fig .pick{cursor:pointer}
+.fig .pick .sector{fill:rgba(77,150,224,.08);stroke:var(--sky);stroke-width:1;stroke-dasharray:3 3}
+.fig .pick:hover .sector{fill:rgba(77,150,224,.2)}
+.fig .pick.sel .sector{fill:url(#hatchHL);stroke:var(--ink);stroke-dasharray:none;stroke-width:1.5}
+.fig .vtx{cursor:pointer}
+.fig .vtx circle.hit{fill:rgba(255,127,80,.0);stroke:none}
+.fig .vtx circle.dotv{fill:#fff;stroke:var(--pri);stroke-width:2}
+.fig .meas .arc{stroke:var(--pri);stroke-width:2.4}
+.fig .meas text{fill:#b3431d;font-weight:700}
+.fig .drag{cursor:grab;fill:var(--pri);stroke:#fff;stroke-width:2}
+.fig .drag:active{cursor:grabbing}
+.fig .dim{stroke:var(--ink);stroke-width:1.2;fill:none}
+
+/* 教師模式標記 */
+body.teacher .t-show{display:revert}
+.t-show{display:none}
+.tbadge{background:var(--ink);color:#fff;border-radius:8px;font-size:.7rem;padding:0 .4rem;font-weight:800}
+
+/* 彈出視窗 */
+.modal{position:fixed;inset:0;background:rgba(43,45,66,.45);display:grid;place-items:center;z-index:99;padding:1rem}
+.modal-box{background:#fff;border:3px solid var(--ink);border-radius:20px;padding:1rem 1.2rem;width:min(360px,100%);box-shadow:6px 6px 0 var(--ink)}
+.modal-box h3{margin:0 0 .4rem}
+.modal-box input{width:100%;font-size:1.3rem;text-align:center;letter-spacing:.3em;border:2.5px solid var(--ink);border-radius:12px;padding:.3rem}
+.toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:999px;padding:.4rem 1rem;
+  font-weight:700;z-index:98;font-size:.9rem;box-shadow:0 4px 0 rgba(0,0,0,.2);transition:opacity .3s}
+
+/* 小彩紙 */
+.pop{position:absolute;pointer-events:none;font-weight:900;font-size:1.3rem;animation:pop 1s ease-out forwards}
+@keyframes pop{0%{opacity:1;transform:translateY(0) scale(.8)}100%{opacity:0;transform:translateY(-50px) scale(1.3)}}
+
+/* ===== 響應式 ===== */
+@media (max-width:820px){
+  .top{position:static}
+  .notes{grid-template-columns:1fr}
+  .qgrid{grid-template-columns:1fr}
+  .figbox .fig{max-height:260px}
+  .brand h1{font-size:.95rem}
+}
+@media (max-width:480px){
+  html{font-size:calc(var(--fs) - 2px)}
+  main{padding:.6rem .55rem 3rem}
+  .card{padding:.65rem .6rem}
+  .sl{grid-template-columns:1fr;row-gap:0}
+  .sl .rs{padding-left:1.6em}
+  .var input{width:3.4rem}
+  .prog-bar{width:60px}
+}
+
+/* ===== 列印（黑白） ===== */
+@media print{
+  :root{--bg:#fff}
+  body{background:#fff;font-size:12pt}
+  .explore,.top,.tabs,.subtabs,.btnrow,.try,.hintbox,.explore .ex-ctrl,.toast,.status,.lock,.tools{display:none!important}
+  .card,.notes,.example{box-shadow:none;border:1.5px solid #000;break-inside:avoid;background:#fff}
+  .notes{background:#f2f2f2}
+  .steps,.copy{background:#fff;border:1px solid #000}
+  .blank input,.blank select{border:none;border-bottom:1px solid #000;background:#fff}
+  .blank .mk{display:none}
+  .fig .ln,.fig .arc,.fig .mark{stroke:#000}
+  .fig .lbl,.fig .plbl,.fig .zh{fill:#000}
+  .card-tag,.qno{background:#fff;color:#000;border:1px solid #000}
+  a{color:#000}
+}
+
+</style>
+</head>
+<body>
+<noscript>請開啟 JavaScript 以使用此互動課件。</noscript>
+<script>
+/* =========================================================
+   第 2 章 與三角形及多邊形相關的角 —— 互動引擎
+   本檔包括：工具函數、幾何計算、SVG 繪圖、驗證板、
+   填充步驟、題目卡、分頁、教師模式及進度記錄。
+   ========================================================= */
+'use strict';
+
+/* ---------- 基本工具 ---------- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  if (attrs) for (const k in attrs) {
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k.nodeType ? k : document.createTextNode(k));
+  return e;
+}
+function sv(tag, attrs, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  if (attrs) for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+/* localStorage 可能在 iframe 內被封鎖，所以全部包在 try/catch 內 */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('ch2:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('ch2:' + k, JSON.stringify(v)); } catch (e) { /* 忽略 */ } },
+  del(k) { try { localStorage.removeItem('ch2:' + k); } catch (e) { /* 忽略 */ } }
+};
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* 把文字中的變數及點名改為斜體（x、y、AB、△ABC…），單位 cm、m 保持正體 */
+const VAR_RE = /(\d+(?:\.\d+)?\s?(?:cm|m)(?![A-Za-z]))|(\bcm\b|\bm\b)|([A-Z]+)|((?<![A-Za-z])[a-z](?![A-Za-z]))/g;
+function fmt(s) {
+  return String(s).split(/(<[^>]+>)/).map(part => {
+    if (part.startsWith('<')) return part;
+    return esc(part).replace(VAR_RE, (m, unitNum, unit, caps, low) => {
+      if (unitNum || unit) return '<span class="up">' + m + '</span>';
+      return '<i class="v">' + m + '</i>';
+    });
+  }).join('');
+}
+/* SVG 文字（支援斜體變數） */
+function svText(parent, x, y, s, cls = 'lbl', anchor = 'middle') {
+  const t = sv('text', { x, y, class: cls, 'text-anchor': anchor, 'dominant-baseline': 'central' }, parent);
+  String(s).split(/(\d+(?:\.\d+)?\s?(?:cm|m)(?![A-Za-z])|[A-Za-z]+)/).forEach(p => {
+    if (!p) return;
+    const ts = sv('tspan', null, t);
+    ts.textContent = p;
+    if (/^[A-Za-z]+$/.test(p) && !/^(cm|m)$/.test(p)) ts.setAttribute('font-style', 'italic');
+  });
+  return t;
+}
+function toast(msg, ms = 1800) {
+  const t = el('div', { class: 'toast' }, msg);
+  document.body.append(t);
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 350); }, ms);
+}
+function popAt(node, txt = '✓') {
+  const r = node.getBoundingClientRect();
+  const p = el('div', { class: 'pop', style: `left:${r.left + r.width / 2 + scrollX - 12}px;top:${r.top + scrollY}px;color:var(--ok)` }, txt);
+  document.body.append(p);
+  setTimeout(() => p.remove(), 1000);
+}
+
+/* ---------- 幾何計算（數學座標：y 向上，角度以度計，逆時針為正） ---------- */
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+const G = {
+  pol(P, r, d) { return [P[0] + r * Math.cos(rad(d)), P[1] + r * Math.sin(rad(d))]; },
+  dir(P, Q) { return deg(Math.atan2(Q[1] - P[1], Q[0] - P[0])); },
+  dist(P, Q) { return Math.hypot(Q[0] - P[0], Q[1] - P[1]); },
+  mid(P, Q) { return [(P[0] + Q[0]) / 2, (P[1] + Q[1]) / 2]; },
+  lerp(P, Q, t) { return [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t]; },
+  /* 延長 P→Q，越過 Q 再加長 len */
+  ext(P, Q, len) { return G.pol(Q, len, G.dir(P, Q)); },
+  /* 兩條直線（點 P 方向 d1；點 Q 方向 d2）的交點 */
+  inter(P, d1, Q, d2) {
+    const a = [Math.cos(rad(d1)), Math.sin(rad(d1))], b = [Math.cos(rad(d2)), Math.sin(rad(d2))];
+    const den = a[0] * b[1] - a[1] * b[0];
+    const t = ((Q[0] - P[0]) * b[1] - (Q[1] - P[1]) * b[0]) / den;
+    return [P[0] + a[0] * t, P[1] + a[1] * t];
+  },
+  /* 已知 P、Q 及兩個底角，求第三頂點（在 P→Q 方向的左邊） */
+  tri(P, Q, aP, aQ) { const d = G.dir(P, Q); return G.inter(P, d + aP, Q, d + 180 - aQ); },
+  /* 夾角（0–180） */
+  ang(V, A, B) { let d = Math.abs(norm180(G.dir(V, B) - G.dir(V, A))); return d; },
+  /* 按內角（逆時針次序）建立多邊形：第一邊方向 d0，各邊長 len（最後兩邊自動計算使圖形封閉） */
+  poly(angles, d0 = 0, len = 100, start = [0, 0]) {
+    const n = angles.length, L = Array.isArray(len) ? len.slice() : Array(n).fill(len);
+    const dirs = [d0];
+    for (let i = 1; i < n; i++) dirs.push(dirs[i - 1] + 180 - angles[i]);
+    // 前 n-2 條邊用給定長度，最後兩條邊解方程使多邊形封閉
+    let sx = 0, sy = 0;
+    for (let i = 0; i < n - 2; i++) { sx += L[i] * Math.cos(rad(dirs[i])); sy += L[i] * Math.sin(rad(dirs[i])); }
+    const a = [Math.cos(rad(dirs[n - 2])), Math.sin(rad(dirs[n - 2]))], b = [Math.cos(rad(dirs[n - 1])), Math.sin(rad(dirs[n - 1]))];
+    const den = a[0] * b[1] - a[1] * b[0];
+    L[n - 2] = (-sx * b[1] + sy * b[0]) / den;
+    L[n - 1] = (-a[0] * sy + a[1] * sx) / den;
+    const pts = [start];
+    for (let i = 0; i < n - 1; i++) pts.push(G.pol(pts[i], L[i], dirs[i]));
+    pts.ok = L[n - 2] > 18 && L[n - 1] > 18;
+    pts.L = L;
+    return pts;
+  },
+  /* 自動找一組邊長，令多邊形封閉而且各邊長度相近（固定亂數種子，每次結果一樣） */
+  polyFit(angles, d0 = 0, base = 95) {
+    let seed = angles.reduce((a, b) => a * 31 + b, 7) % 2147483647;
+    const rnd = () => { seed = (seed * 48271) % 2147483647; return seed / 2147483647; };
+    let best = null, bestScore = 1e9;
+    for (let k = 0; k < 4000; k++) {
+      const len = angles.map(() => base * (0.6 + 0.8 * rnd()));
+      const pts = G.poly(angles, d0, len);
+      if (!pts.ok) continue;
+      const score = Math.max(...pts.L) / Math.min(...pts.L);
+      if (score < bestScore) { bestScore = score; best = pts; }
+    }
+    return best || G.poly(angles, d0, base);
+  }
+};
+function norm180(d) { d = ((d % 360) + 360) % 360; return d > 180 ? d - 360 : d; }
+function norm360(d) { return ((d % 360) + 360) % 360; }
+
+/* ---------- 全頁共用的 SVG 圖案（網紋，方便黑白列印） ---------- */
+function installDefs() {
+  const s = sv('svg', { width: 0, height: 0, style: 'position:absolute', 'aria-hidden': 'true' });
+  const d = sv('defs', null, s);
+  const pat = (id, draw, bg) => {
+    const p = sv('pattern', { id, width: 8, height: 8, patternUnits: 'userSpaceOnUse' }, d);
+    if (bg) sv('rect', { width: 8, height: 8, fill: bg }, p);
+    draw(p);
+  };
+  pat('hatchHL', p => sv('path', { d: 'M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4', stroke: '#2B2D42', 'stroke-width': 1.3 }, p), '#FFE08A');
+  pat('pt0', p => sv('path', { d: 'M-2,2 l4,-4 M0,8 l8,-8 M6,10 l4,-4', stroke: '#2B2D42', 'stroke-width': 1 }, p), '#FFD9C8');
+  pat('pt1', p => { sv('circle', { cx: 2, cy: 2, r: 1.2, fill: '#2B2D42' }, p); sv('circle', { cx: 6, cy: 6, r: 1.2, fill: '#2B2D42' }, p); }, '#CDEFEA');
+  pat('pt2', p => sv('path', { d: 'M0,2 h8 M0,6 h8', stroke: '#2B2D42', 'stroke-width': .9 }, p), '#FFF0B8');
+  pat('pt3', p => sv('path', { d: 'M-2,6 l4,4 M0,0 l8,8 M6,-2 l4,4', stroke: '#2B2D42', 'stroke-width': 1 }, p), '#D8E7FA');
+  pat('pt4', p => sv('path', { d: 'M2,0 v8 M6,0 v8', stroke: '#2B2D42', 'stroke-width': .9 }, p), '#EADCF7');
+  pat('pOver', p => sv('path', { d: 'M0,0 l8,8 M8,0 l-8,8', stroke: '#C8384F', 'stroke-width': 1.3 }, p), '#FBE1E5');
+  document.body.prepend(s);
+}
+const PAT = ['pt0', 'pt1', 'pt2', 'pt3', 'pt4'];
+
+/* =========================================================
+   幾何圖繪製
+   spec = { P:{名稱:[x,y]}, L:[線段], A:[角], T:[文字], hide:[不顯示的點名], lp:{點名:方向} }
+   ========================================================= */
+function drawFigure(spec, opts = {}) {
+  const P = spec.P;
+  const X = p => P[p][0], Y = p => -P[p][1];            // 轉為 SVG 座標（y 向下）
+  const svg = sv('svg', { class: 'fig', role: 'img' });
+  if (spec.title) sv('title', null, svg).textContent = spec.title;
+  const gSeg = sv('g', null, svg), gAng = sv('g', null, svg), gTxt = sv('g', null, svg), gTop = sv('g', null, svg);
+  const nb = {};                                          // 每點相鄰點（用來擺放點名）
+  const bbox = { x0: 1e9, y0: 1e9, x1: -1e9, y1: -1e9 };
+  const grow = (x, y) => { bbox.x0 = Math.min(bbox.x0, x); bbox.x1 = Math.max(bbox.x1, x); bbox.y0 = Math.min(bbox.y0, y); bbox.y1 = Math.max(bbox.y1, y); };
+  for (const k in P) grow(P[k][0], -P[k][1]);
+
+  // --- 線段 ---
+  for (const it of spec.L || []) {
+    const o = typeof it === 'string' || Array.isArray(it) ? { s: it } : it;
+    const [a, b] = typeof o.s === 'string' ? [o.s[0], o.s[1]] : o.s;
+    if (!P[a] || !P[b]) { console.warn('缺少點', a, b, spec); continue; }
+    (nb[a] = nb[a] || []).push(b); (nb[b] = nb[b] || []).push(a);
+    const cls = 'ln' + (o.dash ? ' dash' : '') + (o.thin ? ' thin' : '') + (o.gray ? ' gray' : '') + (o.hint ? ' hintonly' : '');
+    const ln = sv('line', { x1: X(a), y1: Y(a), x2: X(b), y2: Y(b), class: cls }, gSeg);
+    if (o.id) ln.dataset.id = o.id;
+    const d = G.dir(P[a], P[b]), len = G.dist(P[a], P[b]);
+    // 平行箭咀
+    if (o.par) {
+      for (let i = 0; i < o.par; i++) {
+        const c = G.lerp(P[a], P[b], o.at ?? 0.6);
+        const tip = G.pol(c, i * 8, d);
+        const b1 = G.pol(tip, 8, d + 150), b2 = G.pol(tip, 8, d - 150);
+        sv('path', { d: `M${tip[0]},${-tip[1]} L${b1[0]},${-b1[1]} L${b2[0]},${-b2[1]} Z`, class: 'arrowmk' }, gSeg);
+      }
+    }
+    // 等長記號
+    if (o.tick) {
+      const c = G.lerp(P[a], P[b], o.tat ?? 0.5);
+      for (let i = 0; i < o.tick; i++) {
+        const m = G.pol(c, (i - (o.tick - 1) / 2) * 4.5, d);
+        const p1 = G.pol(m, 6, d + 90), p2 = G.pol(m, 6, d - 90);
+        sv('line', { x1: p1[0], y1: -p1[1], x2: p2[0], y2: -p2[1], class: 'mark' }, gSeg);
+      }
+    }
+    void len;
+  }
+
+  // --- 角 ---
+  const angEls = [];
+  for (const a of spec.A || []) angEls.push(drawAngle(gAng, P, a));
+
+  // --- 文字（邊長等） ---
+  const cen = centroid(P);
+  for (const t of spec.T || []) {
+    let x, y;
+    if (t.at) { x = t.at[0]; y = -t.at[1]; }
+    else {
+      const [a, b] = typeof t.side === 'string' ? [t.side[0], t.side[1]] : t.side;
+      const m = G.lerp(P[a], P[b], t.t ?? 0.5), d = G.dir(P[a], P[b]);
+      let n = [Math.cos(rad(d + 90)), Math.sin(rad(d + 90))];
+      const toC = [cen[0] - m[0], cen[1] - m[1]];
+      if (n[0] * toC[0] + n[1] * toC[1] > 0) n = [-n[0], -n[1]];
+      if (t.flip) n = [-n[0], -n[1]];
+      const w = String(t.s).length * 7.2;
+      const off = (t.off ?? 7) + Math.abs(n[0]) * w / 2 + Math.abs(n[1]) * 8;
+      x = m[0] + n[0] * off; y = -(m[1] + n[1] * off);
+    }
+    const te = svText(gTxt, x, y, t.s, t.zh ? 'zh' : 'lbl', t.anchor || 'middle');
+    if (t.id) te.dataset.id = t.id;
+    if (t.hint) te.classList.add('hintonly');
+    grow(x, y);
+  }
+
+  // --- 角的標籤計入邊界 ---
+  for (const g of angEls) { const i = g._info; if (i.lp) { grow(i.lp[0] - g._lw / 2, -i.lp[1] - 9); grow(i.lp[0] + g._lw / 2, -i.lp[1] + 9); } }
+
+  // --- 點名（自動避開線段、弧線及角的標籤） ---
+  const hide = new Set(spec.hide || []);
+  const segs = (spec.L || []).map(it => { const o = typeof it === 'string' || Array.isArray(it) ? { s: it } : it; return typeof o.s === 'string' ? [o.s[0], o.s[1]] : o.s; }).filter(([a, b]) => P[a] && P[b]);
+  const angAt = {};
+  (spec.A || []).forEach((a, i) => { if (!a.hint) (angAt[a.v] = angAt[a.v] || []).push(angEls[i]._info); });
+  for (const k in P) {
+    if (hide.has(k) || !/^[A-Z]$/.test(k)) continue;
+    const occ = [];
+    for (const [a, b] of segs) {
+      if (a === k) occ.push(G.dir(P[k], P[b]));
+      else if (b === k) occ.push(G.dir(P[k], P[a]));
+      else {                                   // 點在線段中間
+        const L = G.dist(P[a], P[b]), t = ((P[k][0] - P[a][0]) * (P[b][0] - P[a][0]) + (P[k][1] - P[a][1]) * (P[b][1] - P[a][1])) / (L * L);
+        const q = G.lerp(P[a], P[b], t);
+        if (t > 0.001 && t < 0.999 && G.dist(q, P[k]) < 0.8) occ.push(G.dir(P[k], P[a]), G.dir(P[k], P[b]));
+      }
+    }
+    const angs = angAt[k] || [];
+    angs.forEach(i => { if (i.lp) occ.push(G.dir(P[k], i.lp)); });
+    // 預設方向：與相鄰線段平均方向相反
+    let vx = 0, vy = 0; occ.forEach(d => { vx += Math.cos(rad(d)); vy += Math.sin(rad(d)); });
+    const pref = Math.hypot(vx, vy) < 0.35 ? 270 : deg(Math.atan2(-vy, -vx));
+    let d;
+    const o = spec.lp && spec.lp[k];
+    if (typeof o === 'number') d = o;
+    else if (typeof o === 'string') d = { e: 0, ne: 45, n: 90, nw: 135, w: 180, sw: 225, s: 270, se: 315 }[o];
+    else if (!occ.length) d = 90;
+    else {
+      let best = -1;
+      for (let c = 0; c < 360; c += 7.5) {
+        const clear = Math.min(...occ.map(x => Math.abs(norm180(c - x))));
+        const score = Math.min(clear, 70) + 8 * Math.cos(rad(c - pref));
+        if (score > best) { best = score; d = c; }
+      }
+    }
+    // 若落在弧線範圍內，就放到弧線外面
+    let dist = spec.lpd ?? 14;
+    angs.forEach(i => { const rel = norm360((d - i.da) * Math.sign(i.d || 1)); if (rel < Math.abs(i.d)) dist = Math.max(dist, i.r + 10); });
+    const pos = G.pol(P[k], dist, d);
+    svText(gTxt, pos[0], -pos[1], k, 'plbl');
+    grow(pos[0] - 6, -pos[1] - 8); grow(pos[0] + 6, -pos[1] + 8);
+  }
+
+  // --- 量度多邊形內角（點擊頂點） ---
+  if (spec.measure) {
+    const poly = spec.measure;
+    let area = 0; poly.forEach((v, i) => { const w = poly[(i + 1) % poly.length]; area += P[v][0] * P[w][1] - P[w][0] * P[v][1]; });
+    const ccw = area > 0;
+    poly.forEach((v, i) => {
+      const prev = poly[(i - 1 + poly.length) % poly.length], next = poly[(i + 1) % poly.length];
+      const g = sv('g', { class: 'vtx' }, gTop);
+      sv('circle', { cx: X(v), cy: Y(v), r: 16, class: 'hit' }, g);
+      sv('circle', { cx: X(v), cy: Y(v), r: 4.5, class: 'dotv' }, g);
+      let shown = null;
+      g.addEventListener('click', () => {
+        if (shown) { shown.remove(); shown = null; return; }
+        const nx = ccw ? next : prev, pv = ccw ? prev : next;
+        const da = G.dir(P[v], P[nx]);
+        const inner = norm360(G.dir(P[v], P[pv]) - da);
+        shown = sv('g', { class: 'meas' }, gAng);
+        const r = 17;
+        sv('path', { d: arcPath(P[v], r, da, inner), class: 'arc' }, shown);
+        const lp = G.pol(P[v], r + 16, da + inner / 2);
+        svText(shown, lp[0], -lp[1], Math.round(inner) + '°', 'lbl');
+      });
+    });
+  }
+
+  // --- 可點選的角（標示外角） ---
+  const picks = [];
+  for (const pk of spec.picks || []) {
+    const g = sv('g', { class: 'pick' }, gTop);
+    const { da, d } = angleSpan(P, pk);
+    sv('path', { d: sectorPath(P[pk.v], pk.r || 26, da, d), class: 'sector' }, g);
+    const obj = { spec: pk, g, sel: false };
+    g.addEventListener('click', () => { obj.sel = !obj.sel; g.classList.toggle('sel', obj.sel); svg.dispatchEvent(new CustomEvent('pick', { detail: obj })); });
+    picks.push(obj);
+  }
+
+  for (const h of spec.handles || []) {
+    const c = sv('circle', { cx: h.at[0], cy: -h.at[1], r: h.r || 9, class: 'drag' }, gTop);
+    c.dataset.h = h.id;
+    sv('circle', { cx: h.at[0], cy: -h.at[1], r: 22, fill: 'transparent' }, gTop).dataset.h = h.id;
+  }
+  const pad = spec.pad ?? 22;
+  const vb = spec.vb || [bbox.x0 - pad, bbox.y0 - pad, bbox.x1 - bbox.x0 + 2 * pad, bbox.y1 - bbox.y0 + 2 * pad];
+  svg.setAttribute('viewBox', vb.map(v => v.toFixed(1)).join(' '));
+  svg.style.maxWidth = opts.maxw || (spec.vb ? '' : Math.round(vb[2] * 1.45) + 'px');
+  if (!spec.vb) svg.style.margin = '0 auto';
+  svg._picks = picks;
+  svg.hl = (ids, on = true) => {
+    for (const e of svg.querySelectorAll('[data-id]')) if (ids.includes(e.dataset.id)) e.classList.toggle('hl', on);
+  };
+  svg.clearHL = () => svg.querySelectorAll('.hl').forEach(e => e.classList.remove('hl'));
+  return svg;
+}
+function centroid(P, hide) {
+  let x = 0, y = 0, n = 0;
+  for (const k in P) { if (hide && hide.includes(k)) continue; x += P[k][0]; y += P[k][1]; n++; }
+  return [x / n, y / n];
+}
+/* 由角的設定計算起始方向 da 及轉角 d（逆時針為正） */
+function angleSpan(P, a) {
+  const da = G.dir(P[a.v], P[a.a]);
+  let d = norm180(G.dir(P[a.v], P[a.b]) - da);
+  if (a.big) d = d > 0 ? d - 360 : d + 360;
+  if (a.sweep) d = Math.abs(d) * a.sweep;
+  return { da, d };
+}
+function arcPath(V, r, da, d) {
+  const p0 = G.pol(V, r, da), p1 = G.pol(V, r, da + d);
+  const large = Math.abs(d) > 180 ? 1 : 0, sweep = d > 0 ? 0 : 1;
+  return `M${p0[0]},${-p0[1]} A${r},${r} 0 ${large} ${sweep} ${p1[0]},${-p1[1]}`;
+}
+function sectorPath(V, r, da, d) {
+  const p0 = G.pol(V, r, da), p1 = G.pol(V, r, da + d);
+  const large = Math.abs(d) > 180 ? 1 : 0, sweep = d > 0 ? 0 : 1;
+  return `M${V[0]},${-V[1]} L${p0[0]},${-p0[1]} A${r},${r} 0 ${large} ${sweep} ${p1[0]},${-p1[1]} Z`;
+}
+function drawAngle(parent, P, a) {
+  const g = sv('g', { class: 'ang' }, parent);
+  if (a.id) g.dataset.id = a.id;
+  if (a.hint) g.classList.add('hintonly');
+  const V = P[a.v];
+  const { da, d } = angleSpan(P, a);
+  const r = a.r ?? 16;
+  if (a.mk === 'right') {
+    const s = a.r ?? 10;
+    const p1 = G.pol(V, s, da), p3 = G.pol(V, s, da + d), p2 = [p1[0] + p3[0] - V[0], p1[1] + p3[1] - V[1]];
+    sv('path', { d: `M${V[0]},${-V[1]} L${p1[0]},${-p1[1]} L${p2[0]},${-p2[1]} L${p3[0]},${-p3[1]} Z`, class: 'sector' + (a.shade ? ' shade' : '') }, g);
+    sv('path', { d: `M${p1[0]},${-p1[1]} L${p2[0]},${-p2[1]} L${p3[0]},${-p3[1]}`, class: 'arc' }, g);
+  } else {
+    const sec = sv('path', { d: sectorPath(V, a.fr || r, da, d), class: 'sector' + (a.shade ? ' shade' : '') }, g);
+    if (a.fill) { sec.setAttribute('style', `fill:url(#${a.fill})`); sec.setAttribute('stroke', '#2B2D42'); sec.setAttribute('stroke-width', '1'); }
+    const n = a.mk === 'arc3' ? 3 : a.mk === 'arc2' ? 2 : 1;
+    for (let i = 0; i < n; i++) sv('path', { d: arcPath(V, r + i * 3.6, da, d), class: 'arc' }, g);
+  }
+  let lp = null;
+  if (a.lab != null && a.lab !== '') {
+    const w = String(a.lab).replace(/[°]/g, '').length * 7.5 + 4;
+    const h = Math.min(90, Math.abs(d) / 2);
+    const rOut = r + (a.mk === 'arc3' ? 7.2 : a.mk === 'arc2' ? 3.6 : 0);
+    let dist = a.ld ?? Math.min(rOut + 34, Math.max(rOut + 11, (7 + 0.25 * w) / Math.sin(rad(Math.max(h, 1)))));
+    lp = G.pol(V, dist, da + d / 2 + (a.lrot || 0));
+    if (a.lo) lp = [lp[0] + a.lo[0], lp[1] + a.lo[1]];
+    svText(g, lp[0], -lp[1], a.lab, 'lbl');
+    g._lw = w;
+  }
+  g._info = { da, d, r: a.mk === 'right' ? (a.r ?? 10) * 1.42 : r + (a.mk === 'arc3' ? 7.2 : a.mk === 'arc2' ? 3.6 : 0), lp };
+  return g;
+}
+
+/* =========================================================
+   驗證板：把角（或長度）拼在一起，看看是否剛好等於目標
+   board = { title, parts:['148','x'], target:'180', tl:'直線', unit:'°'|'cm'|'m', kind:'fan'|'bar'|'tri' }
+   ========================================================= */
+function parseTerm(t, vars) {
+  // 回傳 {v:數值或 NaN, lab:標籤, key:變數名(如有), coef}
+  if (typeof t === 'number') return { v: t, lab: t + '°', coef: 0 };
+  if (typeof t === 'object') return t;
+  let m = /^(\d+(?:\.\d+)?)$/.exec(t);
+  if (m) return { v: +m[1], lab: m[1], coef: 0, num: true };
+  m = /^(\d+)?\*?([A-Za-z]\w*)$/.exec(t);
+  if (m) {
+    const coef = m[1] ? +m[1] : 1, key = m[2], vd = vars.find(v => v.k === key);
+    const val = vd ? vd.cur : NaN;
+    const base = vd ? vd.lab : key;
+    return { v: coef * val, lab: (coef === 1 ? '' : coef) + base, key, coef };
+  }
+  return { v: NaN, lab: t };
+}
+function boardEval(b, vars) {
+  const unit = b.unit ?? '°';
+  const parts = [];
+  for (const p of b.parts) {
+    const rep = typeof p === 'object' && p.rep ? p.rep : 1;
+    const term = parseTerm(typeof p === 'object' && p.rep ? p.of : p, vars);
+    const lab = (term.num ? term.lab + (unit === '°' ? '°' : '') : term.lab);
+    for (let i = 0; i < rep; i++) parts.push({ v: term.v, lab: rep > 1 && i > 0 ? '' : lab, key: term.key, coef: term.coef, repLab: rep > 1 ? rep + ' 個 ' + lab : null });
+  }
+  const tg = parseTerm(b.target, vars);
+  const tv = tg.v, tlab = b.tl ?? (tg.num ? tg.lab + (unit === '°' ? '°' : '') : tg.lab);
+  const total = parts.reduce((s, p) => s + p.v, 0);
+  const ok = Number.isFinite(total) && Number.isFinite(tv) && Math.abs(total - tv) < 1e-6;
+  // 判斷方向信息（只涉及一個變數時）
+  const keys = new Set([...parts.map(p => p.key), tg.key].filter(Boolean));
+  let dirMsg = '';
+  if (!ok && keys.size === 1 && Number.isFinite(total) && Number.isFinite(tv)) {
+    const k = [...keys][0], vd = vars.find(v => v.k === k);
+    const inParts = parts.some(p => p.key === k);
+    const tooSmall = inParts ? total < tv : total > tv;
+    dirMsg = (vd ? vd.lab : k) + (tooSmall ? ' 太小了' : ' 太大了');
+  }
+  return { parts, total, tv, tlab, ok, unit, dirMsg, keys };
+}
+function drawBoard(b, vars) {
+  const r = b.kind === 'tri' ? { ok: false } : boardEval(b, vars);
+  const box = el('div', { class: 'board' + (r.ok ? ' fit' : '') });
+  box.append(el('div', { class: 'bt', html: fmt(b.title || '把角拼起來') }));
+  const valid = b.kind !== 'tri' && Number.isFinite(r.total) && Number.isFinite(r.tv) && r.parts.every(p => p.v >= 0) && r.tv > 0;
+  let svg;
+  if (b.kind === 'tri') svg = drawTriBoard(b, vars);
+  else if (!valid) {
+    svg = el('div', { style: 'font-size:.8rem;color:var(--muted);padding:1.2rem .3rem;text-align:center' }, '⬆ 在上面輸入數值，這裏會把角拼給你看');
+  } else {
+    const kind = b.kind || (r.unit !== '°' || Math.max(r.total, r.tv) > 360.001 ? 'bar' : 'fan');
+    svg = kind === 'fan' ? drawFan(r) : drawBar(r);
+  }
+  box.append(svg);
+  let msg, cls;
+  if (b.kind === 'tri') { const t = triEval(b, vars); msg = t.msg; cls = t.ok ? 'ok' : 'bad'; box.classList.toggle('fit', t.ok); r.ok = t.ok; }
+  else if (!valid) { msg = '　'; cls = ''; }
+  else if (r.ok) { msg = '✓ 剛好吻合！'; cls = 'ok'; }
+  else {
+    const geo = r.total < r.tv ? (r.unit === '°' ? '拼起來還有空隙' : '還未夠長') : (r.unit === '°' ? '拼起來重疊了' : '太長了');
+    msg = '✗ ' + geo + (r.dirMsg ? '：' + r.dirMsg : ''); cls = 'bad';
+  }
+  box.append(el('div', { class: 'bm ' + cls, html: fmt(msg) }));
+  box._ok = r.ok;
+  return box;
+}
+function drawFan(r) {
+  const R = 70, full = Math.max(r.total, r.tv) > 180.001;
+  const svg = sv('svg', { class: 'fig', viewBox: full ? '-112 -100 224 200' : '-112 -100 224 118' });
+  const C = [0, 0];
+  const g = sv('g', null, svg);
+  // 各部分的扇形
+  let a0 = 0;
+  r.parts.forEach((p, i) => {
+    if (p.v <= 0) return;
+    sv('path', { d: sectorPath(C, R, a0, p.v), fill: `url(#${PAT[i % PAT.length]})`, stroke: '#2B2D42', 'stroke-width': 1.3 }, g);
+    a0 += p.v;
+  });
+  // 空隙或重疊
+  if (!r.ok) {
+    if (r.total < r.tv) {
+      sv('path', { d: sectorPath(C, R * 0.9, r.total, r.tv - r.total), fill: '#fff', stroke: '#C8384F', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, g);
+      const lp = G.pol(C, R * 0.55, r.total + (r.tv - r.total) / 2);
+      if (r.tv - r.total > 30) svText(g, lp[0], -lp[1], '空隙', 'zh');
+    } else {
+      sv('path', { d: sectorPath(C, R + 6, r.tv, r.total - r.tv), fill: 'url(#pOver)', stroke: '#C8384F', 'stroke-width': 1.5 }, g);
+
+    }
+  }
+  // 標籤
+  a0 = 0;
+  r.parts.forEach(p => {
+    if (p.v <= 0) return;
+    const small = p.v < 26;
+    if (p.lab) {
+      const lp = G.pol(C, small ? R + 13 : R * 0.6, a0 + p.v / 2);
+      const t = svText(g, lp[0], -lp[1], p.lab, 'lbl');
+      t.setAttribute('font-size', small ? 12 : 14);
+      t.setAttribute('paint-order', 'stroke'); t.setAttribute('stroke', '#fff'); t.setAttribute('stroke-width', 3);
+    }
+    a0 += p.v;
+  });
+  // 基線及目標線
+  if (Math.abs(r.tv - 180) < 1e-6) {
+    sv('line', { x1: -R - 18, y1: 0, x2: R + 18, y2: 0, stroke: '#2B2D42', 'stroke-width': 3.2 }, g);
+    svText(g, R + 4, 12, r.tlab, 'zh', 'middle');
+  } else {
+    sv('line', { x1: 0, y1: 0, x2: R + 18, y2: 0, stroke: '#2B2D42', 'stroke-width': 3 }, g);
+    const e = G.pol(C, R + 18, r.tv);
+    sv('line', { x1: 0, y1: 0, x2: e[0], y2: -e[1], stroke: '#2B2D42', 'stroke-width': 3, 'stroke-dasharray': '7 4' }, g);
+    const lp = G.pol(C, R + 30, r.tv);
+    const t = svText(g, lp[0], -lp[1] + (Math.abs(norm180(r.tv)) < 12 ? -10 : 0), r.tlab, 'lbl');
+    t.setAttribute('font-size', 13);
+  }
+  sv('circle', { cx: 0, cy: 0, r: 2.5, fill: '#2B2D42' }, g);
+  return svg;
+}
+function drawBar(r) {
+  const W = 260, x0 = 58;
+  const svg = sv('svg', { class: 'fig', viewBox: '0 0 330 96' });
+  const s = W / Math.max(r.total, r.tv);
+  svText(svg, 4, 24, '目標', 'zh', 'start');
+  svText(svg, 4, 64, '拼起來', 'zh', 'start');
+  // 目標
+  sv('rect', { x: x0, y: 12, width: r.tv * s, height: 24, rx: 5, fill: '#fff', stroke: '#2B2D42', 'stroke-width': 2 }, svg);
+  const tt = svText(svg, x0 + r.tv * s / 2, 24, r.tlab, 'lbl'); tt.setAttribute('font-size', 13);
+  // 拼起來
+  let x = x0;
+  r.parts.forEach((p, i) => {
+    if (p.v <= 0) return;
+    sv('rect', { x, y: 52, width: p.v * s, height: 24, fill: `url(#${PAT[i % PAT.length]})`, stroke: '#2B2D42', 'stroke-width': 1.2 }, svg);
+    if (p.lab && p.v * s > 22) {
+      const t = svText(svg, x + p.v * s / 2, 64, p.lab, 'lbl');
+      t.setAttribute('font-size', 12); t.setAttribute('paint-order', 'stroke'); t.setAttribute('stroke', '#fff'); t.setAttribute('stroke-width', 3);
+    }
+    x += p.v * s;
+  });
+  const rep = r.parts.find(p => p.repLab);
+  if (rep) svText(svg, x0, 88, '（' + rep.repLab + '）', 'zh', 'start');
+  if (!r.ok) {
+    if (r.total < r.tv) sv('rect', { x, y: 52, width: (r.tv - r.total) * s, height: 24, fill: '#fff', stroke: '#C8384F', 'stroke-dasharray': '4 3', 'stroke-width': 1.5 }, svg);
+    else sv('rect', { x: x0 + r.tv * s, y: 49, width: (r.total - r.tv) * s, height: 30, fill: 'url(#pOver)', stroke: '#C8384F', 'stroke-width': 1.5 }, svg);
+  }
+  sv('line', { x1: x0 + r.tv * s, y1: 6, x2: x0 + r.tv * s, y2: 84, stroke: '#2B2D42', 'stroke-dasharray': '4 3', 'stroke-width': 1.5 }, svg);
+  return svg;
+}
+/* 多邊形分成三角形 */
+function triEval(b, vars) {
+  const vd = vars.find(v => v.k === b.var), t = vd ? vd.cur : NaN, need = b.n - 2;
+  if (!Number.isFinite(t)) return { ok: false, msg: '　' };
+  if (t === need) return { ok: true, msg: '✓ 剛好分成 ' + need + ' 個三角形！' };
+  return { ok: false, msg: t < need ? '✗ 還有空隙：三角形太少了' : '✗ 太多了：多邊形放不下這麼多個三角形' };
+}
+function drawTriBoard(b, vars) {
+  const n = b.n, R = 72;
+  const vd = vars.find(v => v.k === b.var), t = vd && Number.isFinite(vd.cur) ? Math.max(0, Math.round(vd.cur)) : 0;
+  const svg = sv('svg', { class: 'fig', viewBox: '-100 -92 200 184' });
+  const pts = []; for (let i = 0; i < n; i++) pts.push(G.pol([0, 0], R, 90 + 180 / n + i * 360 / n));
+  const need = n - 2;
+  for (let k = 1; k <= Math.min(t, need); k++) {
+    const a = pts[0], p = pts[k], q = pts[k + 1];
+    sv('path', { d: `M${a[0]},${-a[1]} L${p[0]},${-p[1]} L${q[0]},${-q[1]} Z`, fill: `url(#${PAT[(k - 1) % PAT.length]})`, stroke: '#2B2D42', 'stroke-width': 1.2 }, svg);
+    const c = [(a[0] + p[0] + q[0]) / 3, (a[1] + p[1] + q[1]) / 3];
+    const tx = svText(svg, c[0], -c[1], String(k), 'lbl'); tx.setAttribute('font-weight', 700);
+    tx.setAttribute('paint-order', 'stroke'); tx.setAttribute('stroke', '#fff'); tx.setAttribute('stroke-width', 3);
+  }
+  sv('polygon', { points: pts.map(p => p[0] + ',' + (-p[1])).join(' '), fill: 'none', stroke: '#2B2D42', 'stroke-width': 2.2 }, svg);
+  sv('circle', { cx: pts[0][0], cy: -pts[0][1], r: 3.5, fill: '#FF7F50' }, svg);
+  if (t > need) svText(svg, 0, 84, '多出 ' + (t - need) + ' 個放不下！', 'zh');
+  return svg;
+}
+
+/* =========================================================
+   填充步驟：範本語法
+   {{180°}} 數值（! 開頭 = 最後答案，加雙底線）
+   {{r:理由}} 理由選單　{{t:AC|CA}} 文字　{{p:AB|CD}} 平行線（次序不拘）
+   {{c:是|不是=是}} 選擇
+   [[分子||分母]] 分數
+   ========================================================= */
+let REASONS = [];                       // 由目前工作紙設定
+const normTxt = s => String(s).replace(/[\s∠△]/g, '').replace(/[Ａ-Ｚａ-ｚ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).toUpperCase();
+const normNum = s => {
+  const t = String(s).replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)).replace(/[°度\s]|cm|m/gi, '').replace('．', '.');
+  if (!/^-?\d+(\.\d+)?$/.test(t)) return NaN;
+  return parseFloat(t);
+};
+function parseTok(raw) {
+  if (raw.startsWith('r:')) return { t: 'rsn', ans: raw.slice(2).split('|') };
+  if (raw.startsWith('t:')) return { t: 'txt', ans: raw.slice(2).split('|') };
+  if (raw.startsWith('p:')) return { t: 'par', ans: raw.slice(2).split('|') };
+  if (raw.startsWith('c:')) { const [o, a] = raw.slice(2).split('='); return { t: 'ch', opts: o.split('|'), ans: a }; }
+  const m = /^(!)?(-?\d+(?:\.\d+)?)(°)?$/.exec(raw);
+  if (m) return { t: 'num', ans: +m[2], deg: !!m[3], fin: !!m[1], show: m[2] + (m[3] || '') };
+  return { t: 'raw', s: raw };
+}
+function tokText(tok) {                // 答案的文字形式
+  if (tok.t === 'num') return tok.show;
+  if (tok.t === 'rsn' || tok.t === 'txt') return tok.ans[0];
+  if (tok.t === 'par') return tok.ans[0] + ' // ' + tok.ans[1];
+  if (tok.t === 'ch') return tok.ans;
+  return '';
+}
+function makeBlank(tok) {
+  const wrap = el('span', { class: 'blank' + (tok.fin ? ' fin' : '') });
+  const mk = el('span', { class: 'mk' });
+  let get, set, inputs = [];
+  if (tok.t === 'num' || tok.t === 'txt') {
+    const inp = el('input', { type: 'text', inputmode: tok.t === 'num' ? 'decimal' : 'text', autocomplete: 'off', spellcheck: 'false', class: tok.t === 'txt' ? 'txt' : '', 'aria-label': '空格' });
+    if (tok.t === 'num' && Math.abs(tok.ans) >= 1000) inp.style.width = '5.2em';
+    inputs.push(inp); wrap.append(inp);
+    get = () => inp.value; set = v => { inp.value = v; };
+  } else if (tok.t === 'par') {
+    const a = el('input', { type: 'text', class: 'txt', autocomplete: 'off' }), b = el('input', { type: 'text', class: 'txt', autocomplete: 'off' });
+    inputs.push(a, b); wrap.append(a, el('span', { class: 'up' }, ' // '), b);
+    get = () => [a.value, b.value]; set = v => { a.value = v[0]; b.value = v[1]; };
+  } else if (tok.t === 'rsn') {
+    const s = el('select', { 'aria-label': '選擇理由' }, el('option', { value: '' }, '選擇理由…'), ...REASONS.map(r => el('option', { value: r }, r)));
+    // 若答案不在清單內（保險）
+    for (const a of tok.ans) if (!REASONS.includes(a)) s.append(el('option', { value: a }, a));
+    inputs.push(s); wrap.append(s);
+    get = () => s.value; set = v => { s.value = v; };
+  } else if (tok.t === 'ch') {
+    const g = el('span', { class: 'chs' }); let cur = '';
+    const btns = tok.opts.map(o => el('button', { type: 'button', onclick: () => { cur = o; btns.forEach(b => b.classList.toggle('on', b.textContent === o)); wrap.dispatchEvent(new Event('input', { bubbles: true })); } }, o));
+    g.append(...btns); wrap.append(g); inputs.push(...btns);
+    get = () => cur; set = v => { cur = v; btns.forEach(b => b.classList.toggle('on', b.textContent === v)); };
+  }
+  wrap.append(mk);
+  const check = () => {
+    const v = get();
+    if (tok.t === 'num') return Math.abs(normNum(v) - tok.ans) < 1e-6;
+    if (tok.t === 'txt') { const n = normTxt(v); return tok.ans.some(a => { const A = normTxt(a); return n === A || n === [...A].reverse().join(''); }); }
+    if (tok.t === 'par') {
+      const [p, q] = v.map(normTxt), [A, B] = tok.ans.map(normTxt);
+      const same = (x, y) => x === y || x === [...y].reverse().join('');
+      return (same(p, A) && same(q, B)) || (same(p, B) && same(q, A));
+    }
+    if (tok.t === 'rsn') return tok.ans.includes(v);
+    if (tok.t === 'ch') return v === tok.ans;
+    return true;
+  };
+  const empty = () => { const v = get(); return Array.isArray(v) ? v.every(x => !x) : !v; };
+  return {
+    tok, el: wrap, check, empty,
+    mark(state) { wrap.classList.remove('ok', 'bad'); mk.textContent = ''; if (state === true) { wrap.classList.add('ok'); mk.textContent = '✓'; } else if (state === false) { wrap.classList.add('bad'); mk.textContent = '✗'; } },
+    fill() { set(tok.t === 'par' ? tok.ans : tok.t === 'num' ? tok.show : tok.t === 'ch' ? tok.ans : tok.ans[0]); },
+    clear() { set(tok.t === 'par' ? ['', ''] : ''); },
+    lock(on) { inputs.forEach(i => { i.disabled = on; }); }
+  };
+}
+/* 把一行範本轉成 DOM；mode='edit' 生成輸入格，mode='show' 直接顯示答案 */
+function renderTpl(str, mode, blanks) {
+  const frag = el('span');
+  const pieces = String(str).split(/(\[\[.*?\]\])/);
+  for (const pc of pieces) {
+    const fm = /^\[\[(.*?)\|\|(.*?)\]\]$/.exec(pc);
+    if (fm) {
+      const fr = el('span', { class: 'frac' }, renderTpl(fm[1], mode, blanks), renderTpl(fm[2], mode, blanks));
+      frag.append(fr); continue;
+    }
+    pc.split(/(\{\{.*?\}\})/).forEach(seg => {
+      const m = /^\{\{(.*)\}\}$/.exec(seg);
+      if (!m) { if (seg) frag.append(el('span', { html: fmtMath(seg) })); return; }
+      const tok = parseTok(m[1]);
+      if (tok.t === 'raw') { frag.append(el('span', { html: fmtMath(tok.s) })); return; }
+      if (mode === 'edit') { const b = makeBlank(tok); blanks.push(b); frag.append(b.el); }
+      else {
+        const txt = tokText(tok);
+        frag.append(el('span', { class: (tok.t === 'rsn' ? 'rv' : 'fv') + (tok.fin ? ' fin' : ''), html: tok.t === 'rsn' || tok.t === 'ch' ? esc(txt) : fmt(txt) }));
+      }
+    });
+  }
+  return frag;
+}
+/* 算式文字：中文字用正常字體，其餘用數學字體 */
+function fmtMath(s) {
+  return fmt(s).replace(/([　-鿿＀-￯]+)/g, '<span class="zh">$1</span>');
+}
+/* 一行步驟：字串 = 整行；陣列 = [算式, 理由] */
+function stepLine(line, mode, blanks) {
+  let eq = line, rs = null, ind = 0;
+  if (Array.isArray(line)) [eq, rs] = line;
+  const im = /^(>+)\s?/.exec(eq); if (im) { ind = im[1].length; eq = eq.slice(im[0].length); }
+  const row = el('div', { class: 'sl' + (rs == null ? ' full' : '') });
+  row.append(el('div', { class: 'eq' + (ind ? ' ind' + ind : '') }, renderTpl(eq, mode, blanks)));
+  if (rs != null) {
+    const r = el('div', { class: 'rs' });
+    if (rs) { r.append('（', renderTpl(rs, mode, blanks), '）'); }
+    row.append(r);
+  }
+  return row;
+}
+/* 把範本變成提示用的「等式形式」 */
+function tplSkeleton(line) {
+  let eq = Array.isArray(line) ? line[0] : line, rs = Array.isArray(line) ? line[1] : '';
+  const rep = s => String(s || '').replace(/^>+\s?/, '').replace(/\[\[(.*?)\|\|(.*?)\]\]/g, '($1)/($2)').replace(/\{\{(.*?)\}\}/g, (m, t) => {
+    const k = parseTok(t);
+    if (k.t === 'rsn') return '（理由？）';
+    if (k.t === 'txt' || k.t === 'par') return '＿＿';
+    if (k.t === 'raw') return k.s;
+    return '（ ? ）';
+  });
+  return rep(eq) + (rs ? '　（' + rep(rs) + '）' : '');
+}
+
+/* =========================================================
+   App 狀態：進度、教師模式
+   ========================================================= */
+const App = {
+  teacher: false,
+  cards: [],          // 所有工作紙題目卡（計算完成度）
+  listeners: [],
+  onChange(f) { this.listeners.push(f); },
+  emit() { this.listeners.forEach(f => f()); },
+  isDone(id) { return !!store.get('done:' + id, false); },
+  setDone(id) { store.set('done:' + id, true); this.emit(); }
+};
+
+/* ---------- 共用：提示控制 ---------- */
+function hintController(q, fig, host, steps) {
+  const levels = [];
+  const h1 = q.h || [];
+  levels.push({ t: '想一想', s: h1[0] || '圖中有甚麼已知條件？這題要用上面「重點」框內哪一個性質？' });
+  levels.push({ t: '看圖', s: (h1[1] || '留意圖中加粗、加網紋的角（或線）。') , hl: q.hl || [] });
+  if (q.h3 !== false && steps && steps.length) {
+    const idx = q.h3 ?? steps.findIndex(l => /\{\{/.test(Array.isArray(l) ? l.join('') : l));
+    const line = steps[Math.max(0, idx)];
+    levels.push({ t: '列式', s: h1[2] || ('可以這樣寫：' + tplSkeleton(line)) });
+  } else if (h1[2]) levels.push({ t: '再提示', s: h1[2] });
+  let lv = 0;
+  const box = el('div', { class: 'hintbox hidden' });
+  host.append(box);
+  const btn = el('button', { class: 'btn ghost', type: 'button' }, '💡 提示');
+  const upd = () => { btn.textContent = lv >= levels.length ? '💡 提示（已全部顯示）' : `💡 提示 ${lv + 1}/${levels.length}`; btn.disabled = lv >= levels.length; };
+  btn.addEventListener('click', () => {
+    if (lv >= levels.length) return;
+    const L = levels[lv++];
+    box.classList.remove('hidden');
+    box.append(el('div', { html: '<span class="hl-t">' + L.t + '：</span>' + fmt(L.s) }));
+    if (L.hl && fig) fig.hl(L.hl, true);
+    upd();
+  });
+  upd();
+  return { btn, reset() { lv = 0; box.innerHTML = ''; box.classList.add('hidden'); if (fig) fig.clearHL(); upd(); }, used: () => lv };
+}
+
+/* ---------- 抄寫版（可逐步顯示） ---------- */
+function copyPanel(q, title = '抄寫版：把步驟抄到工作紙上') {
+  const p = el('div', { class: 'panel copy' });
+  const lines = el('div');
+  const head = el('div', { class: 'copy-head' }, el('h5', null, '✏️ ' + title));
+  let rows = [];
+  const render = () => {
+    lines.innerHTML = ''; rows = [];
+    (q.steps || []).forEach(l => { const r = stepLine(l, 'show', []); rows.push(r); lines.append(r); });
+    if (q.copyText) { const r = el('div', { class: 'sl full', html: fmt(q.copyText) }); rows.push(r); lines.append(r); }
+  };
+  render();
+  // 逐步顯示（方便老師投影時控制節奏）
+  let shown = rows.length;
+  const nextB = el('button', { class: 'btn ghost', type: 'button' }, '下一步 ▶');
+  const allB = el('button', { class: 'btn ghost', type: 'button' }, '全部顯示');
+  const resetB = el('button', { class: 'btn ghost', type: 'button' }, '逐步顯示');
+  const apply = () => { rows.forEach((r, i) => r.classList.toggle('hid', i >= shown)); nextB.disabled = shown >= rows.length; };
+  nextB.onclick = () => { shown++; apply(); };
+  allB.onclick = () => { shown = rows.length; apply(); };
+  resetB.onclick = () => { shown = 0; apply(); };
+  head.append(el('span', { class: 't-show' }, resetB, ' ', nextB, ' ', allB));
+  p.append(head, lines);
+  p.stepper = { start() { shown = 0; apply(); }, all() { shown = rows.length; apply(); } };
+  return p;
+}
+
+/* =========================================================
+   題目卡：計算題（試一試 + 寫步驟 + 抄寫版）
+   ========================================================= */
+function cardCalc(q, ctx) {
+  const card = el('div', { class: 'card', id: 'q-' + q.id });
+  const status = el('span', { class: 'status' }, '未完成');
+  card.append(el('div', { class: 'card-head' }, el('span', { class: 'card-tag' + (q.extra ? ' extra' : '') }, q.extra ? '補充 ' + q.no : '工作紙第 ' + q.no + ' 題'), status));
+  if (q.sub) card.append(el('div', { class: 'card-sub', html: fmt(q.sub) }));
+  const grid = el('div', { class: 'qgrid' + (q.fig ? '' : ' nofig') });
+  let fig = null;
+  if (q.fig) { fig = drawFigure(q.fig); grid.append(el('div', { class: 'figbox' }, fig)); }
+  const work = el('div');
+  grid.append(work); card.append(grid);
+
+  // 1. 試一試：輸入猜測值，驗證板即時回應
+  const vars = (q.vars || []).map(v => ({ ...v, cur: NaN }));
+  let boardsWrap = null, varInputs = [];
+  if (vars.length && q.boards && q.boards.length) {
+    const tp = el('div', { class: 'panel try' }, el('h5', null, el('span', { class: 'n' }, '1'), '試一試：輸入你的猜測，看看拼不拼得上'));
+    const vr = el('div', { class: 'varrow' });
+    vars.forEach(v => {
+      const inp = el('input', { type: 'text', inputmode: 'decimal', 'aria-label': v.lab, placeholder: '?' });
+      const bump = d => { const c = Number.isFinite(v.cur) ? v.cur : (v.start ?? 0); v.cur = Math.max(0, c + d); inp.value = v.cur; upd(); };
+      inp.addEventListener('input', () => { v.cur = normNum(inp.value); upd(); });
+      const w = el('span', { class: 'var' }, el('span', { class: 'vl', html: fmt(v.lab) }), el('span', null, '='),
+        el('button', { type: 'button', onclick: () => bump(-10), 'aria-label': '減 10' }, '−10'),
+        el('button', { type: 'button', onclick: () => bump(-1), 'aria-label': '減 1' }, '−1'),
+        inp, el('span', { class: 'u' }, v.unit ?? '°'),
+        el('button', { type: 'button', onclick: () => bump(1), 'aria-label': '加 1' }, '+1'),
+        el('button', { type: 'button', onclick: () => bump(10), 'aria-label': '加 10' }, '+10'));
+      vr.append(w); varInputs.push({ v, inp });
+    });
+    boardsWrap = el('div', { class: 'boards' });
+    const found = el('div', { class: 'found hidden' });
+    tp.append(vr, boardsWrap, found);
+    work.append(tp);
+    var upd = () => {
+      boardsWrap.innerHTML = '';
+      let all = true;
+      for (const b of q.boards) { const bx = drawBoard(b, vars); boardsWrap.append(bx); if (!bx._ok) all = false; }
+      found.classList.toggle('hidden', !all);
+      found.innerHTML = all ? '🎉 找到了！' + vars.map(v => fmt(v.lab) + ' = ' + v.cur + (v.unit ?? '°')).join('，') + '。現在把步驟寫出來 ⬇' : '';
+    };
+    upd();
+  }
+
+  // 2. 寫出步驟
+  const sp = el('div', { class: 'panel steps' }, el('h5', null, el('span', { class: 'n' }, vars.length ? '2' : '1'), '寫出步驟（跟工作紙一樣）'));
+  const blanks = [];
+  (q.steps || []).forEach(l => sp.append(stepLine(l, 'edit', blanks)));
+  const msg = el('div', { class: 'msg' });
+  const checkB = el('button', { class: 'btn pri', type: 'button' }, '檢查答案');
+  const btnrow = el('div', { class: 'btnrow' }, checkB);
+  sp.append(btnrow, msg);
+  work.append(sp);
+  const hints = hintController(q, fig, sp, q.steps);
+  btnrow.append(hints.btn);
+  const copy = copyPanel(q);
+  copy.classList.add('hidden');
+  work.append(copy);
+
+  let tries = 0;
+  const setDone = (fromStudent) => {
+    card.classList.add('done'); status.textContent = '✓ 已完成'; status.classList.add('ok');
+    blanks.forEach(b => { b.fill(); b.mark(true); b.lock(true); });
+    copy.classList.remove('hidden');
+    checkB.disabled = true;
+    if (fromStudent) { msg.className = 'msg ok'; msg.textContent = tries === 1 ? '⭐ 一次過全對！把抄寫版抄到工作紙上吧。' : '✓ 全部正確！把抄寫版抄到工作紙上吧。'; popAt(checkB, '⭐'); }
+  };
+  checkB.addEventListener('click', () => {
+    tries++;
+    let ok = true, emp = 0;
+    blanks.forEach(b => { if (b.empty()) { emp++; ok = false; b.mark(null); return; } const c = b.check(); b.mark(c); if (!c) ok = false; });
+    if (ok) {
+      if (tries === 1) store.set('first:' + q.id, true);
+      App.setDone(q.id); setDone(true);
+    } else {
+      const wrong = blanks.filter(b => !b.empty() && !b.check()).length;
+      msg.className = 'msg bad';
+      msg.textContent = (wrong ? `有 ${wrong} 格不對（打 ✗ 的格），改一改再檢查。` : '') + (emp ? ` 還有 ${emp} 格未填。` : '') + (tries >= 2 && hints.used() === 0 ? ' 需要的話可按「提示」。' : '');
+    }
+  });
+  // 輸入後清除該格的對錯標記
+  sp.addEventListener('input', e => { const b = blanks.find(b => b.el.contains(e.target)); if (b) b.mark(null); });
+
+  const api = {
+    q, el: card, ws: ctx.ws,
+    teacher(on) {
+      if (on) {
+        blanks.forEach(b => { b.fill(); b.mark(true); });
+        varInputs.forEach(({ v, inp }) => { v.cur = v.ans; inp.value = v.ans; });
+        if (upd) upd();
+        copy.classList.remove('hidden');
+      } else if (!App.isDone(q.id)) {
+        blanks.forEach(b => { b.clear(); b.mark(null); });
+        varInputs.forEach(({ v, inp }) => { v.cur = NaN; inp.value = ''; });
+        if (upd) upd();
+        copy.classList.add('hidden');
+      }
+    },
+    audit() { return auditFigure(q); }
+  };
+  if (App.isDone(q.id)) setDone(false);
+  return api;
+}
+
+/* =========================================================
+   題目卡：勾選題（✓／✗、是／否、選擇相等的角）
+   q.mode: 'cx'（每項填 ✓ 或 ✗）| 'yn'（是／否）| 'chk'（勾選正確項）
+   ========================================================= */
+function cardTick(q, ctx) {
+  const card = el('div', { class: 'card', id: 'q-' + q.id });
+  const status = el('span', { class: 'status' }, '未完成');
+  card.append(el('div', { class: 'card-head' }, el('span', { class: 'card-tag' }, '工作紙第 ' + q.no + ' 題'), status));
+  if (q.sub) card.append(el('div', { class: 'card-sub', html: fmt(q.sub) }));
+  const grid = el('div', { class: 'qgrid' + (q.fig ? '' : ' nofig') });
+  let fig = null;
+  if (q.fig) { fig = drawFigure(q.fig); grid.append(el('div', { class: 'figbox' }, fig)); }
+  const work = el('div'); grid.append(work); card.append(grid);
+  const sp = el('div', { class: 'panel steps' }, el('h5', null, el('span', { class: 'n' }, '1'), q.task || '在方格內作答'));
+  if (q.tip) sp.append(el('div', { class: 'hint-s', style: 'font-size:.8rem;color:var(--muted);margin-bottom:.3rem', html: fmt(q.tip) }));
+  const wrap = el('div', { class: q.mode === 'chk' ? 'list-ticks' : 'ticks' });
+  const items = q.items.map(it => {
+    const row = el('span', { class: 'tk' });
+    const mk = el('span', { class: 'mk' });
+    let val = '';
+    const box = el('button', { class: 'box', type: 'button', 'aria-label': it.lab }, '');
+    const setV = v => { val = v; box.textContent = v; };
+    box.addEventListener('click', () => {
+      if (q.mode === 'cx') setV(val === '' ? '✓' : val === '✓' ? '✗' : '');
+      else if (q.mode === 'chk') setV(val ? '' : '✓');
+      else { items.forEach(o => o.set('')); setV('✓'); }
+      row.classList.remove('ok', 'bad'); mk.textContent = '';
+    });
+    if (q.mode === 'cx') row.append(el('span', { class: 'lb', html: fmt(it.lab) }), box, mk);
+    else row.append(box, el('span', { class: 'lb' + (/[一-鿿]/.test(it.lab) ? ' zh' : ''), html: fmt(it.lab) }), mk);
+    wrap.append(row);
+    const want = q.mode === 'cx' ? it.ans : (it.ans ? '✓' : '');
+    return { it, row, mk, set: setV, get: () => val, want, lock(on) { box.disabled = on; } };
+  });
+  sp.append(wrap);
+  const msg = el('div', { class: 'msg' });
+  const checkB = el('button', { class: 'btn pri', type: 'button' }, '檢查答案');
+  const btnrow = el('div', { class: 'btnrow' }, checkB);
+  sp.append(btnrow, msg);
+  work.append(sp);
+  const hints = hintController(q, fig, sp, null);
+  btnrow.append(hints.btn);
+  const copy = el('div', { class: 'panel copy hidden' }, el('h5', null, '✏️ 抄寫版：在工作紙方格內填上'),
+    el('div', { class: 'sl full', html: q.items.map(it => fmt(it.lab) + '　<b>' + (q.mode === 'cx' ? it.ans : it.ans ? '✓' : '□') + '</b>').join(q.mode === 'chk' ? '<br>' : '　　') }));
+  if (q.explain) copy.append(el('div', { class: 'sl full', style: 'font-size:.9rem', html: '<b>原因：</b>' + fmt(q.explain) }));
+  work.append(copy);
+  let tries = 0;
+  const done = (fromStudent) => {
+    card.classList.add('done'); status.textContent = '✓ 已完成'; status.classList.add('ok');
+    items.forEach(o => { o.set(o.want); o.row.classList.add('ok'); o.mk.textContent = '✓'; o.lock(true); });
+    copy.classList.remove('hidden'); checkB.disabled = true;
+    if (fromStudent) { msg.className = 'msg ok'; msg.textContent = tries === 1 ? '⭐ 一次過全對！' : '✓ 全部正確！'; popAt(checkB, '⭐'); }
+  };
+  checkB.addEventListener('click', () => {
+    tries++;
+    let ok = true, emp = 0;
+    items.forEach(o => {
+      o.row.classList.remove('ok', 'bad');
+      if (q.mode === 'cx' && !o.get()) { emp++; ok = false; o.mk.textContent = ''; return; }
+      const c = o.get() === o.want; if (!c) ok = false;
+      o.row.classList.add(c ? 'ok' : 'bad'); o.mk.textContent = c ? '✓' : '✗';
+    });
+    if (q.mode === 'yn' && items.every(o => !o.get())) { emp = 1; ok = false; items.forEach(o => { o.row.classList.remove('bad'); o.mk.textContent = ''; }); }
+    if (ok) { if (tries === 1) store.set('first:' + q.id, true); App.setDone(q.id); done(true); }
+    else { msg.className = 'msg bad'; msg.textContent = emp ? '還有方格未填。' : '有些方格不對，再想一想。'; }
+  });
+  const api = {
+    q, el: card, ws: ctx.ws,
+    teacher(on) {
+      if (on) { items.forEach(o => { o.set(o.want); o.row.classList.add('ok'); o.mk.textContent = '✓'; }); copy.classList.remove('hidden'); }
+      else if (!App.isDone(q.id)) { items.forEach(o => { o.set(''); o.row.classList.remove('ok', 'bad'); o.mk.textContent = ''; }); copy.classList.add('hidden'); }
+    },
+    audit() { return auditFigure(q); }
+  };
+  if (App.isDone(q.id)) done(false);
+  return api;
+}
+
+/* =========================================================
+   題目卡：在圖中點選（標示外角）
+   ========================================================= */
+function cardPick(q, ctx) {
+  const card = el('div', { class: 'card', id: 'q-' + q.id });
+  const status = el('span', { class: 'status' }, '未完成');
+  card.append(el('div', { class: 'card-head' }, el('span', { class: 'card-tag' }, '工作紙第 ' + q.no + ' 題'), status));
+  if (q.sub) card.append(el('div', { class: 'card-sub', html: fmt(q.sub) }));
+  const grid = el('div', { class: 'qgrid' });
+  const fig = drawFigure(q.fig);
+  grid.append(el('div', { class: 'figbox' }, fig));
+  const work = el('div'); grid.append(work); card.append(grid);
+  const sp = el('div', { class: 'panel steps' }, el('h5', null, el('span', { class: 'n' }, '1'), q.task || '在圖中點選'));
+  const msg = el('div', { class: 'msg' });
+  const checkB = el('button', { class: 'btn pri', type: 'button' }, '檢查答案');
+  const btnrow = el('div', { class: 'btnrow' }, checkB);
+  sp.append(el('div', { style: 'font-size:.85rem', html: fmt(q.tip || '點選圖中的角，被選中的角會加上網紋。再按一下可取消。') }), btnrow, msg);
+  work.append(sp);
+  const hints = hintController(q, fig, sp, null);
+  btnrow.append(hints.btn);
+  const copy = el('div', { class: 'panel copy hidden' }, el('h5', null, '✏️ 抄寫版'), el('div', { class: 'sl full', html: fmt(q.copyText || '在工作紙的圖中，用弧線標示網紋所示的角。') }));
+  work.append(copy);
+  fig.addEventListener('pick', e => {
+    const o = e.detail;
+    msg.className = 'msg'; msg.innerHTML = o.sel && o.spec.msg ? fmt(o.spec.msg) : '';
+  });
+  let tries = 0;
+  const done = (fromStudent) => {
+    card.classList.add('done'); status.textContent = '✓ 已完成'; status.classList.add('ok');
+    fig._picks.forEach(p => { p.sel = !!p.spec.ok; p.g.classList.toggle('sel', p.sel); p.g.style.pointerEvents = 'none'; });
+    copy.classList.remove('hidden'); checkB.disabled = true;
+    if (fromStudent) { msg.className = 'msg ok'; msg.textContent = '✓ 正確！'; popAt(checkB, '⭐'); }
+  };
+  checkB.addEventListener('click', () => {
+    tries++;
+    const sel = fig._picks.filter(p => p.sel);
+    const good = fig._picks.filter(p => p.spec.ok);
+    const ok = sel.length > 0 && sel.every(p => p.spec.ok) && (q.all ? sel.length === good.length : true);
+    if (ok) { if (tries === 1) store.set('first:' + q.id, true); App.setDone(q.id); done(true); }
+    else { msg.className = 'msg bad'; msg.innerHTML = sel.length ? fmt((sel.find(p => !p.spec.ok) || {}).spec?.msg || '還未對，再想一想。') : '請先在圖中點選一個角。'; }
+  });
+  const api = {
+    q, el: card, ws: ctx.ws,
+    teacher(on) {
+      if (on) { fig._picks.forEach(p => { p.sel = !!p.spec.ok; p.g.classList.toggle('sel', p.sel); }); copy.classList.remove('hidden'); }
+      else if (!App.isDone(q.id)) { fig._picks.forEach(p => { p.sel = false; p.g.classList.remove('sel'); }); copy.classList.add('hidden'); }
+    },
+    audit() { return auditFigure(q); }
+  };
+  if (App.isDone(q.id)) done(false);
+  return api;
+}
+
+/* =========================================================
+   例題卡／功課答案卡：按「下一步」逐步顯示
+   ========================================================= */
+function cardExample(q, ctx, kind = '例題') {
+  const card = el('div', { class: kind === '例題' ? 'example' : 'card', id: 'q-' + q.id });
+  card.append(el('div', { class: 'card-head' }, el('span', { class: 'card-tag' }, kind === '例題' ? '例題' : '第 ' + q.no + ' 題'), q.warn ? el('span', { class: 'tbadge' }, '⚠ 注意') : null));
+  if (q.sub) card.append(el('div', { class: 'card-sub', html: fmt(q.sub) }));
+  if (q.warn) card.append(el('div', { class: 'hintbox', html: fmt(q.warn) }));
+  const grid = el('div', { class: 'qgrid' + (q.fig ? '' : ' nofig') });
+  let fig = null;
+  if (q.fig) { fig = drawFigure(q.fig); grid.append(el('div', { class: 'figbox' }, fig)); }
+  const work = el('div');
+  const lines = el('div', { class: 'panel copy', style: 'border-style:solid' });
+  const rows = (q.steps || []).map(l => { const r = stepLine(l, 'show', []); lines.append(r); return r; });
+  let shown = kind === '例題' ? 0 : 0;
+  const nextB = el('button', { class: 'btn teal', type: 'button' }, '下一步 ▶');
+  const allB = el('button', { class: 'btn ghost', type: 'button' }, '全部顯示');
+  const resetB = el('button', { class: 'btn ghost', type: 'button' }, '重新開始');
+  const apply = () => { rows.forEach((r, i) => r.classList.toggle('hid', i >= shown)); nextB.disabled = shown >= rows.length; };
+  nextB.onclick = () => { shown++; apply(); };
+  allB.onclick = () => { shown = rows.length; apply(); };
+  resetB.onclick = () => { shown = 0; apply(); };
+  apply();
+  work.append(lines, el('div', { class: 'btnrow' }, nextB, allB, resetB));
+  grid.append(work); card.append(grid);
+  return { q, el: card, ws: ctx.ws, teacher() { }, audit() { return auditFigure(q); } };
+}
+
+/* =========================================================
+   圖形核對（開發用）：量度圖中每個角，與標示的數值比較
+   ========================================================= */
+function evalLab(lab, q) {
+  const s = String(lab).replace('°', '').trim();
+  if (/^\d+(\.\d+)?$/.test(s)) return +s;
+  const m = /^(\d*)([a-z])$/.exec(s);
+  if (m && q.vars) { const v = q.vars.find(v => v.k === m[2]); if (v) return (m[1] ? +m[1] : 1) * v.ans; }
+  if (m && q.ansMap && q.ansMap[m[2]] != null) return (m[1] ? +m[1] : 1) * q.ansMap[m[2]];
+  return null;
+}
+function auditFigure(q) {
+  const out = [];
+  if (!q.fig) return out;
+  for (const a of q.fig.A || []) {
+    const want = a.mk === 'right' ? 90 : a.chk ?? evalLab(a.lab, q);
+    if (want == null) continue;
+    const { d } = angleSpan(q.fig.P, a);
+    const got = Math.abs(d);
+    if (Math.abs(got - want) > 0.6) out.push(`${q.id}: ∠(${a.a}${a.v}${a.b}) 標示 ${a.lab ?? '直角'}=${want}，實際 ${got.toFixed(1)}`);
+  }
+  return out;
+}
+
+/* =========================================================
+   工作紙資料：2.0、2.1、2.2A、2.2B、2.3A、2.3B
+   每題包括：圖形（fig）、試答變數（vars）、驗證板（boards）、
+   步驟範本（steps）、提示（h, hl）
+   ========================================================= */
+'use strict';
+const { pol, inter, tri, ext, lerp } = G;
+
+/* 小工具：多邊形 */
+function polyP(names, pts, P = {}) { names.forEach((n, i) => { P[n] = pts[i]; }); return P; }
+function polyL(names) { return names.map((n, i) => [n, names[(i + 1) % names.length]]); }
+/* 內角（逆時針次序的多邊形） */
+function inAng(names, i, lab, extra = {}) {
+  const n = names.length;
+  return { v: names[i], a: names[(i + 1) % n], b: names[(i - 1 + n) % n], lab, ...extra };
+}
+/* 在頂點 v 加外角：延長 prev→v，外角在延長線與 v→next 之間 */
+function exAng(P, L, prev, v, next, lab, extra = {}, len = 42) {
+  const e = v + '_x';
+  P[e] = ext(P[prev], P[v], len);
+  L.push([v, e]);
+  return { v, a: e, b: next, lab, ...extra };
+}
+/* 正多邊形 */
+function regPts(n, R = 80, rot = 90) { const a = []; for (let i = 0; i < n; i++) a.push(pol([0, 0], R, rot + 180 / n - 180 + i * 360 / n)); return a; }
+
+/* 理由清單（逐份工作紙累積） */
+const R20 = ['直線上的鄰角', '同頂角', '對頂角', '同位角', '內錯角', '同旁內角', '△ 內角和'];
+const R21 = [...R20, '△ 外角'];
+const R22A = [...R21, '已知', '等腰 △ 底角', '等腰 △ 性質', '等角對邊相等'];
+const R22B = [...R22A, '等邊 △ 性質'];
+const R23A = [...R22B, '多邊形內角和'];
+const R23B = [...R23A, '多邊形外角和'];
+
+const X = (k = 'x', ans, lab, unit) => ({ k, ans, lab: lab || k, unit });
+
+/* =================== 2.0 熱身練習 =================== */
+function ws20() {
+  const O = [0, 0];
+  // ---- 第 1 題 ----
+  const q1a = {
+    id: '2.0-1a', no: '1(a)',
+    fig: { P: { A: [-110, 0], O, B: [110, 0], C: pol(O, 100, 32) }, L: ['AB', 'OC'], lp: { C: 'ne' },
+      A: [{ v: 'O', a: 'A', b: 'C', lab: '148°', r: 16, id: 'a148' }, { v: 'O', a: 'C', b: 'B', lab: 'x', r: 28, id: 'ax' }] },
+    vars: [X('x', 32)],
+    boards: [{ title: '148° 和 x 拼起來，是否剛好成一條直線？', parts: ['148', 'x'], target: '180', tl: '直線' }],
+    steps: [['148° + x = {{180°}}', '直線上的鄰角'], ['> x = {{180°}} − 148°', ''], ['> x = {{!32°}}', '']],
+    h: ['AOB 是一條直線。直線上的鄰角加起來是多少度？', '148° 和 x 在直線 AOB 的同一邊，合起來剛好是一條直線。'], hl: ['a148', 'ax']
+  };
+  const q1b = {
+    id: '2.0-1b', no: '1(b)',
+    fig: { P: { A: [-110, 0], O, B: [110, 0], C: pol(O, 100, 141), D: pol(O, 100, 22) }, L: ['AB', 'OC', 'OD'],
+      A: [{ v: 'O', a: 'A', b: 'C', lab: '39°', r: 16, id: 'a39' }, { v: 'O', a: 'C', b: 'D', lab: 'x', r: 24, id: 'ax' }, { v: 'O', a: 'D', b: 'B', lab: '22°', r: 16, id: 'a22' }] },
+    vars: [X('x', 119)],
+    boards: [{ title: '三個角拼起來，是否剛好成一條直線？', parts: ['39', 'x', '22'], target: '180', tl: '直線' }],
+    steps: [['39° + x + 22° = {{180°}}', '{{r:直線上的鄰角}}'], ['> x = {{180°}} − 39° − 22°', ''], ['> x = {{!119°}}', '']],
+    h: ['AOB 是一條直線，三個角都在直線的同一邊。'], hl: ['a39', 'ax', 'a22']
+  };
+  // ---- 第 2 題 ----
+  const q2a = {
+    id: '2.0-2a', no: '2(a)',
+    fig: { P: { O, A: [100, 0], B: pol(O, 95, 50) }, L: ['OA', 'OB'], lp: { O: 'w' },
+      A: [{ v: 'O', a: 'A', b: 'B', lab: 'x', r: 20, id: 'ax' }, { v: 'O', a: 'A', b: 'B', big: true, lab: '310°', r: 11, ld: 34, id: 'a310' }] },
+    vars: [X('x', 50)],
+    boards: [{ title: 'x 和 310° 拼起來，是否剛好轉了一周？', parts: ['x', '310'], target: '360', tl: '一周' }],
+    steps: [['x + 310° = {{360°}}', '同頂角'], ['> x = {{360°}} − {{310°}}', ''], ['> x = {{!50°}}', '']],
+    h: ['x 和 310° 圍着 O 點轉了一整周。一周是多少度？'], hl: ['ax', 'a310']
+  };
+  const q2b = {
+    id: '2.0-2b', no: '2(b)',
+    fig: { P: { O, A: pol(O, 100, 60), B: pol(O, 100, 210), C: pol(O, 95, 330) }, L: ['OA', 'OB', 'OC'], lp: { O: 180 },
+      A: [{ v: 'O', a: 'A', b: 'B', lab: '150°', r: 17, ld: 34, id: 'a150' }, { v: 'O', a: 'B', b: 'C', lab: '120°', r: 17, id: 'a120' }, { v: 'O', a: 'C', b: 'A', lab: 'x', r: 17, id: 'ax' }] },
+    vars: [X('x', 90)],
+    boards: [{ title: '三個角拼起來，是否剛好轉了一周？', parts: ['x', '150', '120'], target: '360', tl: '一周' }],
+    steps: [['x + 150° + 120° = {{360°}}', '{{r:同頂角}}'], ['> x = {{360°}} − 150° − 120°', ''], ['> x = {{!90°}}', '']],
+    h: ['三個角都以 O 為頂點，合起來是一周。'], hl: ['ax', 'a150', 'a120']
+  };
+  // ---- 第 3 題 ----
+  const q3a = {
+    id: '2.0-3a', no: '3(a)',
+    fig: { P: { O, A: pol(O, 100, 147), B: pol(O, 100, -33), C: pol(O, 100, 213), D: pol(O, 100, 33) }, L: ['AB', 'CD'],
+      A: [{ v: 'O', a: 'A', b: 'C', lab: 'x', r: 17, id: 'ax' }, { v: 'O', a: 'D', b: 'B', lab: '66°', r: 17, id: 'a66' }] },
+    vars: [X('x', 66)],
+    boards: [{ title: '把 x 和 66° 疊在一起，是否完全重合？', parts: ['x'], target: '66' }],
+    steps: [['x = {{!66°}}', '對頂角']],
+    h: ['x 和 66° 是兩條直線相交時「相對」的兩個角。'], hl: ['ax', 'a66']
+  };
+  const q3b = {
+    id: '2.0-3b', no: '3(b)',
+    fig: { P: { O, D: pol(O, 100, 22), A: pol(O, 100, 158), B: pol(O, 100, -22), C: pol(O, 100, 202), E: pol(O, 95, 87) }, L: ['AB', 'CD', 'OE'], lp: { O: 180 },
+      A: [{ v: 'O', a: 'A', b: 'E', lab: 'x', r: 17, id: 'ax' }, { v: 'O', a: 'E', b: 'D', lab: '65°', r: 17, id: 'a65' }, { v: 'O', a: 'C', b: 'B', lab: '136°', r: 17, id: 'a136' },
+        { v: 'O', a: 'A', b: 'D', r: 28, id: 'aod', hint: true, mk: 'arc2' }] },
+    vars: [X('x', 71)],
+    boards: [{ title: 'x 和 65° 拼起來（即 ∠AOD），是否和 136° 一樣大？', parts: ['x', '65'], target: '136' }],
+    steps: [['x + 65° = {{136°}}', '{{r:對頂角}}'], ['> x = {{136°}} − 65°', ''], ['> x = {{!71°}}', '']],
+    h: ['x 和 65° 合起來是 ∠AOD。∠AOD 和哪一個角是對頂角？', '雙弧線標示的是 ∠AOD。'], hl: ['aod', 'a136']
+  };
+
+  // ---- 第 4–6 題（平行線） ----
+  const n4 = [0, 0], m4 = pol(n4, 70, 41);
+  const q4a = {
+    id: '2.0-4a', no: '4(a)',
+    fig: { P: { n: n4, m: m4, C: pol(n4, 95, 165), D: pol(n4, 115, -15), A: pol(m4, 125, 165), B: pol(m4, 90, -15), t1: pol(n4, 42, 221), t2: pol(m4, 40, 41) },
+      L: [{ s: 'AB', par: 1, at: 0.82 }, { s: 'CD', par: 1, at: 0.82 }, { s: ['t1', 't2'], id: 'tr' }],
+      A: [{ v: 'm', a: 'B', b: 'n', lab: 'x', r: 15, id: 'ax' }, { v: 'n', a: 'D', b: 't1', lab: '124°', r: 15, id: 'a124' }] },
+    vars: [X('x', 124)],
+    boards: [{ title: '把 x 和 124° 疊在一起，是否一樣大？', parts: ['x'], target: '124' }],
+    steps: [['x = {{!124°}}', '同位角，{{p:AB|CD}}']],
+    h: ['同位角形成一個「F」形狀。', '加粗的是截線。沿着截線和兩條平行線，找出「F」形狀。'], hl: ['ax', 'a124', 'tr']
+  };
+  const A4 = [0, 0], C4 = pol(A4, 95, 330);
+  const q4b = {
+    id: '2.0-4b', no: '4(b)',
+    fig: { P: { A: A4, B: pol(A4, 120, 240), C: C4, e: pol(C4, 62, 330), D: pol(C4, 95, 240), r: pol(C4, 72, 294) },
+      L: [{ s: 'AB', par: 1, at: 0.55 }, { s: 'CD', par: 1, at: 0.6 }, ['A', 'e'], ['C', 'r']], lp: { C: 'ne' },
+      A: [{ v: 'A', a: 'B', b: 'C', lab: 'x', r: 15, id: 'ax' }, { v: 'C', a: 'D', b: 'r', lab: '54°', r: 15, id: 'a54' }, { v: 'C', a: 'r', b: 'e', lab: '36°', r: 21, id: 'a36' }] },
+    vars: [X('x', 90)],
+    boards: [{ title: 'x 和「54° + 36°」是否一樣大？', parts: ['x'], target: { v: 90, lab: '54°+36°' } }],
+    steps: [['x = 54° + 36°', '{{r:同位角}}，{{p:AB|CD}}'], ['> = {{!90°}}', '']],
+    h: ['在 C 點，54° 和 36° 合起來的角，與 x 形成甚麼形狀？', 'AC 延長後就是截線，找出「F」形狀。'], hl: ['ax', 'a54', 'a36']
+  };
+  const p5 = [0, 0], q5 = pol(p5, 112, -67);
+  const q5a = {
+    id: '2.0-5a', no: '5(a)',
+    fig: { P: { p: p5, q: q5, C: [-78, 0], D: [125, 0], E: [q5[0] - 110, q5[1]], F: [q5[0] + 108, q5[1]], t1: pol(p5, 38, 113), t2: pol(q5, 38, -67) },
+      L: [{ s: 'CD', par: 1, at: 0.25 }, { s: 'EF', par: 1, at: 0.62 }, { s: ['t1', 't2'], id: 'tr' }],
+      A: [{ v: 'p', a: 'D', b: 'q', lab: 'x', r: 15, id: 'ax' }, { v: 'q', a: 'E', b: 'p', lab: '67°', r: 15, id: 'a67' }] },
+    vars: [X('x', 67)],
+    boards: [{ title: '把 x 和 67° 疊在一起，是否一樣大？', parts: ['x'], target: '67' }],
+    steps: [['x = {{!67°}}', '內錯角，{{p:CD|EF}}']],
+    h: ['內錯角形成一個「Z」形狀。'], hl: ['ax', 'a67', 'tr']
+  };
+  const F5 = [0, 0], C5 = pol(F5, 135, 112);
+  const q5b = {
+    id: '2.0-5b', no: '5(b)',
+    fig: { P: { F: F5, E: [-160, 0], C: C5, D: [C5[0] + 150, C5[1]], r: pol(F5, 118, 157) },
+      L: [{ s: 'CD', par: 1, at: 0.6 }, { s: 'EF', par: 1, at: 0.45 }, 'CF', ['F', 'r']],
+      A: [{ v: 'C', a: 'D', b: 'F', lab: 'x', r: 15, id: 'ax' }, { v: 'F', a: 'E', b: 'r', lab: '23°', r: 24, id: 'a23' }, { v: 'F', a: 'r', b: 'C', lab: '45°', r: 16, id: 'a45' }] },
+    vars: [X('x', 68)],
+    boards: [{ title: 'x 和「23° + 45°」是否一樣大？', parts: ['x'], target: { v: 68, lab: '23°+45°' } }],
+    steps: [['x = 23° + 45°', '{{r:內錯角}}，{{p:CD|EF}}'], ['> = {{!68°}}', '']],
+    h: ['在 F 點，23° 和 45° 合起來是 ∠CFE。它和 x 形成甚麼形狀？'], hl: ['ax', 'a23', 'a45']
+  };
+  const p6 = [0, 0], q6 = pol(p6, 78, -8);
+  const q6a = {
+    id: '2.0-6a', no: '6(a)',
+    fig: { P: { p: p6, q: q6, P: pol(p6, 55, 70), Q: pol(p6, 72, 250), R: pol(q6, 55, 70), S: pol(q6, 72, 250), t1: pol(p6, 55, 172), t2: pol(q6, 55, -8) },
+      L: [{ s: 'PQ', par: 1, at: 0.8 }, { s: 'RS', par: 1, at: 0.8 }, { s: ['t1', 't2'], id: 'tr' }],
+      A: [{ v: 'p', a: 'P', b: 'q', lab: 'x', r: 14, id: 'ax' }, { v: 'q', a: 'R', b: 'p', lab: '102°', r: 14, id: 'a102' }] },
+    vars: [X('x', 78)],
+    boards: [{ title: 'x 和 102° 拼起來，是否成一條直線（180°）？', parts: ['x', '102'], target: '180', tl: '180°' }],
+    steps: [['x + 102° = {{180°}}', '同旁內角，{{p:PQ|RS}}'], ['> x = {{180°}} − {{102°}}', ''], ['> x = {{!78°}}', '']],
+    h: ['同旁內角形成一個「C」形狀。同旁內角的和是多少？'], hl: ['ax', 'a102', 'tr']
+  };
+  const P6 = [0, 0], R6 = pol(P6, 105, -87), Q6 = inter(P6, 0, R6, 35);
+  const q6b = {
+    id: '2.0-6b', no: '6(b)',
+    fig: { P: { P: P6, Q: Q6, R: R6, S: [R6[0] + 168, R6[1]] }, L: [{ s: 'PQ', par: 1, at: 0.62 }, { s: 'RS', par: 1, at: 0.62 }, 'PR', 'RQ'],
+      A: [{ v: 'P', a: 'Q', b: 'R', lab: '87°', r: 15, id: 'a87' }, { v: 'R', a: 'P', b: 'Q', lab: '58°', r: 20, id: 'a58' }, { v: 'R', a: 'Q', b: 'S', lab: 'x', r: 28, id: 'ax' }] },
+    vars: [X('x', 35)],
+    boards: [{ title: '87°、58° 和 x 拼起來，是否成一條直線？', parts: ['87', '58', 'x'], target: '180', tl: '180°' }],
+    steps: [['87° + 58° + x = {{180°}}', '{{r:同旁內角}}，{{p:PQ|RS}}'], ['> x = {{180°}} − 87° − 58°', ''], ['> x = {{!35°}}', '']],
+    h: ['∠QPR 和 ∠PRS 是一對同旁內角，而 ∠PRS = 58° + x。'], hl: ['a87', 'a58', 'ax']
+  };
+
+  // ---- 第 7–10 題（△ 內角和） ----
+  const B7 = [0, 0], C7 = [175, 0];
+  const t7 = (id, no, P, A, vars, parts, steps, h) => ({ id, no, fig: { P, L: ['AB', 'BC', 'CA'], A }, vars, boards: [{ title: '把三個內角撕下來拼在一起', parts, target: '180', tl: '直線' }], steps, h, hl: A.map(a => a.id) });
+  const q7 = t7('2.0-7', '7', { B: B7, C: C7, A: tri(B7, C7, 52, 34) },
+    [{ v: 'A', a: 'B', b: 'C', lab: '94°', id: 'a1' }, { v: 'B', a: 'C', b: 'A', lab: 'x', id: 'a2' }, { v: 'C', a: 'A', b: 'B', lab: '34°', id: 'a3' }],
+    [X('x', 52)], ['x', '94', '34'],
+    [['x + 94° + 34° = {{180°}}', '{{r:△ 內角和}}'], ['> x = {{180°}} − 94° − 34°', ''], ['> x = {{!52°}}', '']],
+    ['三角形三個內角的和是多少？']);
+  const A8 = [0, 0], B8 = [95, 0];
+  const q8 = t7('2.0-8', '8', { A: A8, B: B8, C: tri(A8, B8, 29, 124) },
+    [{ v: 'A', a: 'B', b: 'C', lab: '29°', id: 'a1', r: 22 }, { v: 'B', a: 'C', b: 'A', lab: '124°', id: 'a2' }, { v: 'C', a: 'A', b: 'B', lab: 'x', id: 'a3', r: 22 }],
+    [X('x', 27)], ['x', '29', '124'],
+    [['x + 29° + 124° = {{180°}}', '{{r:△ 內角和}}'], ['> x = {{180°}} − 29° − 124°', ''], ['> x = {{!27°}}', '']],
+    ['三角形三個內角的和是多少？']);
+  const A9 = [0, 0], B9 = pol(A9, 118, -78);
+  const q9 = t7('2.0-9', '9', { A: A9, B: B9, C: tri(A9, B9, 66, 66) },
+    [{ v: 'A', a: 'B', b: 'C', lab: 'x', id: 'a1' }, { v: 'B', a: 'C', b: 'A', lab: 'x', id: 'a2' }, { v: 'C', a: 'A', b: 'B', lab: '48°', id: 'a3', r: 20 }],
+    [X('x', 66)], ['x', 'x', '48'],
+    [['x + x + 48° = {{180°}}', '{{r:△ 內角和}}'], ['> 2x = {{180°}} − 48°', ''], ['> 2x = {{132°}}', ''], ['> x = {{!66°}}', '']],
+    ['圖中有兩個角都是 x。三個內角加起來是多少？', '', '先寫出 x + x + 48° = ?，再把 x + x 合併為 2x。']);
+  const B10 = [0, 0], C10 = [160, 0];
+  const q10 = t7('2.0-10', '10', { B: B10, C: C10, A: tri(B10, C10, 105, 30) },
+    [{ v: 'A', a: 'B', b: 'C', lab: '3x', id: 'a1', r: 18 }, { v: 'B', a: 'C', b: 'A', lab: '105°', id: 'a2' }, { v: 'C', a: 'A', b: 'B', lab: '2x', id: 'a3', r: 24 }],
+    [X('x', 15)], ['3x', '105', '2x'],
+    [['3x + 105° + 2x = {{180°}}', '{{r:△ 內角和}}'], ['> 5x = {{180°}} − 105°', ''], ['> 5x = {{75°}}', ''], ['> x = {{!15°}}', '']],
+    ['三個內角是 3x、105° 和 2x，加起來是多少？', '', '3x + 2x = 5x。']);
+
+  return {
+    id: '2.0', tab: '2.0 熱身練習', small: '相交線・平行線・△內角和', reasons: R20,
+    goals: ['理解與相交線相關的角的性質。', '理解與平行線相關的角的性質。', '理解三角形的內角和的性質。'],
+    secs: [
+      { key: 's1', num: '①', tab: '① 相交線', title: '與相交線相關的角',
+        notes: [
+          { h: '(a) 直線上的鄰角', p: ['若 AOB 是一條直線，', '則 a + b = 180°。'], memo: '直線上的鄰角' },
+          { h: '(b) 同頂角', p: ['若 a、b 和 c 是同頂角，', '則 a + b + c = 360°。'], memo: '同頂角' },
+          { h: '(c) 對頂角', p: ['若 AB 與 CD 相交於 O，', '則 a = b 及 c = d。'], memo: '對頂角' }],
+        widget: 'lineAngles',
+        groups: [{ no: '1', stem: '下列各題中，AOB 是一條直線。求 x。', qs: [q1a, q1b] },
+          { no: '2', stem: '下列各題中，求 x。', qs: [q2a, q2b] },
+          { no: '3', stem: '下列各題中，直線 AB 與 CD 相交於 O。求 x。', qs: [q3a, q3b] }] },
+      { key: 's2', num: '②', tab: '② 平行線', title: '與平行線相關的角',
+        notes: [
+          { h: '(a) 平行線上的同位角', p: ['若 AB // CD，則 a = b。'], memo: '同位角，AB // CD' },
+          { h: '(b) 平行線上的內錯角', p: ['若 AB // CD，則 a = b。'], memo: '內錯角，AB // CD' },
+          { h: '(c) 平行線上截線的同旁內角', p: ['若 AB // CD，則 a + b = 180°。'], memo: '同旁內角，AB // CD' }],
+        widget: 'parallel',
+        groups: [{ no: '4', stem: '下列各題中，AB // CD。求 x。', qs: [q4a, q4b] },
+          { no: '5', stem: '下列各題中，CD // EF。求 x。', qs: [q5a, q5b] },
+          { no: '6', stem: '下列各題中，PQ // RS。求 x。', qs: [q6a, q6b] }] },
+      { key: 's3', num: '③', tab: '③ △內角和', title: '三角形的內角和',
+        notes: [{ h: '三角形的內角和', p: ['在 △ABC 中，', '∠A + ∠B + ∠C = 180°'], memo: '△ 內角和' }],
+        widget: 'triSum',
+        groups: [{ no: '7–10', stem: '下列各題中，求 x。', qs: [q7, q8, q9, q10] }] }
+    ]
+  };
+}
+
+/* =================== 2.1 三角形的外角 =================== */
+function ws21() {
+  // 第 1 題：判斷外角
+  const P1a = { B: [0, 0], C: [160, 28], A: [30, 110] };
+  Object.assign(P1a, { a2: ext(P1a.B, P1a.A, 32), b2: ext(P1a.C, P1a.B, 36), c2: ext(P1a.B, P1a.C, 38), c3: ext(P1a.A, P1a.C, 34) });
+  const q1a = {
+    id: '2.1-1a', no: '1(a)', type: 'tick', mode: 'cx', task: '在方格內填「✓」或「✗」（按方格切換）',
+    fig: { P: P1a, L: [['b2', 'c2'], ['B', 'a2'], ['A', 'c3']], lp: { C: 'sw', A: 'w' },
+      A: [{ v: 'A', a: 'a2', b: 'C', lab: 'x', r: 13, id: 'ax' }, { v: 'B', a: 'A', b: 'b2', lab: 'y', r: 13, id: 'ay' }, { v: 'C', a: 'c2', b: 'c3', lab: 'z', r: 13, id: 'az' }] },
+    items: [{ lab: 'x', ans: '✓' }, { lab: 'y', ans: '✓' }, { lab: 'z', ans: '✗' }],
+    h: ['外角是由三角形的「一條邊」和「另一條邊的延長線」組成的角。', '逐個角看：它的兩條邊，是三角形的邊，還是延長線？'],
+    explain: 'x、y 都是由三角形的一條邊和另一條邊的延長線組成；z 由兩條延長線組成（它是 ∠ACB 的對頂角），所以不是外角。'
+  };
+  const P1b = { B: [0, 0], A: [80, 95], C: [165, 25] };
+  Object.assign(P1b, { a2: ext(P1b.C, P1b.A, 32), c3: ext(P1b.A, P1b.C, 42), b2: ext(P1b.C, P1b.B, 38), c2: ext(P1b.B, P1b.C, 20) });
+  const q1b = {
+    id: '2.1-1b', no: '1(b)', type: 'tick', mode: 'cx', task: '在方格內填「✓」或「✗」（按方格切換）',
+    fig: { P: P1b, L: [['b2', 'c2'], ['a2', 'c3'], 'AB'], lp: { B: 'n', C: 'ne' },
+      A: [{ v: 'A', a: 'a2', b: 'B', lab: 'x', r: 13, id: 'ax' }, { v: 'B', a: 'b2', b: 'C', sweep: 1, lab: 'y', r: 13, ld: 24, id: 'ay' }, { v: 'C', a: 'B', b: 'c3', lab: 'z', r: 13, id: 'az' }] },
+    items: [{ lab: 'x', ans: '✓' }, { lab: 'y', ans: '✗' }, { lab: 'z', ans: '✓' }],
+    h: ['外角是由三角形的「一條邊」和「另一條邊的延長線」組成的角。', 'y 是由哪兩條線組成的？它有多大？'],
+    explain: 'x、z 都是外角；y 是直線上的角（180°），不是外角。'
+  };
+  const q1c = {
+    id: '2.1-1c', no: '1(c)', type: 'tick', mode: 'cx', task: '在方格內填「✓」或「✗」（按方格切換）',
+    fig: { P: { B: [0, 0], C: [170, 0], A: [78, 105], b2: [-52, 0] }, L: [['b2', 'C'], 'AB', 'AC'],
+      A: [{ v: 'A', a: 'B', b: 'C', big: true, lab: 'x', r: 11, ld: 24, id: 'ax' }, { v: 'B', a: 'b2', b: 'A', lab: 'y', r: 13, id: 'ay' }, { v: 'C', a: 'B', b: 'A', lab: 'z', r: 16, id: 'az' }] },
+    items: [{ lab: 'x', ans: '✗' }, { lab: 'y', ans: '✓' }, { lab: 'z', ans: '✗' }],
+    h: ['外角是由三角形的「一條邊」和「另一條邊的延長線」組成的角。', 'x 是反角；z 在三角形裏面。哪一個才有延長線？'],
+    explain: 'x 是反角，z 是三角形的內角，兩者都不是外角；只有 y 是外角。'
+  };
+  // 第 2 題：標示外角
+  const l2 = [0, 0], r2 = [112, 0], t2 = [56, 90];
+  const q2a = {
+    id: '2.1-2a', no: '2(a)', type: 'pick', task: '在圖中點選要標示的外角',
+    fig: { P: { l: l2, r: r2, t: t2, e: ext(r2, t2, 48) }, L: [['l', 'r'], ['l', 't'], ['r', 'e']],
+      A: [{ v: 'l', a: 'r', b: 't', r: 15 }, { v: 'r', a: 't', b: 'l', r: 15 }],
+      picks: [{ v: 't', a: 'e', b: 'l', r: 26, ok: true }, { v: 't', a: 'l', b: 'r', r: 30, msg: '這是三角形的內角，不是外角。' },
+        { v: 'l', a: 'r', b: 't', r: 32, msg: '這是給定的內對角，不是外角。' }, { v: 'r', a: 't', b: 'l', r: 32, msg: '這是給定的內對角，不是外角。' }] },
+    h: ['兩個給定的內對角在左下和右下，外角應在第三個頂點。', '第三個頂點在哪裏？那裏哪條邊被延長了？'],
+    copyText: '在上方頂點，延長線與左邊那條邊之間，畫一條弧線標示外角。'
+  };
+  const t2b = [95, 112], b2b = [118, -8], l2b = [22, 30];
+  const q2b = {
+    id: '2.1-2b', no: '2(b)', type: 'pick', task: '在圖中點選要標示的外角',
+    fig: { P: { t: t2b, b: b2b, l: l2b, e: ext(t2b, l2b, 50) }, L: [['t', 'e'], ['t', 'b'], ['l', 'b']],
+      A: [{ v: 't', a: 'l', b: 'b', r: 15 }, { v: 'b', a: 't', b: 'l', r: 15 }],
+      picks: [{ v: 'l', a: 'e', b: 'b', r: 26, ok: true }, { v: 'l', a: 'b', b: 't', r: 30, msg: '這是三角形的內角，不是外角。' },
+        { v: 't', a: 'l', b: 'b', r: 32, msg: '這是給定的內對角，不是外角。' }, { v: 'b', a: 't', b: 'l', r: 32, msg: '這是給定的內對角，不是外角。' }] },
+    h: ['兩個給定的內對角在上方和下方，外角應在左邊的頂點。', '左邊頂點那裏，哪條邊被延長了？'],
+    copyText: '在左邊頂點，延長線與下方那條邊之間，畫一條弧線標示外角。'
+  };
+  // 例題
+  const Cx = [0, 0], Dx = [150, 0];
+  const ex21 = {
+    id: '2.1-ex', sub: '例如：圖中，BCD 是一條直線。求 x。',
+    fig: { P: { B: [-45, 0], C: Cx, D: Dx, A: tri(Cx, Dx, 33, 113) }, L: ['BD', 'AC', 'AD'],
+      A: [{ v: 'A', a: 'C', b: 'D', lab: '34°', r: 18 }, { v: 'D', a: 'A', b: 'C', lab: '113°', r: 15 }, { v: 'C', a: 'B', b: 'A', lab: 'x', r: 15 }] },
+    steps: ['在 △ACD 中，', ['x = 34° + 113°', '△ 外角'], ['> = {{!147°}}', '']], ansMap: { x: 147 }
+  };
+  // 第 3–4 題
+  const B3 = [0, 0], C3 = [120, 0];
+  const q3a = {
+    id: '2.1-3a', no: '3(a)',
+    fig: { P: { B: B3, C: C3, D: [195, 0], A: tri(B3, C3, 44, 81) }, L: ['BD', 'AB', 'AC'],
+      A: [{ v: 'B', a: 'C', b: 'A', lab: '44°', r: 18, id: 'a44' }, { v: 'A', a: 'B', b: 'C', lab: '55°', r: 16, id: 'a55' }, { v: 'C', a: 'A', b: 'D', lab: 'x', r: 15, id: 'ax' }] },
+    vars: [X('x', 99)],
+    boards: [{ title: '55° 和 44° 拼起來，是否剛好等於外角 x？', parts: ['55', '44'], target: 'x' }],
+    steps: ['在 △ABC 中，', ['x = 55° + 44°', '{{r:△ 外角}}'], ['> = {{!99°}}', '']],
+    h: ['外角和它的兩個內對角形成一支旗「⚑」的形狀。', '外角 x 的兩個內對角是哪兩個？'], hl: ['ax', 'a44', 'a55']
+  };
+  const A3 = [0, 165], Bb3 = [0, 45];
+  const q3b = {
+    id: '2.1-3b', no: '3(b)',
+    fig: { P: { A: A3, B: Bb3, C: [0, -12], D: tri(A3, Bb3, 32, 48) }, L: ['AC', 'AD', 'BD'],
+      A: [{ v: 'A', a: 'B', b: 'D', lab: '32°', r: 20, id: 'a32' }, { v: 'D', a: 'A', b: 'B', lab: '100°', r: 14, id: 'a100' }, { v: 'B', a: 'D', b: 'C', lab: '2x', r: 14, id: 'ax' }] },
+    vars: [X('x', 66)],
+    boards: [{ title: '100° 和 32° 拼起來，是否剛好等於外角 2x？', parts: ['100', '32'], target: '2x' }],
+    steps: ['在 △ABD 中，', ['2x = 100° + 32°', '{{r:△ 外角}}'], ['> 2x = {{132°}}', ''], ['> x = {{!66°}}', '']],
+    h: ['2x 是 △ABD 的外角。它的兩個內對角是哪兩個？'], hl: ['ax', 'a32', 'a100']
+  };
+  const C4 = [0, 0], D4 = [95, 0];
+  const q4a = {
+    id: '2.1-4a', no: '4(a)',
+    fig: { P: { B: [-50, 0], C: C4, D: D4, A: tri(C4, D4, 105, 45) }, L: ['BD', 'AC', 'AD'],
+      A: [{ v: 'C', a: 'A', b: 'B', lab: '75°', r: 15, id: 'a75' }, { v: 'A', a: 'C', b: 'D', lab: '30°', r: 20, id: 'a30' }, { v: 'D', a: 'A', b: 'C', lab: 'x', r: 17, id: 'ax' }] },
+    vars: [X('x', 45)],
+    boards: [{ title: 'x 和 30° 拼起來，是否剛好等於外角 75°？', parts: ['x', '30'], target: '75' }],
+    steps: ['在 △ACD 中，', ['75° = x + {{30°}}', '{{r:△ 外角}}'], ['> x = {{!45°}}', '']],
+    h: ['75° 是 △ACD 的外角，它的內對角是 x 和哪一個角？'], hl: ['ax', 'a30', 'a75']
+  };
+  const A4b = [0, 40], B4b = [58, -45], C4b = tri(A4b, B4b, 68, 68);
+  const q4b = {
+    id: '2.1-4b', no: '4(b)',
+    fig: { P: { A: A4b, B: B4b, C: C4b, D: ext(B4b, C4b, 55) }, L: ['AB', 'AC', ['B', 'D']], lp: { C: 'e' },
+      A: [{ v: 'A', a: 'C', b: 'B', lab: 'x', r: 14, id: 'ax' }, { v: 'B', a: 'A', b: 'C', lab: 'x', r: 14, id: 'ax2' }, { v: 'C', a: 'D', b: 'A', lab: '136°', r: 14, id: 'a136' }] },
+    vars: [X('x', 68)],
+    boards: [{ title: '兩個 x 拼起來，是否剛好等於外角 136°？', parts: ['x', 'x'], target: '136' }],
+    steps: ['在 △ABC 中，', ['136° = x + x', '{{r:△ 外角}}'], ['> 136° = {{2}}x', ''], ['> x = {{!68°}}', '']],
+    h: ['136° 是 △ABC 的外角，它的兩個內對角都是 x。'], hl: ['ax', 'ax2', 'a136']
+  };
+  const B5 = [0, 0], C5 = [82, 0];
+  const q5 = {
+    id: '2.1-5', no: '5', sub: '圖中，ABCD 和 EBF 都是直線。求 x 和 y。',
+    fig: { P: { A: [-60, 0], B: B5, C: C5, D: [155, 0], E: inter(B5, 50, C5, 78), F: pol(B5, 45, 230) }, L: ['AD', 'EF', 'EC'], lp: { B: 'se' },
+      A: [{ v: 'B', a: 'A', b: 'F', lab: '50°', r: 14, id: 'a50' }, { v: 'B', a: 'E', b: 'C', lab: 'x', r: 16, id: 'ax' }, { v: 'C', a: 'E', b: 'D', lab: '78°', r: 14, id: 'a78' }, { v: 'E', a: 'B', b: 'C', lab: 'y', r: 20, id: 'ay' }] },
+    vars: [X('x', 50), X('y', 28)],
+    boards: [{ title: 'x 和 50° 是否一樣大？', parts: ['x'], target: '50' }, { title: 'x 和 y 拼起來，是否剛好等於外角 78°？', parts: ['x', 'y'], target: '78' }],
+    steps: [['x = {{!50°}}', '{{r:對頂角}}'], '在 △BCE 中，', ['78° = x + y', '{{r:△ 外角}}'], ['> 78° = {{50°}} + y', ''], ['> y = {{!28°}}', '']],
+    h: ['先求 x：x 和 50° 有甚麼關係？', '', '然後在 △BCE 中，78° 是外角，它的內對角是 x 和 y。'], hl: ['ax', 'a50']
+  };
+  const A6 = [0, 0], B6 = [120, 0], D6 = inter(A6, -22, B6, -54);
+  const q6 = {
+    id: '2.1-6', no: '6', sub: '圖中，ABC 和 ADE 都是直線。求 x。',
+    fig: { P: { A: A6, B: B6, C: [178, 0], D: D6, E: pol(D6, 48, -22) }, L: ['AC', 'AE', 'BD'],
+      A: [{ v: 'A', a: 'B', b: 'D', lab: '22°', r: 24, id: 'a22' }, { v: 'B', a: 'D', b: 'C', lab: 'x', r: 14, id: 'ax' }, { v: 'D', a: 'B', b: 'E', lab: '148°', r: 13, id: 'a148' },
+        { v: 'D', a: 'A', b: 'B', r: 18, id: 'adb', hint: true, mk: 'arc2' }] },
+    vars: [X('ADB', 32, '∠ADB'), X('x', 54)],
+    boards: [{ title: '∠ADB 和 148° 拼起來，是否成一條直線？', parts: ['ADB', '148'], target: '180', tl: '直線' },
+      { title: '∠ADB 和 22° 拼起來，是否等於外角 x？', parts: ['ADB', '22'], target: 'x' }],
+    steps: [['∠ADB + 148° = {{180°}}', '{{r:直線上的鄰角}}'], ['> ∠ADB = {{32°}}', ''], '在 △ABD 中，', ['x = ∠ADB + 22°', '{{r:△ 外角}}'], ['> = {{32°}} + 22°', ''], ['> = {{!54°}}', '']],
+    h: ['先求 ∠ADB。ADE 是一條直線。', '雙弧線標示的是 ∠ADB。', '然後 x 是 △ABD 的外角，它的內對角是 ∠ADB 和 22°。'], hl: ['adb', 'a148']
+  };
+  return {
+    id: '2.1', tab: '2.1 △外角', small: '三角形的外角', reasons: R21,
+    goals: ['理解三角形的外角的概念。', '理解三角形的外角的性質。'],
+    secs: [
+      { key: 's1', num: '①', tab: '① 外角的概念', title: '三角形的外角',
+        notes: [{ h: '三角形的外角', p: ['圖中，BCD 是一條直線。', '∠ACD 是 △ABC 的一個外角；', '∠A 和 ∠B 是它的內對角。'], memo: '外角 = 一條邊 + 另一條邊的延長線' }],
+        widget: 'triExt',
+        groups: [{ no: '1', stem: '下列各題中，判斷所給的角是否 △ABC 的外角。若是，則在空格內填「✓」；若不是，則在空格內填「✗」。', qs: [q1a, q1b, q1c] },
+          { no: '2', stem: '在下列各圖中標示兩個給定內對角所對的外角。', qs: [q2a, q2b] }] },
+      { key: 's2', num: '②', tab: '② 外角的性質', title: '三角形外角的性質',
+        notes: [{ h: '三角形外角的性質', p: ['在 △ABC 中，d = a + b。', 'BCD 必為一條直線。'], memo: '△ 外角' }],
+        examples: [ex21], widget: 'triExt2',
+        groups: [{ no: '3–4', stem: '下列各題中，BCD 是一條直線。求 x。（3 – 4）', qs: [q3a, q3b, q4a, q4b] },
+          { no: '5', stem: '', qs: [q5] }, { no: '6', stem: '', qs: [q6] }] }
+    ]
+  };
+}
+
+/* =================== 2.2A 等腰三角形 =================== */
+function ws22A() {
+  const Q0 = [0, 0], R0 = [150, 0];
+  const exI = { id: '2.2A-ex1', sub: '例如：',
+    fig: { P: { Q: Q0, R: R0, P: tri(Q0, R0, 46, 46) }, L: ['QR', 'PQ', 'PR'], T: [{ s: '6 cm', side: 'QP' }, { s: '6 cm', side: 'PR' }],
+      A: [{ v: 'Q', a: 'R', b: 'P', lab: '46°', r: 18 }, { v: 'R', a: 'P', b: 'Q', lab: 'x', r: 18 }] },
+    steps: ['在 △PQR 中，', ['∵ PQ = PR', '已知'], ['∴ ∠R = ∠Q', '等腰 △ 底角'], ['> x = {{!46°}}', '']], ansMap: { x: 46 } };
+  const q1a = { id: '2.2A-1a', no: '1(a)', type: 'tick', mode: 'chk', task: '在適當的方格內填「✓」', tip: '提示：可以點擊圖中的頂點，量度那個角。',
+    fig: { P: { B: [0, 0], C: [72, 0], A: [36, 138] }, L: [{ s: 'AB', tick: 2 }, { s: 'AC', tick: 2 }, 'BC'], measure: ['B', 'C', 'A'] },
+    items: [{ lab: '∠A = ∠B', ans: false }, { lab: '∠A = ∠C', ans: false }, { lab: '∠B = ∠C', ans: true }],
+    h: ['等腰 △ 底角：相等的兩條邊「對面」的兩個角相等。', '哪兩條邊有相同的記號？它們對面的角是哪兩個？'],
+    explain: 'AB = AC，AB 對面是 ∠C，AC 對面是 ∠B，所以 ∠B = ∠C。' };
+  const q1b = { id: '2.2A-1b', no: '1(b)', type: 'tick', mode: 'chk', task: '在適當的方格內填「✓」', tip: '提示：可以點擊圖中的頂點，量度那個角。',
+    fig: { P: { A: [0, 0], C: [150, 0], B: [75, -74] }, L: ['AC', 'AB', 'BC'], T: [{ s: '3 cm', side: 'AB' }, { s: '3 cm', side: 'BC' }], measure: ['A', 'B', 'C'] },
+    items: [{ lab: '∠A = ∠B', ans: false }, { lab: '∠A = ∠C', ans: true }, { lab: '∠B = ∠C', ans: false }],
+    h: ['等腰 △ 底角：相等的兩條邊「對面」的兩個角相等。', 'BA = BC = 3 cm。BA 對面是哪個角？BC 對面呢？'],
+    explain: 'BA = BC，BA 對面是 ∠C，BC 對面是 ∠A，所以 ∠A = ∠C。' };
+  const B2 = [0, 0], C2 = [110, 0];
+  const q2a = { id: '2.2A-2a', no: '2(a)',
+    fig: { P: { B: B2, C: C2, A: tri(B2, C2, 65, 65) }, L: [{ s: 'AB', tick: 2 }, { s: 'AC', tick: 2 }, 'BC'],
+      A: [{ v: 'B', a: 'C', b: 'A', lab: 'x', r: 16, id: 'ax' }, { v: 'C', a: 'A', b: 'B', lab: '65°', r: 16, id: 'a65' }] },
+    vars: [X('x', 65)], boards: [{ title: '把 x 和 65° 疊在一起，是否一樣大？', parts: ['x'], target: '65' }],
+    steps: ['在 △ABC 中，', ['∵ AB = {{t:AC}}', '已知'], ['∴ x = {{!65°}}', '{{r:等腰 △ 底角}}']],
+    h: ['AB 和 AC 有相同的記號，表示它們相等。'], hl: ['ax', 'a65'] };
+  const E2 = [125, 0];
+  const q2b = { id: '2.2A-2b', no: '2(b)',
+    fig: { P: { D: [0, 0], E: E2, F: pol(E2, 125, 64) }, L: ['DE', 'EF', 'DF'], T: [{ s: '4 cm', side: 'DE' }, { s: '4 cm', side: 'EF' }],
+      A: [{ v: 'D', a: 'E', b: 'F', lab: '32°', r: 24, id: 'a32' }, { v: 'F', a: 'D', b: 'E', lab: '2x', r: 18, id: 'ax' }] },
+    vars: [X('x', 16)], boards: [{ title: '把 2x 和 32° 疊在一起，是否一樣大？', parts: ['2x'], target: '32' }],
+    steps: ['在 △DEF 中，', ['∵ ED = {{t:EF}}', '{{r:已知}}'], ['∴ 2x = {{32°}}', '{{r:等腰 △ 底角}}'], ['> x = {{!16°}}', '']],
+    h: ['DE = EF = 4 cm。這兩條邊對面的角是哪兩個？'], hl: ['ax', 'a32'] };
+  const B3 = [0, 0];
+  const q3a = { id: '2.2A-3a', no: '3(a)',
+    fig: { P: { B: B3, C: [130, 0], A: pol(B3, 130, 94) }, L: [{ s: 'BA', tick: 2 }, { s: 'BC', tick: 2 }, 'AC'],
+      A: [{ v: 'B', a: 'C', b: 'A', lab: 'x', r: 15, id: 'ax' }, { v: 'C', a: 'A', b: 'B', lab: '43°', r: 20, id: 'a43' }, { v: 'A', a: 'B', b: 'C', r: 18, id: 'abac', hint: true, mk: 'arc2' }] },
+    vars: [X('BAC', 43, '∠BAC'), X('x', 94)],
+    boards: [{ title: '∠BAC 和 ∠BCA（43°）是否一樣大？', parts: ['BAC'], target: '43' }, { title: '△ABC 三個內角拼起來', parts: ['x', 'BAC', '43'], target: '180', tl: '直線' }],
+    steps: ['在 △ABC 中，', ['∵ BA = {{t:BC}}', '已知'], ['∴ ∠BAC = {{43°}}', '等腰 △ 底角'], ['> x + ∠BAC + {{43°}} = {{180°}}', '△ 內角和'], ['x + {{43°}} + {{43°}} = {{180°}}', ''], ['> x = {{!94°}}', '']],
+    h: ['BA = BC，所以 ∠BAC 等於哪個角？', '雙弧線標示的是 ∠BAC。', '然後用 △ 內角和：x + ∠BAC + 43° = 180°。'], hl: ['abac', 'a43'] };
+  const P3 = [0, 0];
+  const q3b = { id: '2.2A-3b', no: '3(b)',
+    fig: { P: { P: P3, Q: pol(P3, 130, 195), R: pol(P3, 130, 245) }, L: ['PQ', 'PR', 'QR'], T: [{ s: '12 cm', side: 'QP' }, { s: '12 cm', side: 'PR' }],
+      A: [{ v: 'P', a: 'Q', b: 'R', lab: '50°', r: 18, id: 'a50' }, { v: 'Q', a: 'P', b: 'R', lab: 'x', r: 15, id: 'ax' }, { v: 'R', a: 'Q', b: 'P', r: 15, id: 'ar', hint: true }] },
+    vars: [X('x', 65)], boards: [{ title: '△PQR 三個內角拼起來', parts: ['x', 'x', '50'], target: '180', tl: '直線' }],
+    steps: ['在 △PQR 中，', ['∵ PQ = {{t:PR}}', '{{r:已知}}'], ['∴ ∠PRQ = x', '{{r:等腰 △ 底角}}'], ['x + ∠PRQ + 50° = {{180°}}', '{{r:△ 內角和}}'], ['> x + x + 50° = {{180°}}', ''], ['> 2x = {{130°}}', ''], ['> x = {{!65°}}', '']],
+    h: ['PQ = PR，所以 ∠PRQ 也等於 x。', '', '三個內角是 x、x 和 50°。'], hl: ['ax', 'ar'] };
+  const C4 = [120, 0];
+  const q4 = { id: '2.2A-4', no: '4', sub: '圖中，BCD 是一條直線。求 x。',
+    fig: { P: { B: [0, 0], C: C4, D: [205, 0], A: pol(C4, 120, 114) }, L: ['BD', { s: 'CB', tick: 2 }, { s: 'CA', tick: 2 }, 'AB'],
+      A: [{ v: 'B', a: 'C', b: 'A', lab: '57°', r: 18, id: 'a57' }, { v: 'C', a: 'A', b: 'D', lab: 'x', r: 15, id: 'ax' }, { v: 'A', a: 'B', b: 'C', r: 18, id: 'abac', hint: true, mk: 'arc2' }] },
+    vars: [X('BAC', 57, '∠BAC'), X('x', 114)],
+    boards: [{ title: '∠BAC 和 57° 是否一樣大？', parts: ['BAC'], target: '57' }, { title: '57° 和 ∠BAC 拼起來，是否等於外角 x？', parts: ['57', 'BAC'], target: 'x' }],
+    steps: ['在 △ABC 中，', ['∵ CB = {{t:CA}}', '已知'], ['∴ ∠BAC = {{57°}}', '等腰 △ 底角'], ['> x = {{57°}} + ∠BAC', '△ 外角'], ['> = {{57°}} + {{57°}}', ''], ['> = {{!114°}}', '']],
+    h: ['CB = CA，所以 ∠BAC 等於哪個角？', '雙弧線標示的是 ∠BAC。', 'x 是 △ABC 的外角。'], hl: ['abac', 'a57'] };
+  const A5 = [0, 0], B5 = [125, 12], C5 = tri(B5, A5, 44, 68);
+  const q5 = { id: '2.2A-5', no: '5', sub: '圖中，ACE 和 BCD 都是直線。求 x 和 y。',
+    fig: { P: { A: A5, B: B5, C: C5, E: ext(A5, C5, 52), D: ext(B5, C5, 52) }, L: [{ s: 'AB', tick: 2 }, { s: 'BC', tick: 2 }, ['C', 'D'], ['A', 'E']], lp: { C: 'e' },
+      A: [{ v: 'A', a: 'B', b: 'C', lab: 'x', r: 15, id: 'ax' }, { v: 'B', a: 'A', b: 'C', lab: '44°', r: 20, id: 'a44' }, { v: 'C', a: 'D', b: 'E', lab: 'y', r: 12, id: 'ay' }, { v: 'C', a: 'A', b: 'B', r: 14, id: 'abca', hint: true, mk: 'arc2' }] },
+    vars: [X('x', 68), X('y', 68)],
+    boards: [{ title: '△ABC 三個內角（x、x、44°）拼起來', parts: ['x', 'x', '44'], target: '180', tl: '直線' }, { title: 'y 和 ∠BCA（= x）是否一樣大？', parts: ['y'], target: 'x' }],
+    steps: ['在 △ABC 中，', ['∵ BA = {{t:BC}}', '{{r:已知}}'], ['∴ ∠BCA = x', '{{r:等腰 △ 底角}}'], ['x + ∠BCA + 44° = {{180°}}', '{{r:△ 內角和}}'], ['> x + x + 44° = {{180°}}', ''], ['> 2x = {{136°}}', ''], ['> x = {{!68°}}', ''],
+      ['y = ∠BCA', '{{r:對頂角}}'], ['> = x', ''], ['> = {{!68°}}', '']],
+    h: ['BA = BC，所以 ∠BCA 等於哪個角？', '雙弧線標示的是 ∠BCA。', 'y 和 ∠BCA 是對頂角。'], hl: ['abca', 'ax'] };
+
+  // ② 等腰 △ 性質
+  const A6 = [0, 0], M6 = pol(A6, 130, -30);
+  const C6 = inter(A6, -10, M6, 60), B6 = inter(A6, -50, M6, 240);
+  const q6 = { id: '2.2A-6', no: '6', sub: '圖中，BMC 是一條直線。AB = AC 及 AM ⊥ BC。求 x 和 y。',
+    fig: { P: { A: A6, B: B6, C: C6, M: M6 }, L: [{ s: 'AB', tick: 2, tat: 0.72 }, { s: 'AC', tick: 2, tat: 0.72 }, 'BC', 'AM'], lp: { M: -30 },
+      A: [{ v: 'A', a: 'M', b: 'C', lab: '20°', r: 30, ld: 52, id: 'a20' }, { v: 'A', a: 'B', b: 'M', lab: 'x', r: 22, id: 'ax' }, { v: 'M', a: 'A', b: 'C', mk: 'right', id: 'rt' }],
+      T: [{ s: 'y cm', side: 'CM', off: 10 }, { s: '5 cm', side: 'MB', off: 10 }] },
+    vars: [X('x', 20), X('y', 5, 'y', 'cm')],
+    boards: [{ title: 'x 和 20° 是否一樣大？', parts: ['x'], target: '20' }, { title: 'CM（y cm）和 BM 是否一樣長？', parts: ['y'], target: '5', unit: 'cm', tl: 'BM = 5 cm' }],
+    steps: ['在 △ABC 中，', ['∵ AB = {{t:AC}} 及 AM ⊥ {{t:BC}}', '已知'], ['∴ ∠BAM = ∠{{t:CAM}}', '等腰 △ 性質'], ['> x = {{!20°}}', ''], ['CM = {{t:BM}}', '{{r:等腰 △ 性質}}'], ['> y = {{!5}}', '']],
+    h: ['AB = AC 及 AM ⊥ BC，由等腰 △ 性質可知兩件事。', '', '∠BAM = ∠CAM，而且 BM = CM。'], hl: ['ax', 'a20', 'rt'] };
+  const q7 = { id: '2.2A-7', no: '7', sub: '圖中，QMR 是一條直線。PQ = PR 及 QM = RM。求 x 和 y。',
+    fig: { P: { Q: [0, 0], R: [300, 0], M: [150, 0], P: [150, 150 * Math.tan(rad(24))] },
+      L: [{ s: 'PQ', tick: 1 }, { s: 'PR', tick: 1 }, { s: 'QM', tick: 2 }, { s: 'MR', tick: 2 }, 'PM'], lp: { M: 's' },
+      A: [{ v: 'Q', a: 'M', b: 'P', lab: '24°', r: 30, id: 'a24' }, { v: 'M', a: 'Q', b: 'P', lab: 'x', r: 12, ld: 24, id: 'ax' }, { v: 'P', a: 'Q', b: 'M', lab: 'y', r: 16, ld: 30, id: 'ay' }] },
+    vars: [X('x', 90), X('y', 66)],
+    boards: [{ title: '∠PMQ 和 ∠PMR 都是 x，兩個拼起來是否成一條直線？', parts: ['x', 'x'], target: '180', tl: '直線' }, { title: '△PQM 三個內角拼起來', parts: ['x', 'y', '24'], target: '180', tl: '直線' }],
+    steps: ['在 △PQR 中，', ['∵ PQ = PR 及 QM = RM', '{{r:已知}}'], ['∴ PM ⊥ {{t:QR}}', '{{r:等腰 △ 性質}}'], ['即 x = {{!90°}}', ''], '在 △PQM 中，', ['x + y + 24° = {{180°}}', '{{r:△ 內角和}}'], ['> {{90°}} + y + 24° = {{180°}}', ''], ['> y = {{!66°}}', '']],
+    h: ['PQ = PR 及 QM = RM，由等腰 △ 性質，PM 和 QR 有甚麼關係？', '', '然後在 △PQM 中用 △ 內角和。'], hl: ['ax', 'ay', 'a24'] };
+
+  // ③ 等角對邊相等
+  const E0 = [0, 0], F0 = [100, 0];
+  const exIII = { id: '2.2A-ex3', sub: '例如，',
+    fig: { P: { E: E0, F: F0, D: tri(E0, F0, 65, 65) }, L: ['DE', 'EF', 'DF'], T: [{ s: 'x cm', side: 'ED' }, { s: '5 cm', side: 'DF' }],
+      A: [{ v: 'E', a: 'F', b: 'D', lab: '65°', r: 16 }, { v: 'F', a: 'D', b: 'E', lab: '65°', r: 16 }] },
+    steps: ['在 △DEF 中，', ['∵ ∠E = ∠F', '已知'], ['∴ DE = DF', '等角對邊相等'], ['> x = {{!5}}', '']] };
+  const q8a = { id: '2.2A-8a', no: '8(a)',
+    fig: { P: { P: [0, 0], Q: [0, -64], R: [172, -32] }, L: ['PQ', 'PR', 'QR'], T: [{ s: 'x cm', side: 'PR' }, { s: '10 cm', side: 'QR' }],
+      A: [{ v: 'P', a: 'Q', b: 'R', mk: 'arc2', r: 12, id: 'ap' }, { v: 'Q', a: 'R', b: 'P', mk: 'arc2', r: 12, id: 'aq' }] },
+    vars: [X('x', 10, 'x', 'cm')], boards: [{ title: 'PR（x cm）和 QR 是否一樣長？', parts: ['x'], target: '10', unit: 'cm', tl: 'QR = 10 cm' }],
+    steps: ['在 △PQR 中，', ['∵ ∠P = ∠{{t:Q}}', '已知'], ['∴ PR = {{t:QR}}', '{{r:等角對邊相等}}'], ['> x = {{!10}}', '']],
+    h: ['∠P 和 ∠Q 有相同的記號。相等的角「對面」的邊也相等。', '∠P 對面是哪條邊？∠Q 對面呢？'], hl: ['ap', 'aq'] };
+  const Q8 = [0, 0], R8 = pol(Q8, 72, -40);
+  const q8b = { id: '2.2A-8b', no: '8(b)',
+    fig: { P: { Q: Q8, R: R8, P: tri(Q8, R8, 70, 70) }, L: ['PQ', 'QR', 'PR'], T: [{ s: '12 m', side: 'QP' }, { s: 'x m', side: 'PR' }],
+      A: [{ v: 'Q', a: 'R', b: 'P', lab: '70°', r: 14, id: 'aq' }, { v: 'R', a: 'P', b: 'Q', lab: '70°', r: 14, id: 'ar' }] },
+    vars: [X('x', 12, 'x', 'm')], boards: [{ title: 'PR（x m）和 PQ 是否一樣長？', parts: ['x'], target: '12', unit: 'm', tl: 'PQ = 12 m' }],
+    steps: ['在 △PQR 中，', ['∵ ∠Q = ∠{{t:R}}', '{{r:已知}}'], ['∴ PR = {{t:PQ}}', '{{r:等角對邊相等}}'], ['> x = {{!12}}', '']],
+    h: ['∠Q = ∠R = 70°。∠Q 對面是哪條邊？∠R 對面呢？'], hl: ['aq', 'ar'] };
+  const B9 = [0, 0], C9 = [115, 8];
+  const q9 = { id: '2.2A-9', no: '9', sub: '圖中，求 x 和 y。',
+    fig: { P: { B: B9, C: C9, A: tri(B9, C9, 55, 70) }, L: ['AB', 'BC', 'CA'], T: [{ s: 'y cm', side: 'AC' }, { s: '7 cm', side: 'BC' }],
+      A: [{ v: 'A', a: 'B', b: 'C', lab: '55°', r: 16, id: 'a55' }, { v: 'B', a: 'C', b: 'A', lab: 'x', r: 16, id: 'ax' }, { v: 'C', a: 'A', b: 'B', lab: '70°', r: 15, id: 'a70' }] },
+    vars: [X('x', 55), X('y', 7, 'y', 'cm')],
+    boards: [{ title: '△ABC 三個內角拼起來', parts: ['x', '55', '70'], target: '180', tl: '直線' }, { title: 'AC（y cm）和 BC 是否一樣長？', parts: ['y'], target: '7', unit: 'cm', tl: 'BC = 7 cm' }],
+    steps: ['在 △ABC 中，', ['x + {{55°}} + {{70°}} = {{180°}}', '△ 內角和'], ['> x = {{!55°}}', ''], ['∵ ∠A = ∠{{t:B}}', '已知'], ['∴ AC = {{t:BC}}', '{{r:等角對邊相等}}'], ['> y = {{!7}}', '']],
+    h: ['先用 △ 內角和求 x。', '', '求到 x 之後，看看哪兩個角相等，它們對面的邊也相等。'], hl: ['ax', 'a55'] };
+  const C10 = [0, 0], B10 = pol(C10, 110, 40);
+  const q10 = { id: '2.2A-10', no: '10', sub: '圖中，ABC 是一條直線。求 x。',
+    fig: { P: { C: C10, B: B10, A: pol(C10, 165, 40), D: [2 * B10[0], 0] }, L: ['CA', 'BD', 'CD'], T: [{ s: '4 cm', side: 'CB' }, { s: 'x cm', side: 'BD' }],
+      A: [{ v: 'C', a: 'D', b: 'B', lab: '40°', r: 20, id: 'a40' }, { v: 'B', a: 'A', b: 'D', lab: '80°', r: 14, id: 'a80' }, { v: 'D', a: 'B', b: 'C', r: 18, id: 'ad', hint: true, mk: 'arc2' }] },
+    vars: [X('D', 40, '∠D'), X('x', 4, 'x', 'cm')],
+    boards: [{ title: '∠D 和 40° 拼起來，是否等於外角 80°？', parts: ['D', '40'], target: '80' }, { title: 'BD（x cm）和 BC 是否一樣長？', parts: ['x'], target: '4', unit: 'cm', tl: 'BC = 4 cm' }],
+    steps: ['在 △BCD 中，', ['80° = ∠D + 40°', '{{r:△ 外角}}'], ['> ∠D = {{40°}}', ''], ['∵ ∠C = ∠D', ''], ['∴ BD = {{t:BC}}', '{{r:等角對邊相等}}'], ['> x = {{!4}}', '']],
+    h: ['先用 △ 外角求 ∠D。', '雙弧線標示的是 ∠D。', '求到 ∠D 之後，∠C 和 ∠D 有甚麼關係？'], hl: ['ad', 'a80', 'a40'] };
+
+  return {
+    id: '2.2A', tab: '2.2A 等腰△', small: '等腰三角形的性質', reasons: R22A,
+    goals: ['理解與等腰三角形相關的性質（等腰 △ 底角）。', '理解與等腰三角形相關的性質（等腰 △ 性質）。', '理解與等腰三角形相關的性質（等角對邊相等）。'],
+    secs: [
+      { key: 's1', num: '①', tab: '① 等腰 △ 底角', title: '與等腰三角形相關的性質（I）',
+        notes: [{ h: '等腰 △ 底角', p: ['在 △ABC 中，', '若 AB = AC，則 ∠B = ∠C。'], memo: '等腰 △ 底角' }],
+        examples: [exI], widget: 'isosceles',
+        groups: [{ no: '1', stem: '下列各題中，等腰三角形的哪兩個角相等？在適當的方格內填「✓」。', qs: [q1a, q1b] },
+          { no: '2', stem: '下列各題中，求 x。', qs: [q2a, q2b] }, { no: '3', stem: '下列各題中，求 x。', qs: [q3a, q3b] },
+          { no: '4', stem: '', qs: [q4] }, { no: '5', stem: '', qs: [q5] }] },
+      { key: 's2', num: '②', tab: '② 等腰 △ 性質', title: '與等腰三角形相關的性質（II）',
+        notes: [{ h: '等腰 △ 性質（在 △ABC 中，M 是 BC 上的一點）', p: ['若 AB = AC 及 BM = CM，則 AM ⊥ BC 及 x = y。', '若 AB = AC 及 AM ⊥ BC，則 BM = CM 及 x = y。', '若 AB = AC 及 x = y，則 BM = CM 及 AM ⊥ BC。'], memo: '等腰 △ 性質' }],
+        widget: 'isosProp',
+        groups: [{ no: '6', stem: '', qs: [q6] }, { no: '7', stem: '', qs: [q7] }] },
+      { key: 's3', num: '③', tab: '③ 等角對邊相等', title: '與等腰三角形相關的性質（III）',
+        notes: [{ h: '等角對邊相等', p: ['在 △ABC 中，', '若 ∠B = ∠C，則 AB = AC。'], memo: '等角對邊相等' }],
+        examples: [exIII], widget: 'isosEqAng',
+        groups: [{ no: '8', stem: '下列各題中，求 x。', qs: [q8a, q8b] }, { no: '9', stem: '', qs: [q9] }, { no: '10', stem: '', qs: [q10] }] }
+    ]
+  };
+}
+
+/* =================== 2.2B 等邊三角形 =================== */
+function ws22B() {
+  const Y0 = [0, 0], Z0 = [110, 0];
+  const ex = { id: '2.2B-ex', sub: '例如，',
+    fig: { P: { Y: Y0, Z: Z0, X: tri(Y0, Z0, 60, 60) }, L: ['XY', 'YZ', 'XZ'], T: [{ s: '6 cm', side: 'YX' }, { s: '6 cm', side: 'XZ' }, { s: '6 cm', side: 'YZ' }],
+      A: [{ v: 'Z', a: 'X', b: 'Y', lab: 'a', r: 16 }] },
+    steps: ['在 △XYZ 中，', ['∵ XY = YZ = XZ', ''], ['∴ a = {{!60°}}', '']], ansMap: { a: 60 } };
+  const eq3 = (s) => { const B = [0, 0], C = [s, 0]; return { B, C, A: tri(B, C, 60, 60) }; };
+  const yn = [{ lab: '是', ans: true }, { lab: '否', ans: false }], ny = [{ lab: '是', ans: false }, { lab: '否', ans: true }];
+  const q1a = { id: '2.2B-1a', no: '1(a)', type: 'tick', mode: 'yn', task: '這個三角形是否必為等邊三角形？',
+    fig: { P: eq3(100), L: ['AB', 'BC', 'CA'], hide: ['A', 'B', 'C'], T: [{ s: '7 cm', side: 'BA' }, { s: '7 cm', side: 'AC' }, { s: '7 cm', side: 'BC' }] },
+    items: yn, h: ['等邊三角形的三條邊都相等。這個三角形的三條邊呢？'], explain: '三條邊都是 7 cm，所以必為等邊三角形。' };
+  const q1b = { id: '2.2B-1b', no: '1(b)', type: 'tick', mode: 'yn', task: '這個三角形是否必為等邊三角形？',
+    fig: { P: eq3(100), L: ['AB', 'BC', 'CA'], hide: ['A', 'B', 'C'], T: [{ s: '13 cm', side: 'AC' }, { s: '13 cm', side: 'BC' }] },
+    items: ny, h: ['題目給了幾條邊的長度？另一條邊呢？', '圖看起來像等邊，但「看起來」不算數。'], explain: '只知道兩條邊相等，第三條邊未知，所以不一定是等邊三角形。' };
+  const q2a = { id: '2.2B-2a', no: '2(a)', type: 'tick', mode: 'yn', task: '這個三角形是否必為等邊三角形？',
+    fig: { P: eq3(100), L: ['AB', 'BC', 'CA'], hide: ['A', 'B', 'C'], A: [{ v: 'A', a: 'B', b: 'C', lab: '60°', r: 14 }, { v: 'B', a: 'C', b: 'A', lab: '60°', r: 14 }, { v: 'C', a: 'A', b: 'B', lab: '60°', r: 14 }] },
+    items: yn, h: ['等邊三角形的三個角都是 60°。'], explain: '三個角都是 60°，所以必為等邊三角形。' };
+  const p0 = [0, 30];
+  const q2b = { id: '2.2B-2b', no: '2(b)', type: 'tick', mode: 'yn', task: '這個三角形是否必為等邊三角形？',
+    fig: { P: { p: p0, q: pol(p0, 118, 15), r: pol(p0, 118, -45) }, L: [['p', 'q'], ['q', 'r'], ['r', 'p']],
+      A: [{ v: 'p', a: 'q', b: 'r', lab: '60°', r: 16 }, { v: 'r', a: 'p', b: 'q', lab: '60°', r: 16 }] },
+    items: yn, h: ['只知道兩個角是 60°。第三個角可以用甚麼性質求出？'], explain: '第三個角 = 180° − 60° − 60° = 60°（△ 內角和），三個角都是 60°，所以必為等邊三角形。' };
+  const P3a = eq3(100);
+  const q3a = { id: '2.2B-3a', no: '3(a)',
+    fig: { P: P3a, L: [{ s: 'AB', tick: 2 }, { s: 'AC', tick: 2 }, { s: 'BC', tick: 2 }], A: [{ v: 'B', a: 'C', b: 'A', lab: 'x', r: 15, id: 'ax' }] },
+    vars: [X('x', 60)], boards: [{ title: '三個角都一樣大（都是 x），拼起來是否成一條直線？', parts: ['x', 'x', 'x'], target: '180', tl: '直線' }],
+    steps: [['∵ AB = BC = {{t:CA}}', '已知'], ['∴ x = {{!60°}}', '{{r:等邊 △ 性質}}']], h: ['三條邊都有相同的記號，這是甚麼三角形？'], hl: ['ax'] };
+  const A3b = [0, 0], C3b = [115, 0];
+  const q3b = { id: '2.2B-3b', no: '3(b)',
+    fig: { P: { A: A3b, C: C3b, B: tri(C3b, A3b, 60, 60) }, L: ['AB', 'BC', 'CA'], T: [{ s: '10 cm', side: 'AC' }, { s: '10 cm', side: 'AB' }, { s: '10 cm', side: 'BC' }],
+      A: [{ v: 'A', a: 'C', b: 'B', lab: 'x', r: 15, id: 'ax' }] },
+    vars: [X('x', 60)], boards: [{ title: '三個角都一樣大（都是 x），拼起來是否成一條直線？', parts: ['x', 'x', 'x'], target: '180', tl: '直線' }],
+    steps: [['∵ AB = BC = {{t:AC|CA}}', '{{r:已知}}'], ['∴ x = {{!60°}}', '{{r:等邊 △ 性質}}']], h: ['三條邊都是 10 cm，這是甚麼三角形？'], hl: ['ax'] };
+  const q4a = { id: '2.2B-4a', no: '4(a)',
+    fig: { P: eq3(100), L: ['AB', 'BC', 'CA'], T: [{ s: '9 cm', side: 'BA' }, { s: 'x cm', side: 'AC' }, { s: '9 cm', side: 'BC' }],
+      A: [{ v: 'A', a: 'B', b: 'C', mk: 'arc2', r: 11, id: 'a1' }, { v: 'B', a: 'C', b: 'A', mk: 'arc2', r: 11, id: 'a2' }, { v: 'C', a: 'A', b: 'B', mk: 'arc2', r: 11, id: 'a3' }] },
+    vars: [X('x', 9, 'x', 'cm')], boards: [{ title: 'AC（x cm）和 AB 是否一樣長？', parts: ['x'], target: '9', unit: 'cm', tl: 'AB = 9 cm' }],
+    steps: [['∵ ∠A = ∠{{t:B|C}} = ∠{{t:C|B}}', '已知'], '∴ △ABC（{{c:是|不是=是}}）一個等邊三角形。', ['∴ x = {{!9}}', '']],
+    h: ['三個角都有相同的記號，表示三個角都相等。', '三個角都相等的三角形，三條邊有甚麼關係？'], hl: ['a1', 'a2', 'a3'] };
+  const t1 = [0, 0], t2 = [112, 0];
+  const q4b = { id: '2.2B-4b', no: '4(b)',
+    fig: { P: { t1, t2, t3: tri(t2, t1, 60, 60) }, L: [['t1', 't2'], ['t2', 't3'], ['t3', 't1']], T: [{ s: '12 m', side: ['t1', 't3'] }, { s: 'x m', side: ['t2', 't3'] }],
+      A: [{ v: 't1', a: 't2', b: 't3', lab: '60°', r: 15 }, { v: 't2', a: 't3', b: 't1', lab: '60°', r: 15 }, { v: 't3', a: 't1', b: 't2', lab: '60°', r: 15 }] },
+    vars: [X('x', 12, 'x', 'm')], boards: [{ title: '右邊（x m）和左邊（12 m）是否一樣長？', parts: ['x'], target: '12', unit: 'm', tl: '12 m' }],
+    steps: ['∵ 三個角都是 60°', '∴ 這是一個等邊三角形。', ['∴ x = {{!12}}', '']],
+    h: ['三個角都是 60°，這是甚麼三角形？'] };
+  const q5 = { id: '2.2B-5', no: '5', sub: '圖中，BCD 是一條直線。求 x。',
+    fig: { P: { B: [-72, 0], C: [0, 0], D: [110, 0], A: [55, 55 * Math.sqrt(3)] }, L: ['BD', { s: 'AC', tick: 2 }, { s: 'AD', tick: 2 }, { s: 'CD', tick: 2 }],
+      A: [{ v: 'C', a: 'A', b: 'B', lab: 'x', r: 16, id: 'ax' }, { v: 'C', a: 'D', b: 'A', r: 16, id: 'acd', hint: true, mk: 'arc2' }] },
+    vars: [X('ACD', 60, '∠ACD'), X('x', 120)],
+    boards: [{ title: '等邊 △ACD 的三個角（都是 ∠ACD）拼起來', parts: ['ACD', 'ACD', 'ACD'], target: '180', tl: '直線' }, { title: 'x 和 ∠ACD 拼起來，是否成一條直線？', parts: ['x', 'ACD'], target: '180', tl: '直線' }],
+    steps: [['∵ AC = CD = {{t:AD|DA}}', '已知'], ['∴ ∠ACD = {{60°}}', '{{r:等邊 △ 性質}}'], ['> x + ∠ACD = {{180°}}', '{{r:直線上的鄰角}}'], ['x + {{60°}} = {{180°}}', ''], ['> x = {{!120°}}', '']],
+    h: ['△ACD 的三條邊都相等，∠ACD 是多少？', '雙弧線標示的是 ∠ACD。', 'x 和 ∠ACD 在直線 BCD 上。'], hl: ['acd', 'ax'] };
+  const B6 = [0, 0], C6 = [140, 0];
+  const q6 = { id: '2.2B-6', no: '6', sub: '圖中，D 是 AB 上的一點。求 x。',
+    fig: { P: { B: B6, C: C6, A: [70, 70 * Math.sqrt(3)], D: inter(B6, 60, C6, 147) }, L: ['AB', 'BC', 'CA', 'CD'], lp: { D: 20 },
+      T: [{ s: '4 cm', side: 'BA', off: 16 }, { s: '4 cm', side: 'AC' }, { s: '4 cm', side: 'BC' }],
+      A: [{ v: 'C', a: 'B', b: 'D', lab: '33°', r: 26, id: 'a33' }, { v: 'D', a: 'B', b: 'C', lab: 'x', r: 13, id: 'ax' }, { v: 'B', a: 'C', b: 'A', r: 15, id: 'ab', hint: true, mk: 'arc2' }] },
+    vars: [X('ABC', 60, '∠ABC'), X('x', 87)],
+    boards: [{ title: '等邊 △ABC 的三個角（都是 ∠ABC）拼起來', parts: ['ABC', 'ABC', 'ABC'], target: '180', tl: '直線' }, { title: '△BCD 三個內角拼起來', parts: ['x', 'ABC', '33'], target: '180', tl: '直線' }],
+    steps: [['∵ AB = BC = CA', '{{r:已知}}'], ['∴ ∠ABC = {{60°}}', '{{r:等邊 △ 性質}}'], '在 △BCD 中，', ['x + ∠ABC + 33° = {{180°}}', '{{r:△ 內角和}}'], ['> x + {{60°}} + 33° = {{180°}}', ''], ['> x = {{!87°}}', '']],
+    h: ['△ABC 的三條邊都是 4 cm，∠ABC 是多少？', '雙弧線標示的是 ∠ABC。', '然後在 △BCD 中用 △ 內角和。'], hl: ['ab', 'a33', 'ax'] };
+  return {
+    id: '2.2B', tab: '2.2B 等邊△', small: '等邊三角形的性質', reasons: R22B,
+    goals: ['理解等邊三角形的性質。'],
+    secs: [
+      { key: 's1', num: '①', tab: '① 等邊 △ 性質', title: '等邊三角形的性質',
+        notes: [{ h: '等邊 △ 性質', p: ['在 △ABC 中，若 AB = BC = AC，', '則 ∠A = ∠B = ∠C = 60°。'], memo: '等邊 △ 性質' }],
+        examples: [ex],
+        groups: [{ no: '1–2', stem: '下列各題中，判斷所給三角形是否必為等邊三角形。在適當的方格內填「✓」。（1 – 2）', qs: [q1a, q1b, q2a, q2b] },
+          { no: '3', stem: '下列各題中，求 x。', qs: [q3a, q3b] }, { no: '4', stem: '下列各題中，求 x。', qs: [q4a, q4b] },
+          { no: '5', stem: '', qs: [q5] }, { no: '6', stem: '', qs: [q6] }] }
+    ]
+  };
+}
+
+/* =================== 2.3A 多邊形的內角 =================== */
+function ws23A() {
+  const yn = [{ lab: '是', ans: true }, { lab: '否', ans: false }], ny = [{ lab: '是', ans: false }, { lab: '否', ans: true }];
+  const mTip = '提示：可以點擊圖中的頂點，量度那個內角。';
+  const hexN = ['a', 'b', 'c', 'd', 'e', 'f'], hexP = polyP(hexN, regPts(6, 62, 90));
+  const q1a = { id: '2.3A-1a', no: '1(a)', type: 'tick', mode: 'yn', task: '這是一個正多邊形嗎？', tip: mTip,
+    fig: { P: hexP, L: hexN.map((n, i) => ({ s: [n, hexN[(i + 1) % 6]], tick: 1 })), A: hexN.map((n, i) => ({ ...inAng(hexN, i, ''), r: 11 })), measure: hexN },
+    items: yn, h: ['正多邊形要同時符合兩個條件：所有邊相等，及所有角相等。'], explain: '六條邊都相等（同一記號），六個角也都相等（同一記號），所以是正多邊形。' };
+  const rhN = ['a', 'b', 'c', 'd'], rhP = polyP(rhN, [[0, 0], [100, 0], [135, 90], [35, 90]]);
+  const q1b = { id: '2.3A-1b', no: '1(b)', type: 'tick', mode: 'yn', task: '這是一個正多邊形嗎？', tip: mTip,
+    fig: { P: rhP, L: rhN.map((n, i) => ({ s: [n, rhN[(i + 1) % 4]], tick: 1 })), measure: rhN },
+    items: ny, h: ['四條邊都相等。四個角呢？點擊頂點量一量。'], explain: '四條邊都相等，但四個角不全相等（兩個銳角、兩個鈍角），所以不是正多邊形。' };
+  const arN = ['a', 'b', 'c', 'd', 'e', 'f', 'g'], arP = polyP(arN, [[0, -22], [78, -22], [78, -48], [130, 0], [78, 48], [78, 22], [0, 22]]);
+  const q2a = { id: '2.3A-2a', no: '2(a)', type: 'tick', mode: 'yn', task: '這是一個凹多邊形嗎？', tip: mTip,
+    fig: { P: arP, L: polyL(arN), measure: arN }, items: yn,
+    h: ['凹多邊形至少有一個內角大於 180°。', '箭咀「頸部」的兩個頂點，內角有多大？'], explain: '箭咀「頸部」的兩個內角都是 270°，大於 180°，所以是凹多邊形。' };
+  const stN = [], stPts = [];
+  for (let i = 0; i < 10; i++) { stN.push('s' + i); stPts.push(pol([0, 0], i % 2 ? 29 : 75, 90 + i * 36)); }
+  const q2b = { id: '2.3A-2b', no: '2(b)', type: 'tick', mode: 'yn', task: '這是一個凹多邊形嗎？', tip: mTip,
+    fig: { P: polyP(stN, stPts), L: polyL(stN), measure: stN }, items: yn,
+    h: ['凹多邊形至少有一個內角大於 180°。', '星形向內凹的頂點，內角有多大？'], explain: '星形向內凹的五個頂點，內角都大於 180°，所以是凹多邊形。' };
+  const tzN = ['a', 'b', 'c', 'd'], tzP = polyP(tzN, [[0, 0], [82, 0], [105, 85], [-22, 85]]);
+  const q3a = { id: '2.3A-3a', no: '3(a)', type: 'tick', mode: 'yn', task: '這是一個凸多邊形嗎？', tip: mTip,
+    fig: { P: tzP, L: polyL(tzN), measure: tzN }, items: yn, h: ['凸多邊形的所有內角都小於 180°。'], explain: '四個內角都小於 180°，所以是凸多邊形。' };
+  const u = 34, crN = [], crPts = [[u, -u], [u, -3 * u], [2 * u, -3 * u], [2 * u, -u], [3 * u, -u], [3 * u, 0], [2 * u, 0], [2 * u, 2 * u], [u, 2 * u], [u, 0], [0, 0], [0, -u]];
+  crPts.forEach((p, i) => crN.push('k' + i));
+  const q3b = { id: '2.3A-3b', no: '3(b)', type: 'tick', mode: 'yn', task: '這是一個凸多邊形嗎？', tip: mTip,
+    fig: { P: polyP(crN, crPts), L: polyL(crN), measure: crN }, items: ny,
+    h: ['凸多邊形的所有內角都小於 180°。', '十字形向內凹的四個頂點，內角有多大？'], explain: '十字形有四個內角是 270°，大於 180°，所以不是凸多邊形（它是凹多邊形）。' };
+
+  // ② 內角和
+  const q4a = { id: '2.3A-4a', no: '4(a)', sub: '(a) 六邊形',
+    vars: [{ k: 't', lab: '三角形數目', ans: 4, unit: '個' }], boards: [{ kind: 'tri', n: 6, var: 't', title: '從一個頂點（●）畫對角線，六邊形可以分成多少個三角形？' }],
+    steps: ['該多邊形的內角和', ['= [({{6}}) − 2] × 180°', '多邊形內角和'], ['= ({{4}}) × 180°', ''], ['= {{!720°}}', '']],
+    h: ['n 邊形的內角和是 (n − 2) × 180°。六邊形的 n 是多少？'] };
+  const q4b = { id: '2.3A-4b', no: '4(b)', sub: '(b) 八邊形',
+    vars: [{ k: 't', lab: '三角形數目', ans: 6, unit: '個' }], boards: [{ kind: 'tri', n: 8, var: 't', title: '從一個頂點（●）畫對角線，八邊形可以分成多少個三角形？' }],
+    steps: ['該多邊形的內角和', ['= [({{8}}) − 2] × 180°', '{{r:多邊形內角和}}'], ['= {{6}} × 180°', ''], ['= {{!1080°}}', '']],
+    h: ['八邊形的 n 是多少？代入 (n − 2) × 180°。'] };
+  const qdN = ['a', 'b', 'c', 'd'];   // 左下、右下、右上、左上
+  const qa = [0, 0], qb = [175, 0], qd = pol(qa, 100, 85), qc = inter(qd, 15, qb, 130);
+  const q5a = { id: '2.3A-5a', no: '5(a)',
+    fig: { P: polyP(qdN, [qa, qb, qc, qd]), L: polyL(qdN), A: [inAng(qdN, 0, '85°', { id: 'a1' }), inAng(qdN, 1, '50°', { id: 'a2', r: 20 }), inAng(qdN, 2, '115°', { id: 'a3' }), inAng(qdN, 3, 'x', { id: 'ax' })] },
+    vars: [X('x', 110)], boards: [{ title: '四個內角拼起來，是否剛好一周？', parts: ['x', '85', '50', '115'], target: '360', tl: '四邊形內角和' }],
+    steps: ['該多邊形的邊數 = {{4}}', ['x + 85° + 50° + 115° = [({{4}}) − 2] × 180°', '{{r:多邊形內角和}}'], ['> x + {{250°}} = {{360°}}', ''], ['> x = {{!110°}}', '']],
+    h: ['先數一數邊數，再用 (n − 2) × 180°。'] };
+  const pN = ['a', 'b', 'c', 'd', 'e'], pP = polyP(pN, G.poly([100, 110, 90, 110, 130], 0, 105));
+  const q5b = { id: '2.3A-5b', no: '5(b)',
+    fig: { P: pP, L: polyL(pN), A: [inAng(pN, 0, '100°'), inAng(pN, 1, '110°'), inAng(pN, 2, '', { mk: 'right' }), inAng(pN, 3, 'x', { id: 'ax' }), inAng(pN, 4, '130°')] },
+    vars: [X('x', 110)], boards: [{ title: '五個內角加起來，是否等於五邊形的內角和？', parts: ['x', '130', '100', '110', '90'], target: '540', tl: '五邊形內角和' }],
+    steps: [['x + 130° + 100° + 110° + 90° = ({{5}} − 2) × 180°', '{{r:多邊形內角和}}'], ['> x + {{430°}} = {{540°}}', ''], ['> x = {{!110°}}', '']],
+    h: ['這是一個五邊形。直角記號表示 90°。'] };
+  const q6N = ['A', 'B', 'C', 'D'], q6P = polyP(q6N, G.poly([68, 96, 90, 106], -40, [115, 95, 90, 90]));
+  q6P.E = ext(q6P.C, q6P.B, 62); q6P.F = ext(q6P.A, q6P.B, 62);
+  const q6 = { id: '2.3A-6', no: '6', sub: '圖中，CBE 和 ABF 都是直線。求 x。',
+    fig: { P: q6P, L: [...polyL(q6N), ['B', 'E'], ['B', 'F']], lp: { B: 'e' },
+      A: [inAng(q6N, 0, 'x', { id: 'ax' }), inAng(q6N, 3, '106°', { id: 'a106' }), inAng(q6N, 2, '', { mk: 'right', id: 'rt' }), { v: 'B', a: 'E', b: 'F', lab: '96°', r: 13, id: 'a96' },
+        inAng(q6N, 1, '', { hint: true, id: 'abc', mk: 'arc2', r: 15 })] },
+    vars: [X('ABC', 96, '∠ABC'), X('x', 68)],
+    boards: [{ title: '∠ABC 和 96° 是否一樣大？', parts: ['ABC'], target: '96' }, { title: '四邊形 ABCD 的四個內角拼起來', parts: ['x', 'ABC', '90', '106'], target: '360', tl: '四邊形內角和' }],
+    steps: [['∠ABC = {{96°}}', '對頂角'], ['> x + ∠ABC + 90° + 106° = [({{4}}) − 2] × 180°', '{{r:多邊形內角和}}'], ['x + {{96°}} + 90° + 106° = {{360°}}', ''], ['> x + {{292°}} = {{360°}}', ''], ['> x = {{!68°}}', '']],
+    h: ['先求 ∠ABC：它和 96° 有甚麼關係？', '雙弧線標示的是 ∠ABC。', '然後用四邊形的內角和。'], hl: ['abc', 'a96'] };
+  const hN = ['A', 'B', 'C', 'D', 'E', 'F'], hP = polyP(hN, G.polyFit([108, 150, 90, 142, 80, 150], 200, 88));
+  const q7 = { id: '2.3A-7', no: '7', sub: '求圖中的 x。',
+    fig: { P: hP, L: polyL(hN), A: [inAng(hN, 0, '108°'), inAng(hN, 1, '150°'), inAng(hN, 2, '', { mk: 'right' }), inAng(hN, 3, '142°'), inAng(hN, 4, 'x', { id: 'ax' }),
+      { v: 'F', a: 'A', b: 'E', big: true, lab: '210°', r: 12, ld: 30, id: 'a210' }, inAng(hN, 5, '', { hint: true, id: 'afe', mk: 'arc2', r: 15 })] },
+    vars: [X('AFE', 150, '∠AFE'), X('x', 80)],
+    boards: [{ title: '∠AFE 和 210° 拼起來，是否剛好一周？', parts: ['AFE', '210'], target: '360', tl: '一周' }, { title: '六個內角加起來，是否等於六邊形的內角和？', parts: ['x', 'AFE', '108', '150', '90', '142'], target: '720', tl: '六邊形內角和' }],
+    steps: [['∠AFE + 210° = {{360°}}', '{{r:同頂角}}'], ['> ∠AFE = {{150°}}', ''], ['x + ∠AFE + 108° + 150° + 90° + 142° = ({{6}} − 2) × 180°', '{{r:多邊形內角和}}'], ['> x + {{640°}} = {{720°}}', ''], ['> x = {{!80°}}', '']],
+    h: ['210° 是 F 點的反角，不是內角。先求內角 ∠AFE（反角 AFE = ?）。', '雙弧線標示的是內角 ∠AFE。', '然後用六邊形的內角和。'], hl: ['afe', 'a210'] };
+
+  // ③ 正多邊形的內角
+  const ex3 = { id: '2.3A-ex3', sub: '例如：對於一個正六邊形，',
+    steps: ['內角和', ['= (6 − 2) × 180°', '多邊形內角和'], '每個內角的大小', ['= [[(6 − 2) × 180°||6]]', ''], ['= {{!120°}}', '']] };
+  const q8a = { id: '2.3A-8a', no: '8(a)', sub: '(a) 求該五邊形的內角和。',
+    vars: [{ k: 't', lab: '三角形數目', ans: 3, unit: '個' }], boards: [{ kind: 'tri', n: 5, var: 't', title: '五邊形可以分成多少個三角形？' }],
+    steps: ['該五邊形的內角和', ['= [({{5}}) − 2] × 180°', '{{r:多邊形內角和}}'], ['= {{!540°}}', '']], h: ['五邊形的 n 是多少？'] };
+  const pentN = ['a', 'b', 'c', 'd', 'e'], pentP = polyP(pentN, regPts(5, 62, 90));
+  const q8b = { id: '2.3A-8b', no: '8(b)', sub: '(b) 求該五邊形的每個內角的大小。',
+    fig: { P: pentP, L: pentN.map((n, i) => ({ s: [n, pentN[(i + 1) % 5]], tick: 1 })), A: pentN.map((n, i) => ({ ...inAng(pentN, i, '?'), r: 12 })) },
+    vars: [X('a', 108, '每個內角')], boards: [{ title: '5 個相等的內角加起來，是否等於內角和 540°？', parts: [{ rep: 5, of: 'a' }], target: '540', tl: '內角和 540°' }],
+    steps: ['該五邊形每個內角的大小', ['= [[{{540°}}||{{5}}]]', ''], ['= {{!108°}}', '']],
+    h: ['正五邊形有 5 個相等的內角，它們的和是 540°。'] };
+  const q9 = { id: '2.3A-9', no: '9', sub: '求正十二邊形的每個內角的大小。',
+    vars: [{ k: 't', lab: '三角形數目', ans: 10, unit: '個' }, X('a', 150, '每個內角')],
+    boards: [{ kind: 'tri', n: 12, var: 't', title: '十二邊形可以分成多少個三角形？' }, { title: '12 個相等的內角加起來，是否等於內角和？', parts: [{ rep: 12, of: 'a' }], target: '1800', tl: '十二邊形內角和' }],
+    steps: ['該多邊形的內角和', ['= ({{12}} − 2) × 180°', '{{r:多邊形內角和}}'], ['= {{1800°}}', ''], '該多邊形每個內角的大小', ['= [[{{1800°}}||{{12}}]]', ''], ['= {{!150°}}', '']],
+    h: ['先求十二邊形的內角和，再平均分給 12 個相等的內角。'] };
+  return {
+    id: '2.3A', tab: '2.3A 多邊形內角', small: '內角和・正多邊形', reasons: R23A,
+    goals: ['認識正多邊形、凹多邊形和凸多邊形的概念。', '理解多邊形的內角和的公式。', '解與正多邊形內角相關的問題。'],
+    secs: [
+      { key: 's1', num: '①', tab: '① 正、凹、凸多邊形', title: '正多邊形、凹多邊形、凸多邊形',
+        notes: [{ h: '(a) 正多邊形', p: ['正多邊形是<u>所有邊的長度相等</u>及<u>所有角的大小相等</u>的多邊形。'] },
+          { h: '(b) 凹多邊形', p: ['凹多邊形是<u>至少有一個內角大於 180°</u> 的多邊形。'] },
+          { h: '(c) 凸多邊形', p: ['凸多邊形是<u>所有內角都小於 180°</u> 的多邊形。'] }],
+        widget: 'polyDrag',
+        groups: [{ no: '1', stem: '下列何者是一個正多邊形？在適當的方格內填「✓」。', qs: [q1a, q1b] },
+          { no: '2', stem: '下列何者是一個凹多邊形？在適當的方格內填「✓」。', qs: [q2a, q2b] },
+          { no: '3', stem: '下列何者是一個凸多邊形？在適當的方格內填「✓」。', qs: [q3a, q3b] }] },
+      { key: 's2', num: '②', tab: '② 多邊形內角和', title: '多邊形的內角和',
+        notes: [{ h: '多邊形的內角和', p: ['一個 n 邊形的內角和是 (n – 2) × 180°。', '例如：一個七邊形的內角和', '= (7 – 2) × 180°', '= 900°'], memo: '多邊形內角和' }],
+        widget: 'polyInt',
+        groups: [{ no: '4', stem: '求下列各多邊形的內角和。', qs: [q4a, q4b] }, { no: '5', stem: '下列各題中，求未知量。', qs: [q5a, q5b] },
+          { no: '6', stem: '', qs: [q6] }, { no: '7', stem: '', qs: [q7] }] },
+      { key: 's3', num: '③', tab: '③ 正多邊形內角', title: '正多邊形的內角',
+        notes: [{ h: '考慮一個正 n 邊形', p: ['(i) 內角和 = (n – 2) × 180°（多邊形內角和）', '(ii) 每個內角的大小 = [[(n – 2) × 180°||n]]', '一個正 n 邊形有 n 個相等的內角。'] }],
+        examples: [ex3], widget: 'polyIntReg',
+        groups: [{ no: '8', stem: '考慮一個正五邊形。', qs: [q8a, q8b] }, { no: '9', stem: '', qs: [q9] }] }
+    ]
+  };
+}
+
+/* =================== 2.3B 多邊形的外角 =================== */
+function ws23B() {
+  // 例題：外角和
+  const exN = ['D', 'A', 'B', 'C'], exP = polyP(exN, G.poly([110, 74, 88, 88], 0, 110)), exL = polyL(exN);
+  const exA = [exAng(exP, exL, 'B', 'A', 'D', 'x'), exAng(exP, exL, 'A', 'D', 'C', '70°'), exAng(exP, exL, 'D', 'C', 'B', '92°'), exAng(exP, exL, 'C', 'B', 'A', '92°')];
+  const ex1 = { id: '2.3B-ex1', sub: '例如：',
+    fig: { P: exP, L: exL, A: exA }, ansMap: { x: 106 },
+    steps: [['x + 70° + 92° + 92° = 360°', '多邊形外角和'], ['> x + 254° = 360°', ''], ['> x = {{!106°}}', '']] };
+  // 第 1 題
+  const P1a = { B: [0, 0], C: [112, 0], D: [96, 74], A: [-18, 44] };
+  Object.assign(P1a, { a2: ext(P1a.B, P1a.A, 36), b2: ext(P1a.C, P1a.B, 42), d2: ext(P1a.A, P1a.D, 46) });
+  const q1a = { id: '2.3B-1a', no: '1(a)', type: 'tick', mode: 'cx', task: '在方格內填「✓」或「✗」（按方格切換）',
+    fig: { P: P1a, L: [['B', 'a2'], ['b2', 'C'], ['A', 'd2'], 'CD'], lp: { A: 'w', B: 's', C: 'nw' },
+      A: [{ v: 'A', a: 'a2', b: 'D', lab: 'p', r: 13 }, { v: 'B', a: 'A', b: 'b2', lab: 'q', r: 13 }, { v: 'C', a: 'B', b: 'D', big: true, lab: 'r', r: 11, ld: 22 }, { v: 'D', a: 'd2', b: 'C', lab: 's', r: 13 }] },
+    items: [{ lab: 'p', ans: '✓' }, { lab: 'q', ans: '✓' }, { lab: 'r', ans: '✗' }, { lab: 's', ans: '✓' }],
+    h: ['外角由多邊形的「一條邊」和「相鄰一條邊的延長線」組成。', '外角 + 內角 = 180°。r 是甚麼角？'], explain: 'p、q、s 都是由一條邊和相鄰邊的延長線組成的外角；r 是反角，不是外角。' };
+  const P1b = { A: [55, 100], E: [150, 92], D: [165, 20], C: [48, 0], B: [0, 45] };
+  Object.assign(P1b, { a2: ext(P1b.E, P1b.A, 46), e2: ext(P1b.A, P1b.E, 36), b1: ext(P1b.A, P1b.B, 40), b2: ext(P1b.C, P1b.B, 40) });
+  const q1b = { id: '2.3B-1b', no: '1(b)', type: 'tick', mode: 'cx', task: '在方格內填「✓」或「✗」（按方格切換）',
+    fig: { P: P1b, L: [['a2', 'e2'], ['A', 'b1'], ['C', 'b2'], 'CD', 'DE'], lp: { B: 'e', A: 'n' },
+      A: [{ v: 'A', a: 'a2', b: 'B', lab: 'p', r: 13 }, { v: 'B', a: 'b1', b: 'b2', lab: 'q', r: 13 }, { v: 'D', a: 'E', b: 'C', lab: 'r', r: 13 }, { v: 'E', a: 'e2', b: 'D', lab: 's', r: 13 }] },
+    items: [{ lab: 'p', ans: '✓' }, { lab: 'q', ans: '✗' }, { lab: 'r', ans: '✗' }, { lab: 's', ans: '✓' }],
+    h: ['外角由多邊形的「一條邊」和「相鄰一條邊的延長線」組成。', 'q 由兩條延長線組成；r 在多邊形裏面。'], explain: 'p、s 是外角；q 由兩條延長線組成（是內角的對頂角），r 是內角，兩者都不是外角。' };
+  // 第 2 題
+  const q2a = { id: '2.3B-2a', no: '2(a)', sub: '(a) 正方形',
+    vars: [X('S', 360, '外角和')], boards: [{ title: '正方形的 4 個外角（每個 90°）拼起來，是否等於你寫的外角和？', parts: [{ rep: 4, of: '90' }], target: 'S', tl: '外角和' }],
+    steps: [['正方形的外角和 = {{!360°}}', '{{r:多邊形外角和}}']], h: ['凸多邊形的外角和是多少？與邊數有關嗎？'] };
+  const q2b = { id: '2.3B-2b', no: '2(b)', sub: '(b) 十邊形',
+    vars: [X('S', 360, '外角和')], boards: [{ title: '正十邊形的 10 個外角（每個 36°）拼起來，是否等於你寫的外角和？', parts: [{ rep: 10, of: '36' }], target: 'S', tl: '外角和' }],
+    steps: [['十邊形的外角和 = {{!360°}}', '{{r:多邊形外角和}}']], h: ['凸多邊形的外角和永遠是同一個數。'] };
+  // 第 3 題
+  const n3a = ['A', 'B', 'C', 'D'], P3a = polyP(n3a, G.poly([70, 82, 80, 128], -62, 112)), L3a = polyL(n3a);
+  const A3a = [exAng(P3a, L3a, 'A', 'D', 'C', 'x', { id: 'ax' }), exAng(P3a, L3a, 'D', 'C', 'B', '100°'), exAng(P3a, L3a, 'C', 'B', 'A', '98°'), exAng(P3a, L3a, 'B', 'A', 'D', '110°')];
+  const q3a = { id: '2.3B-3a', no: '3(a)', fig: { P: P3a, L: L3a, A: A3a },
+    vars: [X('x', 52)], boards: [{ title: '四個外角拼起來，是否剛好一周？', parts: ['x', '110', '98', '100'], target: '360', tl: '一周' }],
+    steps: [['x + 110° + 98° + 100° = {{360°}}', '{{r:多邊形外角和}}'], ['> x + 308° = {{360°}}', ''], ['> x = {{!52°}}', '']],
+    h: ['四個角都是外角。凸多邊形的外角和是多少？'] };
+  const n3b = ['A', 'B', 'C', 'D', 'E'], P3b = polyP(n3b, G.poly([140, 90, 140, 75, 95], -100, 95)), L3b = polyL(n3b);
+  const A3b = [exAng(P3b, L3b, 'A', 'E', 'D', '85°'), exAng(P3b, L3b, 'E', 'D', 'C', '105°'), exAng(P3b, L3b, 'D', 'C', 'B', '40°', { r: 22 }), exAng(P3b, L3b, 'C', 'B', 'A', '', { mk: 'right' }), exAng(P3b, L3b, 'B', 'A', 'E', 'x', { r: 22, id: 'ax' })];
+  const q3b = { id: '2.3B-3b', no: '3(b)', fig: { P: P3b, L: L3b, A: A3b },
+    vars: [X('x', 40)], boards: [{ title: '五個外角拼起來，是否剛好一周？', parts: ['x', '85', '105', '40', '90'], target: '360', tl: '一周' }],
+    steps: [['x + 85° + 105° + 40° + 90° = {{360°}}', '{{r:多邊形外角和}}'], ['> x + {{320°}} = {{360°}}', ''], ['> x = {{!40°}}', '']],
+    h: ['B 點的直角記號表示外角是 90°。'] };
+  // 第 4 題
+  const n4 = ['A', 'B', 'C', 'D', 'E'], P4 = polyP(n4, G.polyFit([106, 110, 96, 80, 148], -90, 100)), L4 = polyL(n4);
+  const A4 = [exAng(P4, L4, 'E', 'A', 'B', '74°'), exAng(P4, L4, 'A', 'B', 'C', '70°'), exAng(P4, L4, 'B', 'C', 'D', 'x', { id: 'ax' }), exAng(P4, L4, 'C', 'D', 'E', '100°'), exAng(P4, L4, 'D', 'E', 'A', '32°', { r: 22 }),
+    inAng(n4, 2, 'y', { id: 'ay', r: 13 })];
+  P4.c3 = ext(P4.D, P4.C, 34); L4.push(['C', 'c3']);
+  const q4 = { id: '2.3B-4', no: '4', sub: '求圖中的 x 和 y。', fig: { P: P4, L: L4, A: A4 },
+    vars: [X('x', 84), X('y', 96)],
+    boards: [{ title: '五個外角拼起來，是否剛好一周？', parts: ['x', '70', '74', '32', '100'], target: '360', tl: '一周' }, { title: 'x 和 y 拼起來，是否成一條直線？', parts: ['x', 'y'], target: '180', tl: '直線' }],
+    steps: [['x + 70° + 74° + 32° + 100° = {{360°}}', '{{r:多邊形外角和}}'], ['> x + {{276°}} = {{360°}}', ''], ['> x = {{!84°}}', ''], ['x + y = {{180°}}', '{{r:直線上的鄰角}}'], ['> {{84°}} + y = {{180°}}', ''], ['> y = {{!96°}}', '']],
+    h: ['先用多邊形外角和求 x。', '', '然後 x 和 y 在同一條直線上。'], hl: ['ax', 'ay'] };
+  // ② 正多邊形的外角
+  const ex2 = { id: '2.3B-ex2', sub: '例如：對於正六邊形，',
+    steps: ['外角和', ['= 360°', '多邊形外角和'], '每個外角的大小', ['= [[360°||6]]', ''], ['= {{!60°}}', '']] };
+  const q5a = { id: '2.3B-5a', no: '5(a)', sub: '(a) 寫出該五邊形的外角和。',
+    steps: [['該五邊形的外角和 = {{!360°}}', '多邊形外角和']], h: ['凸多邊形的外角和是多少？'] };
+  const pN = ['a', 'b', 'c', 'd', 'e'], pP = polyP(pN, regPts(5, 60, 90)), pL = polyL(pN);
+  const pA = [exAng(pP, pL, 'a', 'b', 'c', '?', { r: 14 }, 40)];
+  const q5b = { id: '2.3B-5b', no: '5(b)', sub: '(b) 求該五邊形的每個外角的大小。', fig: { P: pP, L: pL, A: pA, hide: pN },
+    vars: [X('e', 72, '每個外角')], boards: [{ title: '5 個相等的外角拼起來，是否剛好一周？', parts: [{ rep: 5, of: 'e' }], target: '360', tl: '一周' }],
+    steps: ['該正五邊形的每個外角的大小', ['= [[{{360°}}||{{5}}]]', ''], ['= {{!72°}}', '']],
+    h: ['正五邊形有 5 個相等的外角，合起來是 360°。'] };
+  const q6 = { id: '2.3B-6', no: '6', sub: '求正十五邊形的每個外角的大小。',
+    vars: [X('e', 24, '每個外角')], boards: [{ title: '15 個相等的外角拼起來，是否剛好一周？', parts: [{ rep: 15, of: 'e' }], target: '360', tl: '一周' }],
+    steps: ['正十五邊形的每個外角的大小', ['= [[{{360°}}||{{15}}]]', ''], ['= {{!24°}}', '']],
+    h: ['正十五邊形有 15 個相等的外角。'] };
+  return {
+    id: '2.3B', tab: '2.3B 多邊形外角', small: '外角和・正多邊形', reasons: R23B,
+    goals: ['理解凸多邊形的外角和的公式。', '解與正多邊形的外角相關的問題。'],
+    secs: [
+      { key: 's1', num: '①', tab: '① 外角和', title: '凸多邊形的外角和',
+        notes: [{ h: '(a) 外角與內角', p: ['對於每個頂點，', '外角 + 內角 = 180°'] }, { h: '(b) 凸多邊形的外角和是 360°。', p: [], memo: '多邊形外角和' }],
+        examples: [ex1], widget: 'polyExt',
+        groups: [{ no: '1', stem: '下列各題中，判斷所給的角是否外角。若是，則在空格內填「✓」；若不是，則在空格內填「✗」。', qs: [q1a, q1b] },
+          { no: '2', stem: '下列各題中，寫出所給多邊形的外角和。', qs: [q2a, q2b] },
+          { no: '3', stem: '下列各題中，求未知量。', qs: [q3a, q3b] }, { no: '4', stem: '', qs: [q4] }] },
+      { key: 's2', num: '②', tab: '② 正多邊形外角', title: '正多邊形的外角',
+        notes: [{ h: '考慮一個正 n 邊形', p: ['(i) 外角和 = 360°（多邊形外角和）', '(ii) 每個外角的大小 = [[360°||n]]', '一個正 n 邊形有 n 個相等的外角。'] }],
+        examples: [ex2], widget: 'polyExtReg',
+        groups: [{ no: '5', stem: '考慮一個正五邊形。', qs: [q5a, q5b] }, { no: '6', stem: '', qs: [q6] }] }
+    ]
+  };
+}
+
+/* =================== 功課（只在教師模式顯示） =================== */
+function homework() {
+  // EX2.1
+  const B3 = [0, 0], D3 = [135, 0];
+  const f3 = { P: { A: [-50, 0], B: B3, D: D3, E: [185, 0], C: tri(B3, D3, 68, 49) }, L: ['AE', 'BC', 'CD'],
+    A: [{ v: 'B', a: 'A', b: 'C', lab: '112°', r: 13 }, { v: 'B', a: 'C', b: 'D', lab: 'x', r: 17 }, { v: 'C', a: 'B', b: 'D', lab: '63°', r: 16 }, { v: 'D', a: 'C', b: 'E', lab: 'y', r: 13 }] };
+  const P9 = [0, 0], R9 = pol(P9, 115, 14), Q9 = inter(P9, -35, R9, 292);
+  const f9 = { P: { P: P9, R: R9, Q: Q9, T: pol(R9, 40, 14), S: pol(R9, 38, 112), U: pol(Q9, 38, -35) }, L: ['PT', 'PU', 'QS'], lp: { R: 'nw', Q: 'sw' },
+    A: [{ v: 'P', a: 'Q', b: 'R', lab: 'x', r: 22 }, { v: 'R', a: 'S', b: 'T', lab: '98°', r: 13 }, { v: 'Q', a: 'R', b: 'U', lab: '3x', r: 13 }] };
+  const steps9 = [['∠PRQ = 98°', '對頂角'], '在 △PQR 中，', ['3x = x + ∠PRQ', '△ 外角'], ['> 3x = x + 98°', ''], ['> 2x = 98°', ''], ['> x = {{!49°}}', '']];
+  const B11 = [0, 0], C11 = [125, 0], D11 = [175, 0];
+  const f11 = { P: { B: B11, C: C11, D: D11, A: inter(B11, 34, C11, 109), E: inter(C11, -71, D11, 250) }, L: ['BD', 'AE', 'AB', 'DE'], lp: { C: 'sw' },
+    A: [{ v: 'A', a: 'B', b: 'C', lab: '75°', r: 14 }, { v: 'B', a: 'C', b: 'A', lab: '34°', r: 24 }, { v: 'D', a: 'C', b: 'E', lab: 'x', r: 12 }, { v: 'E', a: 'C', b: 'D', lab: '39°', r: 13 }] };
+  // EX2.2
+  const B22 = [115, 0];
+  const f22 = { P: { A: [0, 0], B: B22, C: pol(B22, 115, 294) }, L: ['AB', 'BC', 'CA'], T: [{ s: '5 cm', side: 'AB' }, { s: '5 cm', side: 'BC' }],
+    A: [{ v: 'A', a: 'B', b: 'C', lab: '33°', r: 26 }, { v: 'B', a: 'A', b: 'C', lab: 'x', r: 15 }] };
+  const C25 = [0, 0], B25 = [130, 0];
+  const f25 = { P: { C: C25, B: B25, A: tri(C25, B25, 58, 58) }, L: ['AB', 'BC', 'CA'], T: [{ s: 'x m', side: 'CA' }, { s: '8 m', side: 'AB' }],
+    A: [{ v: 'A', a: 'C', b: 'B', lab: '64°', r: 15 }, { v: 'C', a: 'B', b: 'A', lab: '58°', r: 16 }] };
+  const C27 = [0, 0], B27 = pol(C27, 110, 20);
+  const f27 = { P: { C: C27, B: B27, A: pol(C27, 160, 20), D: inter(C27, -45, B27, 250) }, L: ['CA', { s: 'CB', tick: 2 }, { s: 'BD', tick: 2 }, 'CD'],
+    A: [{ v: 'B', a: 'A', b: 'D', lab: '130°', r: 13 }, { v: 'C', a: 'B', b: 'D', lab: 'x', r: 18 }] };
+  const f210 = { P: { A: [150 - 60 * Math.tan(rad(65)), 0], B: [150, 60], C: [150, 0], D: [150, -60] },
+    L: [{ s: 'AB', tick: 1 }, { s: 'AD', tick: 1 }, 'AC', { s: 'BC', tick: 2 }, { s: 'CD', tick: 2 }], lp: { C: 'e' },
+    A: [{ v: 'A', a: 'C', b: 'B', lab: 'y', r: 24 }, { v: 'C', a: 'A', b: 'B', lab: 'x', r: 12 }, { v: 'D', a: 'A', b: 'C', lab: '65°', r: 16 }] };
+  const B216 = [0, 0];
+  const f216 = { P: { D: [-100, 0], B: B216, E: [100, 0], A: pol(B216, 110, 135), C: pol(B216, 110, 75) }, L: ['DE', { s: 'AB', tick: 2 }, { s: 'BC', tick: 2 }, { s: 'CA', tick: 2 }],
+    A: [{ v: 'B', a: 'D', b: 'A', lab: '45°', r: 18 }, { v: 'B', a: 'C', b: 'E', lab: 'x', r: 16 }] };
+  // EX2.3
+  const n2 = ['A', 'B', 'C', 'D'], P2 = polyP(n2, G.poly([90, 90, 72, 108], -42, 105));
+  const f32 = { P: P2, L: polyL(n2), A: [inAng(n2, 0, '', { mk: 'right' }), inAng(n2, 1, 'x'), inAng(n2, 2, '72°'), inAng(n2, 3, '108°')] };
+  const n5 = ['A', 'B', 'C', 'D', 'E'], P5 = polyP(n5, G.polyFit([110, 140, 70, 110, 110], -105, 95));
+  const f35 = { P: P5, L: polyL(n5), A: [inAng(n5, 0, '110°'), inAng(n5, 1, '140°'), inAng(n5, 2, '70°', { r: 20 }), inAng(n5, 3, 'x'), inAng(n5, 4, 'x')] };
+  const n8 = ['B', 'C', 'D', 'E', 'A'], P8 = polyP(n8, G.poly([102, 95, 143, 66, 134], -105, 95)), L8 = polyL(n8);
+  const f38 = { P: P8, L: L8, A: [inAng(n8, 0, '102°'), inAng(n8, 1, '95°'), inAng(n8, 2, '143°'), inAng(n8, 4, '134°'), exAng(P8, L8, 'A', 'E', 'D', 'x')] };
+  const n11 = ['B', 'C', 'D', 'A'], P11 = polyP(n11, G.poly([97, 63, 104, 96], 240, 120)), L11 = polyL(n11);
+  const f311 = { P: P11, L: L11, A: [exAng(P11, L11, 'B', 'C', 'D', '117°'), exAng(P11, L11, 'C', 'D', 'A', '76°'), exAng(P11, L11, 'D', 'A', 'B', 'x'), exAng(P11, L11, 'A', 'B', 'C', '83°')] };
+  const n14 = ['A', 'B', 'C', 'D', 'E', 'F'], P14 = polyP(n14, G.polyFit([112, 94, 112, 141, 132, 129], -80, 85)), L14 = polyL(n14);
+  const f314 = { P: P14, L: L14, A: [exAng(P14, L14, 'F', 'A', 'B', 'x'), exAng(P14, L14, 'A', 'B', 'C', '86°'), exAng(P14, L14, 'B', 'C', 'D', 'x'), exAng(P14, L14, 'C', 'D', 'E', '39°', { r: 22 }), exAng(P14, L14, 'D', 'E', 'F', '48°'), exAng(P14, L14, 'E', 'F', 'A', '51°')] };
+  const n17 = ['A', 'B', 'C', 'D', 'E', 'F'], P17 = polyP(n17, G.polyFit([116, 101, 116, 131, 127, 129], 210, 85)), L17 = polyL(n17);
+  P17.b1 = ext(P17.A, P17.B, 40); P17.b2 = ext(P17.C, P17.B, 40); L17.push(['B', 'b1'], ['B', 'b2']);
+  const f317 = { P: P17, L: L17, A: [exAng(P17, L17, 'F', 'A', 'B', 'x'), { v: 'B', a: 'b1', b: 'b2', lab: '101°', r: 13 }, exAng(P17, L17, 'B', 'C', 'D', 'x'), exAng(P17, L17, 'C', 'D', 'E', '49°'), exAng(P17, L17, 'D', 'E', 'F', '53°'), exAng(P17, L17, 'E', 'F', 'A', '51°')] };
+  return [
+    { id: 'EX2.1', tab: 'EX2.1', title: '家課：EX2.1 (3, 6, 9, 11)', qs: [
+      { id: 'hw21-3', no: '3', sub: '圖中，ACD 是一條直線。求 x。', fig: f3, ansMap: { x: 68, y: 131 },
+        warn: '題目寫「ACD 是一條直線」，但圖中的直線是 ABDE，圖中亦有 y。以下按圖作答。',
+        steps: [['x + 112° = 180°', '直線上的鄰角'], ['> x = {{!68°}}', ''], '在 △BCD 中，', ['y = 63° + x', '△ 外角'], ['> = 63° + 68°', ''], ['> = {{!131°}}', '']] },
+      { id: 'hw21-6', no: '6', sub: '圖中，ABDE 是一條直線，求未知量。', fig: f9, ansMap: { x: 49 },
+        warn: '這題的圖與第 9 題相同，與題目文字不符（題目文字似乎屬於第 3 題的圖）。以下按圖作答，答案與第 9 題相同。', steps: steps9 },
+      { id: 'hw21-9', no: '9', sub: '圖中，PQU、PRT 和 QRS 都是直線。（原題沒有寫「求 x」）', fig: f9, ansMap: { x: 49 }, steps: steps9 },
+      { id: 'hw21-11', no: '11', sub: '圖中，AE 與 BD 相交於 C，求未知量。', fig: f11, ansMap: { x: 70 },
+        steps: ['在 △ABC 中，', ['∠ACB + 75° + 34° = 180°', '△ 內角和'], ['> ∠ACB = 71°', ''], ['∠DCE = ∠ACB', '對頂角'], ['> = 71°', ''], '在 △CDE 中，', ['x + 71° + 39° = 180°', '△ 內角和'], ['> x = {{!70°}}', '']] }] },
+    { id: 'EX2.2', tab: 'EX2.2', title: '家課：EX2.2 (2, 5, 7, 10, 16)', qs: [
+      { id: 'hw22-2', no: '2', sub: '求 x。', fig: f22, ansMap: { x: 114 },
+        steps: ['在 △ABC 中，', ['∵ BA = BC', '已知'], ['∴ ∠BCA = 33°', '等腰 △ 底角'], ['x + 33° + 33° = 180°', '△ 內角和'], ['> x = {{!114°}}', '']] },
+      { id: 'hw22-5', no: '5', sub: '求 x。', fig: f25,
+        steps: ['在 △ABC 中，', ['∠B + 64° + 58° = 180°', '△ 內角和'], ['> ∠B = 58°', ''], ['∵ ∠B = ∠C', ''], ['∴ AC = AB', '等角對邊相等'], ['> x = {{!8}}', '']] },
+      { id: 'hw22-7', no: '7', sub: 'ABC 是一條直線。求 x。', fig: f27, ansMap: { x: 65 },
+        steps: ['在 △BCD 中，', ['∵ BC = BD', '已知'], ['∴ ∠BDC = x', '等腰 △ 底角'], ['130° = x + ∠BDC', '△ 外角'], ['> 130° = x + x', ''], ['> 2x = 130°', ''], ['> x = {{!65°}}', '']] },
+      { id: 'hw22-10', no: '10', sub: '圖中，BCD 是一條直線，求未知量。', fig: f210, ansMap: { x: 90, y: 25 },
+        steps: ['在 △ABD 中，', ['∵ AB = AD 及 BC = DC', '已知'], ['∴ AC ⊥ BD', '等腰 △ 性質'], ['即 x = {{!90°}}', ''], '在 △ACD 中，', ['∠CAD + 90° + 65° = 180°', '△ 內角和'], ['> ∠CAD = 25°', ''], ['y = ∠CAD', '等腰 △ 性質'], ['> = {{!25°}}', '']] },
+      { id: 'hw22-16', no: '16', sub: '圖中，DBE 是一條直線，求未知量。', fig: f216, ansMap: { x: 75 },
+        steps: [['∵ AB = BC = CA', '已知'], ['∴ ∠ABC = 60°', '等邊 △ 性質'], ['45° + ∠ABC + x = 180°', '直線上的鄰角'], ['> 45° + 60° + x = 180°', ''], ['> x = {{!75°}}', '']] }] },
+    { id: 'EX2.3', tab: 'EX2.3', title: '家課：EX2.3 (2, 5, 8, 11, 14, 17, 20)', qs: [
+      { id: 'hw23-2', no: '2', sub: '求 x。', fig: f32, ansMap: { x: 90 },
+        steps: [['x + 90° + 108° + 72° = (4 − 2) × 180°', '多邊形內角和'], ['> x + 270° = 360°', ''], ['> x = {{!90°}}', '']] },
+      { id: 'hw23-5', no: '5', sub: '求 x。', fig: f35, ansMap: { x: 110 },
+        steps: [['x + x + 110° + 140° + 70° = (5 − 2) × 180°', '多邊形內角和'], ['> 2x + 320° = 540°', ''], ['> 2x = 220°', ''], ['> x = {{!110°}}', '']] },
+      { id: 'hw23-8', no: '8', sub: '求 x。', fig: f38, ansMap: { x: 114 },
+        steps: [['∠AED + 102° + 134° + 95° + 143° = (5 − 2) × 180°', '多邊形內角和'], ['> ∠AED + 474° = 540°', ''], ['> ∠AED = 66°', ''], ['x + ∠AED = 180°', '直線上的鄰角'], ['> x = 180° − 66°', ''], ['> = {{!114°}}', '']] },
+      { id: 'hw23-11', no: '11', sub: '求 x。', fig: f311, ansMap: { x: 84 },
+        steps: [['x + 83° + 117° + 76° = 360°', '多邊形外角和'], ['> x + 276° = 360°', ''], ['> x = {{!84°}}', '']] },
+      { id: 'hw23-14', no: '14', sub: '求 x。', fig: f314, ansMap: { x: 68 },
+        steps: [['x + x + 51° + 48° + 39° + 86° = 360°', '多邊形外角和'], ['> 2x + 224° = 360°', ''], ['> 2x = 136°', ''], ['> x = {{!68°}}', '']] },
+      { id: 'hw23-17', no: '17', sub: '求 x。', fig: f317, ansMap: { x: 64 },
+        warn: 'B 點的 101° 由兩條延長線組成，是 ∠ABC 的對頂角（即內角），不是外角。若誤當外角計算，會得出 x = 53°。',
+        steps: [['∠ABC = 101°', '對頂角'], ['B 的外角 = 180° − 101°', '直線上的鄰角'], ['> = 79°', ''], ['x + x + 51° + 53° + 49° + 79° = 360°', '多邊形外角和'], ['> 2x + 232° = 360°', ''], ['> 2x = 128°', ''], ['> x = {{!64°}}', '']] },
+      { id: 'hw23-20', no: '20', sub: '求下列各正多邊形每個內角的大小。(a) 正八邊形　(b) 正十五邊形',
+        steps: ['(a) 正八邊形每個內角的大小', ['= [[(8 − 2) × 180°||8]]', '多邊形內角和'], ['= {{!135°}}', ''], '(b) 正十五邊形每個內角的大小', ['= [[(15 − 2) × 180°||15]]', '多邊形內角和'], ['= {{!156°}}', '']] }] }
+  ];
+}
+
+const CH2 = {
+  title: '第 2 章　與三角形及多邊形相關的角',
+  ws: [ws20(), ws21(), ws22A(), ws22B(), ws23A(), ws23B()],
+  hw: homework()
+};
+
+/* =========================================================
+   概念探索：可拖動的互動圖（放在每個小節「重點」框旁邊）
+   ========================================================= */
+'use strict';
+
+/* 通用：可拖動圖。makeSpec(state) 回傳圖形設定；move(state, 拖動點id, 座標) 更新狀態 */
+function dragFig(state, makeSpec, move, after) {
+  const wrap = el('div', { style: 'touch-action:none' });
+  let drag = null;
+  const render = () => {
+    const svg = drawFigure(makeSpec(state));
+    wrap.innerHTML = ''; wrap.append(svg);
+    if (after) after(state);
+  };
+  wrap.addEventListener('pointerdown', e => {
+    const h = e.target && e.target.dataset && e.target.dataset.h;
+    if (!h) return;
+    drag = h; wrap.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  wrap.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const svg = wrap.querySelector('svg');
+    const m = svg.getScreenCTM(); if (!m) return;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(m.inverse());
+    move(state, drag, [pt.x, -pt.y]);
+    render();
+  });
+  const stop = () => { drag = null; };
+  wrap.addEventListener('pointerup', stop); wrap.addEventListener('pointercancel', stop);
+  render();
+  wrap.render = render;
+  return wrap;
+}
+function exploreBox(title, tip, ...kids) {
+  return el('div', { class: 'explore' }, el('h4', null, title), tip ? el('div', { class: 'hint-s', html: fmt(tip) }) : null, ...kids);
+}
+function segCtl(opts, cur, on) {
+  const s = el('span', { class: 'seg' });
+  const bs = opts.map(([k, lab]) => el('button', { type: 'button', class: k === cur ? 'on' : '', onclick: () => { bs.forEach(b => b.classList.toggle('on', b === bb[k])); on(k); } }, lab));
+  const bb = {}; opts.forEach(([k], i) => { bb[k] = bs[i]; });
+  s.append(...bs);
+  return s;
+}
+const R0 = v => Math.round(v);
+/* 多邊形各內角（按方向） */
+function polyAngles(pts) {
+  let area = 0; pts.forEach((p, i) => { const q = pts[(i + 1) % pts.length]; area += p[0] * q[1] - q[0] * p[1]; });
+  const ccw = area > 0, n = pts.length;
+  return pts.map((p, i) => {
+    const nx = pts[(i + (ccw ? 1 : n - 1)) % n], pv = pts[(i + (ccw ? n - 1 : 1)) % n];
+    return norm360(G.dir(p, pv) - G.dir(p, nx));
+  });
+}
+/* 把數值四捨五入，但保持總和 */
+function roundKeepSum(vals, sum) {
+  const r = vals.map(Math.round); const diff = sum - r.reduce((a, b) => a + b, 0);
+  if (diff) { let k = 0; vals.forEach((v, i) => { if (Math.abs(v - Math.round(v)) > Math.abs(vals[k] - Math.round(vals[k]))) k = i; }); r[k] += diff; }
+  return r;
+}
+function randConvex(n, R = 80) {
+  let angs;
+  do {
+    angs = []; for (let i = 0; i < n; i++) angs.push(Math.random() * 360);
+    angs.sort((a, b) => a - b);
+  } while (angs.some((a, i) => norm360(angs[(i + 1) % n] - a) < 360 / n * 0.45));
+  return angs.map(a => pol([0, 0], R * (0.88 + Math.random() * 0.12), a));
+}
+
+const WIDGETS = {
+  /* ---------- 2.0 ①：直線上的鄰角、同頂角、對頂角 ---------- */
+  lineAngles() {
+    const st = { mode: 'a', c: 62, t: [75, 200, 310], d: 25 };
+    const out = el('div', { class: 'readout' });
+    const O = [0, 0];
+    const spec = s => {
+      if (s.mode === 'a') {
+        const C = pol(O, 88, s.c);
+        out.innerHTML = fmt(`a = ${180 - R0(s.c)}°，b = ${R0(s.c)}°，a + b = <b>180°</b>`);
+        return { vb: [-128, -112, 256, 142], P: { A: [-110, 0], O, B: [110, 0], C }, L: ['AB', 'OC'], lp: { C: 'ne' },
+          A: [{ v: 'O', a: 'A', b: 'C', lab: 'a', r: 24, fill: 'pt0' }, { v: 'O', a: 'C', b: 'B', lab: 'b', r: 24, fill: 'pt1' }], handles: [{ id: 'C', at: C }] };
+      }
+      if (s.mode === 'b') {
+        const ord = s.t.map((t, i) => [norm360(t), i]).sort((a, b) => a[0] - b[0]);
+        const names = ['A', 'B', 'C'], P = { O };
+        ord.forEach(([t], k) => { P[names[k]] = pol(O, 88, t); });
+        const vals = ord.map(([t], k) => norm360(ord[(k + 1) % 3][0] - t));
+        const rv = roundKeepSum(vals, 360);
+        out.innerHTML = fmt(`a = ${rv[0]}°，b = ${rv[1]}°，c = ${rv[2]}°，a + b + c = <b>360°</b>`);
+        const labs = ['a', 'b', 'c'];
+        return { vb: [-120, -120, 240, 240], P, L: ['OA', 'OB', 'OC'],
+          A: names.map((nm, k) => ({ v: 'O', a: nm, b: names[(k + 1) % 3], big: vals[k] > 180, lab: labs[k], r: 20 + k * 3, fill: PAT[k] })),
+          handles: names.map((nm, k) => ({ id: 'r' + ord[k][1], at: P[nm] })) };
+      }
+      // 對頂角
+      const P = { O, A: pol(O, 100, 155), B: pol(O, 100, -25), D: pol(O, 100, s.d), C: pol(O, 100, s.d + 180) };
+      const top = R0(155 - s.d), side = 180 - top;
+      out.innerHTML = fmt(`a = b = ${side}°，c = d = ${top}°`);
+      return { vb: [-125, -110, 250, 220], P, L: ['AB', 'CD'],
+        A: [{ v: 'O', a: 'A', b: 'C', lab: 'a', r: 20, fill: 'pt0' }, { v: 'O', a: 'D', b: 'B', lab: 'b', r: 20, fill: 'pt0' },
+          { v: 'O', a: 'D', b: 'A', lab: 'c', r: 26, fill: 'pt1' }, { v: 'O', a: 'B', b: 'C', lab: 'd', r: 26, fill: 'pt1' }],
+        handles: [{ id: 'D', at: P.D }] };
+    };
+    const move = (s, h, p) => {
+      const t = G.dir(O, p);
+      if (h === 'C') s.c = Math.min(172, Math.max(8, t < -90 ? 180 : t < 0 ? 8 : t));
+      else if (h === 'D') s.d = Math.min(135, Math.max(-12, t));
+      else s.t[+h.slice(1)] = t;
+    };
+    const fig = dragFig(st, spec, move);
+    const tips = { a: '拖動橙色點 C：a 和 b 怎樣變？它們的和呢？', b: '拖動三個橙色點：三個角的和會變嗎？', c: '拖動橙色點 D，旋轉直線 CD：哪兩對角永遠相等？' };
+    const tip = el('div', { class: 'hint-s', html: fmt(tips.a) });
+    const ctl = el('div', { class: 'ex-ctrl' }, segCtl([['a', '(a) 直線上的鄰角'], ['b', '(b) 同頂角'], ['c', '(c) 對頂角']], 'a', k => { st.mode = k; tip.innerHTML = fmt(tips[k]); fig.render(); }));
+    return exploreBox('動手探索', null, ctl, tip, fig, out);
+  },
+
+  /* ---------- 2.0 ②：平行線與截線 ---------- */
+  parallel() {
+    const st = { th: 62, tilt: 0, mode: 'corr' };
+    const out = el('div', { class: 'readout' });
+    const spec = s => {
+      const I1 = [0, 40], I0 = [0, -40];
+      const I2 = inter(I1, s.th, I0, s.tilt);
+      const P = { A: [-125, 40], B: [125, 40], C: pol(I0, 125, s.tilt + 180), D: pol(I0, 125, s.tilt), m: I1, n: I2, u: pol(I1, 48, s.th), w: pol(I2, 48, s.th + 180) };
+      const par = s.tilt === 0 ? 1 : 0;
+      const A = s.mode === 'corr' ? [{ v: 'm', a: 'B', b: 'u', lab: 'a' }, { v: 'n', a: 'D', b: 'm', lab: 'b' }]
+        : s.mode === 'alt' ? [{ v: 'm', a: 'A', b: 'n', lab: 'a' }, { v: 'n', a: 'D', b: 'm', lab: 'b' }]
+          : [{ v: 'm', a: 'B', b: 'n', lab: 'a' }, { v: 'n', a: 'D', b: 'm', lab: 'b' }];
+      A.forEach((a, i) => { a.r = 22; a.fill = PAT[i]; });
+      const va = R0(G.ang(P.m, P[A[0].a], P[A[0].b])), vb = R0(G.ang(P.n, P[A[1].a], P[A[1].b]));
+      const shape = { corr: '「F」', alt: '「Z」', coint: '「C」' }[s.mode];
+      if (s.mode === 'coint') out.innerHTML = fmt(`a = ${va}°，b = ${vb}°，a + b = <b>${va + vb}°</b>` + (par ? '　（AB // CD）' : '　（AB 和 CD 不平行！）') + `<br><span class="ui">同旁內角形成${shape}形狀</span>`);
+      else out.innerHTML = fmt(`a = ${va}°，b = ${vb}°` + (par ? '　<b>a = b</b>（AB // CD）' : '　a ≠ b（AB 和 CD 不平行！）') + `<br><span class="ui">${s.mode === 'corr' ? '同位角' : '內錯角'}形成${shape}形狀</span>`);
+      return { vb: [-145, -100, 290, 200], P, hide: ['m', 'n'],
+        L: [{ s: 'AB', par, at: 0.8 }, { s: 'CD', par, at: 0.8 }, { s: ['u', 'w'] }], A, handles: [{ id: 'u', at: P.u }] };
+    };
+    const move = (s, h, p) => { const t = G.dir([0, 40], p); s.th = Math.min(140, Math.max(40, t < -90 ? 140 : t < 0 ? 40 : t)); };
+    const fig = dragFig(st, spec, move);
+    const tilt = el('input', { type: 'range', min: -12, max: 12, step: 1, value: 0, oninput: e => { st.tilt = +e.target.value; fig.render(); } });
+    const ctl = el('div', { class: 'ex-ctrl' }, segCtl([['corr', '同位角'], ['alt', '內錯角'], ['coint', '同旁內角']], 'corr', k => { st.mode = k; fig.render(); }));
+    const ctl2 = el('div', { class: 'ex-ctrl' }, el('label', null, '把 CD 轉斜一點：', tilt));
+    return exploreBox('動手探索', '拖動橙色點轉動截線。再試試把 CD 轉斜，看看角還相等嗎？', ctl, fig, ctl2, out);
+  },
+
+  /* ---------- 2.0 ③：三角形內角和（撕角拼直線） ---------- */
+  triSum() {
+    const st = { A: [-10, 95], B: [-100, -20], C: [105, -20] };
+    const out = el('div', { class: 'readout' });
+    const fanBox = el('div', { class: 'board fit', style: 'margin-top:.4rem' });
+    const spec = s => {
+      const ang = polyAngles([s.A, s.B, s.C]);
+      const [a, b] = [R0(ang[0]), R0(ang[1])], c = 180 - a - b;
+      out.innerHTML = fmt(`∠A + ∠B + ∠C = ${a}° + ${b}° + ${c}° = <b>180°</b>`);
+      fanBox.innerHTML = '';
+      fanBox.append(el('div', { class: 'bt' }, '把三個角撕下來拼在一起：'),
+        drawFan({ parts: [{ v: a, lab: a + '°' }, { v: b, lab: b + '°' }, { v: c, lab: c + '°' }], total: 180, tv: 180, tlab: '直線', ok: true }),
+        el('div', { class: 'bm ok' }, '✓ 永遠剛好拼成一條直線！'));
+      return { vb: [-135, -48, 270, 170], P: { A: s.A, B: s.B, C: s.C }, L: ['AB', 'BC', 'CA'],
+        A: [{ v: 'A', a: 'B', b: 'C', lab: a + '°', r: 20, fill: 'pt0' }, { v: 'B', a: 'C', b: 'A', lab: b + '°', r: 20, fill: 'pt1' }, { v: 'C', a: 'A', b: 'B', lab: c + '°', r: 20, fill: 'pt2' }],
+        handles: ['A', 'B', 'C'].map(k => ({ id: k, at: s[k] })) };
+    };
+    const move = (s, h, p) => { s[h] = [Math.max(-120, Math.min(120, p[0])), Math.max(-30, Math.min(110, p[1]))]; };
+    return exploreBox('動手探索', '拖動三個頂點，把三角形變成不同形狀。', dragFig(st, spec, move), out, fanBox);
+  },
+
+  /* ---------- 2.1：三角形的外角 ---------- */
+  triExt(kind) {
+    const st = { A: [-35, 90] };
+    const out = el('div', { class: 'readout' });
+    const spec = s => {
+      const P = { A: s.A, B: [-95, 0], C: [45, 0], D: [140, 0] };
+      const a = R0(G.ang(P.A, P.B, P.C)), b = R0(G.ang(P.B, P.C, P.A)), d = a + b;
+      if (kind === 'concept') out.innerHTML = fmt(`外角 ∠ACD = ${d}°　<span class="ui">（由邊 AC 和 BC 的延長線 CD 組成）</span>`);
+      else out.innerHTML = fmt(`外角 d = ${d}°　　a + b = ${a}° + ${b}° = <b>${d}°</b>`);
+      const labs = kind === 'concept' ? ['內對角', '內對角', '外角'] : ['a', 'b', 'd'];
+      return { vb: [-120, -32, 280, 150], P, L: ['BD', 'AB', 'AC'],
+        A: [{ v: 'A', a: 'B', b: 'C', lab: labs[0], r: 18, fill: 'pt0', ld: kind === 'concept' ? 40 : null }, { v: 'B', a: 'C', b: 'A', lab: labs[1], r: 18, fill: 'pt1', ld: kind === 'concept' ? 44 : null },
+          { v: 'C', a: 'A', b: 'D', lab: labs[2], r: 18, fill: 'pt3', ld: kind === 'concept' ? 36 : null }],
+        handles: [{ id: 'A', at: P.A }] };
+    };
+    const move = (s, h, p) => { s.A = [Math.max(-110, Math.min(40, p[0])), Math.max(30, Math.min(110, p[1]))]; };
+    return exploreBox('動手探索', kind === 'concept' ? '外角：三角形的一條邊與相鄰邊的延長線所成的角。拖動頂點 A 看看。' : '拖動頂點 A：外角 d 和 a + b 是否永遠相等？這就是「旗」形狀。', dragFig(st, spec, move), out);
+  },
+
+  /* ---------- 2.2A ①：等腰 △ 底角 ---------- */
+  isosceles() {
+    const st = { A: [0, 120], keep: true };
+    const out = el('div', { class: 'readout' });
+    const spec = s => {
+      const P = { A: s.keep ? [0, s.A[1]] : s.A, B: [-75, 0], C: [75, 0] };
+      const ab = G.dist(P.A, P.B) / 25, ac = G.dist(P.A, P.C) / 25;
+      const eq = Math.abs(ab - ac) < 0.05;
+      const b = R0(G.ang(P.B, P.C, P.A)), c = R0(G.ang(P.C, P.A, P.B));
+      out.innerHTML = fmt(`AB = ${ab.toFixed(1)} cm，AC = ${ac.toFixed(1)} cm<br>∠B = ${b}°，∠C = ${c}°` + (eq ? '　<b>∠B = ∠C</b>' : ''));
+      return { vb: [-120, -35, 240, 205], P, L: [{ s: 'AB', tick: eq ? 2 : 0 }, { s: 'AC', tick: eq ? 2 : 0 }, 'BC'],
+        A: [{ v: 'B', a: 'C', b: 'A', lab: b + '°', r: 20, fill: 'pt0' }, { v: 'C', a: 'A', b: 'B', lab: c + '°', r: 20, fill: 'pt1' }], handles: [{ id: 'A', at: P.A }] };
+    };
+    const move = (s, h, p) => { s.A = [Math.max(-100, Math.min(100, p[0])), Math.max(25, Math.min(160, p[1]))]; };
+    const fig = dragFig(st, spec, move);
+    const cb = el('input', { type: 'checkbox', checked: true, onchange: e => { st.keep = e.target.checked; fig.render(); } });
+    return exploreBox('動手探索', '拖動頂點 A。保持 AB = AC 時，兩個底角有甚麼關係？取消勾選再試試。', el('div', { class: 'ex-ctrl' }, el('label', null, cb, '保持 AB = AC')), fig, out);
+  },
+
+  /* ---------- 2.2A ②：等腰 △ 性質 ---------- */
+  isosProp() {
+    const st = { h: 130, m: 25 };
+    const out = el('div', { class: 'readout' });
+    const spec = s => {
+      const P = { A: [0, s.h], B: [-75, 0], C: [75, 0], M: [s.m, 0] };
+      const bm = G.dist(P.B, P.M) / 25, cm = G.dist(P.C, P.M) / 25;
+      const x = R0(G.ang(P.A, P.B, P.M)), y = R0(G.ang(P.A, P.M, P.C)), amb = R0(G.ang(P.M, P.A, P.B));
+      const mid = Math.abs(s.m) < 1e-6;
+      out.innerHTML = fmt(`BM = ${bm.toFixed(1)} cm，CM = ${cm.toFixed(1)} cm<br>x = ${x}°，y = ${y}°，∠AMB = ${amb}°`) + (mid ? '<br><b>BM = CM、AM ⊥ BC、x = y 同時成立！</b>' : '');
+      return { vb: [-115, -38, 230, 210], P, L: [{ s: 'AB', tick: 2 }, { s: 'AC', tick: 2 }, 'BC', { s: 'AM', dash: !mid }, { s: 'BM', tick: mid ? 1 : 0 }, { s: 'MC', tick: mid ? 1 : 0 }],
+        A: [{ v: 'A', a: 'B', b: 'M', lab: 'x', r: 26, fill: 'pt0' }, { v: 'A', a: 'M', b: 'C', lab: 'y', r: 32, fill: 'pt1' }, mid ? { v: 'M', a: 'A', b: 'C', mk: 'right' } : { v: 'M', a: 'A', b: 'B', r: 12, lab: amb + '°' }],
+        handles: [{ id: 'M', at: P.M }, { id: 'A', at: P.A }] };
+    };
+    const move = (s, h, p) => {
+      if (h === 'M') { let m = Math.max(-65, Math.min(65, p[0])); if (Math.abs(m) < 5) m = 0; s.m = m; }
+      else s.h = Math.max(60, Math.min(160, p[1]));
+    };
+    return exploreBox('動手探索', '拖動 BC 上的點 M。當 M 在正中間時，會發生甚麼事？（也可拖動 A）', dragFig(st, spec, move), out);
+  },
+
+  /* ---------- 2.2A ③：等角對邊相等 ---------- */
+  isosEqAng() {
+    const st = { b: 62, c: 62 };
+    const out = el('div', { class: 'readout' });
+    const box = el('div');
+    const render = () => {
+      const B = [-75, 0], C = [75, 0], A = tri(B, C, st.b, st.c);
+      const ab = G.dist(A, B) / 25, ac = G.dist(A, C) / 25, eq = st.b === st.c;
+      out.innerHTML = fmt(`∠B = ${st.b}°，∠C = ${st.c}°<br>AB = ${ab.toFixed(1)} cm，AC = ${ac.toFixed(1)} cm` + (eq ? '　<b>AB = AC</b>' : ''));
+      box.innerHTML = '';
+      box.append(drawFigure({ vb: [-120, -35, 240, 215], P: { A, B, C }, L: [{ s: 'AB', tick: eq ? 2 : 0 }, { s: 'AC', tick: eq ? 2 : 0 }, 'BC'],
+        A: [{ v: 'B', a: 'C', b: 'A', r: 18, fill: 'pt0', mk: eq ? 'arc2' : 'arc' }, { v: 'C', a: 'A', b: 'B', r: 18, fill: eq ? 'pt0' : 'pt1', mk: eq ? 'arc2' : 'arc' }] }));
+    };
+    const sb = el('input', { type: 'range', min: 35, max: 75, value: 62, oninput: e => { st.b = +e.target.value; render(); } });
+    const sc = el('input', { type: 'range', min: 35, max: 75, value: 62, oninput: e => { st.c = +e.target.value; render(); } });
+    render();
+    return exploreBox('動手探索', '調整 ∠B 和 ∠C。兩個角相等時，AB 和 AC 有甚麼關係？', el('div', { class: 'ex-ctrl' }, el('label', { html: fmt('∠B') }, sb)), el('div', { class: 'ex-ctrl' }, el('label', { html: fmt('∠C') }, sc)), box, out);
+  },
+
+  /* ---------- 2.3A ①：拖動頂點（凸、凹、正多邊形） ---------- */
+  polyDrag() {
+    const init = () => regPts(5, 78, 90);
+    const st = { p: init() };
+    const out = el('div', { class: 'readout' });
+    const names = ['A', 'B', 'C', 'D', 'E'];
+    const spec = s => {
+      const ang = polyAngles(s.p);
+      const P = polyP(names, s.p);
+      const big = ang.map((a, i) => [a, names[i]]).filter(([a]) => a > 180.5);
+      const sides = s.p.map((p, i) => G.dist(p, s.p[(i + 1) % 5]));
+      const reg = Math.max(...sides) - Math.min(...sides) < 2 && Math.max(...ang) - Math.min(...ang) < 1.5;
+      out.innerHTML = big.length ? fmt(`<b>凹多邊形</b>：∠${big[0][1]} = ${R0(big[0][0])}°，大於 180°`) : fmt('<b>凸多邊形</b>：所有內角都小於 180°' + (reg ? '<br>而且所有邊相等、所有角相等 → <b>正五邊形</b>' : ''));
+      let area = 0; s.p.forEach((p, i) => { const q = s.p[(i + 1) % 5]; area += p[0] * q[1] - q[0] * p[1]; });
+      const A = names.map((n, i) => area > 0 ? { ...inAng(names, i, R0(ang[i]) + '°'), big: ang[i] > 180, r: 15, fill: ang[i] > 180.5 ? 'pOver' : null } : { v: n, a: names[(i + 4) % 5], b: names[(i + 1) % 5], big: ang[i] > 180, lab: R0(ang[i]) + '°', r: 15, fill: ang[i] > 180.5 ? 'pOver' : null });
+      return { vb: [-125, -110, 250, 215], P, L: polyL(names), A, hide: names, handles: names.map((n, i) => ({ id: String(i), at: s.p[i] })) };
+    };
+    const move = (s, h, p) => { s.p[+h] = [Math.max(-110, Math.min(110, p[0])), Math.max(-95, Math.min(95, p[1]))]; };
+    const fig = dragFig(st, spec, move);
+    const reset = el('button', { class: 'btn ghost', type: 'button', onclick: () => { st.p = init(); fig.render(); } }, '變回正五邊形');
+    return exploreBox('動手探索', '把一個頂點拖向裏面，看看甚麼時候變成凹多邊形。', fig, out, el('div', { class: 'btnrow' }, reset));
+  },
+
+  /* ---------- 2.3A ②③：多邊形分成三角形 ---------- */
+  polyInt(reg) {
+    const st = { n: reg ? 6 : 7, irr: false, pts: null };
+    const out = el('div', { class: 'readout' });
+    const box = el('div');
+    const render = () => {
+      const n = st.n;
+      if (!st.pts || st.pts.length !== n) st.pts = st.irr ? randConvex(n) : regPts(n, 82, 90);
+      const svg = sv('svg', { class: 'fig', viewBox: '-100 -98 200 196' });
+      const p = st.pts;
+      for (let k = 1; k <= n - 2; k++) {
+        sv('path', { d: `M${p[0][0]},${-p[0][1]} L${p[k][0]},${-p[k][1]} L${p[k + 1][0]},${-p[k + 1][1]} Z`, fill: `url(#${PAT[(k - 1) % PAT.length]})`, stroke: '#2B2D42', 'stroke-width': 1 }, svg);
+        const c = [(p[0][0] + p[k][0] + p[k + 1][0]) / 3, (p[0][1] + p[k][1] + p[k + 1][1]) / 3];
+        const t = svText(svg, c[0], -c[1], String(k), 'lbl'); t.setAttribute('font-weight', 700); t.setAttribute('paint-order', 'stroke'); t.setAttribute('stroke', '#fff'); t.setAttribute('stroke-width', 3);
+      }
+      sv('polygon', { points: p.map(q => q[0] + ',' + (-q[1])).join(' '), fill: 'none', stroke: '#2B2D42', 'stroke-width': 2.4 }, svg);
+      sv('circle', { cx: p[0][0], cy: -p[0][1], r: 4, fill: '#FF7F50' }, svg);
+      box.innerHTML = ''; box.append(svg);
+      const S = (n - 2) * 180;
+      let t = `${n} 邊形：從一個頂點可分成 <b>${n - 2}</b> 個三角形<br>內角和 = (${n} − 2) × 180° = <b>${S}°</b>`;
+      if (reg && !st.irr) t += `<br>每個內角 = ${S}° ÷ ${n} = <b>${Number.isInteger(S / n) ? S / n : (S / n).toFixed(1)}°</b>`;
+      out.innerHTML = fmt(t);
+    };
+    const nIn = el('input', { type: 'range', min: 3, max: 12, value: st.n, oninput: e => { st.n = +e.target.value; st.pts = null; lab.textContent = st.n; render(); } });
+    const lab = el('b', null, String(st.n));
+    const irr = el('input', { type: 'checkbox', onchange: e => { st.irr = e.target.checked; st.pts = null; render(); } });
+    const again = el('button', { class: 'btn ghost', type: 'button', onclick: () => { st.pts = null; render(); } }, '換一個形狀');
+    render();
+    return exploreBox('動手探索', reg ? '正 n 邊形的 n 個內角都相等，所以每個內角 = 內角和 ÷ n。' : '改變邊數 n：從一個頂點（●）畫對角線，可以分成幾個三角形？',
+      el('div', { class: 'ex-ctrl' }, el('label', null, '邊數 n = ', lab, nIn)), el('div', { class: 'ex-ctrl' }, el('label', null, irr, reg ? '不規則（非正多邊形）' : '不規則多邊形'), again), box, out);
+  },
+
+  /* ---------- 2.3B：外角拼成一周 ---------- */
+  polyExt(reg) {
+    const st = { n: reg ? 6 : 5, irr: !reg, pts: null };
+    const out = el('div', { class: 'readout' });
+    const box = el('div', { style: 'display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:.3rem;align-items:center' });
+    const render = () => {
+      const n = st.n;
+      if (!st.pts || st.pts.length !== n) st.pts = st.irr ? randConvex(n, 62) : regPts(n, 62, 90);
+      const names = st.pts.map((_, i) => 'v' + i), P = polyP(names, st.pts), L = polyL(names);
+      const ints = polyAngles(st.pts), exts = ints.map(a => 180 - a);
+      const A = names.map((v, i) => ({ ...exAng(P, L, names[(i - 1 + n) % n], v, names[(i + 1) % n], '', { r: 16, fill: PAT[i % PAT.length] }, 34) }));
+      const r = roundKeepSum(exts, 360);
+      box.innerHTML = '';
+      box.append(drawFigure({ P, L, A, hide: names, pad: 10 }),
+        drawFan({ parts: r.map(v => ({ v, lab: n <= 8 ? v + '°' : '' })), total: 360, tv: 360, tlab: '一周', ok: true }));
+      let t = `${n} 個外角：${r.join('° + ')}° = <b>360°</b>`;
+      if (reg && !st.irr) t = `正 ${n} 邊形：每個外角 = 360° ÷ ${n} = <b>${Number.isInteger(360 / n) ? 360 / n : (360 / n).toFixed(1)}°</b>`;
+      out.innerHTML = fmt(t);
+    };
+    const lab = el('b', null, String(st.n));
+    const nIn = el('input', { type: 'range', min: 3, max: 10, value: st.n, oninput: e => { st.n = +e.target.value; st.pts = null; lab.textContent = st.n; render(); } });
+    const irr = el('input', { type: 'checkbox', checked: st.irr, onchange: e => { st.irr = e.target.checked; st.pts = null; render(); } });
+    const again = el('button', { class: 'btn ghost', type: 'button', onclick: () => { st.pts = null; render(); } }, '換一個形狀');
+    render();
+    return exploreBox('動手探索', '左邊每個外角都有自己的網紋；右邊把所有外角拼在一起。無論多少條邊、甚麼形狀，都剛好拼成一周。',
+      el('div', { class: 'ex-ctrl' }, el('label', null, '邊數 n = ', lab, nIn)), el('div', { class: 'ex-ctrl' }, el('label', null, irr, '不規則多邊形'), again), box, out);
+  }
+};
+WIDGETS.triExt2 = () => WIDGETS.triExt('prop');
+const _triExt = WIDGETS.triExt; WIDGETS.triExt = k => _triExt(k === 'prop' ? 'prop' : 'concept');
+WIDGETS.polyIntReg = () => WIDGETS.polyInt(true);
+WIDGETS.polyExtReg = () => WIDGETS.polyExt(true);
+
+/* =========================================================
+   額外練習：隨機生成同類題目（完成工作紙題目後解鎖）
+   每個生成器回傳 { fig, text, ans, unit, hint, sol }
+   ========================================================= */
+'use strict';
+const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function randExt(n, lo = 30, hi = 110) {
+  for (let k = 0; k < 400; k++) {
+    const w = Array.from({ length: n }, () => 0.5 + Math.random()), s = w.reduce((a, b) => a + b);
+    const e = w.map(v => Math.round(v / s * 360));
+    e[n - 1] = 360 - e.slice(0, -1).reduce((a, b) => a + b, 0);
+    if (e.every(v => v >= lo && v <= hi)) { const pts = G.polyFit(e.map(v => 180 - v), ri(-30, 30), 100); if (pts.ok) return { e, pts }; }
+  }
+  return { e: Array(n).fill(360 / n), pts: regPts(n) };
+}
+
+const GEN = {
+  '2.0': [
+    () => { const b = ri(25, 155), x = 180 - b, O = [0, 0];
+      return { text: 'AOB 是一條直線。求 x。', ans: x, hint: '直線上的鄰角加起來是 180°。',
+        fig: { P: { A: [-110, 0], O, B: [110, 0], C: pol(O, 95, 180 - b) }, L: ['AB', 'OC'], A: [{ v: 'O', a: 'A', b: 'C', lab: b + '°', r: 16 }, { v: 'O', a: 'C', b: 'B', lab: 'x', r: 26 }] },
+        sol: [[`${b}° + x = 180°`, '直線上的鄰角'], [`> x = 180° − ${b}°`, ''], [`> x = {{!${x}°}}`, '']] }; },
+    () => { const a = ri(20, 70), c = ri(20, 70), x = 180 - a - c, O = [0, 0];
+      return { text: 'AOB 是一條直線。求 x。', ans: x, hint: '三個角都在直線的同一邊，加起來是 180°。',
+        fig: { P: { A: [-110, 0], O, B: [110, 0], C: pol(O, 95, 180 - a), D: pol(O, 95, c) }, L: ['AB', 'OC', 'OD'], A: [{ v: 'O', a: 'A', b: 'C', lab: a + '°', r: 16 }, { v: 'O', a: 'C', b: 'D', lab: 'x', r: 24 }, { v: 'O', a: 'D', b: 'B', lab: c + '°', r: 16 }] },
+        sol: [[`${a}° + x + ${c}° = 180°`, '直線上的鄰角'], [`> x = 180° − ${a}° − ${c}°`, ''], [`> x = {{!${x}°}}`, '']] }; },
+    () => { let a, b, x; do { a = ri(100, 160); b = ri(80, 150); x = 360 - a - b; } while (x < 45 || x > 165); const O = [0, 0], t0 = ri(0, 60);
+      return { text: '求 x。', ans: x, hint: '圍着一點的角（同頂角）加起來是 360°。',
+        fig: { P: { O, A: pol(O, 95, t0), B: pol(O, 95, t0 + a), C: pol(O, 95, t0 + a + b) }, L: ['OA', 'OB', 'OC'], A: [{ v: 'O', a: 'A', b: 'B', lab: a + '°', r: 16 }, { v: 'O', a: 'B', b: 'C', lab: b + '°', r: 16 }, { v: 'O', a: 'C', b: 'A', lab: 'x', r: 16 }] },
+        sol: [[`x + ${a}° + ${b}° = 360°`, '同頂角'], [`> x = 360° − ${a}° − ${b}°`, ''], [`> x = {{!${x}°}}`, '']] }; },
+    () => { const d = ri(110, 150), c = ri(30, d - 35), x = d - c, O = [0, 0], t = ri(10, 30);
+      return { text: '直線 AB 與 CD 相交於 O。求 x。', ans: x, hint: 'x 和 ' + c + '° 合起來的角，和 ' + d + '° 是對頂角。',
+        fig: { P: { O, D: pol(O, 100, t), A: pol(O, 100, t + d), B: pol(O, 100, t + d - 180), C: pol(O, 100, t + 180), E: pol(O, 95, t + c) }, L: ['AB', 'CD', 'OE'],
+          A: [{ v: 'O', a: 'A', b: 'E', lab: 'x', r: 17 }, { v: 'O', a: 'E', b: 'D', lab: c + '°', r: 17 }, { v: 'O', a: 'C', b: 'B', lab: d + '°', r: 17 }] },
+        sol: [[`x + ${c}° = ${d}°`, '對頂角'], [`> x = {{!${x}°}}`, '']] }; },
+    () => { let th; do { th = ri(40, 140); } while (Math.abs(th - 90) < 8); const type = pick(['同位角', '內錯角', '同旁內角']);
+      const m = [0, 45], n = inter(m, th, [0, -45], 0);
+      const P = { A: [-125, 45], B: [125, 45], C: [-125, -45], D: [125, -45], m, n, u: pol(m, 42, th), w: pol(n, 42, th + 180) };
+      let A, ans, sol;
+      if (type === '同位角') { A = [{ v: 'm', a: 'B', b: 'u', lab: th + '°' }, { v: 'n', a: 'D', b: 'm', lab: 'x' }]; ans = th; sol = [[`x = {{!${th}°}}`, '同位角，AB // CD']]; }
+      else if (type === '內錯角') { A = [{ v: 'm', a: 'A', b: 'n', lab: th + '°' }, { v: 'n', a: 'D', b: 'm', lab: 'x' }]; ans = th; sol = [[`x = {{!${th}°}}`, '內錯角，AB // CD']]; }
+      else { A = [{ v: 'm', a: 'B', b: 'n', lab: (180 - th) + '°' }, { v: 'n', a: 'D', b: 'm', lab: 'x' }]; ans = th; sol = [[`x + ${180 - th}° = 180°`, '同旁內角，AB // CD'], [`> x = {{!${th}°}}`, '']]; }
+      A.forEach(a => { a.r = 16; });
+      return { text: 'AB // CD。求 x。', ans, hint: '找出「F」、「Z」或「C」形狀。', fig: { P, hide: ['m', 'n'], L: [{ s: 'AB', par: 1, at: .8 }, { s: 'CD', par: 1, at: .8 }, ['u', 'w']], A }, sol }; },
+    () => { const a = ri(30, 100), b = ri(25, 150 - a), x = 180 - a - b, B = [0, 0], C = [170, 0];
+      return { text: '求 x。', ans: x, hint: '三角形三個內角的和是 180°。',
+        fig: { P: { B, C, A: tri(B, C, a, b) }, L: ['AB', 'BC', 'CA'], A: [{ v: 'B', a: 'C', b: 'A', lab: a + '°', r: 18 }, { v: 'C', a: 'A', b: 'B', lab: b + '°', r: 18 }, { v: 'A', a: 'B', b: 'C', lab: 'x', r: 18 }] },
+        sol: [[`x + ${a}° + ${b}° = 180°`, '△ 內角和'], [`> x = {{!${x}°}}`, '']] }; }
+  ],
+  '2.1': [
+    () => { const a = ri(35, 80), b = ri(30, 70), x = a + b, B = [0, 0], C = [125, 0];
+      return { text: 'BCD 是一條直線。求 x。', ans: x, hint: '外角等於兩個內對角的和。',
+        fig: { P: { B, C, D: [200, 0], A: tri(B, C, b, 180 - a - b) }, L: ['BD', 'AB', 'AC'], A: [{ v: 'A', a: 'B', b: 'C', lab: a + '°', r: 16 }, { v: 'B', a: 'C', b: 'A', lab: b + '°', r: 18 }, { v: 'C', a: 'A', b: 'D', lab: 'x', r: 15 }] },
+        sol: ['在 △ABC 中，', [`x = ${a}° + ${b}°`, '△ 外角'], [`> = {{!${x}°}}`, '']] }; },
+    () => { const x = ri(30, 70), a = ri(30, 75), d = x + a, B = [0, 0], C = [125, 0];
+      return { text: 'BCD 是一條直線。求 x。', ans: x, hint: d + '° 是外角，它等於兩個內對角的和。',
+        fig: { P: { B, C, D: [200, 0], A: tri(B, C, x, 180 - d) }, L: ['BD', 'AB', 'AC'], A: [{ v: 'A', a: 'B', b: 'C', lab: a + '°', r: 16 }, { v: 'B', a: 'C', b: 'A', lab: 'x', r: 18 }, { v: 'C', a: 'A', b: 'D', lab: d + '°', r: 15 }] },
+        sol: ['在 △ABC 中，', [`${d}° = x + ${a}°`, '△ 外角'], [`> x = {{!${x}°}}`, '']] }; },
+    () => { const x = ri(25, 70), d = 2 * x, B = [0, 0], C = [125, 0];
+      return { text: 'BCD 是一條直線。求 x。', ans: x, hint: '外角 ' + d + '° 等於 x + x。',
+        fig: { P: { B, C, D: [200, 0], A: tri(B, C, x, 180 - d) }, L: ['BD', 'AB', 'AC'], A: [{ v: 'A', a: 'B', b: 'C', lab: 'x', r: 16 }, { v: 'B', a: 'C', b: 'A', lab: 'x', r: 18 }, { v: 'C', a: 'A', b: 'D', lab: d + '°', r: 15 }] },
+        sol: ['在 △ABC 中，', [`${d}° = x + x`, '△ 外角'], [`> 2x = ${d}°`, ''], [`> x = {{!${x}°}}`, '']] }; }
+  ],
+  '2.2A': [
+    () => { const a = 2 * ri(15, 60), x = (180 - a) / 2, B = [0, 0], C = [130, 0];
+      return { text: '求 x。', ans: x, hint: 'AB = AC，兩個底角相等，都是 x。',
+        fig: { P: { B, C, A: tri(B, C, x, x) }, L: [{ s: 'AB', tick: 2 }, { s: 'AC', tick: 2 }, 'BC'], A: [{ v: 'A', a: 'B', b: 'C', lab: a + '°', r: 16 }, { v: 'B', a: 'C', b: 'A', lab: 'x', r: 16 }] },
+        sol: ['在 △ABC 中，', ['∵ AB = AC', '已知'], ['∴ ∠C = x', '等腰 △ 底角'], [`x + x + ${a}° = 180°`, '△ 內角和'], [`> 2x = ${180 - a}°`, ''], [`> x = {{!${x}°}}`, '']] }; },
+    () => { const b = ri(35, 80), x = 180 - 2 * b, B = [0, 0], C = [130, 0];
+      return { text: '求 x。', ans: x, hint: 'AB = AC，所以 ∠C 也是 ' + b + '°。',
+        fig: { P: { B, C, A: tri(B, C, b, b) }, L: [{ s: 'AB', tick: 2 }, { s: 'AC', tick: 2 }, 'BC'], A: [{ v: 'A', a: 'B', b: 'C', lab: 'x', r: 16 }, { v: 'B', a: 'C', b: 'A', lab: b + '°', r: 16 }] },
+        sol: ['在 △ABC 中，', ['∵ AB = AC', '已知'], [`∴ ∠C = ${b}°`, '等腰 △ 底角'], [`x + ${b}° + ${b}° = 180°`, '△ 內角和'], [`> x = {{!${x}°}}`, '']] }; },
+    () => { const b = ri(35, 75), x = 2 * b, C = [120, 0];
+      return { text: 'BCD 是一條直線。求 x。', ans: x, hint: 'CB = CA，所以 ∠BAC = ' + b + '°。x 是外角。',
+        fig: { P: { B: [0, 0], C, D: [205, 0], A: pol(C, 120, 180 - (180 - 2 * b)) }, L: ['BD', { s: 'CB', tick: 2 }, { s: 'CA', tick: 2 }, 'AB'], A: [{ v: 'B', a: 'C', b: 'A', lab: b + '°', r: 18 }, { v: 'C', a: 'A', b: 'D', lab: 'x', r: 15 }] },
+        sol: ['在 △ABC 中，', ['∵ CB = CA', '已知'], [`∴ ∠BAC = ${b}°`, '等腰 △ 底角'], [`x = ${b}° + ${b}°`, '△ 外角'], [`> = {{!${x}°}}`, '']] }; },
+    () => { const b = ri(40, 75), L = ri(4, 15), B = [0, 0], C = [120, 0];
+      return { text: '求 x。', ans: L, unit: 'cm', hint: '∠B = ∠C，相等的角「對面」的邊也相等。',
+        fig: { P: { B, C, A: tri(B, C, b, b) }, L: ['AB', 'AC', 'BC'], T: [{ s: 'x cm', side: 'BA' }, { s: L + ' cm', side: 'AC' }], A: [{ v: 'B', a: 'C', b: 'A', lab: b + '°', r: 16 }, { v: 'C', a: 'A', b: 'B', lab: b + '°', r: 16 }] },
+        sol: ['在 △ABC 中，', ['∵ ∠B = ∠C', '已知'], ['∴ AB = AC', '等角對邊相等'], [`> x = {{!${L}}}`, '']] }; }
+  ],
+  '2.2B': [
+    () => { const a = ri(20, 100), x = 120 - a, B = [0, 0];
+      return { text: 'DBE 是一條直線，AB = BC = CA。求 x。', ans: x, hint: '等邊三角形每個角都是 60°，然後用直線上的鄰角。',
+        fig: { P: { D: [-100, 0], B, E: [100, 0], A: pol(B, 105, 180 - a), C: pol(B, 105, 120 - a) }, L: ['DE', { s: 'AB', tick: 2 }, { s: 'BC', tick: 2 }, { s: 'CA', tick: 2 }],
+          A: [{ v: 'B', a: 'D', b: 'A', lab: a + '°', r: 18 }, { v: 'B', a: 'C', b: 'E', lab: 'x', r: 16 }] },
+        sol: [['∵ AB = BC = CA', '已知'], ['∴ ∠ABC = 60°', '等邊 △ 性質'], [`${a}° + 60° + x = 180°`, '直線上的鄰角'], [`> x = {{!${x}°}}`, '']] }; },
+    () => { const c = ri(12, 50), x = 120 - c, B = [0, 0], C = [140, 0];
+      return { text: '△ABC 是等邊三角形，D 是 AB 上的一點。求 x。', ans: x, hint: '∠ABC = 60°，然後在 △BCD 中用 △ 內角和。',
+        fig: { P: { B, C, A: [70, 70 * Math.sqrt(3)], D: inter(B, 60, C, 180 - c) }, L: [{ s: 'AB', tick: 2 }, { s: 'BC', tick: 2 }, { s: 'CA', tick: 2 }, 'CD'], lp: { D: 'w' },
+          A: [{ v: 'C', a: 'B', b: 'D', lab: c + '°', r: 26 }, { v: 'D', a: 'B', b: 'C', lab: 'x', r: 13 }] },
+        sol: [['∵ AB = BC = CA', '已知'], ['∴ ∠ABC = 60°', '等邊 △ 性質'], '在 △BCD 中，', [`x + 60° + ${c}° = 180°`, '△ 內角和'], [`> x = {{!${x}°}}`, '']] }; }
+  ],
+  '2.3A': [
+    () => { const n = ri(5, 12), S = (n - 2) * 180, nm = ['', '', '', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'][n];
+      return { text: `求${nm}邊形的內角和。`, ans: S, hint: 'n 邊形的內角和是 (n − 2) × 180°。',
+        sol: [`${nm}邊形的內角和`, [`= (${n} − 2) × 180°`, '多邊形內角和'], [`= {{!${S}°}}`, '']] }; },
+    () => { const n = ri(4, 6), { e, pts } = randExt(n), ints = e.map(v => 180 - v), k = ri(0, n - 1), names = pts.map((_, i) => 'v' + i), S = (n - 2) * 180;
+      const others = ints.filter((_, i) => i !== k);
+      return { text: '求 x。', ans: ints[k], hint: `這是一個${['', '', '', '', '四', '五', '六'][n]}邊形，內角和是 (${n} − 2) × 180°。`,
+        fig: { P: polyP(names, pts), L: polyL(names), A: names.map((_, i) => inAng(names, i, i === k ? 'x' : ints[i] + '°', { r: 14 })) },
+        sol: [[`x + ${others.join('° + ')}° = (${n} − 2) × 180°`, '多邊形內角和'], [`> x + ${others.reduce((a, b) => a + b)}° = ${S}°`, ''], [`> x = {{!${ints[k]}°}}`, '']] }; },
+    () => { const n = pick([3, 4, 5, 6, 8, 9, 10, 12, 15, 18, 20]), S = (n - 2) * 180, a = S / n;
+      return { text: `求正 ${n} 邊形的每個內角的大小。`, ans: a, hint: '先求內角和，再除以 n。',
+        sol: ['內角和', [`= (${n} − 2) × 180°`, '多邊形內角和'], [`= ${S}°`, ''], '每個內角的大小', [`= [[${S}°||${n}]]`, ''], [`= {{!${a}°}}`, '']] }; }
+  ],
+  '2.3B': [
+    () => { const n = ri(4, 6), { e, pts } = randExt(n, 35, 110), k = ri(0, n - 1), names = pts.map((_, i) => 'v' + i), P = polyP(names, pts), L = polyL(names);
+      const A = names.map((v, i) => exAng(P, L, names[(i - 1 + n) % n], v, names[(i + 1) % n], i === k ? 'x' : e[i] + '°', { r: 14 }, 36));
+      const others = e.filter((_, i) => i !== k);
+      return { text: '圖中所示的都是外角。求 x。', ans: e[k], hint: '凸多邊形的外角和是 360°。', fig: { P, L, A, hide: names },
+        sol: [[`x + ${others.join('° + ')}° = 360°`, '多邊形外角和'], [`> x + ${others.reduce((a, b) => a + b)}° = 360°`, ''], [`> x = {{!${e[k]}°}}`, '']] }; },
+    () => { const n = pick([3, 4, 5, 6, 8, 9, 10, 12, 15, 18, 20, 24, 30, 36]), a = 360 / n;
+      return { text: `求正 ${n} 邊形的每個外角的大小。`, ans: a, hint: '正 n 邊形的每個外角 = 360° ÷ n。',
+        sol: ['每個外角的大小', [`= [[360°||${n}]]`, '多邊形外角和'], [`= {{!${a}°}}`, '']] }; },
+    () => { const n = pick([5, 6, 8, 9, 10, 12, 15, 18, 20, 24, 30, 36]), a = 360 / n;
+      return { text: `一個正多邊形的每個外角是 ${a}°。這個多邊形有多少條邊？`, ans: n, unit: '條邊', lab: 'n', hint: `${a}° × n = 360°（多邊形外角和）。`,
+        sol: [[`${a}° × n = 360°`, '多邊形外角和'], [`> n = [[360°||${a}°]]`, ''], [`> n = {{!${n}}}`, '']] }; }
+  ]
+};
+
+function practicePanel(ws) {
+  const box = el('div');
+  const gens = GEN[ws.id] || [];
+  let streak = 0, cur = null, wrong = 0;
+  const card = el('div', { class: 'card' });
+  const head = el('div', { class: 'card-head' }, el('span', { class: 'card-tag extra' }, '補充練習'), el('span', { class: 'streak' }));
+  const body = el('div');
+  card.append(head, body);
+  const next = () => {
+    cur = pick(gens)(); wrong = 0;
+    body.innerHTML = '';
+    const grid = el('div', { class: 'qgrid' + (cur.fig ? '' : ' nofig') });
+    if (cur.fig) grid.append(el('div', { class: 'figbox' }, drawFigure(cur.fig)));
+    const work = el('div');
+    const inp = el('input', { type: 'text', inputmode: 'decimal', autocomplete: 'off' });
+    const msg = el('div', { class: 'msg' });
+    const sol = el('div', { class: 'panel copy hidden' }, el('h5', null, '✏️ 解法'));
+    (cur.sol || []).forEach(l => sol.append(stepLine(l, 'show', [])));
+    const hintB = el('button', { class: 'btn ghost', type: 'button', onclick: () => { msg.className = 'msg'; msg.innerHTML = '💡 ' + fmt(cur.hint); } }, '💡 提示');
+    const solB = el('button', { class: 'btn ghost hidden', type: 'button', onclick: () => sol.classList.remove('hidden') }, '看解法');
+    const nextB = el('button', { class: 'btn teal', type: 'button', onclick: next }, '下一題 ▶');
+    const check = () => {
+      const v = normNum(inp.value);
+      if (!Number.isFinite(v)) { msg.className = 'msg bad'; msg.textContent = '請先輸入一個數。'; return; }
+      if (Math.abs(v - cur.ans) < 1e-6) {
+        streak++; msg.className = 'msg ok'; msg.textContent = '✓ 答對了！';
+        sol.classList.remove('hidden'); inp.disabled = true; popAt(inp, '⭐');
+      } else {
+        streak = 0; wrong++; msg.className = 'msg bad'; msg.textContent = '✗ 不對，再試一次。';
+        if (wrong >= 2) solB.classList.remove('hidden');
+      }
+      head.lastChild.textContent = streak ? `連續答對 ${streak} 題 ⭐` : '';
+    };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+    const unit = cur.unit ?? '°';
+    work.append(el('div', { class: 'panel steps' },
+      el('div', { class: 'card-sub', html: fmt(cur.text) }),
+      el('div', { class: 'varrow' }, el('span', { class: 'var' }, el('span', { class: 'vl', html: fmt(cur.lab || 'x') }), '=', inp, el('span', { class: 'u' }, unit))),
+      el('div', { class: 'btnrow' }, el('button', { class: 'btn pri', type: 'button', onclick: check }, '檢查'), hintB, solB, nextB), msg), sol);
+    if (App.teacher) sol.classList.remove('hidden');
+    grid.append(work); body.append(grid);
+  };
+  next();
+  box.append(el('p', { style: 'font-size:.85rem;color:var(--muted);margin:.2rem 0 .6rem' }, '這裏的題目每次都會隨機生成，可以無限練習。答錯兩次後可以看解法。'), card);
+  return box;
+}
+
+/* =========================================================
+   網頁外殼：頁首、分頁、教師模式、進度、全螢幕、列印
+   ========================================================= */
+'use strict';
+
+/* 教師模式密碼（可自行更改） */
+const TEACHER_PIN = '2627';
+
+const View = { ws: 0, sec: 's1', cards: [] };
+
+function allQIds(ws) { return ws.secs.flatMap(s => s.groups.flatMap(g => g.qs.map(q => q.id))); }
+function wsProgress(ws) { const ids = allQIds(ws); return { done: ids.filter(id => App.isDone(id)).length, total: ids.length }; }
+
+function buildShell() {
+  installDefs();
+  const fs = store.get('fs', 18);
+  document.documentElement.style.setProperty('--fs', fs + 'px');
+
+  const logo = '<svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><path d="M6 32 L20 7 L34 32 Z" fill="#FFD9C8" stroke="#2B2D42" stroke-width="2.6" stroke-linejoin="round"/><path d="M12.5 32 A7.5 7.5 0 0 0 9.8 26.4" fill="none" stroke="#2B2D42" stroke-width="2"/><circle cx="20" cy="21" r="2.4" fill="#2BA89A"/></svg>';
+  const progBar = el('i');
+  const progTxt = el('span');
+  const tBtn = el('button', { class: 'chip', type: 'button', onclick: toggleTeacher }, '🔒 教師模式');
+  const tools = el('div', { class: 'tools' },
+    el('span', { class: 'prog', title: '工作紙題目完成度' }, '進度', el('span', { class: 'prog-bar' }, progBar), progTxt),
+    el('button', { class: 'chip', type: 'button', onclick: () => setFs(-1), 'aria-label': '縮小字體' }, 'A−'),
+    el('button', { class: 'chip', type: 'button', onclick: () => setFs(1), 'aria-label': '放大字體' }, 'A+'),
+    el('button', { class: 'chip', type: 'button', onclick: goFull }, '⛶ 全螢幕'),
+    el('button', { class: 'chip', type: 'button', onclick: () => window.print() }, '🖨 列印'),
+    tBtn,
+    el('button', { class: 'chip t-show', type: 'button', onclick: resetProgress }, '↺ 清除進度'));
+  const top = el('header', { class: 'top' }, el('div', { class: 'top-row' },
+    el('div', { class: 'brand' }, el('div', { class: 'brand-badge', html: logo }), el('div', null, el('h1', null, CH2.title), el('small', null, '中二數學・互動課件　配合課堂工作紙 2.0 – 2.3B 使用'))), tools));
+  const tabs = el('nav', { class: 'tabs', 'aria-label': '工作紙' });
+  const subtabs = el('nav', { class: 'subtabs', 'aria-label': '小節' });
+  const main = el('main');
+  document.body.append(top, tabs, subtabs, main);
+  App.ui = { tabs, subtabs, main, progBar, progTxt, tBtn };
+  App.onChange(updateProgress);
+  readHash();
+  render();
+  window.addEventListener('hashchange', () => { readHash(); render(); });
+}
+function setFs(d) {
+  const fs = Math.max(14, Math.min(28, store.get('fs', 18) + d * 2));
+  store.set('fs', fs);
+  document.documentElement.style.setProperty('--fs', fs + 'px');
+}
+function goFull() {
+  const d = document;
+  if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen(); return; }
+  const r = d.documentElement.requestFullscreen ? d.documentElement.requestFullscreen() : null;
+  if (r && r.catch) r.catch(() => window.open(location.href, '_blank'));
+  else if (!r) window.open(location.href, '_blank');
+}
+function readHash() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (!h) return;
+  const [w, s] = h.split('/');
+  if (w === 'hw' && App.teacher) { View.ws = 'hw'; View.sec = s || CH2.hw[0].id; return; }
+  const i = CH2.ws.findIndex(x => x.id === w);
+  if (i >= 0) { View.ws = i; View.sec = s || 's1'; }
+}
+function setHash() {
+  const w = View.ws === 'hw' ? 'hw' : CH2.ws[View.ws].id;
+  try { history.replaceState(null, '', '#' + w + '/' + View.sec); } catch (e) { /* iframe 內可能不容許 */ }
+}
+
+/* ---------- 教師模式 ---------- */
+function toggleTeacher() {
+  if (App.teacher) { setTeacher(false); return; }
+  const inp = el('input', { type: 'password', inputmode: 'numeric', maxlength: 8, autocomplete: 'off' });
+  const msg = el('div', { class: 'msg' });
+  const close = () => m.remove();
+  const ok = () => { if (inp.value === TEACHER_PIN) { close(); setTeacher(true); } else { msg.className = 'msg bad'; msg.textContent = '密碼不正確。'; inp.select(); } };
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') ok(); if (e.key === 'Escape') close(); });
+  const m = el('div', { class: 'modal', onclick: e => { if (e.target === m) close(); } },
+    el('div', { class: 'modal-box' }, el('h3', null, '🔒 教師模式'), el('p', { style: 'margin:.2rem 0 .6rem;font-size:.85rem' }, '教師模式會顯示所有答案及功課答案。請輸入密碼：'),
+      inp, msg, el('div', { class: 'btnrow' }, el('button', { class: 'btn pri', type: 'button', onclick: ok }, '進入'), el('button', { class: 'btn ghost', type: 'button', onclick: close }, '取消'))));
+  document.body.append(m); inp.focus();
+}
+function setTeacher(on) {
+  App.teacher = on;
+  document.body.classList.toggle('teacher', on);
+  App.ui.tBtn.classList.toggle('on', on);
+  App.ui.tBtn.textContent = on ? '🔓 教師模式：開' : '🔒 教師模式';
+  if (!on && View.ws === 'hw') { View.ws = 0; View.sec = 's1'; }
+  render();
+  toast(on ? '已開啟教師模式：顯示所有答案' : '已關閉教師模式');
+}
+function resetProgress() {
+  const close = () => m.remove();
+  const m = el('div', { class: 'modal', onclick: e => { if (e.target === m) close(); } },
+    el('div', { class: 'modal-box' }, el('h3', null, '清除進度？'), el('p', { style: 'font-size:.9rem' }, '會清除這部裝置上所有已完成的記錄（例如借給學生的平板）。'),
+      el('div', { class: 'btnrow' }, el('button', { class: 'btn pri', type: 'button', onclick: () => {
+        CH2.ws.forEach(ws => allQIds(ws).forEach(id => { store.del('done:' + id); store.del('first:' + id); }));
+        close(); render(); App.emit(); toast('已清除進度');
+      } }, '清除'), el('button', { class: 'btn ghost', type: 'button', onclick: close }, '取消'))));
+  document.body.append(m);
+}
+
+/* ---------- 進度 ---------- */
+function updateProgress() {
+  let d = 0, t = 0;
+  CH2.ws.forEach(ws => { const p = wsProgress(ws); d += p.done; t += p.total; });
+  App.ui.progBar.style.width = (t ? d / t * 100 : 0) + '%';
+  App.ui.progTxt.textContent = `${d}/${t}`;
+  renderTabs();
+}
+
+/* ---------- 分頁 ---------- */
+function renderTabs() {
+  const { tabs, subtabs } = App.ui;
+  tabs.innerHTML = '';
+  CH2.ws.forEach((ws, i) => {
+    const p = wsProgress(ws);
+    const b = el('button', { class: 'tab' + (View.ws === i ? ' on' : ''), type: 'button', onclick: () => { View.ws = i; View.sec = 's1'; render(); scrollTo(0, 0); } },
+      ws.tab, el('span', { class: 'dot' }, p.done === p.total ? '✓' : `${p.done}/${p.total}`), el('small', null, ws.small));
+    tabs.append(b);
+  });
+  if (App.teacher) tabs.append(el('button', { class: 'tab teacher-only' + (View.ws === 'hw' ? ' on' : ''), type: 'button', onclick: () => { View.ws = 'hw'; View.sec = CH2.hw[0].id; render(); scrollTo(0, 0); } },
+    '📘 功課對答', el('small', null, 'EX2.1 – EX2.3（教師）')));
+  subtabs.innerHTML = '';
+  if (View.ws === 'hw') {
+    CH2.hw.forEach(h => subtabs.append(el('button', { class: 'stab' + (View.sec === h.id ? ' on' : ''), type: 'button', onclick: () => { View.sec = h.id; render(); } }, h.tab)));
+    return;
+  }
+  const ws = CH2.ws[View.ws];
+  ws.secs.forEach(s => {
+    const ids = s.groups.flatMap(g => g.qs.map(q => q.id));
+    const all = ids.every(id => App.isDone(id));
+    subtabs.append(el('button', { class: 'stab' + (View.sec === s.key ? ' on' : ''), type: 'button', onclick: () => { View.sec = s.key; render(); } },
+      s.tab, all ? el('span', { class: 'ok' }, ' ✓') : null));
+  });
+  subtabs.append(el('button', { class: 'stab' + (View.sec === 'px' ? ' on' : ''), type: 'button', onclick: () => { View.sec = 'px'; render(); } }, '★ 額外練習'));
+}
+
+/* ---------- 內容 ---------- */
+function render() {
+  const { main } = App.ui;
+  main.innerHTML = ''; View.cards = [];
+  if (View.ws === 'hw' && !App.teacher) View.ws = 0;
+  renderTabs();
+  setHash();
+  if (View.ws === 'hw') return renderHW(main);
+  const ws = CH2.ws[View.ws];
+  REASONS = ws.reasons;
+  if (View.sec === 'px') return renderPractice(main, ws);
+  const sec = ws.secs.find(s => s.key === View.sec) || ws.secs[0];
+  const secIdx = ws.secs.indexOf(sec);
+  main.append(el('div', { class: 'sec-title' }, el('span', { class: 'sec-num' }, sec.num), el('h2', null, `課堂工作紙 ${ws.id}　${sec.title}`)));
+  if (ws.goals[secIdx]) main.append(el('div', { class: 'goal', html: '學習目標：' + fmt(ws.goals[secIdx]) }));
+  // 重點框
+  const left = el('div');
+  sec.notes.forEach(n => {
+    const it = el('div', { class: 'note-item' }, el('h3', { html: fmt(n.h) }));
+    n.p.forEach(p => it.append(el('p', null, renderTpl(p, 'show', []))));
+    if (n.memo) it.append(el('span', { class: 'memo', html: '﹝簡記：<b>' + esc(n.memo).replace(/([A-Z]+)/g, '<i class="v">$1</i>') + '</b>﹞' }));
+    left.append(it);
+  });
+  const notes = el('div', { class: 'notes' }, left);
+  if (sec.widget && WIDGETS[sec.widget]) notes.append(WIDGETS[sec.widget]());
+  else notes.classList.add('single');
+  main.append(notes);
+  (sec.examples || []).forEach(q => { const c = cardExample(q, { ws }); main.append(c.el); View.cards.push(c); });
+  // 題目
+  sec.groups.forEach(g => {
+    const grp = el('section', { class: 'group' });
+    if (g.stem) grp.append(el('div', { class: 'group-head' }, el('span', { class: 'qno' }, g.no), el('span', { class: 'stem', html: fmt(g.stem) })));
+    g.qs.forEach(q => {
+      const f = q.type === 'tick' ? cardTick : q.type === 'pick' ? cardPick : cardCalc;
+      const c = f(q, { ws });
+      grp.append(c.el); View.cards.push(c);
+    });
+    main.append(grp);
+  });
+  // 下一節
+  const nx = ws.secs[secIdx + 1];
+  main.append(el('div', { class: 'btnrow', style: 'justify-content:flex-end' },
+    el('button', { class: 'btn teal', type: 'button', onclick: () => { View.sec = nx ? nx.key : 'px'; render(); scrollTo(0, 0); } }, nx ? `下一節：${nx.tab} ▶` : '★ 額外練習 ▶')));
+  if (App.teacher) View.cards.forEach(c => c.teacher(true));
+}
+function renderPractice(main, ws) {
+  const p = wsProgress(ws);
+  main.append(el('div', { class: 'sec-title' }, el('span', { class: 'sec-num' }, '★'), el('h2', null, `課堂工作紙 ${ws.id}　額外練習`)));
+  if (p.done < p.total && !App.teacher) {
+    main.append(el('div', { class: 'lock' }, `🔒 先完成這份工作紙的所有題目（${p.done}/${p.total}），這裏就會解鎖。`));
+    return;
+  }
+  main.append(practicePanel(ws));
+}
+function renderHW(main) {
+  REASONS = CH2.ws[CH2.ws.length - 1].reasons;
+  const hw = CH2.hw.find(h => h.id === View.sec) || CH2.hw[0];
+  main.append(el('div', { class: 'sec-title' }, el('span', { class: 'sec-num' }, '📘'), el('h2', null, hw.title)),
+    el('div', { class: 'goal' }, '只在教師模式顯示。按「下一步」逐行顯示答案，方便在課堂上對功課。'));
+  hw.qs.forEach(q => { const c = cardExample(q, { ws: null }, '功課'); main.append(c.el); View.cards.push(c); });
+}
+
+/* ---------- 開發用：核對全部圖形（在瀏覽器 console 輸入 __audit()） ---------- */
+window.__audit = function () {
+  const out = [];
+  const chk = q => out.push(...auditFigure(q));
+  CH2.ws.forEach(ws => ws.secs.forEach(s => { (s.examples || []).forEach(chk); s.groups.forEach(g => g.qs.forEach(chk)); }));
+  CH2.hw.forEach(h => h.qs.forEach(chk));
+  return out;
+};
+
+document.addEventListener('DOMContentLoaded', buildShell);
+
+</script>
+</body>
+</html>
