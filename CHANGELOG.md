@@ -3,6 +3,7 @@
 最新的記錄放在最上方。格式及規則見 [AGENTS.md](AGENTS.md) 第 4 節。
 
 ## 2026-09-30
+- 修改：`README.md` 資料夾結構改為通用寫法（`Math/F1`–`F6`、`ICT/F1`–`F6`），新增年級時不用再改 README。
 - 修改：`index.html` 加入 `<!DOCTYPE html>`、`lang`、`charset` 及 `viewport`，改善手機顯示（之前手機會顯示縮細的桌面版）。
 - 修改：`index.html` 讀取試算表失敗時，改用瀏覽器內上次成功讀到的清單，並顯示「未能連線」提示。
 - 修改：ICT 中一「避障車」（ICT/F1/避障車.html）預先把 JSX 轉成普通 JavaScript，移除 Babel，改用 React production 版本，加快開啟速度；內容不變。

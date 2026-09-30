@@ -7,13 +7,12 @@
 ## 資料夾結構
 
 ```
-Math/F1/  數學中一課件
-ICT/F1/   ICT 中一課件
-ICT/F4/   ICT 中四課件
-index.html  課件目錄（Google Sites 嵌入這一頁）
+Math/F1/ … Math/F6/   數學 中一至中六課件
+ICT/F1/  … ICT/F6/    ICT 中一至中六課件
+index.html            課件目錄（Google Sites 嵌入這一頁）
 ```
 
-新年級就新開資料夾，例如 `Math/F2/`。
+年級資料夾用 `F1`–`F6`；未有該年級的資料夾就新開一個，例如 `Math/F2/`。
 
 ## 加新課件
 
