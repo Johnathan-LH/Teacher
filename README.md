@@ -1,5 +1,7 @@
 # 數學及 ICT 課件庫
 
+> 使用 AI 助手維護本網站？請讓它先讀 [AGENTS.md](AGENTS.md)。所有改動記錄在 [CHANGELOG.md](CHANGELOG.md)。
+
 網站：https://johnathan-lh.github.io/Teacher/
 
 ## 資料夾結構
