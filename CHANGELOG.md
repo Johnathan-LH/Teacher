@@ -6,6 +6,7 @@
 - 修改：`index.html` 加入 `<!DOCTYPE html>`、`lang`、`charset` 及 `viewport`，改善手機顯示（之前手機會顯示縮細的桌面版）。
 - 修改：`index.html` 讀取試算表失敗時，改用瀏覽器內上次成功讀到的清單，並顯示「未能連線」提示。
 - 修改：ICT 中一「避障車」（ICT/F1/避障車.html）預先把 JSX 轉成普通 JavaScript，移除 Babel，改用 React production 版本，加快開啟速度；內容不變。
+- 修改：ICT 中四「電腦系統」（ICT/F4/cpu_trail_web.html）頁內對象由「中三」改為「中四」，與試算表一致。
 - 修改：固定課件 CDN 版本（React 18.3.1、Vue 3.5.43 production 版、Tailwind 3.4.17），避免外部新版本令課件失效。
 - 下架並刪除：數學 中一「坐標」— 坐標特工：幾何變換模擬器（Math/F1/坐標.html）；原因：教師認為效果不理想。
 - 下架並刪除：數學 中三「三角學」— 三角學秘笈：恆等式與特殊角（Math/F3/SinCosTan.html）；原因：教師認為效果不理想。
