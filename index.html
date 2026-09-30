@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>數學及ICT課件庫</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +36,7 @@ h1{font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.15;margin:10px 0
 .hi{color:var(--muted);margin:0;font-size:16px}
 .stats{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
 .stat{background:#fff;border-radius:99px;padding:4px 14px;font-size:14px;font-weight:600}
+.stat.offline{color:var(--muted);font-size:13px}
 .stat b{font-family:var(--num);font-size:18px;color:var(--pink);margin-right:2px;font-variant-numeric:tabular-nums}
 .floaty{position:absolute;font-family:var(--num);font-weight:800;opacity:.35;pointer-events:none;user-select:none}
 .bot{position:relative;z-index:1;width:190px;max-width:42%;flex:0 0 auto;animation:bob 3.2s ease-in-out infinite}
@@ -299,18 +304,34 @@ $("#grades").addEventListener("click", e => {
 });
 $("#q").addEventListener("input", e => { state.q = e.target.value.trim(); if (COURSES.length) render(); });
 
+const CSV_CACHE = "clib2-csv";
 async function load(){
   if (!CONFIG.SHEET_CSV_URL){
     showMessage(`<span class="big">🔌</span>還未連接試算表。請把 CSV 連結貼到程式碼的 <code>SHEET_CSV_URL</code>。`);
     return;
   }
+  const use = csv => {
+    COURSES = toCourses(parseCSV(csv));
+    SUBJECTS = [...new Set([...CONFIG.subjects.filter(s => COURSES.some(c => c.subject === s)), ...COURSES.map(c => c.subject)])];
+    render();
+  };
   try {
     const res = await fetch(CONFIG.SHEET_CSV_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(res.status);
-    COURSES = toCourses(parseCSV(await res.text()));
-    SUBJECTS = [...new Set([...CONFIG.subjects.filter(s => COURSES.some(c => c.subject === s)), ...COURSES.map(c => c.subject)])];
-    render();
+    const csv = await res.text();
+    use(csv);
+    try { localStorage.setItem(CSV_CACHE, csv); } catch (e) {}
   } catch (err){
+    // 讀取失敗時，改用上次成功讀到的清單（存在這部電腦的瀏覽器）
+    let cached = null;
+    try { cached = localStorage.getItem(CSV_CACHE); } catch (e) {}
+    if (cached && err.message !== "欄名不符"){
+      try {
+        use(cached);
+        $("#stats").insertAdjacentHTML("beforeend", `<span class="stat offline">⚠️ 未能連線，顯示的可能不是最新清單</span>`);
+        return;
+      } catch (e) {}
+    }
     showMessage(err.message === "欄名不符"
       ? `<span class="big">🧐</span>讀到試算表，但欄名不符。<br>第一行要是：<code>科目</code> <code>年級</code> <code>課題</code> <code>課件名稱</code> <code>連結</code> <code>簡介</code> <code>標籤</code>`
       : `<span class="big">😵</span>未能讀取試算表。<br>請確認試算表已「發佈到網路」，而且連結以 <code>output=csv</code> 結尾。`);
