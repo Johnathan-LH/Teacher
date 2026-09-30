@@ -8,7 +8,6 @@
 
 ```
 Math/F1/  數學中一課件
-Math/F3/  數學中三課件
 ICT/F1/   ICT 中一課件
 ICT/F4/   ICT 中四課件
 index.html  課件目錄（Google Sites 嵌入這一頁）

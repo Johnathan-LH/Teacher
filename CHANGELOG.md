@@ -3,6 +3,8 @@
 最新的記錄放在最上方。格式及規則見 [AGENTS.md](AGENTS.md) 第 4 節。
 
 ## 2026-09-30
+- 下架並刪除：數學 中一「坐標」— 坐標特工：幾何變換模擬器（Math/F1/坐標.html）；原因：教師認為效果不理想。
+- 下架並刪除：數學 中三「三角學」— 三角學秘笈：恆等式與特殊角（Math/F3/SinCosTan.html）；原因：教師認為效果不理想。
 - 修改：改用新的課件目錄頁 `index.html`，由 Google 試算表「課件清單」提供資料，按科目 → 年級 → 課題分類，明亮圓潤風格。
 - 修改：Google Sites 改為「按網址嵌入」`https://johnathan-lh.github.io/Teacher/`。
 - 刪除：舊的自動目錄產生器 `generate_index.py` 及 `.github/workflows/auto-update.yml`。
