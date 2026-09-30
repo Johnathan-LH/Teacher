@@ -1,398 +1,320 @@
+<title>數學及ICT課件庫</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;600;800&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout: 圓點紙底 + 漂浮數學／電腦符號的歡迎橫幅（右邊有電腦小精靈）→ 科目大按鈕 → 年級貼紙列 → 彩色課題卡片 */
+:root{
+  color-scheme:light;
+  --bg:#f3f8ff; --dot:#d6e6fb; --card:#ffffff; --ink:#27335a; --muted:#6b7599; --line:#e3eaf7;
+  --sun:#ffd23f; --sky:#4cc9f0; --grape:#7b6cf6; --mint:#3ddc97; --pink:#ff7aa2; --orange:#ff9f43;
+  --round:"Chiron GoRound TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --num:"Baloo 2","Chiron GoRound TC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg); color:var(--ink); font-family:var(--round); font-size:16px; line-height:1.6;
+  background-image:radial-gradient(var(--dot) 2px,transparent 2px); background-size:26px 26px;
+}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:18px;padding-block:22px 48px}
+button,input{font-family:inherit}
+:focus-visible{outline:3px solid var(--grape);outline-offset:3px}
 
-    <!DOCTYPE html>
-    <html lang="zh-Hant">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>JOHNATHAN // NEXUS_LAB</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        
-        <style>
-            :root {
-                --dark-bg: #030712;
-            }
-            body {
-                background-color: var(--dark-bg);
-                color: #e2e8f0;
-                overflow-x: hidden;
-            }
-            
-            #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
-            
-            .scanlines {
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.25));
-                background-size: 100% 4px; z-index: 50; pointer-events: none; opacity: 0.4;
-            }
-            
-            .cyber-panel {
-                background: rgba(3, 7, 18, 0.75); backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .cyber-clip { clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
-            
-            /* 動態顏色卡片 */
-            .data-card {
-                transition: all 0.3s ease; position: relative;
-                border: 1px solid var(--theme-dim);
-                background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(3,7,18,0.9) 100%);
-            }
-            .data-card:hover {
-                border-color: var(--theme-color);
-                box-shadow: 0 0 20px var(--theme-glow), inset 0 0 15px var(--theme-dim);
-                transform: translateY(-4px);
-            }
-            .data-card::before {
-                content: ''; position: absolute; top: -1px; left: -1px; width: 20px; height: 20px;
-                border-top: 2px solid var(--theme-color); border-left: 2px solid var(--theme-color);
-                transition: all 0.3s ease;
-            }
-            .data-card:hover::before { width: 100%; height: 100%; opacity: 0.3; }
-            
-            .blinking-cursor { animation: blink 1s step-end infinite; }
-            @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-            
-            /* 側邊欄活躍按鈕動態顏色 */
-            .filter-btn.active-cyan { color: #22d3ee; border-color: #06b6d4; background: rgba(6, 182, 212, 0.15); text-shadow: 0 0 8px #06b6d4; }
-            .filter-btn.active-purple { color: #d8b4fe; border-color: #a855f7; background: rgba(168, 85, 247, 0.15); text-shadow: 0 0 8px #a855f7; }
-            .filter-btn.active-blue { color: #93c5fd; border-color: #3b82f6; background: rgba(59, 130, 246, 0.15); text-shadow: 0 0 8px #3b82f6; }
-            
-            ::-webkit-scrollbar { width: 4px; }
-            ::-webkit-scrollbar-track { background: #0f172a; }
-            ::-webkit-scrollbar-thumb { background: #475569; }
-        </style>
-    </head>
-    <body class="flex flex-col min-h-screen font-sans">
-        <div class="scanlines"></div>
-        <canvas id="bg-canvas"></canvas>
+/* ---------- 歡迎橫幅 ---------- */
+.hero{position:relative;overflow:hidden;border-radius:32px;padding:30px 32px;
+  background:linear-gradient(135deg,#ffe98a 0%,#ffd6e4 55%,#cfe9ff 100%);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  box-shadow:0 8px 0 rgba(39,51,90,.08)}
+.hero-text{position:relative;z-index:1;min-width:0;flex:1 1 320px}
+.school{display:inline-block;font-family:var(--num);font-size:13px;letter-spacing:.06em;background:#fff;
+  color:var(--grape);padding:3px 12px;border-radius:99px;font-weight:600}
+h1{font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.15;margin:10px 0 6px;text-wrap:balance;letter-spacing:.02em}
+.hi{color:var(--muted);margin:0;font-size:16px}
+.stats{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.stat{background:#fff;border-radius:99px;padding:4px 14px;font-size:14px;font-weight:600}
+.stat b{font-family:var(--num);font-size:18px;color:var(--pink);margin-right:2px;font-variant-numeric:tabular-nums}
+.floaty{position:absolute;font-family:var(--num);font-weight:800;opacity:.35;pointer-events:none;user-select:none}
+.bot{position:relative;z-index:1;width:190px;max-width:42%;flex:0 0 auto;animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-2deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.eye{transform-origin:center;transform-box:fill-box;animation:blink 4s infinite}
+@media (prefers-reduced-motion:reduce){.bot,.eye{animation:none}}
 
-        <div class="flex-1 w-full max-w-screen-2xl mx-auto p-4 md:p-6 flex flex-col h-screen z-10 relative">
-            
-            <!-- 頂部遙測儀表板 -->
-            <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shrink-0 border-b border-slate-800 pb-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 bg-slate-900 border border-slate-600 flex items-center justify-center rounded cyber-clip shadow-lg">
-                        <i class="fas fa-satellite-dish text-slate-300 text-2xl animate-pulse"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-3xl md:text-4xl font-black tracking-widest text-white">
-                            JOHNATHAN <span class="text-slate-500">//</span> LAB<span class="blinking-cursor text-slate-500">_</span>
-                        </h1>
-                        <p class="text-slate-400 font-bold text-[10px] tracking-[0.3em] uppercase mt-1 font-mono">Global Learning Network Node &bull; Authorized Access Only</p>
-                    </div>
-                </div>
-                
-                <div class="flex gap-3">
-                    <div class="cyber-panel px-4 py-2 font-mono">
-                        <div class="text-[8px] text-slate-400 uppercase tracking-widest mb-1">System Status</div>
-                        <div class="text-emerald-400 text-xs font-bold tracking-widest flex items-center">
-                            <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-2 shadow-[0_0_5px_#34d399]"></span>ONLINE
-                        </div>
-                    </div>
-                    <div class="cyber-panel px-4 py-2 font-mono">
-                        <div class="text-[8px] text-slate-400 uppercase tracking-widest mb-1">Last Sync (HKT)</div>
-                        <div class="text-slate-300 text-xs font-bold tracking-widest">2026-04-07 09:13:01</div>
-                    </div>
-                </div>
-            </header>
+/* ---------- 科目 ---------- */
+.subjects{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 18px}
+.subj{display:flex;align-items:center;gap:12px;padding:10px 22px 10px 10px;border:3px solid var(--line);border-radius:22px;
+  background:var(--card);color:var(--ink);font-size:19px;font-weight:800;cursor:pointer;
+  box-shadow:0 5px 0 var(--line);transition:transform .15s,box-shadow .15s}
+.subj:hover{transform:translateY(-2px)}
+.subj .ico{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:var(--c-soft)}
+.subj .ico svg{width:30px;height:30px}
+.subj .n{font-family:var(--num);font-size:14px;background:var(--bg);border-radius:99px;padding:0 9px;color:var(--muted)}
+.subj[aria-pressed="true"]{border-color:var(--c);background:var(--c);color:#fff;box-shadow:0 5px 0 var(--c-deep)}
+.subj[aria-pressed="true"] .ico{background:#fff}
+.subj[aria-pressed="true"] .n{background:rgba(255,255,255,.3);color:#fff}
 
-            <main class="flex-1 cyber-panel flex flex-col md:flex-row overflow-hidden relative cyber-clip border-slate-700">
-                
-                <aside class="w-full md:w-64 bg-slate-950/90 border-r border-slate-800 p-6 overflow-y-auto shrink-0 z-10">
-                    <div class="text-[10px] text-slate-500 mb-6 font-bold tracking-widest border-b border-slate-800 pb-2 font-mono">
-                        > DIRECTORY_TREE
-                    </div>
-                    
-    <div class="mb-6">
-        <button onclick="filterBy('ALL', 'ALL')" id="btn-ALL-ALL" class="filter-btn w-full text-left px-4 py-3 bg-slate-800/50 border border-slate-500 text-slate-200 font-black tracking-[0.1em] text-sm uppercase transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:bg-slate-700 cyber-clip flex items-center group active-all">
-            <i class="fas fa-network-wired mr-3 group-hover:animate-pulse text-emerald-400"></i> SYS.ROOT_DIR
-        </button>
+/* ---------- 年級 + 搜尋 ---------- */
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:22px}
+.grades{display:flex;flex-wrap:wrap;gap:8px}
+.grade{border:0;border-radius:99px;padding:7px 16px;background:var(--card);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer;
+  box-shadow:0 3px 0 var(--line);display:flex;gap:6px;align-items:center}
+.grade .n{font-family:var(--num);font-size:13px;color:var(--muted)}
+.grade[aria-pressed="true"]{background:var(--sun);box-shadow:0 3px 0 #e0b21c}
+.grade[aria-pressed="true"] .n{color:var(--ink)}
+.grade:disabled{opacity:.4;cursor:default}
+.search-box{position:relative;flex:0 1 280px;min-width:200px}
+.search-box svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px}
+.search{width:100%;border:3px solid var(--line);border-radius:99px;padding:8px 16px 8px 40px;font-size:15px;background:var(--card);color:var(--ink)}
+.search:focus{border-color:var(--sky);outline:none}
+
+/* ---------- 課件清單 ---------- */
+main{display:flex;flex-direction:column;gap:30px}
+.gradeblock h2{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;font-size:24px;font-weight:800}
+.badge{font-family:var(--num);background:var(--c);color:#fff;border-radius:14px;padding:2px 14px;transform:rotate(-3deg);display:inline-block;box-shadow:0 4px 0 var(--c-deep)}
+.gradeblock h2 small{font-size:14px;font-weight:600;color:var(--muted)}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start}
+.topic{background:var(--card);border-radius:24px;overflow:hidden;box-shadow:0 6px 0 var(--line);min-width:0}
+.topic h3{margin:0;padding:12px 18px;font-size:18px;font-weight:800;background:var(--t);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.topic h3 .n{font-family:var(--num);font-size:14px;background:#fff;border-radius:99px;padding:0 10px}
+.items{list-style:none;margin:0;padding:6px 10px 10px}
+.item{display:flex;flex-direction:column;gap:6px;padding:12px 10px;border-bottom:2px dashed var(--line)}
+.item:last-child{border-bottom:0}
+.item .t{font-weight:800;font-size:16.5px}
+.item .d{color:var(--muted);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;font-weight:600;padding:1px 10px;border-radius:99px;background:var(--bg);color:var(--grape)}
+.open{align-self:flex-start;text-decoration:none;font-weight:800;font-size:15px;color:#fff;background:var(--c);
+  padding:7px 18px;border-radius:99px;box-shadow:0 4px 0 var(--c-deep);transition:transform .12s,box-shadow .12s;display:inline-flex;gap:6px;align-items:center}
+.open:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--c-deep)}
+.open:active{transform:translateY(2px);box-shadow:0 2px 0 var(--c-deep)}
+.open.none{background:var(--line);color:var(--muted);box-shadow:none;pointer-events:none}
+.soon{color:var(--muted);font-size:14px;padding:14px 20px}
+.empty{background:var(--card);border:3px dashed var(--line);border-radius:24px;padding:28px;text-align:center;color:var(--muted);line-height:1.9}
+.empty .big{font-size:40px;display:block}
+.empty code{font-family:var(--num);background:var(--bg);padding:1px 8px;border-radius:8px;color:var(--ink)}
+
+/* 科目顏色 */
+.theme-0{--c:var(--grape);--c-deep:#5646d4;--c-soft:#ebe8ff}
+.theme-1{--c:#1eaee0;--c-deep:#1487b0;--c-soft:#dff5fd}
+.theme-2{--c:#20b877;--c-deep:#178f5c;--c-soft:#dcf8ec}
+.theme-3{--c:var(--pink);--c-deep:#e0507c;--c-soft:#ffe6ee}
+
+@media (max-width:640px){
+  .hero{padding:24px 20px}
+  .bot{width:130px}
+  .search-box{flex:1 1 100%}
+  .topics{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap" id="app">
+  <section class="hero">
+    <span class="floaty" style="left:4%;top:8%;font-size:34px;color:var(--grape)">π</span>
+    <span class="floaty" style="left:40%;top:6%;font-size:28px;color:var(--sky)">&lt;/&gt;</span>
+    <span class="floaty" style="left:58%;bottom:8%;font-size:30px;color:var(--pink)">√x</span>
+    <span class="floaty" style="left:30%;bottom:4%;font-size:26px;color:var(--mint)">01</span>
+    <span class="floaty" style="left:48%;top:44%;font-size:26px;color:var(--orange)">△</span>
+    <div class="hero-text">
+      <span class="school" id="school"></span>
+      <h1 id="title"></h1>
+      <p class="hi">揀科目、揀年級，打開課件就可以開始學習！</p>
+      <div class="stats" id="stats"></div>
     </div>
-    <div class="space-y-6 font-mono">
-    
-        <div>
-            <div class="text-sm font-black text-cyan-500 uppercase tracking-widest px-2 flex items-center bg-slate-900/80 py-1 border-l-2 border-cyan-500">
-                <i class="fas fa-database mr-2 text-xs"></i> ICT
-            </div>
-            <div class="pl-2 ml-1 border-l border-slate-800/80">
-                
-            <div class="flex items-center text-slate-600 mt-2">
-                <span class="mr-2 text-cyan-900">├──</span>
-                <button onclick="filterBy('ICT', 'F1')" id="btn-ICT-F1" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all flex items-center group" data-color="cyan">
-                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> F1
-                </button>
-            </div>
-            
-            <div class="flex items-center text-slate-600 mt-2">
-                <span class="mr-2 text-cyan-900">└──</span>
-                <button onclick="filterBy('ICT', '全部')" id="btn-ICT-全部" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-cyan-300 hover:border-cyan-500/30 hover:bg-cyan-500/10 transition-all flex items-center group" data-color="cyan">
-                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-cyan-400"></i> VIEW_ALL
-                </button>
-            </div>
-            
-            </div>
-        </div>
-        
-        <div>
-            <div class="text-sm font-black text-purple-500 uppercase tracking-widest px-2 flex items-center bg-slate-900/80 py-1 border-l-2 border-purple-500">
-                <i class="fas fa-database mr-2 text-xs"></i> MATH
-            </div>
-            <div class="pl-2 ml-1 border-l border-slate-800/80">
-                
-            <div class="flex items-center text-slate-600 mt-2">
-                <span class="mr-2 text-purple-900">├──</span>
-                <button onclick="filterBy('MATH', 'F1')" id="btn-MATH-F1" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-purple-300 hover:border-purple-500/30 hover:bg-purple-500/10 transition-all flex items-center group" data-color="purple">
-                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-purple-400"></i> F1
-                </button>
-            </div>
-            
-            <div class="flex items-center text-slate-600 mt-2">
-                <span class="mr-2 text-purple-900">└──</span>
-                <button onclick="filterBy('MATH', 'F3')" id="btn-MATH-F3" class="filter-btn flex-1 text-left px-3 py-1.5 rounded bg-transparent border border-transparent text-xs font-bold text-slate-400 hover:text-purple-300 hover:border-purple-500/30 hover:bg-purple-500/10 transition-all flex items-center group" data-color="purple">
-                    <i class="fas fa-folder mr-2 opacity-50 group-hover:opacity-100 group-hover:text-purple-400"></i> F3
-                </button>
-            </div>
-            
-            </div>
-        </div>
-        </div>
-                </aside>
+    <svg class="bot" viewBox="0 0 200 190" aria-hidden="true">
+      <ellipse cx="100" cy="182" rx="62" ry="7" fill="#27335a" opacity=".12"/>
+      <rect x="78" y="140" width="44" height="22" rx="6" fill="#9aa6d6"/>
+      <rect x="54" y="158" width="92" height="16" rx="8" fill="#b7c1ea"/>
+      <rect x="18" y="14" width="164" height="132" rx="30" fill="#7b6cf6"/>
+      <rect x="32" y="28" width="136" height="100" rx="20" fill="#ffffff"/>
+      <text x="44" y="56" font-family="Baloo 2, sans-serif" font-weight="800" font-size="18" fill="#4cc9f0">1+1=2</text>
+      <text x="132" y="118" font-family="Baloo 2, sans-serif" font-weight="800" font-size="16" fill="#ff9f43">π</text>
+      <ellipse class="eye" cx="76" cy="82" rx="8" ry="10" fill="#27335a"/>
+      <ellipse class="eye" cx="124" cy="82" rx="8" ry="10" fill="#27335a"/>
+      <circle cx="79" cy="78" r="3" fill="#fff"/><circle cx="127" cy="78" r="3" fill="#fff"/>
+      <circle cx="60" cy="100" r="8" fill="#ff7aa2" opacity=".45"/><circle cx="140" cy="100" r="8" fill="#ff7aa2" opacity=".45"/>
+      <path d="M88 100 q12 12 24 0" stroke="#27335a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="6" r="7" fill="#ffd23f"/><rect x="97" y="8" width="6" height="10" fill="#7b6cf6"/>
+    </svg>
+  </section>
 
-                <section class="flex-1 flex flex-col relative overflow-hidden z-10">
-                    
-                    <div class="p-4 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center bg-slate-900/60 shrink-0 gap-4 font-mono">
-                        <div class="text-xs font-bold text-slate-400 tracking-widest flex items-center">
-                            <i class="fas fa-terminal mr-2 text-slate-500"></i> 
-                            <span class="text-white mr-2">QUERY:</span> 
-                            <span id="file-count" class="text-slate-300">0</span> DATABLOCKS FOUND
-                        </div>
-                        <div class="relative w-full sm:w-80">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">>_</span>
-                            <input type="text" id="search-input" placeholder="ENTER SEARCH PARAMETER..." oninput="handleSearch()"
-                                   class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-700 focus:outline-none focus:border-slate-400 transition-all text-xs font-bold text-white placeholder-slate-700 cyber-clip">
-                        </div>
-                    </div>
+  <nav class="subjects" id="subjects" aria-label="科目"></nav>
 
-                    <div class="p-6 overflow-y-auto flex-1 bg-gradient-to-br from-slate-900/30 to-transparent">
-                        <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                            <!-- JS 動態生成 -->
-                        </div>
-                        
-                        <div id="empty-state" class="hidden h-full flex flex-col items-center justify-center opacity-40">
-                            <i class="fas fa-exclamation-triangle text-6xl mb-6 text-red-500"></i>
-                            <h3 class="text-2xl font-black text-red-500 tracking-[0.2em] mb-2 font-mono">ERR_404</h3>
-                            <p class="text-slate-400 tracking-widest text-sm font-mono">NO CORRESPONDING DATA BLOCKS LOCATED.</p>
-                        </div>
-                    </div>
-                </section>
-            </main>
-            
-            <footer class="mt-4 flex justify-between items-center text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em] shrink-0 font-mono">
-                <span>> SYS.MAINTAINER: JOHNATHAN-LH</span>
-                <span>SECURE CONNECTION ESTABLISHED // PORT 443</span>
-            </footer>
-        </div>
+  <div class="bar">
+    <div class="grades" id="grades" aria-label="年級"></div>
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#6b7599" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+      <label for="q" style="position:absolute;left:-9999px">搜尋</label>
+      <input class="search" id="q" type="search" placeholder="搜尋課題或課件">
+    </div>
+  </div>
 
-        <script>
-            // --- 高效能粒子系統 (FPS Optimized) ---
-            const canvas = document.getElementById('bg-canvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            const mouse = { x: null, y: null, radius: 200 };
+  <main id="list"><div class="empty"><span class="big">⏳</span>正在載入課件清單…</div></main>
+</div>
 
-            window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-            window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+<script>
+/* ============================================================
+   設定（只需設定一次）
+   ============================================================ */
+const CONFIG = {
+  school: "Maryknoll Secondary School",
+  title: "數學及ICT課件庫",
+  SHEET_CSV_URL: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTnHug9_QB5u15YeOhrdxA7CgTNq3iEo0CgaCfOdls8xyt9s6VnvFidR1xNBrrDURKx2M30Kfjr9Idh/pub?gid=1953720394&single=true&output=csv",
+  BASE_URL: "https://johnathan-lh.github.io/Teacher/",   // 「連結」欄可只填檔案路徑，例如 Math/F1/坐標.html
+  subjects: ["數學", "ICT"],              // 科目顯示次序（試算表出現的新科目會自動加在後面）
+  grades: ["中一", "中二", "中三", "中四", "中五", "中六"]
+};
+/* 試算表第一行（欄名）：科目 | 年級 | 課題 | 課件名稱 | 連結 | 簡介 | 標籤 */
 
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 1.5 + 0.5;
-                    this.speedX = (Math.random() - 0.5) * 0.5; 
-                    this.speedY = (Math.random() - 0.5) * 0.5;
-                }
-                draw() {
-                    ctx.fillStyle = 'rgba(99, 102, 241, 0.6)'; 
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                update() {
-                    this.x += this.speedX; this.y += this.speedY;
-                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+/* ============================================================
+   以下是程式，一般不用修改
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let COURSES = [], SUBJECTS = [];
+const state = { subject: "", grade: "全部", q: "" };
+try { Object.assign(state, JSON.parse(localStorage.getItem("clib2") || "{}"), { q: "" }); } catch (e) {}
+function save(){ try { localStorage.setItem("clib2", JSON.stringify({ subject: state.subject, grade: state.grade })); } catch (e) {} }
 
-                    if (mouse.x != null) {
-                        let dx = mouse.x - this.x;
-                        let dy = mouse.y - this.y;
-                        if (Math.abs(dx) < mouse.radius && Math.abs(dy) < mouse.radius) {
-                            let distance = Math.sqrt(dx * dx + dy * dy);
-                            if (distance < mouse.radius) {
-                                this.x += dx * 0.01;
-                                this.y += dy * 0.01;
-                            }
-                        }
-                    }
-                }
-            }
+$("#school").textContent = CONFIG.school;
+$("#title").textContent = CONFIG.title;
 
-            function init() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                particles = [];
-                let numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000);
-                if(numberOfParticles > 70) numberOfParticles = 70; 
-                for (let i = 0; i < numberOfParticles; i++) particles.push(new Particle());
-            }
+const TOPIC_COLORS = ["#fff1b8", "#d9f3ff", "#dcfbea", "#ffe3ec", "#ebe8ff", "#ffe8d1"];
+const ICONS = {
+  math: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="8" fill="#ffd23f"/><path d="M9 11h6M12 8v6M18 11h6M9.5 19.5l5 5M14.5 19.5l-5 5M18 20h6M18 24h6" stroke="#27335a" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  ict: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="5" width="26" height="17" rx="5" fill="#4cc9f0"/><rect x="6" y="8" width="20" height="11" rx="3" fill="#fff"/><path d="M12 11l-3 2.5 3 2.5M20 11l3 2.5-3 2.5M17 10.5l-2 6" stroke="#27335a" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="11" y="23" width="10" height="3" rx="1.5" fill="#27335a"/></svg>`,
+  other: `<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="4" width="22" height="24" rx="6" fill="#3ddc97"/><path d="M10 11h12M10 16h12M10 21h7" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`
+};
+const iconFor = s => /數|math/i.test(s) ? ICONS.math : /ict|電腦|資訊|編程|程式/i.test(s) ? ICONS.ict : ICONS.other;
 
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update(); 
-                    particles[i].draw();
-                    
-                    for (let j = i + 1; j < particles.length; j++) {
-                        let dx = particles[i].x - particles[j].x;
-                        let dy = particles[i].y - particles[j].y;
-                        
-                        if (Math.abs(dx) > 120 || Math.abs(dy) > 120) continue;
-                        
-                        let distance = Math.sqrt(dx * dx + dy * dy);
-                        if (distance < 120) {
-                            ctx.beginPath();
-                            ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 - distance/600})`;
-                            ctx.lineWidth = 0.5;
-                            ctx.moveTo(particles[i].x, particles[i].y); 
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.stroke();
-                        }
-                    }
-                    
-                    if (mouse.x != null) {
-                        let dxMouse = mouse.x - particles[i].x;
-                        let dyMouse = mouse.y - particles[i].y;
-                        if (Math.abs(dxMouse) < mouse.radius && Math.abs(dyMouse) < mouse.radius) {
-                            let distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-                            if (distMouse < mouse.radius * 0.7) {
-                                ctx.beginPath();
-                                ctx.strokeStyle = `rgba(6, 182, 212, ${0.6 - distMouse/mouse.radius})`;
-                                ctx.lineWidth = 1;
-                                ctx.moveTo(particles[i].x, particles[i].y); 
-                                ctx.lineTo(mouse.x, mouse.y);
-                                ctx.stroke();
-                            }
-                        }
-                    }
-                }
-                requestAnimationFrame(animate);
-            }
+function parseCSV(text){
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < text.length; i++){
+    const ch = text[i];
+    if (q){
+      if (ch === '"'){ if (text[i+1] === '"'){ f += '"'; i++; } else q = false; }
+      else f += ch;
+    } else if (ch === '"') q = true;
+    else if (ch === ",") { row.push(f); f = ""; }
+    else if (ch === "\n" || ch === "\r"){
+      if (ch === "\r" && text[i+1] === "\n") i++;
+      row.push(f); rows.push(row); row = []; f = "";
+    } else f += ch;
+  }
+  if (f !== "" || row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
 
-            let resizeTimer;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(init, 200); 
-            });
-            init(); animate();
+function fullUrl(u){
+  if (!u) return "";
+  if (/^https?:\/\//i.test(u)) return u;
+  return CONFIG.BASE_URL + u.replace(/^\.?\//, "").split("/").map(encodeURIComponent).join("/");
+}
 
-            // --- 色彩管理與渲染邏輯 ---
-            const lessons = [{"title": "ICT \u57fa\u790e\u6e2c\u8a66\uff1aCPU \u6307\u4ee4\u9031\u671f", "url": "ICT/cpu_trail_web.html", "subject": "ICT", "sub": "\u5168\u90e8", "path": "ICT/cpu_trail_web.html"}, {"title": "ICT \u5be6\u4f5c\uff1a\u907f\u969c\u5c0f\u8eca\u4efb\u52d9\u63a7\u5236\u4e2d\u5fc3", "url": "ICT/F1/\u907f\u969c\u8eca.html", "subject": "ICT", "sub": "F1", "path": "ICT/F1/\u907f\u969c\u8eca.html"}, {"title": "\u4e09\u89d2\u5b78\u79d8\u7b08\uff1a\u6046\u7b49\u5f0f\u8207\u7279\u6b8a\u89d2", "url": "Math/F3/SinCosTan.html", "subject": "MATH", "sub": "F3", "path": "Math/F3/SinCosTan.html"}, {"title": "\u767e\u5206\u6578\u8b8a\u5316 \u7d71\u4e00\u8996\u89ba\u5316\u6f14\u793a", "url": "Math/F1/\u767e\u5206\u6578.html", "subject": "MATH", "sub": "F1", "path": "Math/F1/\u767e\u5206\u6578.html"}, {"title": "\u5750\u6a19.html", "url": "Math/F1/\u5750\u6a19.html", "subject": "MATH", "sub": "F1", "path": "Math/F1/\u5750\u6a19.html"}];
-            let currentMain = 'ALL';
-            let currentSub = 'ALL';
-            let searchQuery = '';
+function toCourses(rows){
+  const head = (rows.shift() || []).map(h => h.trim());
+  const col = name => head.indexOf(name);
+  const idx = { subject: col("科目"), grade: col("年級"), topic: col("課題"), title: col("課件名稱"),
+                url: col("連結"), desc: col("簡介"), tags: col("標籤") };
+  if (idx.subject < 0 || idx.grade < 0 || idx.title < 0) throw new Error("欄名不符");
+  const get = (r, k) => idx[k] >= 0 ? (r[idx[k]] || "").trim() : "";
+  return rows.map(r => ({
+    subject: get(r, "subject"), grade: get(r, "grade"), topic: get(r, "topic") || "其他",
+    title: get(r, "title"), url: fullUrl(get(r, "url")), desc: get(r, "desc"),
+    tags: get(r, "tags").split(/[,，、]/).map(s => s.trim()).filter(Boolean)
+  })).filter(c => c.subject && c.grade && (c.title || c.topic !== "其他"));
+}
 
-            const themeMap = {
-                'ICT': { color: '#06b6d4', dim: 'rgba(6,182,212,0.3)', glow: 'rgba(6,182,212,0.2)', bg: 'rgba(6,182,212,0.1)' },   
-                'MATH': { color: '#a855f7', dim: 'rgba(168,85,247,0.3)', glow: 'rgba(168,85,247,0.2)', bg: 'rgba(168,85,247,0.1)' }, 
-                'DEFAULT': { color: '#3b82f6', dim: 'rgba(59,130,246,0.3)', glow: 'rgba(59,130,246,0.2)', bg: 'rgba(59,130,246,0.1)' } 
-            };
+function showMessage(html){
+  $("#subjects").innerHTML = ""; $("#grades").innerHTML = ""; $("#stats").innerHTML = "";
+  $("#list").innerHTML = `<div class="empty">${html}</div>`;
+}
 
-            function render() {
-                const grid = document.getElementById('lessons-grid');
-                const empty = document.getElementById('empty-state');
-                const countDisplay = document.getElementById('file-count');
-                grid.innerHTML = '';
-                
-                const filtered = lessons.filter(l => {
-                    const matchMain = currentMain === 'ALL' || l.subject === currentMain;
-                    const matchSub = currentSub === 'ALL' || l.sub === currentSub;
-                    const matchSearch = l.title.toLowerCase().includes(searchQuery) || l.path.toLowerCase().includes(searchQuery);
-                    return matchMain && matchSub && matchSearch;
-                });
+const matchQ = c => !state.q || [c.topic, c.title, c.desc, ...c.tags].join(" ").toLowerCase().includes(state.q.toLowerCase());
+const gradeOrder = g => { const i = CONFIG.grades.indexOf(g); return i < 0 ? 99 : i; };
+const countReal = arr => arr.filter(c => c.title).length;
 
-                countDisplay.innerText = filtered.length;
+function render(){
+  if (!COURSES.length){
+    showMessage(`<span class="big">📭</span>試算表已連接，但暫時未有課件。<br>在試算表加入第一行後，稍等幾分鐘再重新整理此頁。`);
+    return;
+  }
+  if (!SUBJECTS.includes(state.subject)) state.subject = SUBJECTS[0];
+  const si = SUBJECTS.indexOf(state.subject);
+  $("#app").className = "wrap theme-" + (si % 4);
 
-                if (filtered.length === 0) {
-                    empty.classList.remove('hidden');
-                } else {
-                    empty.classList.add('hidden');
-                    filtered.forEach(l => {
-                        const theme = themeMap[l.subject] || themeMap['DEFAULT'];
-                        
-                        // 修復重點：使用 ${l.變數} 來讓 Javascript 正確解析範本字串
-                        grid.innerHTML += `
-                            <div class="data-card p-6 cyber-clip group flex flex-col justify-between h-48" 
-                                 style="--theme-color: ${theme.color}; --theme-dim: ${theme.dim}; --theme-glow: ${theme.glow}; --theme-bg: ${theme.bg};">
-                                <div>
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="text-[9px] font-bold uppercase tracking-widest px-2 py-1 border font-mono" 
-                                             style="color: ${theme.color}; border-color: ${theme.color}; background: ${theme.bg};">
-                                            SYS_${l.subject} / ${l.sub}
-                                        </div>
-                                        <i class="fas fa-file-code opacity-40 group-hover:opacity-100 transition-all text-lg" style="color: ${theme.color};"></i>
-                                    </div>
-                                    <h3 class="text-xl font-black text-white mb-2 transition-colors leading-snug line-clamp-2" 
-                                        style="text-shadow: 0 0 10px ${theme.glow};">${l.title}</h3>
-                                    <p class="text-[10px] text-slate-500 font-mono truncate">>${l.path}</p>
-                                </div>
-                                <div class="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center opacity-70 group-hover:opacity-100 transition-opacity">
-                                    <div class="text-[8px] text-slate-500 tracking-widest uppercase font-mono">DATABLOCK_READY</div>
-                                    <a href="${l.url}" target="_blank" rel="noopener noreferrer" 
-                                       class="text-xs font-black tracking-widest px-4 py-2 border transition-all cyber-clip font-mono"
-                                       style="color: ${theme.color}; border-color: ${theme.color};"
-                                       onmouseover="this.style.backgroundColor='${theme.color}'; this.style.color='#fff';"
-                                       onmouseout="this.style.backgroundColor='transparent'; this.style.color='${theme.color}';">
-                                        EXECUTE <i class="fas fa-play ml-2 text-[10px]"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-            }
+  $("#stats").innerHTML = `<span class="stat"><b>${countReal(COURSES)}</b> 個課件</span><span class="stat"><b>${new Set(COURSES.map(c => c.subject + c.grade + c.topic)).size}</b> 個課題</span>`;
 
-            function filterBy(main, sub) {
-                currentMain = main;
-                currentSub = sub;
-                
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.classList.remove('active-cyan', 'active-purple', 'active-blue', 'bg-slate-700');
-                    if(btn.id === 'btn-ALL-ALL') btn.classList.remove('shadow-[0_0_15px_rgba(255,255,255,0.1)]');
-                });
+  $("#subjects").innerHTML = SUBJECTS.map((s, i) =>
+    `<button class="subj theme-${i % 4}" data-s="${esc(s)}" aria-pressed="${s === state.subject}"><span class="ico">${iconFor(s)}</span>${esc(s)}<span class="n">${countReal(COURSES.filter(c => c.subject === s))}</span></button>`
+  ).join("");
 
-                const activeId = main === 'ALL' ? 'btn-ALL-ALL' : `btn-${main}-${sub}`;
-                const activeBtn = document.getElementById(activeId);
-                
-                if (activeBtn) {
-                    if (main === 'ALL') {
-                        activeBtn.classList.add('bg-slate-700', 'shadow-[0_0_15px_rgba(255,255,255,0.1)]');
-                    } else {
-                        const colorTheme = activeBtn.getAttribute('data-color') || 'blue';
-                        activeBtn.classList.add(`active-${colorTheme}`);
-                    }
-                }
+  const inSubj = COURSES.filter(c => c.subject === state.subject && matchQ(c));
+  const allGrades = [...new Set([...CONFIG.grades, ...COURSES.map(c => c.grade)])].sort((a, b) => gradeOrder(a) - gradeOrder(b));
+  $("#grades").innerHTML = ["全部", ...allGrades].map(g => {
+    const rows = inSubj.filter(c => g === "全部" || c.grade === g);
+    const off = rows.length === 0 && g !== "全部" && g !== state.grade;
+    return `<button class="grade" data-g="${esc(g)}" aria-pressed="${g === state.grade}" ${off ? "disabled" : ""}>${esc(g)}<span class="n">${countReal(rows)}</span></button>`;
+  }).join("");
 
-                render();
-            }
+  const shown = inSubj.filter(c => state.grade === "全部" || c.grade === state.grade);
+  if (!shown.length){
+    $("#list").innerHTML = `<div class="empty"><span class="big">🔍</span>${state.q ? `找不到「${esc(state.q)}」相關的課件。` : "這個年級暫時未有課件。"}</div>`;
+    return;
+  }
 
-            function handleSearch() {
-                searchQuery = document.getElementById('search-input').value.toLowerCase();
-                render();
-            }
+  let ci = 0;
+  const grades = allGrades.filter(g => shown.some(c => c.grade === g));
+  $("#list").innerHTML = grades.map(g => {
+    const inGrade = shown.filter(c => c.grade === g);
+    const topics = [...new Set(inGrade.map(c => c.topic))];
+    return `<section class="gradeblock">
+      <h2><span class="badge">${esc(g)}</span><small>${topics.length} 個課題 · ${countReal(inGrade)} 個課件</small></h2>
+      <div class="topics">
+      ${topics.map(t => {
+        const list = inGrade.filter(c => c.topic === t && c.title);
+        const bg = TOPIC_COLORS[ci++ % TOPIC_COLORS.length];
+        const head = `<h3 style="--t:${bg}">${esc(t)}<span class="n">${list.length}</span></h3>`;
+        if (!list.length) return `<div class="topic">${head}<div class="soon">課件準備中，敬請期待 ✨</div></div>`;
+        return `<div class="topic">${head}<ul class="items">
+          ${list.map(c => `<li class="item">
+            <span class="t">${esc(c.title)}</span>
+            ${c.desc ? `<span class="d">${esc(c.desc)}</span>` : ""}
+            ${c.tags.length ? `<span class="tags">${c.tags.map(x => `<span class="tag">#${esc(x)}</span>`).join("")}</span>` : ""}
+            ${/^https?:\/\//i.test(c.url) ? `<a class="open" href="${esc(c.url)}" target="_blank" rel="noopener">▶ 開始學習</a>` : `<span class="open none">未上載</span>`}
+          </li>`).join("")}
+        </ul></div>`;
+      }).join("")}
+      </div>
+    </section>`;
+  }).join("");
+}
 
-            window.onload = render;
-        </script>
-    </body>
-    </html>
-    
+$("#subjects").addEventListener("click", e => {
+  const b = e.target.closest(".subj"); if (!b) return;
+  state.subject = b.dataset.s; state.grade = "全部"; save(); render();
+});
+$("#grades").addEventListener("click", e => {
+  const b = e.target.closest(".grade"); if (!b || b.disabled) return;
+  state.grade = b.dataset.g; save(); render();
+});
+$("#q").addEventListener("input", e => { state.q = e.target.value.trim(); if (COURSES.length) render(); });
+
+async function load(){
+  if (!CONFIG.SHEET_CSV_URL){
+    showMessage(`<span class="big">🔌</span>還未連接試算表。請把 CSV 連結貼到程式碼的 <code>SHEET_CSV_URL</code>。`);
+    return;
+  }
+  try {
+    const res = await fetch(CONFIG.SHEET_CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    COURSES = toCourses(parseCSV(await res.text()));
+    SUBJECTS = [...new Set([...CONFIG.subjects.filter(s => COURSES.some(c => c.subject === s)), ...COURSES.map(c => c.subject)])];
+    render();
+  } catch (err){
+    showMessage(err.message === "欄名不符"
+      ? `<span class="big">🧐</span>讀到試算表，但欄名不符。<br>第一行要是：<code>科目</code> <code>年級</code> <code>課題</code> <code>課件名稱</code> <code>連結</code> <code>簡介</code> <code>標籤</code>`
+      : `<span class="big">😵</span>未能讀取試算表。<br>請確認試算表已「發佈到網路」，而且連結以 <code>output=csv</code> 結尾。`);
+  }
+}
+load();
+</script>
