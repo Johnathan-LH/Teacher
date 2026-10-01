@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DSE 演算法追蹤室</title>
+<title>DSE 算法追蹤室</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap">
@@ -97,7 +97,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 
 /* ---------- 三欄 ---------- */
-.stage { display: grid; gap: 14px; grid-template-columns: minmax(300px, .95fr) minmax(320px, 1fr) minmax(360px, 1.35fr); grid-template-areas: "code arr trace" "say say say" "ctl ctl ctl"; align-items: start; }
+.stage { display: grid; gap: 14px; grid-template-columns: minmax(340px, 1.2fr) minmax(320px, 1fr) minmax(360px, 1.3fr); grid-template-areas: "code arr trace" "say say say" "ctl ctl ctl"; align-items: start; }
 .pane-code { grid-area: code; } .pane-array { grid-area: arr; } .pane-trace { grid-area: trace; }
 .narrate { grid-area: say; } .controls { grid-area: ctl; }
 .pane { background: var(--sheet); border: 1.5px solid var(--rule); border-radius: var(--r); padding: 12px 14px 14px; min-width: 0; }
@@ -111,9 +111,9 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 .code li { counter-increment: ln; display: grid; grid-template-columns: 1.6em 2.2em minmax(0, 1fr); align-items: center; min-height: 2.05em; border: 3px solid transparent; border-radius: 5px; padding-right: 6px; position: relative; }
 .code li::before { content: counter(ln); grid-column: 2; text-align: right; padding-right: .7em; color: var(--muted); font-size: .8em; }
 .code .mark { grid-column: 1; grid-row: 1; text-align: center; font-weight: 800; }
-.code .txt { grid-column: 3; grid-row: 1; white-space: pre; overflow-x: auto; }
+.code .txt { grid-column: 3; grid-row: 1; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.35; padding-block: .2em; }
 .code .kw { font-weight: 800; }
-.code .lit { font-style: italic; }
+.code .lit { font-weight: 800; text-decoration: underline dotted; text-underline-offset: 3px; }
 .code .str { font-style: italic; }
 .code li.now { border-color: var(--ink); background: var(--hl-soft); }
 .code li.now .mark::after { content: "▶"; }
@@ -455,7 +455,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   <header class="top">
     <div class="brand">
       <p class="kicker">HKDSE ICT ・ 必修部分 D ・ 計算思維與程式編寫</p>
-      <h1>演算法追蹤室 <span class="en">Trace Table Lab</span></h1>
+      <h1>算法追蹤室 <span class="en">Trace Table Lab</span></h1>
     </div>
     <nav class="modes" role="tablist" aria-label="模式">
       <button class="mode" role="tab" data-mode="play" aria-selected="true">動手玩<small>Play</small></button>
@@ -468,7 +468,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 
     <section id="view-play">
     <div class="acts" role="tablist" aria-label="活動">
-      <button class="act" role="tab" data-act="flip" aria-selected="true"><b>① 翻牌找數字</b><small>搜尋：線性 vs 二分</small></button>
+      <button class="act" role="tab" data-act="flip" aria-selected="true"><b>① 翻牌找數字</b><small>檢索：線性 vs 對分</small></button>
       <button class="act" role="tab" data-act="sort" aria-selected="false"><b>② 你來當電腦</b><small>親手執行冒泡排序</small></button>
       <button class="act" role="tab" data-act="race" aria-selected="false"><b>③ 效率大比拼</b><small>數據越多，差距越大</small></button>
     </div>
@@ -503,8 +503,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
           </div>
           <div class="stats">
             <div class="stat"><span>你翻了</span><b id="fFlips">0</b><span>張</span></div>
-            <div class="stat"><span>線性搜尋最多要翻</span><b id="fLinMax">15</b><span>張</span></div>
-            <div class="stat"><span>二分搜尋最多要翻</span><b id="fBinMax">4</b><span>張（只限已排序）</span></div>
+            <div class="stat"><span>線性檢索最多要翻</span><b id="fLinMax">15</b><span>張</span></div>
+            <div class="stat"><span>對分檢索最多要翻</span><b id="fBinMax">4</b><span>張（只限已排序）</span></div>
           </div>
         </div>
         <aside class="pane play-side">
@@ -555,7 +555,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
           <div class="minis">
             <div class="mstat"><span>輪 i</span><b id="sI">1</b></div>
             <div class="mstat"><span>j</span><b id="sJ">1</b></div>
-            <div class="mstat" id="sSwWrap"><span>swapped</span><b id="sSw">False</b></div>
+            <div class="mstat" id="sSwWrap"><span>swapped</span><b id="sSw">假</b></div>
             <div class="mstat"><span>比較</span><b id="sCmp">0</b></div>
             <div class="mstat"><span>交換</span><b id="sSwp">0</b></div>
             <div class="mstat"><span>判斷錯誤</span><b id="sErr">0</b></div>
@@ -568,7 +568,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     <!-- ③ 效率大比拼 -->
     <div class="act-view" id="act-race" hidden>
       <div class="pane race">
-        <header class="pane-h"><h2>搜尋賽跑：線性搜尋 vs 二分搜尋</h2><span class="pane-note">兩者搜尋同一組已排序數據，每一拍各比較一次</span></header>
+        <header class="pane-h"><h2>檢索賽跑：線性檢索 vs 對分檢索</h2><span class="pane-note">兩者檢索同一組已排序數據，每一拍各比較一次</span></header>
         <div class="opts">
           <label class="slider"><span>數據量 n</span><input type="range" id="rN" min="8" max="128" step="1" value="64"><output id="rNOut">64</output></label>
           <div class="seg" role="radiogroup" aria-label="目標位置" id="rWhere">
@@ -579,8 +579,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
           <button class="btn primary" id="rGo" type="button">▶ 開始比賽</button>
         </div>
         <div class="lanes">
-          <div class="lane"><div class="lane-h"><b>線性搜尋</b><span class="lane-c" id="rLinC">比較 0 次</span></div><div class="strip" id="rLin"></div></div>
-          <div class="lane"><div class="lane-h"><b>二分搜尋</b><span class="lane-c" id="rBinC">比較 0 次</span></div><div class="strip" id="rBin"></div></div>
+          <div class="lane"><div class="lane-h"><b>線性檢索</b><span class="lane-c" id="rLinC">比較 0 次</span></div><div class="strip" id="rLin"></div></div>
+          <div class="lane"><div class="lane-h"><b>對分檢索</b><span class="lane-c" id="rBinC">比較 0 次</span></div><div class="strip" id="rBin"></div></div>
         </div>
         <p class="say-box" id="rSay"></p>
       </div>
@@ -607,8 +607,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       <div class="pane race">
         <header class="pane-h"><h2>數據量增加時，最多要比較幾多次？</h2><span class="pane-note">移動上面的 n，圖中的直線會跟著移動</span></header>
         <div class="legend2">
-          <span><i class="ln ln-lin"></i>線性搜尋：n 次</span>
-          <span><i class="ln ln-bin"></i>二分搜尋：⌊log₂ n⌋ + 1 次</span>
+          <span><i class="ln ln-lin"></i>線性檢索：n 次</span>
+          <span><i class="ln ln-bin"></i>對分檢索：⌊log₂ n⌋ + 1 次</span>
         </div>
         <div class="chartwrap" id="chartWrap"><svg id="chart" viewBox="0 0 720 280" role="img" aria-label="最壞情況比較次數與數據量的關係"></svg><div class="tip" id="chartTip" hidden></div></div>
         <p class="say-box" id="cSay"></p>
@@ -620,7 +620,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   <!-- 演示／預測 -->
   <section id="view-stage" hidden>
     <div class="setup">
-      <div class="algos" role="radiogroup" aria-label="演算法" id="algoPicker"></div>
+      <div class="algos" role="radiogroup" aria-label="算法" id="algoPicker"></div>
       <form class="data" id="dataForm" autocomplete="off">
         <label class="fld grow"><span>陣列 A（5–10 個整數，用逗號分隔）</span>
           <input id="arrInput" inputmode="text" spellcheck="false"></label>
@@ -650,7 +650,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
           <li><i class="sw sw-compare"></i>比較中</li>
           <li><i class="sw sw-swap"></i>交換中</li>
           <li><i class="sw sw-sorted"></i>已排序</li>
-          <li><i class="sw sw-out"></i>搜尋範圍外</li>
+          <li><i class="sw sw-out"></i>檢索範圍外</li>
           <li><i class="sw sw-checked"></i>已檢查</li>
           <li><i class="sw sw-found"></i>找到</li>
         </ul>
@@ -661,7 +661,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
         <details class="eff" open>
           <summary>同一組數據的效率比較</summary>
           <table class="efftab" id="eff"></table>
-          <p class="fine">比較次數：執行「涉及陣列元素的 if 條件」的次數。二分搜尋使用排序後的數據。</p>
+          <p class="fine">比較次數：執行「涉及陣列元素的 if 條件」的次數。對分檢索使用排序後的數據。</p>
         </details>
       </section>
 
@@ -693,8 +693,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
         <label class="fld"><span>題目類型</span>
           <select id="examAlgo">
             <option value="any">隨機</option>
-            <option value="linear">線性搜尋</option>
-            <option value="binary">二分搜尋</option>
+            <option value="linear">線性檢索</option>
+            <option value="binary">對分檢索</option>
             <option value="bubble">冒泡排序（基本版）</option>
             <option value="bubbleFlag">冒泡排序（flag 版）</option>
           </select></label>
@@ -722,10 +722,10 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   <section id="view-sheet" hidden>
     <div class="setup">
       <div class="examopts">
-        <label class="fld"><span>演算法</span>
+        <label class="fld"><span>算法</span>
           <select id="sheetAlgo">
-            <option value="linear">線性搜尋</option>
-            <option value="binary">二分搜尋</option>
+            <option value="linear">線性檢索</option>
+            <option value="binary">對分檢索</option>
             <option value="bubble">冒泡排序（基本版）</option>
             <option value="bubbleFlag">冒泡排序（flag 版）</option>
           </select></label>
@@ -744,12 +744,12 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   </section>
 </div>
 
-<script>/* 演算法引擎：每個演算法先完整執行一次，把每一步的狀態記錄成 steps 列表。
+<script>/* 算法引擎：每個算法先完整執行一次，把每一步的狀態記錄成 steps 列表。
    介面只讀取這個列表，所以「上一步」一定與「下一步」一致。 */
 (function (root) {
   'use strict';
 
-  const TF = (b) => (b ? 'True' : 'False');
+  const TF = (b) => (b ? '真' : '假');
   function fmt(v) {
     if (typeof v === 'boolean') return TF(v);
     if (v === undefined || v === null) return '';
@@ -760,21 +760,21 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   const ALGOS = {
     linear: {
       id: 'linear',
-      name: '線性搜尋',
+      name: '線性檢索',
       en: 'Linear Search',
       needsTarget: true,
       lines: [
-        [0, 'found ← False'],
+        [0, 'found ← 假'],
         [0, 'i ← 1'],
-        [0, 'while i ≤ n and found = False do'],
-        [1, 'if A[i] = target then'],
-        [2, 'found ← True'],
-        [1, 'else'],
+        [0, '當 i ≤ n AND found = 假，執行'],
+        [1, '若 A[i] = target 則'],
+        [2, 'found ← 真'],
+        [1, '否則'],
         [2, 'i ← i + 1'],
-        [0, 'if found = True then'],
-        [1, 'output i'],
-        [0, 'else'],
-        [1, 'output "Not found"'],
+        [0, '若 found = 真 則'],
+        [1, '輸出 i'],
+        [0, '否則'],
+        [1, '輸出 "找不到"'],
       ],
       columns: [
         { key: 'found', label: 'found' },
@@ -786,26 +786,26 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     },
     binary: {
       id: 'binary',
-      name: '二分搜尋',
+      name: '對分檢索',
       en: 'Binary Search',
       needsTarget: true,
       needsSorted: true,
       lines: [
         [0, 'low ← 1'],
         [0, 'high ← n'],
-        [0, 'found ← False'],
-        [0, 'while low ≤ high and found = False do'],
-        [1, 'mid ← (low + high) div 2'],
-        [1, 'if A[mid] = target then'],
-        [2, 'found ← True'],
-        [1, 'else if A[mid] < target then'],
+        [0, 'found ← 假'],
+        [0, '當 low ≤ high AND found = 假，執行'],
+        [1, 'mid ← ((low + high) / 2) 的整數部分'],
+        [1, '若 A[mid] = target 則'],
+        [2, 'found ← 真'],
+        [1, '否則若 A[mid] < target 則'],
         [2, 'low ← mid + 1'],
-        [1, 'else'],
+        [1, '否則'],
         [2, 'high ← mid - 1'],
-        [0, 'if found = True then'],
-        [1, 'output mid'],
-        [0, 'else'],
-        [1, 'output "Not found"'],
+        [0, '若 found = 真 則'],
+        [1, '輸出 mid'],
+        [0, '否則'],
+        [1, '輸出 "找不到"'],
       ],
       columns: [
         { key: 'mid', label: 'mid' },
@@ -823,9 +823,9 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       en: 'Bubble Sort',
       needsTarget: false,
       lines: [
-        [0, 'for i ← 1 to n - 1 do'],
-        [1, 'for j ← 1 to n - i do'],
-        [2, 'if A[j] > A[j + 1] then'],
+        [0, '設 i 由 1 至 n - 1，執行'],
+        [1, '設 j 由 1 至 n - i，執行'],
+        [2, '若 A[j] > A[j + 1] 則'],
         [3, 'temp ← A[j]'],
         [3, 'A[j] ← A[j + 1]'],
         [3, 'A[j + 1] ← temp'],
@@ -845,16 +845,16 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       needsTarget: false,
       lines: [
         [0, 'i ← 0'],
-        [0, 'repeat'],
+        [0, '重複'],
         [1, 'i ← i + 1'],
-        [1, 'swapped ← False'],
-        [1, 'for j ← 1 to n - i do'],
-        [2, 'if A[j] > A[j + 1] then'],
+        [1, 'swapped ← 假'],
+        [1, '設 j 由 1 至 n - i，執行'],
+        [2, '若 A[j] > A[j + 1] 則'],
         [3, 'temp ← A[j]'],
         [3, 'A[j] ← A[j + 1]'],
         [3, 'A[j + 1] ← temp'],
-        [3, 'swapped ← True'],
-        [0, 'until swapped = False or i = n - 1'],
+        [3, 'swapped ← 真'],
+        [0, '直至 swapped = 假 OR i = n - 1'],
       ],
       baseColumns: [
         { key: 'i', label: 'i' },
@@ -912,7 +912,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     (p[idx] = p[idx] || []).push(label);
   }
 
-  /* ---------- 線性搜尋 ---------- */
+  /* ---------- 線性檢索 ---------- */
   function genLinear(A0, target) {
     const A = A0.slice(), n = A.length;
     let foundIdx = null;
@@ -927,18 +927,18 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     });
     const { st, emit } = R, v = st.vars;
 
-    emit({ kind: 'start', explain: `開始前：A = [${A.join(', ')}]，n = ${n}，target = ${target}。線性搜尋會由第一個元素開始，逐個與 target 比較。` });
+    emit({ kind: 'start', explain: `開始前：A = [${A.join(', ')}]，n = ${n}，target = ${target}。線性檢索會由第一個元素開始，逐個與 target 比較。` });
     v.found = false;
-    emit({ line: 1, row: 'new', set: { found: false }, explain: '把 found 設為 False，表示暫時未找到 target。' });
+    emit({ line: 1, row: 'new', set: { found: false }, explain: '把 found 設為假，表示暫時未找到 target。' });
     v.i = 1;
     emit({ line: 2, set: { i: 1 }, explain: 'i 設為 1，由陣列的第一個元素開始檢查。' });
     for (;;) {
       const c = v.i <= n && v.found === false;
       let why;
-      if (c) why = `i = ${v.i} ≤ n = ${n}，而且 found = False，條件為 True，進入迴圈。`;
-      else if (v.found) why = 'found 已經是 True，條件為 False，離開迴圈。';
-      else why = `i = ${v.i} > n = ${n}，所有元素都已檢查過，條件為 False，離開迴圈。`;
-      emit({ line: 3, cond: { text: 'i ≤ n and found = False', value: c }, explain: why });
+      if (c) why = `i = ${v.i} ≤ n = ${n}，而且 found = 假，條件為真，執行迭代內的步驟。`;
+      else if (v.found) why = 'found 已經是 真，條件為假，結束迭代。';
+      else why = `i = ${v.i} > n = ${n}，所有元素都已檢查過，條件為假，結束迭代。`;
+      emit({ line: 3, cond: { text: 'i ≤ n AND found = 假', value: c }, explain: why });
       if (!c) break;
       st.cmp++;
       const a = A[v.i - 1], eq = a === target;
@@ -946,28 +946,28 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
         line: 4, set: { Ai: a, eq: eq }, cond: { key: 'eq', text: 'A[i] = target', value: eq },
         compare: [v.i],
         explain: eq
-          ? `比較 A[${v.i}] = ${a} 與 target = ${target}：兩者相等，條件為 True。`
-          : `比較 A[${v.i}] = ${a} 與 target = ${target}：兩者不相等，條件為 False，執行 else 部分。`,
+          ? `比較 A[${v.i}] = ${a} 與 target = ${target}：兩者相等，條件為真。`
+          : `比較 A[${v.i}] = ${a} 與 target = ${target}：兩者不相等，條件為假，執行「否則」部分。`,
       });
       if (eq) {
         v.found = true; foundIdx = v.i;
-        emit({ line: 5, set: { found: true }, explain: `在 A[${v.i}] 找到 target，把 found 設為 True。下次檢查 while 條件時便會離開迴圈。` });
+        emit({ line: 5, set: { found: true }, explain: `在 A[${v.i}] 找到 target，把 found 設為真。下次檢查「當」的條件時便會結束迭代。` });
       } else {
         v.i = v.i + 1;
         emit({ line: 7, row: 'new', set: { i: v.i }, explain: `i 加 1，變成 ${v.i}，準備檢查下一個元素。` });
       }
     }
-    emit({ line: 8, cond: { text: 'found = True', value: v.found }, explain: v.found ? 'found = True，條件為 True，執行 output i。' : 'found = False，條件為 False，執行 else 部分。' });
+    emit({ line: 8, cond: { text: 'found = 真', value: v.found }, explain: v.found ? 'found = 真，條件為真，執行「輸出 i」。' : 'found = 假，條件為假，執行「否則」部分。' });
     if (v.found) {
       emit({ line: 9, set: { out: v.i }, kind: 'output', explain: `輸出 i 的值 ${v.i}，即 target 在陣列中的位置。` });
     } else {
-      emit({ line: 11, set: { out: 'Not found' }, kind: 'output', explain: `輸出 "Not found"：陣列中沒有 ${target}。` });
+      emit({ line: 11, set: { out: '找不到' }, kind: 'output', explain: `輸出 "找不到"：陣列中沒有 ${target}。` });
     }
     emit({ kind: 'end', explain: v.found ? `完成：共比較了 ${st.cmp} 次，在位置 ${v.i} 找到 ${target}。` : `完成：共比較了 ${st.cmp} 次（每個元素都比較過），找不到 ${target}。` });
     return R.steps;
   }
 
-  /* ---------- 二分搜尋 ---------- */
+  /* ---------- 對分檢索 ---------- */
   function genBinary(A0, target) {
     const A = A0.slice(), n = A.length;
     let foundIdx = null;
@@ -982,40 +982,40 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       return { ptr: p, out, found: foundIdx };
     });
     const { st, emit } = R, v = st.vars;
-    // midLive 只供指標顯示使用，不屬於偽代碼變數
+    // midLive 只供指標顯示使用，不屬於偽代碼變量
     const clean = () => { R.steps[R.steps.length - 1].vars = Object.assign({}, v); delete R.steps[R.steps.length - 1].vars.midLive; };
 
-    emit({ kind: 'start', explain: `開始前：A = [${A.join(', ')}]（已由小至大排列），n = ${n}，target = ${target}。二分搜尋每次檢查中間元素，把搜尋範圍減半。` });
+    emit({ kind: 'start', explain: `開始前：A = [${A.join(', ')}]（已由小至大排列），n = ${n}，target = ${target}。對分檢索每次檢查中間元素，把檢索範圍減半。` });
     v.low = 1;
-    emit({ line: 1, row: 'new', set: { low: 1 }, explain: 'low 設為 1，即搜尋範圍的左端。' }); clean();
+    emit({ line: 1, row: 'new', set: { low: 1 }, explain: 'low 設為 1，即檢索範圍的左端。' }); clean();
     v.high = n;
-    emit({ line: 2, set: { high: n }, explain: `high 設為 n = ${n}，即搜尋範圍的右端。現時範圍是 A[1] 至 A[${n}]。` }); clean();
+    emit({ line: 2, set: { high: n }, explain: `high 設為 n = ${n}，即檢索範圍的右端。現時範圍是 A[1] 至 A[${n}]。` }); clean();
     v.found = false;
-    emit({ line: 3, set: { found: false }, explain: '把 found 設為 False，表示暫時未找到 target。' }); clean();
+    emit({ line: 3, set: { found: false }, explain: '把 found 設為假，表示暫時未找到 target。' }); clean();
     for (;;) {
       const c = v.low <= v.high && v.found === false;
       let why;
-      if (c) why = `low = ${v.low} ≤ high = ${v.high}，而且 found = False，條件為 True，進入迴圈。`;
-      else if (v.found) why = 'found 已經是 True，條件為 False，離開迴圈。';
-      else why = `low = ${v.low} > high = ${v.high}，搜尋範圍已經是空的，條件為 False，離開迴圈。`;
-      emit({ line: 4, cond: { text: 'low ≤ high and found = False', value: c }, explain: why }); clean();
+      if (c) why = `low = ${v.low} ≤ high = ${v.high}，而且 found = 假，條件為真，執行迭代內的步驟。`;
+      else if (v.found) why = 'found 已經是 真，條件為假，結束迭代。';
+      else why = `low = ${v.low} > high = ${v.high}，檢索範圍已經是空的，條件為假，結束迭代。`;
+      emit({ line: 4, cond: { text: 'low ≤ high AND found = 假', value: c }, explain: why }); clean();
       if (!c) break;
       const mid = Math.floor((v.low + v.high) / 2);
       const lo = v.low, hi = v.high;
       v.mid = mid; v.midLive = true;
       emit({
         line: 5, row: 'new', set: { mid: mid },
-        explain: `mid = (${lo} + ${hi}) div 2 = ${lo + hi} div 2 = ${mid}。div 是整數除法，捨去小數部分。`,
+        explain: `mid ← ((${lo} + ${hi}) / 2) 的整數部分 = (${lo + hi} / 2) 的整數部分 = ${mid}。只取整數部分，捨去小數。`,
       }); clean();
       st.cmp++;
       const a = A[mid - 1], eq = a === target;
       emit({
         line: 6, set: { Amid: a }, cond: { text: 'A[mid] = target', value: eq }, compare: [mid],
-        explain: eq ? `A[${mid}] = ${a}，等於 target = ${target}，條件為 True。` : `A[${mid}] = ${a}，不等於 target = ${target}，條件為 False，檢查 else if。`,
+        explain: eq ? `A[${mid}] = ${a}，等於 target = ${target}，條件為真。` : `A[${mid}] = ${a}，不等於 target = ${target}，條件為假，檢查「否則若」。`,
       }); clean();
       if (eq) {
         v.found = true; foundIdx = mid;
-        emit({ line: 7, set: { found: true }, explain: `找到了！target 在 A[${mid}]，把 found 設為 True。` }); clean();
+        emit({ line: 7, set: { found: true }, explain: `找到了！target 在 A[${mid}]，把 found 設為真。` }); clean();
         continue;
       }
       st.cmp++;
@@ -1023,20 +1023,20 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       emit({
         line: 8, cond: { text: 'A[mid] < target', value: lt }, compare: [mid],
         explain: lt
-          ? `A[${mid}] = ${a} < ${target}，條件為 True。陣列已排序，所以 target 只可能在 mid 的右邊。`
-          : `A[${mid}] = ${a} > ${target}，條件為 False。陣列已排序，所以 target 只可能在 mid 的左邊。`,
+          ? `A[${mid}] = ${a} < ${target}，條件為真。陣列已排序，所以 target 只可能在 mid 的右邊。`
+          : `A[${mid}] = ${a} > ${target}，條件為假。陣列已排序，所以 target 只可能在 mid 的左邊。`,
       }); clean();
       if (lt) {
         v.low = mid + 1; v.midLive = false;
-        emit({ line: 9, set: { low: v.low }, explain: `low ← mid + 1 = ${v.low}。` + (v.low <= v.high ? `搜尋範圍收窄為 A[${v.low}] 至 A[${v.high}]。` : '現在 low > high，範圍已經是空的。') }); clean();
+        emit({ line: 9, set: { low: v.low }, explain: `low ← mid + 1 = ${v.low}。` + (v.low <= v.high ? `檢索範圍收窄為 A[${v.low}] 至 A[${v.high}]。` : '現在 low > high，範圍已經是空的。') }); clean();
       } else {
         v.high = mid - 1; v.midLive = false;
-        emit({ line: 11, set: { high: v.high }, explain: `high ← mid − 1 = ${v.high}。` + (v.low <= v.high ? `搜尋範圍收窄為 A[${v.low}] 至 A[${v.high}]。` : '現在 low > high，範圍已經是空的。') }); clean();
+        emit({ line: 11, set: { high: v.high }, explain: `high ← mid − 1 = ${v.high}。` + (v.low <= v.high ? `檢索範圍收窄為 A[${v.low}] 至 A[${v.high}]。` : '現在 low > high，範圍已經是空的。') }); clean();
       }
     }
-    emit({ line: 12, cond: { text: 'found = True', value: v.found }, explain: v.found ? 'found = True，條件為 True，執行 output mid。' : 'found = False，條件為 False，執行 else 部分。' }); clean();
+    emit({ line: 12, cond: { text: 'found = 真', value: v.found }, explain: v.found ? 'found = 真，條件為真，執行「輸出 mid」。' : 'found = 假，條件為假，執行「否則」部分。' }); clean();
     if (v.found) emit({ line: 13, set: { out: v.mid }, kind: 'output', explain: `輸出 mid 的值 ${v.mid}，即 target 在陣列中的位置。` });
-    else emit({ line: 15, set: { out: 'Not found' }, kind: 'output', explain: `輸出 "Not found"：陣列中沒有 ${target}。` });
+    else emit({ line: 15, set: { out: '找不到' }, kind: 'output', explain: `輸出 "找不到"：陣列中沒有 ${target}。` });
     clean();
     emit({ kind: 'end', explain: v.found ? `完成：只比較了 ${st.cmp} 次便在位置 ${v.mid} 找到 ${target}。` : `完成：比較了 ${st.cmp} 次，確定陣列中沒有 ${target}。` }); clean();
     return R.steps;
@@ -1072,8 +1072,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
         const a = A[j - 1], b = A[j], gt = a > b;
         emit({
           line: 3, set: { gt: gt }, cond: { key: 'gt', text: 'A[j] > A[j + 1]', value: gt }, compare: [j, j + 1],
-          explain: gt ? `A[${j}] = ${a} > A[${j + 1}] = ${b}，條件為 True，兩者次序不對，需要交換。`
-            : `A[${j}] = ${a}，A[${j + 1}] = ${b}，${a} > ${b} 不成立，條件為 False，不用交換。`,
+          explain: gt ? `A[${j}] = ${a} > A[${j + 1}] = ${b}，條件為真，兩者次序不對，需要交換。`
+            : `A[${j}] = ${a}，A[${j + 1}] = ${b}，${a} > ${b} 不成立，條件為假，不用交換。`,
         }); clean();
         if (gt) {
           v.temp = a;
@@ -1105,12 +1105,12 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 
     emit({ kind: 'start', row: 'new', set: initArraySet(A), explain: `開始前：A = [${A.join(', ')}]，n = ${n}。flag 版用 swapped 記錄這一輪有沒有交換過；如果整輪都沒有交換，代表已排好，可以提早結束。` }); clean();
     v.i = 0;
-    emit({ line: 1, set: { i: 0 }, explain: 'i 設為 0，進入 repeat 迴圈後會先加 1。' }); clean();
+    emit({ line: 1, set: { i: 0 }, explain: 'i 設為 0，進入「重複」後會先加 1。' }); clean();
     for (;;) {
       v.i = v.i + 1; v.jLive = false;
       emit({ line: 3, row: 'new', set: { i: v.i }, explain: `i 加 1，第 ${v.i} 輪開始。這一輪 j 由 1 數到 n − i = ${n - v.i}。` }); clean();
       v.swapped = false;
-      emit({ line: 4, set: { swapped: false }, explain: '這一輪開始時把 swapped 設為 False，表示暫時未有交換。' }); clean();
+      emit({ line: 4, set: { swapped: false }, explain: '這一輪開始時把 swapped 設為假，表示暫時未有交換。' }); clean();
       for (let j = 1; j <= n - v.i; j++) {
         v.j = j; v.jLive = true;
         emit({ line: 5, row: 'new', set: { j: j }, explain: `j = ${j}，準備比較相鄰的 A[${j}] 和 A[${j + 1}]。` }); clean();
@@ -1118,8 +1118,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
         const a = A[j - 1], b = A[j], gt = a > b;
         emit({
           line: 6, set: { gt: gt }, cond: { key: 'gt', text: 'A[j] > A[j + 1]', value: gt }, compare: [j, j + 1],
-          explain: gt ? `A[${j}] = ${a} > A[${j + 1}] = ${b}，條件為 True，需要交換。`
-            : `A[${j}] = ${a}，A[${j + 1}] = ${b}，${a} > ${b} 不成立，條件為 False，不用交換。`,
+          explain: gt ? `A[${j}] = ${a} > A[${j + 1}] = ${b}，條件為真，需要交換。`
+            : `A[${j}] = ${a}，A[${j + 1}] = ${b}，${a} > ${b} 不成立，條件為假，不用交換。`,
         }); clean();
         if (gt) {
           v.temp = a;
@@ -1129,7 +1129,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
           A[j] = v.temp; st.swp++;
           emit({ line: 9, set: { ['A' + (j + 1)]: v.temp }, swap: [j, j + 1], explain: `A[${j + 1}] ← temp：A[${j + 1}] 變成 ${v.temp}，交換完成。` }); clean();
           v.swapped = true;
-          emit({ line: 10, set: { swapped: true }, explain: '剛剛發生了交換，把 swapped 設為 True。' }); clean();
+          emit({ line: 10, set: { swapped: true }, explain: '剛剛發生了交換，把 swapped 設為真。' }); clean();
         }
       }
       sortedFrom = n - v.i + 1;
@@ -1137,10 +1137,10 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       const c = v.swapped === false || v.i === n - 1;
       if (c) sortedFrom = 1;
       let why;
-      if (v.swapped === false) why = `swapped = False：這一輪完全沒有交換，代表陣列已排好，條件為 True，提早結束。`;
-      else if (v.i === n - 1) why = `swapped = True，但 i = ${v.i} = n − 1，已完成最後一輪，條件為 True，結束。`;
-      else why = `swapped = True 而且 i = ${v.i} < n − 1 = ${n - 1}，條件為 False，返回 repeat 進行下一輪。`;
-      emit({ line: 11, cond: { text: 'swapped = False or i = n - 1', value: c }, explain: why }); clean();
+      if (v.swapped === false) why = `swapped = 假：這一輪完全沒有交換，代表陣列已排好，條件為真，提早結束。`;
+      else if (v.i === n - 1) why = `swapped = 真，但 i = ${v.i} = n − 1，已完成最後一輪，條件為真，結束。`;
+      else why = `swapped = 真 而且 i = ${v.i} < n − 1 = ${n - 1}，條件為假，返回「重複」進行下一輪。`;
+      emit({ line: 11, cond: { text: 'swapped = 假 OR i = n - 1', value: c }, explain: why }); clean();
       if (c) break;
     }
     emit({ kind: 'end', explain: `完成：A = [${A.join(', ')}]。共進行 ${v.i} 輪，比較 ${st.cmp} 次、交換 ${st.swp} 次。` + (v.i < n - 1 ? `比基本版少做了 ${n - 1 - v.i} 輪。` : '') }); clean();
@@ -1149,7 +1149,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 
   /* ---------- 追蹤表排版 ----------
      規則：一個步驟寫入的格子放在「目前的行」；
-     如果該步驟要求開新行（例如新一次迴圈），或目前行的同一欄已有數值，便開新行。 */
+     如果該步驟要求開新行（例如新一次迭代），或目前行的同一欄已有數值，便開新行。 */
   function layoutRows(steps) {
     const rows = [];
     steps.forEach((s, k) => {
@@ -1172,7 +1172,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     const meta = ALGOS[algo];
     if (meta.needsSorted) {
       const sorted = A.slice().sort((x, y) => x - y);
-      if (sorted.some((x, k) => x !== A[k])) note = '二分搜尋只適用於已排序的陣列，所以這裡已把 A 由小至大排列。';
+      if (sorted.some((x, k) => x !== A[k])) note = '對分檢索只適用於已排序的陣列，所以這裡已把 A 由小至大排列。';
       A = sorted;
     }
     let steps;
@@ -1375,12 +1375,12 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     const S = F.A.slice().sort((a, b) => a - b);
     let lo = 1, hi = F.n, bin = 0;
     while (lo <= hi) { const m = (lo + hi) >> 1; bin++; if (S[m - 1] === F.t) break; if (S[m - 1] < F.t) lo = m + 1; else hi = m - 1; }
-    let h = `<h3>學習重點</h3><table class="cmp"><tr><td>${byComputer ? '電腦' : '你'}翻了</td><td><b>${F.up.size}</b> 張</td></tr><tr><td>線性搜尋需要</td><td><b>${lin}</b> 張</td></tr>`;
-    if (F.sorted) h += `<tr><td>二分搜尋需要</td><td><b>${bin}</b> 張</td></tr>`;
+    let h = `<h3>學習重點</h3><table class="cmp"><tr><td>${byComputer ? '電腦' : '你'}翻了</td><td><b>${F.up.size}</b> 張</td></tr><tr><td>線性檢索需要</td><td><b>${lin}</b> 張</td></tr>`;
+    if (F.sorted) h += `<tr><td>對分檢索需要</td><td><b>${bin}</b> 張</td></tr>`;
     h += '</table>';
     h += F.sorted
-      ? `<p>牌已排序，所以每翻一張都可以<b>排除一半</b>。${F.n} 張牌最多只需翻 ${binMax(F.n)} 張，這就是<b>二分搜尋</b>。</p>`
-      : `<p>牌未排序，翻開一張不能排除其他牌，只能由頭到尾逐張檢查，這就是<b>線性搜尋</b>。最壞情況要翻全部 ${F.n} 張。</p><p>試試選「已由小至大排序」，看看翻牌次數有甚麼不同。</p>`;
+      ? `<p>牌已排序，所以每翻一張都可以<b>排除一半</b>。${F.n} 張牌最多只需翻 ${binMax(F.n)} 張，這就是<b>對分檢索</b>。</p>`
+      : `<p>牌未排序，翻開一張不能排除其他牌，只能由頭到尾逐張檢查，這就是<b>線性檢索</b>。最壞情況要翻全部 ${F.n} 張。</p><p>試試選「已由小至大排序」，看看翻牌次數有甚麼不同。</p>`;
     $('fTake').innerHTML = h;
     $('fTake').hidden = false;
   }
@@ -1396,7 +1396,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     const plan = [];
     if (F.sorted) {
       let lo = 1, hi = F.n;
-      plan.push({ ptr: { lo, hi }, say: `電腦用<b>二分搜尋</b>：low = ${lo}，high = ${hi}，先看中間那張。` });
+      plan.push({ ptr: { lo, hi }, say: `電腦用<b>對分檢索</b>：low = ${lo}，high = ${hi}，先看中間那張。` });
       while (lo <= hi) {
         const m = Math.floor((lo + hi) / 2);
         plan.push({ ptr: { lo, hi, m }, say: `mid = (${lo} + ${hi}) div 2 = ${m}，翻開 A[${m}]。`, probe: m });
@@ -1408,7 +1408,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       }
       if (!F.present) plan.push({ ptr: {}, say: `low = ${lo} &gt; high = ${hi}，範圍已經是空的，所以沒有 ${F.t}。`, absent: true });
     } else {
-      plan.push({ ptr: { i: 1 }, say: '電腦用<b>線性搜尋</b>：由 A[1] 開始，逐張檢查。' });
+      plan.push({ ptr: { i: 1 }, say: '電腦用<b>線性檢索</b>：由 A[1] 開始，逐張檢查。' });
       for (let i = 1; i <= F.n; i++) {
         plan.push({ flip: i, ptr: { i } });
         if (F.A[i - 1] === F.t) break;
@@ -1446,11 +1446,11 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   const getSData = seg('sData', () => newSort());
   const getSCount = seg('sCount', () => newSort());
   const CODE = {
-    basic: [[0, 'for i ← 1 to n - 1 do'], [1, 'for j ← 1 to n - i do'], [2, 'if A[j] > A[j + 1] then'], [3, 'temp ← A[j]'], [3, 'A[j] ← A[j + 1]'], [3, 'A[j + 1] ← temp']],
-    flag: [[0, 'i ← 0'], [0, 'repeat'], [1, 'i ← i + 1'], [1, 'swapped ← False'], [1, 'for j ← 1 to n - i do'], [2, 'if A[j] > A[j + 1] then'], [3, 'temp ← A[j]'], [3, 'A[j] ← A[j + 1]'], [3, 'A[j + 1] ← temp'], [3, 'swapped ← True'], [0, 'until swapped = False or i = n - 1']],
+    basic: [[0, '設 i 由 1 至 n - 1，執行'], [1, '設 j 由 1 至 n - i，執行'], [2, '若 A[j] > A[j + 1] 則'], [3, 'temp ← A[j]'], [3, 'A[j] ← A[j + 1]'], [3, 'A[j + 1] ← temp']],
+    flag: [[0, 'i ← 0'], [0, '重複'], [1, 'i ← i + 1'], [1, 'swapped ← 假'], [1, '設 j 由 1 至 n - i，執行'], [2, '若 A[j] > A[j + 1] 則'], [3, 'temp ← A[j]'], [3, 'A[j] ← A[j + 1]'], [3, 'A[j + 1] ← temp'], [3, 'swapped ← 真'], [0, '直至 swapped = 假 OR i = n - 1']],
   };
-  const KW = /\b(for|to|do|while|if|then|else|repeat|until|and|or|output|div)\b/g;
-  const hl = (t) => esc(t).replace(KW, '<span class="kw">$1</span>').replace(/\b(True|False)\b/g, '<span class="lit">$1</span>');
+  const KW = /(當|若|則|否則若|否則|重複|直至|設|由|至|執行|輸出|的整數部分|AND|OR|NOT)/g;
+  const hl = (t) => esc(t).replace(KW, '<span class="kw">$1</span>').replace(/(真|假)/g, '<span class="lit">$1</span>');
 
   function makeData(kind, n, lo, hi) {
     let v = distinct(n, lo, hi);
@@ -1515,7 +1515,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       d.innerHTML = `<button class="btn big-btn" id="sAgain" type="button">再玩一局</button>`;
     }
     $('sI').textContent = G.i; $('sJ').textContent = G.phase === 'cmp' ? G.j : '—';
-    $('sSw').textContent = G.swapped ? 'True' : 'False';
+    $('sSw').textContent = G.swapped ? '真' : '假';
     $('sCmp').textContent = G.cmp; $('sSwp').textContent = G.swp; $('sErr').textContent = G.err;
     const swapLines = G.flag ? [7, 8, 9, 10] : [4, 5, 6];
     document.querySelectorAll('#sCode li').forEach((li) => {
@@ -1538,8 +1538,8 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     if (doSwap !== should) {
       G.err++;
       say('sSay', should
-        ? `<b class="bad">✗ 要交換。</b>A[${G.j}] = ${a} 比 A[${G.j + 1}] = ${b} 大，次序錯了，條件 A[j] &gt; A[j + 1] 為 True。`
-        : `<b class="bad">✗ 不用交換。</b>A[${G.j}] = ${a} 比 A[${G.j + 1}] = ${b} 小，次序已經正確，條件 A[j] &gt; A[j + 1] 為 False。`);
+        ? `<b class="bad">✗ 要交換。</b>A[${G.j}] = ${a} 比 A[${G.j + 1}] = ${b} 大，次序錯了，條件 A[j] &gt; A[j + 1] 為真。`
+        : `<b class="bad">✗ 不用交換。</b>A[${G.j}] = ${a} 比 A[${G.j + 1}] = ${b} 小，次序已經正確，條件 A[j] &gt; A[j + 1] 為假。`);
       shakePair(); renderSort(); return;
     }
     G.cmp++;
@@ -1571,7 +1571,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     }
     if (G.flag) {
       G.phase = 'decide'; G.line = 11;
-      say('sSay', msg + ` 這一輪 swapped = ${G.swapped ? 'True' : 'False'}。`);
+      say('sSay', msg + ` 這一輪 swapped = ${G.swapped ? '真' : '假'}。`);
     } else {
       G.phase = 'passEnd'; G.line = 1;
       if (none) msg += ' <b>留意：這一輪一次也沒有交換，代表其實已經排好了！</b>但基本版不知道，仍然會做完所有輪次。flag 版就可以在這裡停下來。';
@@ -1584,17 +1584,17 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     if (stop !== shouldStop) {
       G.err++;
       say('sSay', shouldStop
-        ? `<b class="bad">✗ 應該停止。</b>這一輪 swapped = False，即完全沒有交換，代表已排好，條件 swapped = False 為 True。`
-        : `<b class="bad">✗ 還未可以停。</b>這一輪 swapped = True，有交換過，未能肯定已排好，要繼續下一輪。`);
+        ? `<b class="bad">✗ 應該停止。</b>這一輪 swapped = 假，即完全沒有交換，代表已排好，條件 swapped = 假 為真。`
+        : `<b class="bad">✗ 還未可以停。</b>這一輪 swapped = 真，有交換過，未能肯定已排好，要繼續下一輪。`);
       renderSort(); return;
     }
     if (stop) {
       G.sortedFrom = 1; G.phase = 'done';
-      say('sSay', `<b class="good">✓ 正確。</b>swapped = False，提早結束，省下了 ${G.n - 1 - G.i} 輪。`);
+      say('sSay', `<b class="good">✓ 正確。</b>swapped = 假，提早結束，省下了 ${G.n - 1 - G.i} 輪。`);
       finishSort();
     } else {
       nextPass();
-      say('sSay', `<b class="good">✓ 正確。</b>進入第 ${G.i} 輪，swapped 重設為 False。`);
+      say('sSay', `<b class="good">✓ 正確。</b>進入第 ${G.i} 輪，swapped 重設為假。`);
     }
     renderSort();
   }
@@ -1705,10 +1705,10 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     race.timer = setInterval(() => {
       R.tick++;
       paintSearch();
-      if (R.tick === R.bin.length) say('rSay', `二分搜尋完成，只用了 <b>${R.bin.length}</b> 次比較。線性搜尋還在逐個檢查……`);
+      if (R.tick === R.bin.length) say('rSay', `對分檢索完成，只用了 <b>${R.bin.length}</b> 次比較。線性檢索還在逐個檢查……`);
       if (R.tick >= total) {
         stopRace();
-        say('rSay', `結果：線性搜尋 <b>${R.lin.length}</b> 次，二分搜尋 <b>${R.bin.length}</b> 次。` + (R.lin.length > R.bin.length ? `二分搜尋少了 ${R.lin.length - R.bin.length} 次。把 n 調大再試，差距會更明顯。` : '目標剛好在前面時，線性搜尋也可以很快；但最壞情況要檢查全部 n 個。'));
+        say('rSay', `結果：線性檢索 <b>${R.lin.length}</b> 次，對分檢索 <b>${R.bin.length}</b> 次。` + (R.lin.length > R.bin.length ? `對分檢索少了 ${R.lin.length - R.bin.length} 次。把 n 調大再試，差距會更明顯。` : '目標剛好在前面時，線性檢索也可以很快；但最壞情況要檢查全部 n 個。'));
       }
     }, ms);
   });
@@ -1801,14 +1801,14 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     let lp = '', bp = '';
     for (let n = 1; n <= N; n++) { lp += (n === 1 ? 'M' : 'L') + x(n) + ' ' + y(n); bp += (n === 1 ? 'M' : 'L') + x(n) + ' ' + y(binMax(n)); }
     g += `<path class="l-lin" d="${lp}"/><path class="l-bin" d="${bp}"/>`;
-    g += `<text class="dl" x="${x(N) + 8}" y="${y(N) + 4}">線性 ${N}</text><text class="dl" x="${x(N) + 8}" y="${y(binMax(N)) - 2}">二分 ${binMax(N)}</text>`;
+    g += `<text class="dl" x="${x(N) + 8}" y="${y(N) + 4}">線性 ${N}</text><text class="dl" x="${x(N) + 8}" y="${y(binMax(N)) - 2}">對分 ${binMax(N)}</text>`;
     g += `<line class="cur" x1="${x(cur)}" x2="${x(cur)}" y1="${m.t}" y2="${H - m.b}"/>`;
     g += `<circle class="d-lin" cx="${x(cur)}" cy="${y(cur)}" r="5"/><circle class="d-bin" cx="${x(cur)}" cy="${y(binMax(cur))}" r="5"/>`;
     g += `<g id="hov" style="display:none"><line class="hov" y1="${m.t}" y2="${H - m.b}"/><circle class="d-lin" r="4"/><circle class="d-bin" r="4"/></g>`;
     g += `<rect class="hit" x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}"/>`;
     svg.innerHTML = g;
     const sortN = +$('qN').value;
-    say('cSay', `n = ${cur} 時：線性搜尋最多比較 <b>${cur}</b> 次，二分搜尋最多只需 <b>${binMax(cur)}</b> 次。數據量加倍，二分搜尋只多 1 次。冒泡排序（基本版）排 ${sortN} 個數要比較 ${sortN * (sortN - 1) / 2} 次，${sortN * 2} 個數便要 ${sortN * 2 * (sortN * 2 - 1) / 2} 次，增長得更快。`);
+    say('cSay', `n = ${cur} 時：線性檢索最多比較 <b>${cur}</b> 次，對分檢索最多只需 <b>${binMax(cur)}</b> 次。數據量加倍，對分檢索只多 1 次。冒泡排序（基本版）排 ${sortN} 個數要比較 ${sortN * (sortN - 1) / 2} 次，${sortN * 2} 個數便要 ${sortN * 2 * (sortN * 2 - 1) / 2} 次，增長得更快。`);
     const hit = svg.querySelector('.hit'), hov = svg.querySelector('#hov'), tip = $('chartTip');
     const move = (ev) => {
       const r = svg.getBoundingClientRect();
@@ -1819,7 +1819,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       const [c1, c2] = hov.querySelectorAll('circle');
       c1.setAttribute('cx', x(n)); c1.setAttribute('cy', y(n)); c2.setAttribute('cx', x(n)); c2.setAttribute('cy', y(binMax(n)));
       tip.hidden = false;
-      tip.innerHTML = `<b>n = ${n}</b><span><i class="ln ln-lin"></i>線性 ${n} 次</span><span><i class="ln ln-bin"></i>二分 ${binMax(n)} 次</span>`;
+      tip.innerHTML = `<b>n = ${n}</b><span><i class="ln ln-lin"></i>線性 ${n} 次</span><span><i class="ln ln-bin"></i>對分 ${binMax(n)} 次</span>`;
       const left = x(n) / W * r.width;
       tip.style.left = Math.min(left + 12, r.width - 150) + 'px';
       tip.style.top = '8px';
@@ -1845,12 +1845,12 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   const E = window.TraceEngine;
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const KW = /\b(for|to|do|while|if|then|else|repeat|until|and|or|output|div)\b/g;
+  const KW = /(當|若|則|否則若|否則|重複|直至|設|由|至|執行|輸出|的整數部分|AND|OR|NOT)/g;
 
   function hl(text) {
     return text.split(/("[^"]*")/).map((part) => {
       if (/^".*"$/.test(part)) return '<span class="str">' + esc(part) + '</span>';
-      return esc(part).replace(KW, '<span class="kw">$1</span>').replace(/\b(True|False)\b/g, '<span class="lit">$1</span>');
+      return esc(part).replace(KW, '<span class="kw">$1</span>').replace(/(真|假)/g, '<span class="lit">$1</span>');
     }).join('');
   }
   const indent = (lvl) => '    '.repeat(lvl);
@@ -1889,7 +1889,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     return t;
   }
 
-  /* ---------- 演算法選擇 ---------- */
+  /* ---------- 算法選擇 ---------- */
   function renderPicker() {
     $('algoPicker').innerHTML = E.ORDER.map((id) => {
       const a = E.ALGOS[id];
@@ -1965,7 +1965,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       const sorting = !E.ALGOS[id].needsTarget;
       return `<tr class="${id === S.algo ? 'cur' : ''}"><td>${esc(E.ALGOS[id].name)}</td><td class="n">${last.cmp}</td><td class="n">${sorting ? last.swp : '—'}</td></tr>`;
     });
-    $('eff').innerHTML = '<thead><tr><th>演算法</th><th class="n">比較</th><th class="n">交換</th></tr></thead><tbody>' + rows.join('') + '</tbody>';
+    $('eff').innerHTML = '<thead><tr><th>算法</th><th class="n">比較</th><th class="n">交換</th></tr></thead><tbody>' + rows.join('') + '</tbody>';
   }
 
   /* ---------- 主畫面 ---------- */
@@ -1988,7 +1988,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       }
     });
 
-    // 變數
+    // 變量
     $('nNote').textContent = `n = ${R.n}` + (R.meta.needsTarget ? `　target = ${R.target}` : '');
     $('vars').innerHTML = VAR_ORDER[R.algo].map((v) => {
       const val = st.vars[v];
@@ -2084,13 +2084,13 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     const f = fieldsFor(step);
     const code = S.run.meta.lines[step.line - 1] ? S.run.meta.lines[step.line - 1][1] : '';
     if (!f.length) {
-      $('say').innerHTML = `<div class="ask"><div class="ask-h">演算法即將結束。按「下一步」查看結果。</div></div>`;
+      $('say').innerHTML = `<div class="ask"><div class="ask-h">算法即將結束。按「下一步」查看結果。</div></div>`;
       return;
     }
     const inputs = f.map((x) => {
       if (x.bool) {
         const a = S.pred.answers[x.key];
-        return `<label>${esc(x.label)} =<span class="tf" data-k="${esc(x.key)}"><button type="button" aria-pressed="${a === 'True'}" data-v="True">True</button><button type="button" aria-pressed="${a === 'False'}" data-v="False">False</button></span></label>`;
+        return `<label>${esc(x.label)} =<span class="tf" data-k="${esc(x.key)}"><button type="button" aria-pressed="${a === '真'}" data-v="真">真</button><button type="button" aria-pressed="${a === '假'}" data-v="假">假</button></span></label>`;
       }
       return `<label for="ask-${esc(x.key)}">${esc(x.label)} =<input id="ask-${esc(x.key)}" data-k="${esc(x.key)}" autocomplete="off" inputmode="text" value="${esc(S.pred.answers[x.key] || '')}"></label>`;
     }).join('');
@@ -2220,7 +2220,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       ? `n = ${r.n}，target = ${r.target}，A = <span class="given">[${r.A.join(', ')}]</span>`
       : `n = ${r.n}，A = <span class="given">[${r.A.join(', ')}]</span>`;
     return `<p>執行以下 <b>${esc(r.meta.name)}</b> 偽代碼，其中 ${given}。</p>
-      <p>完成追蹤表。只在變數被賦值或條件被計算時填寫；每次新迴圈由新一行開始。條件欄填 <b>True</b> 或 <b>False</b>。</p>`;
+      <p>完成追蹤表。只在變量被賦值或條件被計算時填寫；每次新迭代由新一行開始。條件欄填 <b>真</b> 或 <b>假</b>。</p>`;
   }
   function staticCode(r) {
     return r.meta.lines.map(([lvl, t], k) => `<li data-l="${k + 1}"><span class="mark"></span><span class="txt">${indent(lvl)}${hl(t)}</span></li>`).join('');
@@ -2306,7 +2306,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     return `<article class="page">
       <div class="ph"><h3>${filled ? '答案：' : ''}追蹤表練習・${esc(r.meta.name)}</h3><small>HKDSE ICT　必修部分 D</small></div>
       ${filled ? '<p class="instr"><span class="ansmark">答案頁</span>　網紋格為題目已提供的第一行。</p>' : '<div class="who"><span>姓名：</span><span>班別：</span><span>學號：</span><span>日期：</span></div>'}
-      <p class="instr">執行以下偽代碼並完成追蹤表。只在變數被賦值或條件被計算時填寫；每次新迴圈由新一行開始。條件欄填 <b>True</b> 或 <b>False</b>。第 1 行（網紋格）已填寫作示範。</p>
+      <p class="instr">執行以下偽代碼並完成追蹤表。只在變量被賦值或條件被計算時填寫；每次新迭代由新一行開始。條件欄填 <b>真</b> 或 <b>假</b>。第 1 行（網紋格）已填寫作示範。</p>
       <div class="cols"><ol class="pc">${pc}</ol>${data}</div>
       ${sheetTable(r, filled)}
       <div class="foot"><span>陣列索引由 1 開始</span><span>${filled ? '答案頁' : '共 ' + r.rows.length + ' 行（另附 2 行備用）'}</span></div>
