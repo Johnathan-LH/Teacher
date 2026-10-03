@@ -217,7 +217,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 .q { font-size: 1.02rem; margin-bottom: 12px; }
 .q .given { font-family: var(--f-mono); font-weight: 800; background: var(--paper); border: 1.5px solid var(--rule); border-radius: 4px; padding: .1em .45em; display: inline-block; margin: 2px 0; }
 .exam-t td { padding: 2px 3px; }
-.exam-t input { width: 100%; min-width: 3.6em; font-family: var(--f-mono); font-size: .95rem; text-align: center; border: 1px solid transparent; background: transparent; padding: .25em .2em; border-radius: 3px; }
+.exam-t input { width: 100%; min-width: 3.6em; font-family: var(--f-mono); font-size: .95rem; text-align: center; border: 1px solid var(--rule); background: transparent; padding: .25em .2em; border-radius: 3px; }
 .exam-t input:hover { border-color: var(--rule); }
 .exam-t input:focus { border-color: var(--ink); background: var(--hl-soft); outline: none; }
 .exam-t td.given { background: var(--shade); font-weight: 800; }
@@ -258,6 +258,21 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
 .page .ansmark { border: 2px solid #000; padding: 0 6px; font-weight: 800; }
 .printhint { text-align: center; }
 
+
+.exam-t td.na { background: repeating-linear-gradient(135deg, var(--rule-soft) 0 3px, var(--sheet) 3px 7px); }
+.xqs { display: grid; gap: 12px; margin-top: 14px; }
+.xq p { margin: 0 0 6px; }
+.mk { margin-left: .5em; color: var(--muted); font-size: .85rem; white-space: nowrap; }
+.xins { display: flex; flex-wrap: wrap; gap: 8px 10px; }
+.xin { display: grid; gap: 2px; font-family: var(--f-mono); font-size: .8rem; font-weight: 800; text-align: center; border-radius: 4px; padding: 2px; }
+.xin input { width: 5.2em; font-family: var(--f-mono); font-size: 1.05rem; text-align: center; border: 2px solid var(--ink); border-radius: 5px; background: var(--sheet); padding: .25em .3em; }
+.xin.ok input { border-color: var(--good); background: var(--good-soft); }
+.xin.no input { border-style: dashed; border-color: var(--bad); background: var(--bad-soft); }
+.xin .ans { color: var(--bad); font-size: .78rem; }
+.xin.ok::after { content: "✓"; color: var(--good); }
+.breakdown { flex-basis: 100%; margin: 4px 0 0; padding-left: 1.2em; font-size: .9rem; display: flex; flex-wrap: wrap; gap: 2px 18px; list-style: none; padding: 0; }
+#examA { margin-bottom: 8px; }
+.mission-t .sub { display: block; font-size: .88rem; color: var(--muted); }
 
 /* ================= 動手玩 ================= */
 .acts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -478,12 +493,12 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
       <div class="mission">
         <div class="mission-t">
           <span class="badge">任務</span>
-          <p id="fMission">在牌中找出 <b class="big" id="fTarget">37</b>，翻牌次數越少越好。</p>
+          <p id="fMission">在牌中找出 <b class="big" id="fTarget">37</b>，翻牌次數越少越好。<span class="sub" id="fKind">線性檢索：牌是亂序的。</span></p>
         </div>
         <div class="opts">
-          <div class="seg" role="radiogroup" aria-label="牌的排列" id="fOrder">
-            <button type="button" role="radio" data-v="unsorted" aria-checked="true">未排序</button>
-            <button type="button" role="radio" data-v="sorted" aria-checked="false">已由小至大排序</button>
+          <div class="seg" role="radiogroup" aria-label="檢索方法" id="fOrder">
+            <button type="button" role="radio" data-v="unsorted" aria-checked="true">線性檢索</button>
+            <button type="button" role="radio" data-v="sorted" aria-checked="false">對分檢索</button>
           </div>
           <div class="seg" role="radiogroup" aria-label="牌數" id="fCount">
             <button type="button" role="radio" data-v="7" aria-checked="false">7 張</button>
@@ -711,8 +726,10 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
         <ol class="code static" id="examCode"></ol>
       </section>
       <section class="pane">
-        <header class="pane-h"><h2>追蹤表 <span>Trace Table</span></h2><span class="pane-note">第一行已填寫作示範</span></header>
+        <header class="pane-h"><h2>作答 <span>Answer</span></h2><span class="pane-note">仿 DSE 結構題</span></header>
+        <p class="q" id="examA"></p>
         <div class="tracewrap"><table class="trace exam-t" id="examT"></table></div>
+        <div class="xqs" id="examExtra"></div>
         <div class="score" id="examScore" hidden></div>
       </section>
     </div>
@@ -1251,6 +1268,7 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
   function newFlip() {
     stopFlipDemo();
     F.sorted = getOrder() === 'sorted';
+    $('fKind').textContent = F.sorted ? '對分檢索：牌已由小至大排好。' : '線性檢索：牌是亂序的。';
     F.n = +getCount();
     F.A = distinct(F.n, 1, 99);
     if (F.sorted) F.A.sort((a, b) => a - b); else shuffle(F.A);
@@ -2215,65 +2233,129 @@ h1 .en { font-family: var(--f-mono); font-weight: 600; font-size: .45em; letter-
     return E.run(algo, A, target);
   }
 
+  /* ---------- 考試模式（仿 DSE 結構題：分題、標明分數、每錯一格扣 1 分） ---------- */
+  const cntLine = (r, line) => r.steps.filter((s) => s.line === line).length;
+  function afterPasses(A0, k) {
+    const A = A0.slice(), n = A.length;
+    for (let i = 1; i <= k; i++) for (let j = 1; j <= n - i; j++) if (A[j - 1] > A[j]) { const t = A[j - 1]; A[j - 1] = A[j]; A[j] = t; }
+    return A;
+  }
+  function lastStep(r) { return r.steps[r.steps.length - 1]; }
+
+  function subQuestions(r) {
+    const A = r.A, n = r.n, q = [];
+    const num = (text, v, marks) => q.push({ text, marks: marks || 1, inputs: [{ label: '', ans: v }] });
+    if (r.algo === 'linear') {
+      num('寫出這個算法的輸出。', r.steps.find((s) => s.kind === 'output').set.out);
+      num('「A[i] = target」這個條件共被計算多少次？', cntLine(r, 4));
+      const t2 = Math.max(...A) + 1;
+      num(`若 target 改為 ${t2}，「A[i] = target」這個條件共被計算多少次？`, cntLine(E.run('linear', A, t2), 4));
+    } else if (r.algo === 'binary') {
+      num('寫出這個算法的輸出。', r.steps.find((s) => s.kind === 'output').set.out);
+      num('mid 共被計算多少次？', cntLine(r, 5));
+      const t2 = Math.min(...A) - 1;
+      num(`若 target 改為 ${t2}，mid 共被計算多少次？`, cntLine(E.run('binary', A, t2), 5));
+    } else if (r.algo === 'bubble') {
+      const k = ri(1, 2);
+      q.push({ text: `第 ${k} 遍迭代（i = ${k}）完成後，陣列 A 的內容是甚麼？`, marks: 2, inputs: afterPasses(A, k).map((v, x) => ({ label: `A[${x + 1}]`, ans: v })) });
+      num('「A[j] > A[j + 1]」這個條件共被計算多少次？', cntLine(r, 3));
+      num(`若 A 已經由小至大排好，「A[j] > A[j + 1]」這個條件共被計算多少次？`, n * (n - 1) / 2);
+    } else {
+      const k = ri(1, 2);
+      q.push({ text: `第 ${k} 遍迭代（i = ${k}）完成後，陣列 A 的內容是甚麼？`, marks: 2, inputs: afterPasses(A, k).map((v, x) => ({ label: `A[${x + 1}]`, ans: v })) });
+      num('算法結束時，i 的值是多少？', lastStep(r).vars.i);
+      num('「A[j] > A[j + 1]」這個條件共被計算多少次？', lastStep(r).cmp);
+      const sorted = A.slice().sort((x, y) => x - y);
+      num('若 A 已經由小至大排好，「A[j] > A[j + 1]」這個條件共被計算多少次？', lastStep(E.run('bubbleFlag', sorted)).cmp);
+    }
+    return q;
+  }
+
   function statement(r) {
     const given = r.meta.needsTarget
       ? `n = ${r.n}，target = ${r.target}，A = <span class="given">[${r.A.join(', ')}]</span>`
       : `n = ${r.n}，A = <span class="given">[${r.A.join(', ')}]</span>`;
-    return `<p>執行以下 <b>${esc(r.meta.name)}</b> 偽代碼，其中 ${given}。</p>
-      <p>完成追蹤表。只在變量被賦值或條件被計算時填寫；每次新迭代由新一行開始。條件欄填 <b>真</b> 或 <b>假</b>。</p>`;
+    return `<p>下列偽代碼表示<b>${esc(r.meta.name)}</b>算法，陣列 A 的索引由 1 開始。輸入：${given}。</p>`;
   }
   function staticCode(r) {
     return r.meta.lines.map(([lvl, t], k) => `<li data-l="${k + 1}"><span class="mark"></span><span class="txt">${indent(lvl)}${hl(t)}</span></li>`).join('');
   }
 
-  /* ---------- 考試模式 ---------- */
   function newExam() {
-    S.exam = problem($('examAlgo').value);
-    const r = S.exam;
+    const r = problem($('examAlgo').value);
+    S.exam = r;
+    // 追蹤表：第 1 行及約三成格子已填好，其餘由學生填寫；不會有數值的格子顯示網紋
+    r.given = new Set();
+    r.rows.forEach((row, rr) => Object.keys(row.cells).forEach((key) => { if (rr === 0 || Math.random() < 0.3) r.given.add(rr + ':' + key); }));
+    r.blanks = [];
+    r.rows.forEach((row, rr) => Object.keys(row.cells).forEach((key) => { if (!r.given.has(rr + ':' + key)) r.blanks.push([rr, key]); }));
+    r.marksA = r.blanks.length <= 10 ? 3 : 4;
+    r.subs = subQuestions(r);
     $('examTag').textContent = r.meta.name;
     $('examQ').innerHTML = statement(r);
     $('examCode').innerHTML = staticCode(r);
+    $('examA').innerHTML = `<b>(a)</b> 完成下面的追蹤表。灰底粗體格已填寫，網紋格不用填寫。條件欄填 <b>真</b> 或 <b>假</b>。<span class="mk">（${r.marksA} 分，每錯一格扣 1 分）</span>`;
     const cols = r.columns;
     let h = '<thead><tr><th class="rn">行</th>' + cols.map((c) => `<th class="${c.arr ? 'arr' : ''}">${esc(c.label)}</th>`).join('') + '</tr></thead><tbody>';
-    r.rows.forEach((row, ri2) => {
-      h += `<tr><td class="rn">${ri2 + 1}</td>`;
+    r.rows.forEach((row, rr) => {
+      h += `<tr><td class="rn">${rr + 1}</td>`;
       cols.forEach((c, ci) => {
         const cell = row.cells[c.key];
-        if (ri2 === 0) h += `<td class="given">${cell ? esc(E.fmt(cell.v)) : ''}</td>`;
-        else h += `<td><input id="ex-${ri2}-${ci}" aria-label="第 ${ri2 + 1} 行 ${esc(c.label)}" autocomplete="off"></td>`;
+        if (!cell) h += '<td class="na"></td>';
+        else if (r.given.has(rr + ':' + c.key)) h += `<td class="given">${esc(E.fmt(cell.v))}</td>`;
+        else h += `<td><input id="ex-${rr}-${ci}" aria-label="第 ${rr + 1} 行 ${esc(c.label)}" autocomplete="off"></td>`;
       });
       h += '</tr>';
     });
     $('examT').innerHTML = h + '</tbody>';
+    $('examExtra').innerHTML = r.subs.map((sq, qi) => {
+      const letter = String.fromCharCode(98 + qi);
+      const ins = sq.inputs.map((inp, ii) => `<label class="xin">${inp.label ? `<span>${esc(inp.label)}</span>` : ''}<input id="xq-${qi}-${ii}" autocomplete="off" inputmode="text"></label>`).join('');
+      return `<div class="xq"><p><b>(${letter})</b> ${esc(sq.text)}<span class="mk">（${sq.marks} 分）</span></p><div class="xins">${ins}</div></div>`;
+    }).join('');
     $('examScore').hidden = true;
-    $('examMsg').textContent = `共 ${r.rows.length} 行。可用 Tab 鍵移到下一格。`;
+    $('examMsg').textContent = `共 ${r.blanks.length} 個空格要填。可用 Tab 鍵移到下一格。`;
     $('examMsg').classList.remove('err');
+  }
+
+  function mark(el, ok, ans) {
+    const box = el.parentElement;
+    box.classList.remove('ok', 'no'); const old = box.querySelector('.ans'); if (old) old.remove();
+    if (ok === null) return;
+    box.classList.add(ok ? 'ok' : 'no');
+    if (!ok) box.insertAdjacentHTML('beforeend', `<span class="ans">${esc(ans)}</span>`);
   }
   function gradeExam(reveal) {
     const r = S.exam; if (!r) return;
-    let total = 0, got = 0, extra = 0;
-    r.rows.forEach((row, ri2) => {
-      if (ri2 === 0) return;
-      r.columns.forEach((c, ci) => {
-        const inp = $(`ex-${ri2}-${ci}`); const td = inp.parentElement;
-        td.classList.remove('ok', 'no'); const old = td.querySelector('.ans'); if (old) old.remove();
-        const cell = row.cells[c.key];
-        if (reveal) { inp.value = cell ? E.fmt(cell.v) : ''; return; }
-        const val = inp.value.trim();
-        if (cell) {
-          total++;
-          if (E.same(val, cell.v)) { got++; td.classList.add('ok'); }
-          else { td.classList.add('no'); td.insertAdjacentHTML('beforeend', `<span class="ans">${esc(E.fmt(cell.v))}</span>`); }
-        } else if (val) {
-          extra++; td.classList.add('no'); td.insertAdjacentHTML('beforeend', '<span class="ans">應留空</span>');
-        }
+    let wrongA = 0;
+    r.blanks.forEach(([rr, key]) => {
+      const ci = r.columns.findIndex((c) => c.key === key);
+      const inp = $(`ex-${rr}-${ci}`), ans = r.rows[rr].cells[key].v;
+      if (reveal) { inp.value = E.fmt(ans); mark(inp, null); return; }
+      const ok = E.same(inp.value, ans);
+      if (!ok) wrongA++;
+      mark(inp, ok, E.fmt(ans));
+    });
+    let score = reveal ? 0 : Math.max(0, r.marksA - wrongA), total = r.marksA;
+    const lines = [`(a) ${reveal ? '' : Math.max(0, r.marksA - wrongA) + ' / '}${r.marksA} 分（${r.blanks.length - wrongA} / ${r.blanks.length} 格正確）`];
+    r.subs.forEach((sq, qi) => {
+      let wrong = 0;
+      sq.inputs.forEach((inp, ii) => {
+        const el = $(`xq-${qi}-${ii}`);
+        if (reveal) { el.value = E.fmt(inp.ans); mark(el, null); return; }
+        const ok = E.same(el.value, inp.ans);
+        if (!ok) wrong++;
+        mark(el, ok, E.fmt(inp.ans));
       });
+      const got = Math.max(0, sq.marks - wrong);
+      score += got; total += sq.marks;
+      lines.push(`(${String.fromCharCode(98 + qi)}) ${got} / ${sq.marks} 分`);
     });
     if (reveal) { $('examScore').hidden = true; $('examMsg').textContent = '已填上正確答案。按「出新題目」再練習。'; return; }
-    const pct = total ? Math.round(got / total * 100) : 0;
-    const remark = pct === 100 && !extra ? '全對！' : pct >= 80 ? '很好，留意標示的格子。' : pct >= 50 ? '有基礎，建議用「預測模式」逐步再練一次。' : '建議先回到「演示模式」看一次完整過程。';
+    const pct = Math.round(score / total * 100);
+    const remark = pct === 100 ? '全對！' : pct >= 70 ? '很好，留意標示的格子。' : pct >= 40 ? '有基礎，建議用「預測」模式逐步再練一次。' : '建議先回到「逐行演示」看一次完整過程。';
     $('examScore').hidden = false;
-    $('examScore').innerHTML = `<span>得分</span><b>${got} / ${total}</b><span>${pct}%</span><span>${remark}</span>${extra ? `<span class="note-bad">另有 ${extra} 格應留空（不扣分）</span>` : ''}`;
+    $('examScore').innerHTML = `<span>得分</span><b>${score} / ${total}</b><span>${pct}%</span><span>${remark}</span><ul class="breakdown">${lines.map((l) => `<li>${l}</li>`).join('')}</ul>`;
   }
   $('examNew').addEventListener('click', newExam);
   $('examAlgo').addEventListener('change', newExam);
