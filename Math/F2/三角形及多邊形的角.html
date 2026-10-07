@@ -308,6 +308,17 @@ body.teacher .tbar{display:flex}
 .tclick .tk .box{cursor:pointer}
 .tclick .btnrow .pri{display:none}
 
+.kref{border-radius:4px;padding:0 .12em;font-weight:700}
+.fv.kb{border-radius:4px;padding:0 .15em}
+.blank.kb input,.blank.kb select{border-width:2px;font-weight:700}
+.lktip{font-size:.8rem;color:var(--muted);margin:-.1rem 0 .35rem}
+.sl.lk{border-radius:6px;transition:background .15s}
+.sl.lon{background:rgba(255,214,90,.28)}
+.fig .kc,.fig .kside,.fig text.kt{transition:opacity .15s}
+.fig.lfocus .kc:not(.on),.fig.lfocus .kside:not(.on),.fig.lfocus text.kt:not(.on){opacity:.15}
+.fig.lfocus .kc.on .arc{stroke-width:3.6}
+@media print{.lktip{display:none}}
+
 </style>
 </head>
 <body>
@@ -478,7 +489,9 @@ function installKDefs() {
   st.textContent = KCOL.map(([dk, lt], i) =>
     `.fig .kc.k${i} .arc{stroke:${dk};stroke-width:2.6}.fig .kc.k${i} .sector{fill:url(#kp${i})}.fig .kc.k${i} text{fill:${dk};font-weight:700}` +
     `.fig text.kt.k${i}{fill:${dk};font-weight:700}.fig .kside.k${i}{stroke:${dk};stroke-width:4.5;opacity:.55;stroke-linecap:round}` +
-    `.kchip.k${i}{background:${lt};border-color:${dk};color:${dk}}`).join('');
+    `.kchip.k${i}{background:${lt};border-color:${dk};color:${dk}}` +
+    `.kref.k${i}{color:${dk};background:${lt};box-shadow:inset 0 -2.5px 0 ${dk}}` +
+    `.blank.kb.k${i} input,.blank.kb.k${i} select{border-color:${dk};background:${lt};color:${dk}}.fv.kb.k${i}{color:${dk};background:${lt};box-shadow:inset 0 -2.5px 0 ${dk}}`).join('');
   document.head.appendChild(st);
   document.body.prepend(s);
 }
@@ -654,7 +667,7 @@ function drawFigure(spec, opts = {}) {
   /* 把第 i 個角塗上顏色（同時顯示原本隱藏的提示角） */
   svg.colorAngle = (i, k) => {
     const g = angEls[i]; if (!g) return;
-    g.classList.remove('hintonly'); g.classList.add('kc', 'k' + k);
+    g.classList.remove('hintonly'); g.classList.add('kc', 'k' + k); g.dataset.k = 'A' + i;
   };
   /* 把邊長文字及該邊塗上顏色 */
   svg.colorSide = (j, k) => {
@@ -666,6 +679,15 @@ function drawFigure(spec, opts = {}) {
       gSeg.appendChild(ln);
     }
   };
+  /* 加一個原本沒有畫出的角（步驟中提到 ∠ABC 時用） */
+  svg.addAngle = a => { const g = drawAngle(gAng, P, { r: 14, ...a }); angEls.push(g); svg._A = [...svg._A, a]; return svg._A.length - 1; };
+  /* 把一條線段塗上顏色（如有邊長文字一併塗色） */
+  svg.colorSeg = (a, b, k) => {
+    const ln = sv('line', { x1: P[a][0], y1: -P[a][1], x2: P[b][0], y2: -P[b][1], class: 'kside k' + k }, gSeg);
+    ln.dataset.k = 'S' + [a, b].sort().join('|');
+    tEls.forEach(o => { if (!o.t.side) return; const sd = typeof o.t.side === 'string' ? [...o.t.side] : [...o.t.side]; if (sd.sort().join('|') === [a, b].sort().join('|')) { o.el.classList.add('kt', 'k' + k); o.el.dataset.k = ln.dataset.k; } });
+  };
+  svg._P = P; svg._L = segs;
   svg.hl = (ids, on = true) => {
     for (const e of svg.querySelectorAll('[data-id]')) if (ids.includes(e.dataset.id)) e.classList.toggle('hl', on);
   };
@@ -918,6 +940,8 @@ const normNum = s => {
   return parseFloat(t);
 };
 function parseTok(raw) {
+  const km = /^k(\d+)([:~])([\s\S]*)$/.exec(raw);
+  if (km) { if (km[2] === ':') return { t: 'kref', kc: +km[1], s: km[3] }; const tk = parseTok(km[3]); tk.kc = +km[1]; return tk; }
   if (raw.startsWith('r:')) return { t: 'rsn', ans: raw.slice(2).split('|') };
   if (raw.startsWith('t:')) return { t: 'txt', ans: raw.slice(2).split('|') };
   if (raw.startsWith('p:')) return { t: 'par', ans: raw.slice(2).split('|') };
@@ -934,7 +958,7 @@ function tokText(tok) {                // 答案的文字形式
   return '';
 }
 function makeBlank(tok) {
-  const wrap = el('span', { class: 'blank' + (tok.fin ? ' fin' : '') });
+  const wrap = el('span', { class: 'blank' + (tok.fin ? ' fin' : '') + (tok.kc != null ? ' kb k' + tok.kc : '') });
   const mk = el('span', { class: 'mk' });
   let get, set, inputs = [];
   if (tok.t === 'num' || tok.t === 'txt') {
@@ -996,10 +1020,11 @@ function renderTpl(str, mode, blanks) {
       if (!m) { if (seg) frag.append(el('span', { html: fmtMath(seg) })); return; }
       const tok = parseTok(m[1]);
       if (tok.t === 'raw') { frag.append(el('span', { html: fmtMath(tok.s) })); return; }
+      if (tok.t === 'kref') { frag.append(el('span', { class: 'kref k' + tok.kc, html: fmtMath(tok.s) })); return; }
       if (mode === 'edit') { const b = makeBlank(tok); blanks.push(b); frag.append(b.el); }
       else {
         const txt = tokText(tok);
-        frag.append(el('span', { class: (tok.t === 'rsn' ? 'rv' : 'fv') + (tok.fin ? ' fin' : ''), html: tok.t === 'rsn' || tok.t === 'ch' ? esc(txt) : fmt(txt) }));
+        frag.append(el('span', { class: (tok.t === 'rsn' ? 'rv' : 'fv') + (tok.fin ? ' fin' : '') + (tok.kc != null ? ' kb k' + tok.kc : ''), html: tok.t === 'rsn' || tok.t === 'ch' ? esc(txt) : fmt(txt) }));
       }
     });
   }
@@ -1028,6 +1053,7 @@ function tplSkeleton(line) {
   let eq = Array.isArray(line) ? line[0] : line, rs = Array.isArray(line) ? line[1] : '';
   const rep = s => String(s || '').replace(/^>+\s?/, '').replace(/\[\[(.*?)\|\|(.*?)\]\]/g, '($1)/($2)').replace(/\{\{(.*?)\}\}/g, (m, t) => {
     const k = parseTok(t);
+    if (k.t === 'kref') return k.s;
     if (k.t === 'rsn') return '（理由？）';
     if (k.t === 'txt' || k.t === 'par') return '＿＿';
     if (k.t === 'raw') return k.s;
@@ -1048,6 +1074,149 @@ const App = {
   isDone(id) { return !!store.get('done:' + id, false); },
   setDone(id) { store.set('done:' + id, true); this.emit(); }
 };
+
+
+/* =========================================================
+   步驟 ↔ 圖形連結：步驟中提到的角／邊，與圖中同一個角／邊用同一種顏色
+   （相等的角或邊用同一種顏色；把滑鼠移到某一行，圖中只亮起該行用到的角和邊）
+   ========================================================= */
+function linkSteps(q, fig) {
+  const steps = q.steps || [];
+  if (!fig || !fig._P || q.nolink) return { steps, keys: steps.map(() => []) };
+  const P = fig._P, segs = fig._L || [];
+  const col = {}, val = {};
+  let next = 0;
+  const close = (x, y) => Math.abs(norm180(x - y)) < 1.5;
+  const dir = (v, a) => G.dir(P[v], P[a]);
+  const sideKey = sd => 'S' + (typeof sd === 'string' ? [...sd] : [...sd]).sort().join('|');
+  const onSeg = (x, p, r) => {
+    if (x === p || x === r) return true;
+    const L = G.dist(P[p], P[r]); if (!L) return false;
+    const t = ((P[x][0] - P[p][0]) * (P[r][0] - P[p][0]) + (P[x][1] - P[p][1]) * (P[r][1] - P[p][1])) / (L * L);
+    return t > -0.001 && t < 1.001 && G.dist(G.lerp(P[p], P[r], t), P[x]) < 0.8;
+  };
+  function ang3(n) {
+    const [a, v, b] = n;
+    if (!P[a] || !P[v] || !P[b]) return null;
+    const d1 = dir(v, a), d2 = dir(v, b);
+    const i = fig._A.findIndex(s => s.v === v && P[s.a] && P[s.b] && !s.big &&
+      ((close(dir(v, s.a), d1) && close(dir(v, s.b), d2)) || (close(dir(v, s.a), d2) && close(dir(v, s.b), d1))));
+    return i >= 0 ? i : fig.addAngle({ v, a, b, hint: true });
+  }
+  function ang1(v) {
+    if (!P[v]) return null;
+    const at = fig._A.map((s, i) => [s, i]).filter(([s]) => s.v === v);
+    if (at.length === 1) return at[0][1];
+    if (at.length) return null;
+    const nbs = [...new Set(segs.filter(([a, b]) => a === v || b === v).map(([a, b]) => a === v ? b : a))];
+    return nbs.length === 2 ? fig.addAngle({ v, a: nbs[0], b: nbs[1], hint: true }) : null;
+  }
+  function seg(n) {
+    const [a, b] = n;
+    if (!P[a] || !P[b]) return null;
+    return segs.some(([p, r]) => onSeg(a, p, r) && onSeg(b, p, r)) ? sideKey([a, b]) : null;
+  }
+  const extra = {};             // 同一個未知數標示的其他角（例如兩個 x）→ 同色
+  function varKey(k, coef, used) {
+    const lab = (coef || '') + k;
+    let ex = fig._A.map((s, i) => [s, i]).filter(([s]) => String(s.lab ?? '') === lab).map(([, i]) => 'A' + i);
+    if (!ex.length && coef) ex = fig._A.map((s, i) => [s, i]).filter(([s]) => String(s.lab ?? '') === k).map(([, i]) => 'A' + i);
+    if (ex.length) { const key = ex.find(x => !used.has(x)) || ex[0]; extra[key] = ex.filter(x => x !== key); return key; }
+    if (coef) return null;
+    const re = new RegExp('(^|[^A-Za-z])\\d*' + k + '([^A-Za-z]|$)');
+    const c = fig._A.map((s, i) => [s, i]).filter(([s]) => s.lab != null && re.test(String(s.lab)));
+    if (c.length === 1) return 'A' + c[0][1];
+    if (c.length) return null;
+    const t = fig._T.find(o => o.t.side && new RegExp('(^|[^A-Za-z])' + k + '\\s?(cm|m)(?![A-Za-z])').test(String(o.t.s)));
+    return t ? sideKey(t.t.side) : null;
+  }
+  function numKey(n, deg, used) {
+    if (deg) {
+      const c = fig._A.map((s, i) => [s, i]).filter(([s]) => String(s.lab ?? '') === n + '°').map(([, i]) => 'A' + i);
+      const k = c.find(k => !used.has(k));
+      if (k) return k;
+      if (c.length) return null;
+      if (n === 90) { const r = fig._A.map((s, i) => [s, i]).filter(([s]) => s.mk === 'right').map(([, i]) => 'A' + i).find(k => !used.has(k)); if (r) return r; }
+    } else {
+      const t = fig._T.filter(o => o.t.side && String(o.t.s) === n + ' cm');
+      if (t.length === 1) return sideKey(t[0].t.side);
+      if (t.length) return null;
+    }
+    const kv = Object.keys(val).filter(k => val[k] === n && !used.has(k));
+    return kv.length === 1 ? kv[0] : null;
+  }
+  const paint = (k, c) => {
+    if (k[0] === 'A') fig.colorAngle(+k.slice(1), c); else { const [a, b] = k.slice(1).split('|'); fig.colorSeg(a, b, c); }
+    (extra[k] || []).forEach(x => { if (col[x] == null) { col[x] = c; fig.colorAngle(+x.slice(1), c); fig._angEls[+x.slice(1)].dataset.k2 = k; } });
+  };
+  const RE = /∠\s?([A-Z]{3}|[A-Z](?![A-Z]))|(?<![A-Z∠△□])([A-Z]{2})(?![A-Z])|(?<![A-Za-z\d])(\d*)([a-z])(?![A-Za-z])|(?<![\d.])(\d+(?:\.\d+)?)(°|\s?cm(?![A-Za-z]))/g;
+
+  function proc(str) {
+    const pieces = String(str).split(/(\{\{.*?\}\})/);
+    const refs = [], used = new Set();
+    let num = null;
+    pieces.forEach((pc, pi) => {
+      const m = /^\{\{(.*)\}\}$/.exec(pc);
+      if (m) {
+        const tok = parseTok(m[1]);
+        let key = null;
+        if (tok.t === 'txt') {
+          const a = tok.ans[0], prev = pieces[pi - 1] || '';
+          if (/∠\s*$/.test(prev)) { const i = a.length === 3 ? ang3(a) : a.length === 1 ? ang1(a) : null; if (i != null) key = 'A' + i; }
+          else if (/^[A-Z]{2}$/.test(a)) key = seg(a);
+        } else if (tok.t === 'num') {
+          if (num == null) num = tok.ans;
+          key = numKey(tok.ans, tok.deg, used);
+        }
+        if (key) { used.add(key); refs.push({ pi, key, raw: m[1], quiet: tok.fin }); }
+        return;
+      }
+      let mm; RE.lastIndex = 0;
+      while ((mm = RE.exec(pc))) {
+        let key = null;
+        if (mm[1]) { const i = mm[1].length === 3 ? ang3(mm[1]) : ang1(mm[1]); if (i != null) key = 'A' + i; }
+        else if (mm[2]) key = seg(mm[2]);
+        else if (mm[4]) key = varKey(mm[4], mm[3], used);
+        else if (mm[5]) { if (num == null) num = +mm[5]; key = numKey(+mm[5], mm[6] === '°', used); }
+        if (key) { used.add(key); refs.push({ pi, s: mm.index, e: mm.index + mm[0].length, key }); }
+      }
+    });
+    const keys = [...new Set(refs.map(r => r.key))];
+    const bare = String(str).replace(/\{\{.*?\}\}/g, '□').replace(/^[\s>∵∴即]+/, '');
+    const chain = /=/.test(bare) && !/[+−×÷\/]|\[\[|(?<!\S)-(?!\S)/.test(bare);
+    if (chain && keys.length > 1) {
+      const have = keys.find(k => col[k] != null);
+      const c = have != null ? col[have] : (next++ % KCOL.length);
+      keys.forEach(k => { if (col[k] == null) { col[k] = c; paint(k, c); } });
+    } else keys.forEach(k => { if (col[k] == null) { col[k] = next++ % KCOL.length; paint(k, col[k]); } });
+    if (chain && num != null) keys.forEach(k => { if (val[k] == null) val[k] = num; });
+    // 重組字串
+    const out = pieces.map((pc, pi) => {
+      const rs = refs.filter(r => r.pi === pi);
+      if (!rs.length) return pc;
+      if (rs[0].raw != null) return rs[0].quiet ? pc : '{{k' + col[rs[0].key] + '~' + rs[0].raw + '}}';
+      let t = pc;
+      rs.slice().sort((a, b) => b.s - a.s).forEach(r => { t = t.slice(0, r.s) + '{{k' + col[r.key] + ':' + t.slice(r.s, r.e) + '}}' + t.slice(r.e); });
+      return t;
+    }).join('');
+    return { out, keys };
+  }
+  const keys = [];
+  const out = steps.map(l => {
+    if (Array.isArray(l)) { const r = proc(l[0]); keys.push(r.keys); return [r.out, l[1]]; }
+    const r = proc(l); keys.push(r.keys); return r.out;
+  });
+  return { steps: out, keys };
+}
+/* 滑鼠移到（或點）某一行步驟 → 圖中只亮起該行用到的角和邊 */
+function bindFocus(row, keys, fig) {
+  if (!fig || !keys || !keys.length) return;
+  row.classList.add('lk');
+  const on = () => { fig.classList.add('lfocus'); fig.querySelectorAll('[data-k]').forEach(e => e.classList.toggle('on', keys.includes(e.dataset.k) || keys.includes(e.dataset.k2))); row.classList.add('lon'); };
+  const off = () => { fig.classList.remove('lfocus'); row.classList.remove('lon'); };
+  row.addEventListener('mouseenter', on); row.addEventListener('mouseleave', off);
+  row.addEventListener('focusin', on); row.addEventListener('focusout', off);
+}
 
 /* ---------- 共用：提示控制 ---------- */
 function hintController(q, fig, host, steps) {
@@ -1127,20 +1296,23 @@ function cardCalc(q, ctx) {
   const work = el('div');
   grid.append(work); card.append(grid);
 
-  // 1. 看圖列式：把計算用到的角塗上顏色，並寫出同色的算式
-  const see = q.boards && q.boards.length ? seePanel(q, fig) : null;
+  // 多邊形：從一個頂點分成三角形（只有這類題目才有額外的圖）
+  const see = q.boards && q.boards.some(b => b.kind === 'tri') ? seePanel(q, fig) : null;
   if (see) work.append(see);
 
-  // 2. 寫出步驟
+  // 寫出步驟：步驟中的角／邊與圖中同一個角／邊同色
+  const LK = linkSteps(q, fig);
+  const qL = { ...q, steps: LK.steps };
   const sp = el('div', { class: 'panel steps' }, el('h5', null, el('span', { class: 'n' }, see ? '2' : '1'), '寫出步驟（跟工作紙一樣）'));
+  if (LK.keys.some(k => k.length)) sp.append(el('div', { class: 'lktip' }, '🎨 步驟中有顏色的角／邊，就是圖中同一種顏色的角／邊。把滑鼠移到某一行（或點一下），圖中只會亮起那一行用到的角和邊。'));
   const blanks = [];
-  (q.steps || []).forEach(l => sp.append(stepLine(l, 'edit', blanks)));
+  LK.steps.forEach((l, i) => { const r = stepLine(l, 'edit', blanks); bindFocus(r, LK.keys[i], fig); sp.append(r); });
   const msg = el('div', { class: 'msg' });
   const checkB = el('button', { class: 'btn pri', type: 'button' }, '檢查答案');
   const btnrow = el('div', { class: 'btnrow' }, checkB);
   sp.append(btnrow, msg);
   work.append(sp);
-  const hints = hintController(q, fig, sp, q.steps);
+  const hints = hintController(q, fig, sp, LK.steps);
   btnrow.append(hints.btn);
   const revealB = b => { b.fill(); b.mark(true); };
   blanks.forEach(b => b.el.addEventListener('click', () => { if (App.teacher) revealB(b); }, true));
@@ -1148,7 +1320,7 @@ function cardCalc(q, ctx) {
     () => { const b = blanks.find(b => b.empty() || !b.el.classList.contains('ok')); if (b) revealB(b); },
     () => blanks.forEach(revealB),
     () => blanks.forEach(b => { b.clear(); b.mark(null); })));
-  const copy = copyPanel(q);
+  const copy = copyPanel(qL);
   copy.classList.add('hidden');
   work.append(copy);
 
@@ -1255,7 +1427,8 @@ function seePanel(q, fig) {
   // 每塊驗證板 → 一條算式
   const plain = str => String(str).replace(/\{\{(.*?)\}\}/g, (m, t) => t.replace(/^[!]|^[rtp]:/, '').replace('|', ' // ')).replace(/\[\[(.*?)\|\|(.*?)\]\]/g, '$1 / $2');
   const stepTxt = (q.steps || []).filter(Array.isArray).map(([e, r]) => ({ e: plain(e), r: plain(r || '').trim() })).filter(o => o.r);
-  for (const b of q.boards) {
+  panel.querySelector('h5').lastChild.textContent = '看圖：從一個頂點畫對角線，分成三角形';
+  for (const b of q.boards.filter(b => b.kind === 'tri')) {
     const row = el('div', { class: 'seerow' });
     if (b.kind === 'tri') {
       const vd = vars.find(v => v.k === b.var);
@@ -1449,7 +1622,8 @@ function cardExample(q, ctx, kind = '例題') {
   if (q.fig) { fig = drawFigure(q.fig); grid.append(el('div', { class: 'figbox' }, fig)); }
   const work = el('div');
   const lines = el('div', { class: 'panel copy', style: 'border-style:solid' });
-  const rows = (q.steps || []).map(l => { const r = stepLine(l, 'show', []); lines.append(r); return r; });
+  const LK = linkSteps(q, fig);
+  const rows = LK.steps.map((l, i) => { const r = stepLine(l, 'show', []); bindFocus(r, LK.keys[i], fig); lines.append(r); return r; });
   let shown = kind === '例題' ? 0 : 0;
   const nextB = el('button', { class: 'btn teal', type: 'button' }, '下一步 ▶');
   const allB = el('button', { class: 'btn ghost', type: 'button' }, '全部顯示');
