@@ -299,6 +299,9 @@ svg.seefan text{font-size:19px!important;font-weight:700}
 .seetri{display:flex;align-items:center;gap:.8rem;font-size:.9rem}
 @media print{.see{border:1px solid #000}}
 
+.thide{display:none!important}
+.t-show{flex-wrap:wrap}
+
 </style>
 </head>
 <body>
@@ -1082,9 +1085,9 @@ function copyPanel(q, title = '抄寫版：把步驟抄到工作紙上') {
   render();
   // 逐步顯示（方便老師投影時控制節奏）
   let shown = rows.length;
-  const nextB = el('button', { class: 'btn ghost', type: 'button' }, '下一步 ▶');
+  const nextB = el('button', { class: 'btn teal', type: 'button' }, '下一步 ▶');
   const allB = el('button', { class: 'btn ghost', type: 'button' }, '全部顯示');
-  const resetB = el('button', { class: 'btn ghost', type: 'button' }, '逐步顯示');
+  const resetB = el('button', { class: 'btn ghost', type: 'button' }, '重新開始');
   const apply = () => { rows.forEach((r, i) => r.classList.toggle('hid', i >= shown)); nextB.disabled = shown >= rows.length; };
   nextB.onclick = () => { shown++; apply(); };
   allB.onclick = () => { shown = rows.length; apply(); };
@@ -1092,6 +1095,24 @@ function copyPanel(q, title = '抄寫版：把步驟抄到工作紙上') {
   head.append(el('span', { class: 't-show' }, resetB, ' ', nextB, ' ', allB));
   p.append(head, lines);
   p.stepper = { start() { shown = 0; apply(); }, all() { shown = rows.length; apply(); } };
+  return p;
+}
+
+
+/* ---------- 教師模式：點擊逐步揭曉 ---------- */
+function revealPanel(rows, onApply) {
+  const p = el('div', { class: 'panel copy treveal hidden', style: 'border-style:solid' }, el('h5', null, '👩‍🏫 逐步揭曉（按「下一步」）'));
+  const box = el('div'); rows.forEach(r => box.append(r));
+  let shown = 0;
+  const nextB = el('button', { class: 'btn teal', type: 'button' }, '下一步 ▶');
+  const allB = el('button', { class: 'btn ghost', type: 'button' }, '全部顯示');
+  const resetB = el('button', { class: 'btn ghost', type: 'button' }, '重新開始');
+  const apply = () => { rows.forEach((r, i) => r.classList.toggle('hid', i >= shown)); nextB.disabled = shown >= rows.length; if (onApply) onApply(shown); };
+  nextB.onclick = () => { shown++; apply(); };
+  allB.onclick = () => { shown = rows.length; apply(); };
+  resetB.onclick = () => { shown = 0; apply(); };
+  p.append(box, el('div', { class: 'btnrow' }, nextB, allB, resetB));
+  p.start = () => { shown = 0; apply(); };
   return p;
 }
 
@@ -1156,11 +1177,13 @@ function cardCalc(q, ctx) {
     q, el: card, ws: ctx.ws,
     teacher(on) {
       if (on) {
-        blanks.forEach(b => { b.fill(); b.mark(true); });
+        sp.classList.add('thide');
         copy.classList.remove('hidden');
-      } else if (!App.isDone(q.id)) {
-        blanks.forEach(b => { b.clear(); b.mark(null); });
-        copy.classList.add('hidden');
+        copy.stepper.start();
+      } else {
+        sp.classList.remove('thide');
+        copy.stepper.all();
+        if (!App.isDone(q.id)) copy.classList.add('hidden');
       }
     },
     audit() { return auditFigure(q); }
@@ -1322,6 +1345,9 @@ function cardTick(q, ctx) {
     el('div', { class: 'sl full', html: q.items.map(it => fmt(it.lab) + '　<b>' + (q.mode === 'cx' ? it.ans : it.ans ? '✓' : '□') + '</b>').join(q.mode === 'chk' ? '<br>' : '　　') }));
   if (q.explain) copy.append(el('div', { class: 'sl full', style: 'font-size:.9rem', html: '<b>原因：</b>' + fmt(q.explain) }));
   work.append(copy);
+  const trows = items.map(it => el('div', { class: 'sl full', html: fmt(it.lab) + '　<b>' + (q.mode === 'cx' ? it.ans : it.ans ? '✓ 是' : '✗ 否') + '</b>' }));
+  if (q.explain) trows.push(el('div', { class: 'sl full', style: 'font-size:.9rem', html: '<b>原因：</b>' + fmt(q.explain) }));
+  const tp = revealPanel(trows); work.append(tp);
   let tries = 0;
   const done = (fromStudent) => {
     card.classList.add('done'); status.textContent = '✓ 已完成'; status.classList.add('ok');
@@ -1345,8 +1371,8 @@ function cardTick(q, ctx) {
   const api = {
     q, el: card, ws: ctx.ws,
     teacher(on) {
-      if (on) { items.forEach(o => { o.set(o.want); o.row.classList.add('ok'); o.mk.textContent = '✓'; }); copy.classList.remove('hidden'); }
-      else if (!App.isDone(q.id)) { items.forEach(o => { o.set(''); o.row.classList.remove('ok', 'bad'); o.mk.textContent = ''; }); copy.classList.add('hidden'); }
+      if (on) { sp.classList.add('thide'); copy.classList.add('thide'); tp.classList.remove('hidden'); tp.start(); }
+      else { sp.classList.remove('thide'); copy.classList.remove('thide'); tp.classList.add('hidden'); }
     },
     audit() { return auditFigure(q); }
   };
@@ -1376,6 +1402,9 @@ function cardPick(q, ctx) {
   btnrow.append(hints.btn);
   const copy = el('div', { class: 'panel copy hidden' }, el('h5', null, '✏️ 抄寫版'), el('div', { class: 'sl full', html: fmt(q.copyText || '在工作紙的圖中，用弧線標示網紋所示的角。') }));
   work.append(copy);
+  const showPicks = on => fig._picks.forEach(p => { p.sel = on ? !!p.spec.ok : false; p.g.classList.toggle('sel', p.sel); });
+  const tp = revealPanel([el('div', { class: 'sl full', html: '圖中加網紋的角就是答案。' }), el('div', { class: 'sl full', html: fmt(q.copyText || '在工作紙的圖中，用弧線標示網紋所示的角。') })], n => { if (!App.isDone(q.id)) showPicks(n >= 1); });
+  work.append(tp);
   fig.addEventListener('pick', e => {
     const o = e.detail;
     msg.className = 'msg'; msg.innerHTML = o.sel && o.spec.msg ? fmt(o.spec.msg) : '';
@@ -1398,8 +1427,8 @@ function cardPick(q, ctx) {
   const api = {
     q, el: card, ws: ctx.ws,
     teacher(on) {
-      if (on) { fig._picks.forEach(p => { p.sel = !!p.spec.ok; p.g.classList.toggle('sel', p.sel); }); copy.classList.remove('hidden'); }
-      else if (!App.isDone(q.id)) { fig._picks.forEach(p => { p.sel = false; p.g.classList.remove('sel'); }); copy.classList.add('hidden'); }
+      if (on) { sp.classList.add('thide'); copy.classList.add('thide'); tp.classList.remove('hidden'); tp.start(); }
+      else { sp.classList.remove('thide'); copy.classList.remove('thide'); tp.classList.add('hidden'); if (!App.isDone(q.id)) showPicks(false); }
     },
     audit() { return auditFigure(q); }
   };
@@ -2834,7 +2863,7 @@ function practicePanel(ws) {
 'use strict';
 
 /* 教師模式密碼（可自行更改） */
-const TEACHER_PIN = '2627';
+const TEACHER_PIN = '0000';
 
 const View = { ws: 0, sec: 's1', cards: [] };
 
