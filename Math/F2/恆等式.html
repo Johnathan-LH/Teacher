@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="color-scheme" content="light">
+<title>恆等式 · 公開課</title>
+<link rel="icon" href="data:,">
+<style>
+:root{
+  --paper:#F5F8FE; --grid:#DCE5F4; --ink:#1F2A44; --muted:#5B6782; --line:#C7D3E8;
+  --hi:#FFE14D; --hi2:#FFF5BF; --mint:#4FC497; --mint2:#DCF5EA; --sky:#4C9EEB; --sky2:#DDEDFF;
+  --pink:#FF7F9C; --pink2:#FFE2EA; --grape:#8B7CF6; --grape2:#ECE9FF; --bad:#E0344B; --good:#138F62; --stamp:#D7263D;
+  --s1:#FFE2EA; --s2:#FFF5BF; --s3:#DCF5EA; --s4:#DDEDFF; --s5:#ECE9FF; --s6:#FFE8D1; --sun2:#FFF5BF;
+}
+*{box-sizing:border-box}
+html{font-size:17px;-webkit-text-size-adjust:100%}
+html.teacher{font-size:21px}
+body{margin:0;color:var(--ink);background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:26px 26px;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  touch-action:manipulation;line-height:1.55}
+body.padopen{padding-bottom:300px}
+button{font-family:inherit;color:inherit;touch-action:manipulation;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.mx{font-family:"Times New Roman","STIX Two Text",Times,"PingFang HK","Noto Sans TC",serif;font-size:1.12em}
+.mx i{font-style:italic}
+.eqv{font-weight:900;font-size:1.3em;line-height:1;padding:0 .08em}
+
+/* ---------- top ---------- */
+#top{position:sticky;top:0;z-index:30;background:rgba(245,248,254,.97);padding:10px 16px 8px;border-bottom:2.5px solid var(--ink)}
+.hdr{display:flex;align-items:center;gap:10px;max-width:960px;margin:0 auto 8px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--hi);border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);display:flex;align-items:center;justify-content:center;font:900 28px/1 "Times New Roman",serif;flex:none;transform:rotate(-5deg)}
+.hdr h1{font-size:1.1rem;margin:0;line-height:1.2;font-weight:900}
+.hdr h1 small{display:block;font-weight:600;color:var(--muted);font-size:.78rem}
+.hdr .sp{flex:1}
+.tbadge{background:var(--ink);color:#fff;border-radius:8px;padding:4px 10px;font-size:.8rem;font-weight:700}
+.gbtn{min-height:44px;padding:0 14px;border-radius:12px;border:2px solid var(--ink);background:#fff;font-weight:800;font-size:.9rem;box-shadow:3px 3px 0 var(--ink)}
+.timer{max-width:960px;margin:0 auto}
+.twrap{position:relative;margin:0 0 18px}
+.tbar{display:flex;height:32px;border-radius:10px;overflow:hidden;border:2.5px solid var(--ink);background:#fff}
+.seg{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:0 4px;font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden;border-right:2px solid var(--ink)}
+.seg:last-child{border-right:0}
+.seg span{overflow:hidden;text-overflow:ellipsis}
+.seg.past{background-image:repeating-linear-gradient(45deg,rgba(31,42,68,.22) 0 5px,transparent 5px 11px)}
+.seg.cur{box-shadow:inset 0 0 0 3px var(--ink);font-weight:900}
+.ptr{position:absolute;top:-7px;bottom:-7px;width:0;border-left:4px solid var(--ink);transform:translateX(-2px);transition:left .5s linear;pointer-events:none}
+.ptr::before{content:"";position:absolute;top:-2px;left:-9px;border:7px solid transparent;border-top:9px solid var(--ink)}
+.ticks{position:absolute;left:0;right:0;top:34px;height:16px;font-size:.68rem;color:var(--muted)}
+.ticks span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.tstat{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:.9rem;font-weight:700}
+.tstat .now{flex:1;min-width:220px}
+.pace{border-radius:10px;padding:4px 12px;font-weight:800;border:2.5px solid var(--ink);background:#fff}
+.pace.behind{background:var(--pink2)}
+.pace.ahead{background:var(--sky2)}
+.pace.on{background:var(--mint2)}
+.pvw{font-size:.75rem;color:var(--muted)}
+.tabs{display:flex;gap:8px;max-width:960px;margin:10px auto 0;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 4px 6px 2px}
+.tab{flex:none;display:flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 6px;border-radius:12px;border:2px solid var(--ink);background:#fff;font-weight:800;font-size:.92rem;box-shadow:2px 2px 0 var(--ink)}
+.tab .n{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:900}
+.tab.on{background:var(--hi);transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
+.tab .ok{display:none;font-size:.78rem;background:var(--good);color:#fff;border-radius:6px;padding:0 6px}
+.tab.done .ok{display:inline}
+
+/* ---------- page ---------- */
+main{max-width:960px;margin:0 auto;padding:6px 16px 70px}
+.page{display:none}
+.page.on{display:block}
+.ph{display:flex;align-items:center;gap:12px;margin:22px 0 4px}
+.ph .big{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.35rem;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);flex:none}
+.ph h2{margin:0;font-size:1.55rem;font-weight:900;display:inline;background:linear-gradient(transparent 58%,var(--hi) 58%);padding:0 4px}
+.ph .time{display:block;color:var(--muted);font-size:.85rem;font-weight:700;margin-top:2px}
+.say{display:flex;align-items:center;gap:4px;margin:6px 0 4px}
+.say .pencil{flex:none}
+.bubble{position:relative;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 14px;font-weight:700;font-size:.98rem;margin-left:8px}
+.bubble::before{content:"";position:absolute;left:-11px;top:50%;margin-top:-8px;border:8px solid transparent;border-right:11px solid var(--ink);border-left:0}
+.bubble::after{content:"";position:absolute;left:-7px;top:50%;margin-top:-6px;border:6px solid transparent;border-right:8px solid #fff;border-left:0}
+
+.card{position:relative;background:#fff;border:2px solid var(--ink);border-radius:16px;padding:18px 18px 16px 42px;box-shadow:4px 4px 0 var(--ink);margin:20px 0}
+.card::before{content:"";position:absolute;left:26px;top:0;bottom:0;border-left:2px solid var(--pink)}
+.card.plain{padding-left:18px}
+.card.plain::before{display:none}
+.card h3{margin:0 0 8px;font-size:1.12rem;font-weight:900}
+.card ul{margin:6px 0;padding-left:1.3em}
+.card li{margin:4px 0}
+.card.done{border-color:var(--good);box-shadow:4px 4px 0 var(--good)}
+.sticky{position:relative;background:var(--hi2);border-radius:4px;padding:20px 18px 16px;box-shadow:2px 3px 0 rgba(31,42,68,.28);margin:24px 6px 20px;transform:rotate(-.5deg)}
+.sticky::before{content:"";position:absolute;top:-11px;left:50%;width:96px;height:22px;margin-left:-48px;background:rgba(139,124,246,.38);transform:rotate(2deg)}
+.sticky h3{margin:0 0 6px;font-size:1.08rem;font-weight:900}
+.tip{font-size:.92rem;color:var(--muted)}
+.goal{display:flex;gap:10px;align-items:center;margin:6px 0;font-weight:700}
+.goal b{flex:none;width:28px;height:28px;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--ink)}
+
+/* stamp */
+.stamp{position:absolute;top:8px;right:12px;width:86px;height:86px;border:4px double var(--stamp);color:var(--stamp);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;line-height:1.1;text-align:center;transform:rotate(-14deg);background:rgba(255,255,255,.75);pointer-events:none;z-index:3}
+.stamp.fresh{animation:stampIn .4s cubic-bezier(.2,1.6,.4,1)}
+@keyframes stampIn{from{transform:rotate(-14deg) scale(2.4);opacity:0}to{transform:rotate(-14deg) scale(1);opacity:1}}
+
+/* question */
+.qhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;padding-right:90px}
+.qno{min-width:44px;height:36px;padding:0 10px;border-radius:10px;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.05rem}
+.stars{font-size:.95rem;letter-spacing:1px;padding:2px 10px;border-radius:8px;border:2px solid var(--ink);background:var(--hi2);font-weight:700}
+.tag{font-size:.82rem;padding:3px 10px;border-radius:8px;background:var(--grape2);border:2px solid var(--ink);font-weight:800}
+.donebadge{display:none}
+.qtitle{font-size:1.08rem;font-weight:700;margin:4px 0 10px}
+.lines{margin:6px 0}
+.line{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:4px 0;font-size:1.15rem;line-height:1.6;min-height:48px}
+.line.cont{padding-left:2.6em}
+.line .lbl{font-weight:800;margin-right:4px;min-width:2em}
+.line .note{margin-left:auto;color:var(--muted);font-size:.82rem;font-weight:700}
+.line .note::before{content:"◀ "}
+.tipbox{display:flex;gap:6px;align-items:center;background:var(--hi2);border:2px solid var(--ink);border-radius:14px;padding:6px 14px 6px 4px;margin:6px 0 12px;font-weight:700;font-size:1.02rem}
+.tipbox .pencil{flex:none}
+
+/* blanks */
+.pick{display:inline-flex;position:relative;vertical-align:middle}
+.pick button{min-width:46px;min-height:44px;padding:0 12px;border:2px solid var(--ink);background:#fff;font-size:1.1rem;margin-left:-2px}
+.pick button:first-child{border-radius:10px 0 0 10px;margin-left:0}
+.pick button:last-child{border-radius:0 10px 10px 0}
+.pick button.on{background:var(--hi);font-weight:900;box-shadow:inset 0 0 0 3px var(--ink)}
+.pick.stack{display:flex;flex-direction:column;gap:8px;width:100%;max-width:560px}
+.pick.stack button{border-radius:12px !important;margin:0;text-align:left;padding:8px 16px}
+.pick.stack button.on::after{content:"  ← 已選";font-size:.85rem;font-weight:800}
+.pick.bad{outline:3px dashed var(--bad);outline-offset:3px;border-radius:12px}
+.num{display:inline-flex;align-items:center;justify-content:center;min-width:58px;min-height:44px;padding:0 10px;border:2.5px dashed var(--sky);border-radius:10px;background:var(--sky2);font-size:1.15rem;vertical-align:middle;position:relative}
+.num.filled{border-style:solid;border-color:var(--ink);background:#fff}
+.num.active{box-shadow:0 0 0 4px var(--hi),0 0 0 6px var(--ink)}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:70px;min-height:48px;padding:2px;border:2.5px dashed #9AA8C4;border-radius:10px;background:#FBFCFF;vertical-align:middle;position:relative}
+.slot.long{min-width:210px;justify-content:flex-start}
+.slot.over{background:var(--hi2);border-color:var(--ink);border-style:solid}
+.slot.ready{border-color:var(--ink)}
+.bad{border-color:var(--bad) !important;border-style:dashed !important}
+.bad::after{content:"✗";position:absolute;top:-11px;right:-11px;width:24px;height:24px;border-radius:50%;background:var(--bad);color:#fff;font:700 15px/24px sans-serif;text-align:center;z-index:2}
+.tile{display:inline-flex;align-items:center;min-height:44px;padding:4px 14px;border-radius:10px;background:#fff;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);
+  touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab;font-size:1.08rem}
+.slot .tile{box-shadow:none;background:var(--grape2)}
+.tile.sel{background:var(--hi);transform:translate(-1px,-2px);box-shadow:3px 4px 0 var(--ink)}
+.tile.dragging{opacity:.25}
+.tile.ghost{position:fixed;pointer-events:none;z-index:1000;opacity:.95;transform:rotate(-3deg) scale(1.06);box-shadow:5px 8px 0 rgba(31,42,68,.35);margin:0}
+.bank{display:flex;flex-wrap:wrap;gap:10px;padding:12px;margin:8px 0 12px;border-radius:14px;background:#EEF3FB;border:2px dashed #9AA8C4;min-height:68px;align-items:center}
+.bank .bl{width:100%;font-size:.8rem;color:var(--muted);font-weight:700}
+.bank .empty{color:var(--muted);font-size:.85rem}
+
+.qbtns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.btn{min-height:46px;padding:0 18px;border-radius:12px;border:2px solid var(--ink);background:#fff;font-weight:800;font-size:.98rem;box-shadow:3px 3px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.pri{background:var(--mint)}
+.btn.hint{background:var(--hi2)}
+.btn.teach{background:var(--ink);color:#fff}
+.btn:disabled{opacity:.45}
+.hints{margin-top:12px;background:var(--sky2);border:2px solid var(--ink);border-radius:12px;padding:8px 14px}
+.hints .h{padding:6px 0;border-bottom:1.5px dashed #9AA8C4}
+.hints .h:last-child{border-bottom:0}
+.hints .h b{display:inline-block;margin-right:6px;font-size:.85rem;background:#fff;border:2px solid var(--ink);border-radius:6px;padding:0 8px}
+.fb{margin-top:12px;padding:12px 14px;border-radius:12px;font-weight:800}
+.fb.ok{background:var(--mint2);border:2.5px solid var(--good)}
+.fb.no{background:var(--pink2);border:2.5px dashed var(--bad)}
+.fb.info{background:#EEF3FB;border:2px solid #9AA8C4}
+
+/* tables, chips, sliders */
+.tbl{border-collapse:collapse;margin:8px 0;font-size:1.05rem;width:100%;max-width:640px;background:#fff}
+.tbl th,.tbl td{border:2px solid var(--ink);padding:6px 8px;text-align:center;min-width:64px;height:48px}
+.tbl th{background:var(--hi2)}
+.tbl td.rh{text-align:left;font-weight:700;background:#FBFCFF}
+.tbl .rv{min-height:36px;padding:0 10px;border-radius:8px;border:2px solid var(--ink);background:#fff;font-weight:800;font-size:.85rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{min-width:48px;min-height:44px;padding:0 12px;border-radius:10px;border:2px solid var(--ink);background:#fff;font-size:1.05rem;font-weight:700}
+.chip.on{background:var(--hi);box-shadow:inset 0 0 0 3px var(--ink);font-weight:900}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:48px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:12px;border-radius:6px;background:var(--sky2);border:2px solid var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:38px;height:38px;border-radius:50%;background:var(--hi);border:3px solid var(--ink);margin-top:-15px;box-shadow:2px 2px 0 var(--ink)}
+input[type=range]::-moz-range-track{height:12px;border-radius:6px;background:var(--sky2);border:2px solid var(--ink)}
+input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:var(--hi);border:3px solid var(--ink)}
+.slab{display:block;font-weight:800;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:10px;padding:4px 12px;font-weight:800;background:#fff}
+.badge.yes{background:var(--mint2)}
+.badge.no{background:var(--pink2);border-style:dashed}
+
+/* shop */
+.shop{background:#FBFCFF;border:2px solid var(--ink);border-radius:14px;padding:12px;margin:6px 0 14px}
+.shop h4{margin:0 0 6px;font-size:1rem}
+.shopcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.shopbox{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 10px}
+.shopbox .sh{font-weight:900}
+.shopbox svg{width:100%;height:auto;display:block}
+.calc{font-size:1.08rem;font-weight:700;min-height:1.8em}
+.shopres{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+
+/* balance */
+.balsvg{width:100%;max-width:440px;display:block;margin:0 auto}
+.beam{transform-box:view-box;transform-origin:180px 64px;transition:transform .55s cubic-bezier(.3,1.5,.5,1)}
+.pan{transition:transform .55s cubic-bezier(.3,1.5,.5,1)}
+.baleq{font-size:1.3rem;text-align:center;font-weight:700;margin:6px 0}
+.baleq .q{display:inline-block;min-width:1.4em;border:2px dashed var(--ink);border-radius:8px;margin:0 6px;font-weight:900}
+.balstat{text-align:center;font-weight:800;font-size:1.05rem;margin:6px 0}
+.tried{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tried span{border:2px solid var(--ink);border-radius:8px;padding:0 8px;font-size:.9rem;background:var(--mint2);font-weight:700}
+.tried span.u{background:var(--pink2);border-style:dashed}
+.verdict{background:var(--hi2);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;font-weight:700;margin-top:8px}
+
+/* area model */
+.areasvg{width:100%;max-width:460px;display:block;margin:6px auto}
+.ablk{transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
+.area .tw,.area .ts,.area .tm{opacity:0;transition:opacity .3s}
+.area.s-whole .tw,.area.s-split .ts,.area.s-miss .tm{opacity:1}
+.area.s-split .ablkB,.area.s-miss .ablkB{transform:translateX(22px)}
+.area.s-miss .ablkB rect{fill:url(#hatch)}
+.acap{text-align:center;font-weight:800;font-size:1.05rem;min-height:1.8em}
+.area .chips{justify-content:center}
+
+/* flow */
+.flow{display:flex;flex-direction:column;align-items:center;gap:4px}
+.fbx{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:8px 14px;font-weight:800;text-align:center;box-shadow:2px 2px 0 var(--ink)}
+.fbx.ok{background:var(--mint2)}
+.fbx.no{background:var(--pink2)}
+.farr{font-size:1.2rem;font-weight:900;line-height:1}
+.fsplit{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}
+.fcol{display:flex;flex-direction:column;align-items:center;gap:6px;border:2px dashed #9AA8C4;border-radius:14px;padding:10px;background:#FBFCFF}
+.fhead{font-weight:900;background:var(--hi);padding:0 10px;border-radius:6px;border:2px solid var(--ink)}
+.fq{background:var(--hi2);border:2px solid var(--ink);border-radius:999px;padding:6px 16px;font-weight:900}
+.fyn{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.fyn>div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.fyn span{font-weight:900;color:var(--muted)}
+
+/* demo, talk, self */
+.demo .dcols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.demo .dcol{background:#FBFCFF;border:2px solid var(--ink);border-radius:12px;padding:10px 12px}
+.demo .dcol h4{margin:0 0 6px}
+.demo .dl{font-size:1.1rem;min-height:34px;padding:2px 0}
+.demo .dl.cont{padding-left:2.6em}
+.demo .dl.hid{visibility:hidden}
+.demo .dbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.talk{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1.5px dashed #9AA8C4}
+.talk:last-child{border-bottom:0}
+.talk .ic{flex:none;width:44px;height:44px;border-radius:12px;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.selfrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0;border-bottom:1.5px dashed #9AA8C4}
+.selfrow:last-child{border-bottom:0}
+.selfrow .st{flex:1;min-width:220px;font-weight:700}
+.selfrow .pick button{font-size:.92rem}
+.eqcmp{display:flex;gap:14px;margin:14px 0 8px;flex-wrap:wrap}
+.eqc{flex:1;min-width:140px;max-width:230px;background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.eqc .eqs{font:700 3.2rem/1.1 "Times New Roman",serif}
+.eqc small{color:var(--muted);font-weight:700}
+.eqc.hl{border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);background:var(--hi2);transform:rotate(-2deg)}
+.eqc.hl .eqs{font-size:4.4rem;font-weight:900}
+.eqc.hl b{font-size:1.15rem}
+.sortl{list-style:none;padding:0;margin:8px 0}
+.srow{display:flex;align-items:center;gap:10px;padding:6px 8px;margin:8px 0;border:2px solid var(--ink);background:#fff;border-radius:12px;position:relative;max-width:620px;box-shadow:2px 2px 0 var(--ink)}
+.spos{width:32px;height:32px;border-radius:8px;background:var(--hi2);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:900;flex:none}
+.stext{flex:1;font-size:1.12rem}
+.sbtn{display:flex;gap:6px;flex:none}
+.sbtn button{min-width:46px;min-height:44px;border-radius:10px;border:2px solid var(--ink);background:#fff;font-size:1rem}
+.sbtn button:disabled{opacity:.3}
+
+/* multiplication grid */
+.mgrid{border-collapse:collapse;margin:8px auto;font-size:1.1rem;background:#fff}
+.mgrid th,.mgrid td{border:2px solid var(--ink);text-align:center;min-width:96px;height:64px;padding:0}
+.mgrid th{background:var(--hi2);font-weight:800}
+.mgrid th.x{background:var(--ink);color:#fff;min-width:56px}
+.mgrid td{background:#FBFCFF}
+.gc{width:100%;height:100%;min-height:64px;border:0;background:repeating-linear-gradient(45deg,#EEF3FB 0 8px,#fff 8px 16px);font-size:1.3rem;font-weight:900}
+.gres{text-align:center;font-weight:800;font-size:1.1rem;min-height:1.8em;margin-top:6px}
+/* sortable rows */
+.sgrip{touch-action:none;cursor:grab;font-size:1.3rem;color:var(--muted);padding:0 2px;user-select:none;-webkit-user-select:none}
+.srow .stext{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.srow.dragging{opacity:.3}
+.srow.ins-before::before,.srow.ins-after::before{content:"";position:absolute;left:-4px;right:-4px;height:5px;border-radius:3px;background:var(--ink)}
+.srow.ins-before::before{top:-8px}
+.srow.ins-after::before{bottom:-8px}
+.sghost{position:fixed;pointer-events:none;z-index:1000;margin:0;transform:rotate(-1.5deg);box-shadow:5px 8px 0 rgba(31,42,68,.35);background:var(--hi2)}
+
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(31,42,68,.55);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.ov.on{display:flex}
+.donecard{background:#fff;border:3px solid var(--ink);border-radius:24px;padding:24px 26px;text-align:center;max-width:540px;width:100%;box-shadow:8px 8px 0 var(--ink)}
+.donecard .big{font-size:3.4rem;font-weight:900;line-height:1.1;display:inline;background:linear-gradient(transparent 60%,var(--hi) 60%)}
+.donecard .part{font-size:1.8rem;font-weight:900;margin:14px 0}
+.donecard p{color:var(--muted);font-weight:700}
+.modal{background:#fff;border-radius:18px;max-width:720px;width:100%;max-height:85vh;overflow:auto;padding:20px;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.modal h3{margin:14px 0 6px}
+.gl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:start}
+.gl dt{font-weight:800;background:var(--hi2);border-radius:8px;padding:2px 10px;white-space:nowrap;border:1.5px solid var(--ink)}
+.gl dd{margin:0}
+.sent{background:#FBFCFF;border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:6px 0;font-size:1.05rem}
+
+/* keypad */
+#pad{position:fixed;left:0;right:0;bottom:0;z-index:100;background:#fff;border-top:3px solid var(--ink);padding:10px 12px calc(12px + env(safe-area-inset-bottom));display:none;box-shadow:0 -6px 0 rgba(31,42,68,.12)}
+#pad.on{display:block}
+#pad .pin{max-width:440px;margin:0 auto}
+#pad .ptop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-weight:800}
+#pad .pv{font:700 1.5rem "Times New Roman",serif;min-width:90px;text-align:center;border:2px solid var(--ink);border-radius:10px;padding:0 10px;background:var(--sky2)}
+#pad .pg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+#pad .pg button{height:56px;border-radius:12px;border:2px solid var(--ink);background:#fff;font-size:1.4rem;font-weight:800;box-shadow:2px 2px 0 var(--ink)}
+#pad .pg .fn{background:#EEF3FB;font-size:1.05rem}
+#pad .pg .ok{background:var(--mint)}
+
+@media (max-width:700px){
+  .demo .dcols,.shopcols,.fsplit{grid-template-columns:1fr}
+  .line.cont,.demo .dl.cont{padding-left:1.6em}
+  .seg{font-size:.7rem}
+  .card{padding-left:34px}
+  .card::before{left:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  .stamp.fresh{animation:none}
+  .beam,.pan,.ablk,.ptr{transition:none !important}
+}
+
+/* ===== round 2：層次（只讓題卡和可操作的東西突出） ===== */
+.chap{flex:none;background:var(--hi);border-radius:8px;padding:5px 10px;font-weight:900;font-size:.92rem;line-height:1.2}
+.card.plain{border:2px solid var(--line);box-shadow:none}
+.shop,.demo .dcol,.fcol{border:1.5px solid var(--line)}
+.shopbox{border:1.5px solid var(--line)}
+.gbtn{border-color:var(--line);box-shadow:none}
+.btn{box-shadow:none;border-color:var(--line)}
+.btn.pri{border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.btn.teach{border-color:var(--ink)}
+.btn{transition:transform .15s cubic-bezier(.3,1.6,.5,1),box-shadow .15s}
+.btn:active{transform:scale(.96);box-shadow:none}
+.btn.pri:active{transform:translate(2px,2px) scale(.98);box-shadow:1px 1px 0 var(--ink)}
+.tab{border-color:var(--line);box-shadow:none}
+.tab.on{border-color:var(--ink);box-shadow:2px 2px 0 var(--ink);transform:none}
+.tab .n{border-width:1.5px}
+.chip{border-color:var(--line)}
+.chip.on{border-color:var(--ink)}
+.ph .big{box-shadow:none}
+.ph .sub{display:block;font-weight:700;color:var(--ink);font-size:.98rem;margin-top:4px}
+.hints{border:1.5px solid var(--sky)}
+.fbx{box-shadow:none}
+.srow{box-shadow:none}
+.tipicon{flex:none;background:var(--ink);color:#fff;border-radius:6px;padding:2px 8px;font-size:.82rem;font-weight:900;margin:0 6px 0 8px}
+.tipbox{padding:10px 14px 10px 4px;border-color:var(--ink)}
+
+/* ===== 對齊：標籤一欄、等號縮進一欄、✓✗ 靠右一欄 ===== */
+.line.cont{padding-left:0}
+.line .lc{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.line.cont .lc{padding-left:2.6em}
+.line .lbl{min-width:2.4em;margin-right:0}
+.line .tail{margin-left:auto;padding-left:12px}
+
+/* ===== 例題未顯示的行：虛線佔位 ===== */
+.demo .dl{transition:color .25s,border-color .25s,background-color .25s;border:1.5px solid transparent;border-radius:8px;padding:2px 6px;margin:3px 0}
+.demo .dl.hid{visibility:visible;color:transparent;border-color:var(--line);border-style:dashed;background:#FBFCFF}
+.demo .dl.hid *{color:transparent}
+
+/* ===== 動效：主操作回饋 ===== */
+@keyframes snapIn{0%{transform:scale(1.12)}60%{transform:scale(.97)}100%{transform:scale(1)}}
+.tile.snap{animation:snapIn .26s cubic-bezier(.3,1.6,.5,1)}
+@keyframes shakeX{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.card.shake{animation:shakeX .32s ease}
+@keyframes hintIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.hints .h.hnew{animation:hintIn .25s ease-out}
+@keyframes padUp{from{transform:translateY(100%)}to{transform:none}}
+#pad.on{animation:padUp .24s cubic-bezier(.2,.9,.3,1)}
+/* 狀態切換：分頁從所在方向滑入 */
+@keyframes pageR{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes pageL{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+.page.inR{animation:pageR .32s cubic-bezier(.2,.8,.3,1)}
+.page.inL{animation:pageL .32s cubic-bezier(.2,.8,.3,1)}
+/* 首次進入：主角先到，其餘按閱讀次序跟上 */
+@keyframes enterUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body.entering #top{animation:enterUp .32s ease-out both}
+body.entering .page.on>*{animation:enterUp .4s ease-out both}
+body.entering .page.on>*:nth-child(2){animation-delay:.07s}
+body.entering .page.on>*:nth-child(3){animation-delay:.14s}
+body.entering .page.on>*:nth-child(4){animation-delay:.21s}
+body.entering .page.on>*:nth-child(n+5){animation-delay:.28s}
+body.entering #buddy{animation:buddyIn .6s .35s cubic-bezier(.3,1.5,.5,1) both}
+
+/* ===== 鉛筆仔 ===== */
+main{padding-bottom:150px}
+#buddy{position:fixed;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:120;display:flex;flex-direction:row;align-items:flex-end;pointer-events:none;transition:bottom .25s ease}
+body.padopen #buddy{bottom:300px}
+#buddyBtn{pointer-events:auto;width:96px;height:96px;border:0;background:transparent;padding:0;position:relative}
+#buddyBtn svg{width:100%;height:100%;overflow:visible}
+#buddyBtn::after{content:"";position:absolute;left:22px;right:22px;bottom:2px;height:8px;border-radius:50%;background:rgba(31,42,68,.18);z-index:-1}
+.bbody{transform-box:fill-box;transform-origin:50% 100%}
+#buddy.hop .bbody{animation:hop .62s cubic-bezier(.3,1.6,.5,1)}
+#buddy.tilt .bbody{animation:tilt .6s ease}
+#buddy.mini #buddyBtn{width:58px;height:58px}
+#buddy.mini .bbub{display:none}
+@keyframes hop{0%{transform:translateY(0) scale(1,1)}25%{transform:translateY(0) scale(1.08,.9)}55%{transform:translateY(-18px) scale(.95,1.06)}80%{transform:translateY(0) scale(1.05,.95)}100%{transform:none}}
+@keyframes tilt{0%,100%{transform:rotate(0)}30%{transform:rotate(-9deg)}65%{transform:rotate(5deg)}}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.12)}}
+.beye{transform-box:fill-box;transform-origin:50% 50%;animation:blink 4.6s infinite}
+.beye.r{animation-delay:.04s}
+@keyframes buddyIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+.bbub{pointer-events:auto;max-width:250px;background:#fff;border:2px solid var(--ink);border-radius:14px 14px 4px 14px;padding:8px 12px;font-weight:800;font-size:.95rem;margin:0 -4px 58px 0;box-shadow:3px 3px 0 var(--ink);
+  opacity:0;transform:translateY(8px) scale(.96);transform-origin:100% 100%;transition:opacity .2s,transform .22s cubic-bezier(.3,1.5,.5,1)}
+.bbub.show{opacity:1;transform:none}
+.bbub:empty{display:none}
+
+@media (max-width:700px){
+  .line.cont .lc{padding-left:1.6em}
+  #buddyBtn{width:76px;height:76px}
+}
+@media (prefers-reduced-motion:reduce){
+  .tile.snap,.card.shake,.hints .h.hnew,#pad.on,.page.inR,.page.inL,body.entering #top,body.entering .page.on>*,body.entering #buddy,#buddy.hop .bbody,#buddy.tilt .bbody,.beye{animation:none !important}
+  .bbub{transition:none}
+}
+</style>
+</head>
+<body>
+
+<div id="top">
+  <div class="hdr">
+    <span class="chap">第 3 章</span>
+    <h1>恆等式<small>中二數學　互動課堂</small></h1>
+    <div class="sp"></div>
+    <span class="tbadge" id="tbadge" hidden>老師模式</span>
+    <button class="gbtn" id="glossBtn" type="button">📖 詞彙卡</button>
+  </div>
+  <div class="timer">
+    <div class="twrap">
+      <div class="tbar" id="tbar"></div>
+      <div class="ptr" id="ptr"></div>
+      <div class="ticks" id="ticks"></div>
+    </div>
+    <div class="tstat">
+      <span class="now" id="tnow"></span>
+      <span class="pace" id="tpace" hidden></span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+
+<main id="main"></main>
+
+<div class="ov" id="doneOv">
+  <div class="donecard"><div id="donePen"></div>
+    <div class="big">✓ 我完成了</div>
+    <div class="part" id="donePart"></div>
+    <p>請舉起 iPad 讓老師看到 🙌<br>然後把步驟抄在工作紙上。</p>
+    <button class="btn pri" id="doneClose" type="button">收起</button>
+  </div>
+</div>
+
+<div class="ov" id="glossOv">
+  <div class="modal" role="dialog" aria-label="詞彙卡">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <h2 style="margin:0">📖 詞彙卡</h2>
+      <button class="btn" id="glossClose" type="button">關閉</button>
+    </div>
+    <div id="glossBody"></div>
+  </div>
+</div>
+
+<div id="pad" aria-label="數字鍵盤">
+  <div class="pin">
+    <div class="ptop"><span>輸入數字</span><span class="pv" id="pv"></span></div>
+    <div class="pg" id="pg"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* =========================================================
+   設定
+   ========================================================= */
+var P = new URLSearchParams(location.search);
+var TEACHER = P.get('teacher') === '1';
+if (TEACHER) { document.documentElement.classList.add('teacher'); document.getElementById('tbadge').hidden = false; }
+
+var PH = [
+  {tab:'t1', name:'引入',           s:'14:25', e:'14:28', col:'--s1'},
+  {tab:'t2', name:'熱身',           s:'14:28', e:'14:34', col:'--s2'},
+  {tab:'t3', name:'新知',           s:'14:34', e:'14:39', col:'--s3'},
+  {tab:'t4', name:'證明是恆等式',   s:'14:39', e:'14:48', col:'--s4'},
+  {tab:'t5', name:'證明不是恆等式', s:'14:48', e:'14:55', col:'--s5'},
+  {tab:'t6', name:'總結',           s:'14:55', e:'15:00', col:'--s6'}
+];
+var TABS = PH.map(function(p,i){ return {id:p.tab, num:String(i+1), name:p.name, col:p.col}; });
+TABS.push({id:'tc', num:'★', name:'挑戰區', col:'--sun2'});
+var REQ = {t1:['q1'], t2:['q2','q3','q4','q5'], t3:['q6'], t4:['q7','q8','q9'], t5:['q11','q12'], t6:['q13','q14']};
+
+/* =========================================================
+   排版：`...` 內為數式；- 轉為 −；英文字母轉斜體；^n 轉上標
+   ========================================================= */
+function math(s){
+  var h = String(s).replace(/-/g,'−');
+  h = h.replace(/[A-Za-z]/g, function(m){ return '<i>'+m+'</i>'; });
+  h = h.replace(/\^(\d+)/g, '<sup>$1</sup>');
+  h = h.replace(/≡/g, '<b class="eqv">≡</b>');
+  return '<span class="mx">'+h+'</span>';
+}
+function fm(s){ return String(s).replace(/`([^`]+)`/g, function(_,m){ return math(m); }); }
+function nfmt(n){ return String(n).replace(/-/g,'−'); }
+
+/* =========================================================
+   題目資料
+   [pick:id|選項1,選項2]  點選
+   [num:id]               數字鍵盤
+   [slot:id|庫名]          拖卡空格
+   ========================================================= */
+var Q = {};
+function def(q){ Q[q.id] = q; }
+
+def({id:'q1', no:'1', star:1,
+  title:'3 位同學各買一枝筆（每枝 $`x`）和一本簿（每本 $4）。甲和乙用不同方法計算總價：<br>甲的計法：`3(x + 4)`　　　乙的計法：`3x + 12`',
+  pre:'intro',
+  lines:[
+    {label:'(b)', t:'哪一條等式對任何 x 值都成立？'},
+    {t:'[pick:a|① 3(x + 4) = 3x + 12,② 3(x + 4) = 30]'}
+  ],
+  ans:{a:'① 3(x + 4) = 3x + 12'},
+  wrong:{a:{'② 3(x + 4) = 30':'試試 `x = 2`：`3 × (2 + 4) = 18`，不等於 30。這條等式只在 `x = 6` 時成立。'}},
+  hints:['把 `x` 的值代入，比較兩種計法的結果。',
+         '當 `x = 6` 時，`3 × (6 + 4) = 30`，`3 × 6 + 12 = 30`；但當 `x = 1` 時，`3 × (1 + 4) = 15`。',
+         '等式 ② 只在 `x = 6` 時成立；等式 ① 對任何 `x` 值都成立。']
+});
+
+def({id:'q2', no:'2', star:1, title:'化簡 `(3x + 5) + (2x - 3)`。',
+  tip:'括號前是「+」號：撤去括號後，括號內各項的符號<b>不變</b>。<br>例如：`+(3x - 2) = + 3x - 2`',
+  lines:[
+    {t:'(3x + 5) + (2x - 3)'},
+    {t:'= 3x + 5 [pick:o1|+,-] 2x [pick:o2|+,-] 3', note:'撤去括號。'},
+    {t:'= [slot:s1|A] [slot:s2|A] [slot:s3|A] [slot:s4|A]', note:'把同類項放在一起。'},
+    {t:'= [slot:s5|B]', note:'合併同類項。'}
+  ],
+  banks:{A:['3x','+ 2x','+ 5','- 3'], B:['5x + 2','5x - 2','5x + 8','7x']},
+  ans:{o1:'+', o2:'-', s1:'3x', s2:'+ 2x', s3:'+ 5', s4:'- 3', s5:'5x + 2'},
+  alts:[{o1:'+', o2:'-', s1:'3x', s2:'+ 2x', s3:'- 3', s4:'+ 5', s5:'5x + 2'}],
+  wrong:{
+    o1:{'-':'括號前是「+」號，撤去括號後 `2x` 的符號不變。'},
+    o2:{'+':'括號內是「`- 3`」，撤去「+( )」後符號不變，仍是 `- 3`。'},
+    s1:{'*':'先放 `x` 的項，再放常數項。'},
+    s5:{'5x - 2':'`+5` 和 `-3` 合併，得 `+2`。','5x + 8':'`5 - 3 = 2`，不是 8。','7x':'`3x` 和 5 不是同類項，不能合併。'}
+  },
+  hints:['撤去「+( )」時，括號內各項的符號不變。',
+         '`= 3x + 5 + 2x - 3`',
+         '`= 3x + 5 + 2x - 3`<br>`= 3x + 2x + 5 - 3`<br>`= 5x + 2`']
+});
+
+def({id:'q3', no:'3', star:1, title:'化簡 `(6x + y) - (4x - 2y)`。',
+  tip:'括號前是「−」號：撤去括號後，括號內<b>每一項都要變號</b>。<br>例如：`-(2y - 1) = - 2y + 1`',
+  lines:[
+    {t:'(6x + y) - (4x - 2y)'},
+    {t:'= 6x + y [pick:o1|+,-] 4x [pick:o2|+,-] 2y', note:'撤去括號。'},
+    {t:'= [slot:s1|A] [slot:s2|A] [slot:s3|A] [slot:s4|A]', note:'把同類項放在一起。'},
+    {t:'= [slot:s5|B]', note:'合併同類項。'}
+  ],
+  banks:{A:['6x','- 4x','+ y','+ 2y'], B:['2x + 3y','2x - y','10x - y','2x + y']},
+  ans:{o1:'-', o2:'+', s1:'6x', s2:'- 4x', s3:'+ y', s4:'+ 2y', s5:'2x + 3y'},
+  alts:[{o1:'-', o2:'+', s1:'6x', s2:'- 4x', s3:'+ 2y', s4:'+ y', s5:'2x + 3y'}],
+  wrong:{
+    o1:{'+':'括號前是「−」號，括號內每一項都要變號：`4x` 變成 `- 4x`。'},
+    o2:{'-':'括號前是「−」號，括號內每一項都要變號：`-(-2y) = +2y`。'},
+    s1:{'*':'先放 `x` 的項，再放 `y` 的項。'},
+    s5:{'2x - y':'`-(-2y) = +2y`，所以 `y + 2y = 3y`。','10x - y':'撤去「−( )」時，`4x` 要變成 `- 4x`。','2x + y':'`y + 2y = 3y`。'}
+  },
+  hints:['括號前是「−」號，撤去括號後，括號內每一項都要變號。',
+         '`= 6x + y - 4x + 2y`',
+         '`= 6x + y - 4x + 2y`<br>`= 6x - 4x + y + 2y`<br>`= 2x + 3y`']
+});
+
+def({id:'q4', no:'4', star:1, title:'展開 `4(5x - 3)`。',
+  lines:[
+    {t:'4(5x - 3)'},
+    {t:'= [slot:s1|A] × 5x - [slot:s2|A] × [slot:s3|A]'},
+    {t:'= [slot:s4|B]'}
+  ],
+  banks:{A:['4','4','3','5'], B:['20x - 12','20x - 3','20x + 12','9x - 12']},
+  ans:{s1:'4', s2:'4', s3:'3', s4:'20x - 12'},
+  wrong:{
+    s1:{'*':'把括號外的 4 乘括號內每一項。'},
+    s4:{'20x - 3':'4 要乘括號內每一項，包括 3：`4 × 3 = 12`。','20x + 12':'`4(5x - 3) = 4 × 5x - 4 × 3`，所以是 `- 12`。','9x - 12':'`4 × 5x = 20x`。'}
+  },
+  hints:['`k(x + y) = kx + ky`',
+         '`= 4 × 5x - 4 × 3`',
+         '`= 4 × 5x - 4 × 3`<br>`= 20x - 12`']
+});
+
+def({id:'q5', no:'5', star:1, title:'若 `x = 0`，求 `4(5x - 3)` 的值。',
+  lines:[
+    {t:'4(5x - 3)'},
+    {t:'= 4 × [5 × [num:n1] - 3]'},
+    {t:'= 4 × ([num:n2])'},
+    {t:'= [num:n3]'}
+  ],
+  ans:{n1:'0', n2:'-3', n3:'-12'},
+  wrong:{
+    n1:{'*':'題目說 `x = 0`，把 0 代入 `x`。'},
+    n2:{'3':'`5 × 0 - 3 = 0 - 3 = -3`，是負數。','2':'`5 × 0 = 0`，不是 5。'},
+    n3:{'12':'`4 × (-3) = -12`，正數乘負數得負數。','1':'`4 × (-3)` 是乘法，不是加法。'}
+  },
+  hints:['把 `x = 0` 代入數式。',
+         '`= 4 × [5 × 0 - 3]`',
+         '`= 4 × [5 × 0 - 3]`<br>`= 4 × (-3)`<br>`= -12`']
+});
+
+def({id:'q6', no:'6', star:1, title:'判斷下列各等式是否恆等式。若是，填「✓」，不是則填「✗」。',
+  lines:[
+    {label:'(a)', t:'x + 5 = 5 + x　[pick:a|✓,✗]'},
+    {label:'(b)', t:'2x - 7 = 7 - 2x　[pick:b|✓,✗]'},
+    {label:'(c)', t:'6x + 3x = 9x　[pick:c|✓,✗]'},
+    {label:'(d)', t:'4(x - 1) = 4x - 1　[pick:d|✓,✗]'},
+    {label:'(e)', t:'3(x + 4) = 3x + 12　[pick:e|✓,✗]'}
+  ],
+  ans:{a:'✓', b:'✗', c:'✓', d:'✗', e:'✓'},
+  wrong:{
+    a:{'✗':'`x + 5` 和 `5 + x` 化簡後完全相同。'},
+    b:{'✓':'試 `x = 0`：左方 `= -7`，右方 `= 7`，兩方不相等。'},
+    c:{'✗':'`6x + 3x = 9x`，左右兩方完全相同。'},
+    d:{'✓':'`4(x - 1) = 4x - 4`，4 要乘括號內每一項。'},
+    e:{'✗':'`3(x + 4) = 3x + 12`，左右兩方完全相同。'}
+  },
+  hints:['把左右兩方化簡，看看是否完全相同。',
+         '也可以用上面的「恆等天平」，代入 `x = 0` 比較左方和右方。',
+         '(a) 左方 `= x + 5`，右方 `= x + 5`<br>(b) 左方 `= 2x - 7`，右方 `= -2x + 7`<br>(c) 左方 `= 9x`，右方 `= 9x`<br>(d) 左方 `= 4x - 4`，右方 `= 4x - 1`<br>(e) 左方 `= 3x + 12`，右方 `= 3x + 12`']
+});
+
+def({id:'q7', no:'7', star:1, tag:'填充', title:'證明 `8x - 5x = x + 2x` 是恆等式。',
+  lines:[
+    {t:'左方 = 8x - 5x'},
+    {t:'= ([num:n1])x'},
+    {t:'右方 = x + 2x'},
+    {t:'= ([num:n2])x'},
+    {t:'∵ 左方 [pick:p1|=,≠] 右方'},
+    {t:'∴ 8x - 5x [pick:p2|=,≡] x + 2x'}
+  ],
+  ans:{n1:'3', n2:'3', p1:'=', p2:'≡'},
+  wrong:{
+    n1:{'13':'`8x - 5x` 是減法：`8 - 5 = 3`。'},
+    n2:{'2':'`x` 即是 `1x`，所以 `x + 2x = 3x`。'},
+    p1:{'≠':'左方和右方化簡後都是 `3x`，兩方相等。'},
+    p2:{'=':'證明了是恆等式，結論要用「≡」（三條線）。'}
+  },
+  hints:['分別化簡左方和右方。',
+         '左方 `= 8x - 5x = 3x`',
+         '左方 `= 8x - 5x`<br>`= 3x`<br>右方 `= x + 2x`<br>`= 3x`<br>∵ 左方 = 右方<br>∴ `8x - 5x ≡ x + 2x`']
+});
+
+def({id:'q8', no:'8', star:2, tag:'拖卡', title:'證明 `6x + 15 = 3(2x + 5)` 是恆等式。',
+  lines:[
+    {t:'左方 = 6x + 15'},
+    {t:'右方 = 3(2x + 5)'},
+    {t:'= [slot:s1|A]', note:'撤去括號。'},
+    {t:'= [slot:s2|A]'},
+    {t:'∵ 左方 [pick:p1|=,≠] 右方'},
+    {t:'∴ 6x + 15 [pick:p2|=,≡] 3(2x + 5)'}
+  ],
+  banks:{A:['3 × 2x + 3 × 5','6x + 15','3 × 2x + 5','6x + 5']},
+  ans:{s1:'3 × 2x + 3 × 5', s2:'6x + 15', p1:'=', p2:'≡'},
+  wrong:{
+    s1:{'3 × 2x + 5':'3 要乘括號內<b>每一項</b>，包括 5。','6x + 15':'先寫出撤去括號的一步。','*':'先寫出撤去括號的一步。'},
+    s2:{'6x + 5':'`3 × 5 = 15`。'},
+    p1:{'≠':'左方和右方都是 `6x + 15`，兩方相等。'},
+    p2:{'=':'證明了是恆等式，結論要用「≡」（三條線）。'}
+  },
+  hints:['右方要先撤去括號，再化簡。',
+         '右方 `= 3 × 2x + 3 × 5`',
+         '左方 `= 6x + 15`<br>右方 `= 3(2x + 5)`<br>`= 3 × 2x + 3 × 5`<br>`= 6x + 15`<br>∵ 左方 = 右方<br>∴ `6x + 15 ≡ 3(2x + 5)`']
+});
+
+def({id:'q9', no:'9', star:2, tag:'找錯處', title:'小明想證明 `4(6x + 1) = 3(8x - 1) + 7`，以下是他的證明。',
+  lines:[
+    {label:'(1)', t:'左方 = 4(6x + 1)'},
+    {label:'(2)', t:'= 4 × 6x + 4 × 1'},
+    {label:'(3)', t:'= 24x + 4'},
+    {label:'(4)', t:'右方 = 3(8x - 1) + 7'},
+    {label:'(5)', t:'= 3 × 8x - 1 + 7'},
+    {label:'(6)', t:'= 24x + 6'},
+    {label:'(7)', t:'∵ 左方 ≠ 右方'},
+    {label:'(8)', t:'∴ 4(6x + 1) = 3(8x - 1) + 7 不是恆等式。'},
+    {label:'(a)', t:'小明在哪一行開始出錯？'},
+    {t:'[pick:e|(1),(2),(3),(4),(5),(6),(7),(8)]'},
+    {label:'(b)', t:'該行應改為：'},
+    {t:'[pick:f|= 3 × 8x - 3 × 1 + 7,= 3 × 8x - 3 × 1 + 3 × 7,= 3 × 8x + 3 × 1 + 7]'},
+    {label:'(c)', t:'正確的結論是：'},
+    {t:'[pick:c|∴ 4(6x + 1) ≡ 3(8x - 1) + 7,∴ 4(6x + 1) = 3(8x - 1) + 7 不是恆等式。]'}
+  ],
+  ans:{e:'(5)', f:'= 3 × 8x - 3 × 1 + 7', c:'∴ 4(6x + 1) ≡ 3(8x - 1) + 7'},
+  wrong:{
+    e:{'(6)':'第 (6) 行是根據第 (5) 行計算的，最先出錯的是更早的一行。','(7)':'結論錯，是因為前面的計算錯了。找出最先出錯的一行。','(8)':'結論錯，是因為前面的計算錯了。找出最先出錯的一行。','*':'這一行沒有錯。逐行檢查撤去括號的步驟。'},
+    f:{'= 3 × 8x - 3 × 1 + 3 × 7':'`+ 7` 在括號外面，不用乘 3。','= 3 × 8x + 3 × 1 + 7':'括號內是 `- 1`，`3 × (-1) = -3`。'},
+    c:{'∴ 4(6x + 1) = 3(8x - 1) + 7 不是恆等式。':'改正後，右方 `= 24x - 3 + 7 = 24x + 4`，與左方相同。'}
+  },
+  hints:['逐行檢查：撤去括號時，括號外的數有沒有乘括號內<b>每一項</b>？',
+         '看看第 (5) 行：`3(8x - 1)` 中的 3 要乘 `8x`，也要乘 `-1`。',
+         '第 (5) 行應改為 `= 3 × 8x - 3 × 1 + 7`，之後 `= 24x - 3 + 7 = 24x + 4`。<br>∵ 左方 = 右方<br>∴ `4(6x + 1) ≡ 3(8x - 1) + 7`']
+});
+
+def({id:'q10', no:'10', star:3, tag:'排次序', type:'sort',
+  title:'證明 `2(5x - 3) + 4 = 5(2x + 1) - 7` 是恆等式。<br>拖動各行（或用 ▲ ▼），排列成正確的證明。',
+  items:['左方 = 2(5x - 3) + 4','= 10x - 6 + 4','= 10x - 2','右方 = 5(2x + 1) - 7','= 10x + 5 - 7','= 10x - 2','∵ 左方 = 右方','∴ 2(5x - 3) + 4 ≡ 5(2x + 1) - 7'],
+  alts:[['右方 = 5(2x + 1) - 7','= 10x + 5 - 7','= 10x - 2','左方 = 2(5x - 3) + 4','= 10x - 6 + 4','= 10x - 2','∵ 左方 = 右方','∴ 2(5x - 3) + 4 ≡ 5(2x + 1) - 7']],
+  hints:['先寫「左方 = …」並化簡，再寫「右方 = …」並化簡，最後寫「∵」和「∴」。',
+         '第 1 行：左方 `= 2(5x - 3) + 4`；第 2 行：`= 10x - 6 + 4`',
+         '左方 `= 2(5x - 3) + 4`<br>`= 10x - 6 + 4`<br>`= 10x - 2`<br>右方 `= 5(2x + 1) - 7`<br>`= 10x + 5 - 7`<br>`= 10x - 2`<br>∵ 左方 = 右方<br>∴ `2(5x - 3) + 4 ≡ 5(2x + 1) - 7`']
+});
+
+def({id:'q11', no:'11', star:2, tag:'方法一', title:'用方法一證明 `3(7x - 8) = 7(3x - 4)` 不是恆等式。',
+  lines:[
+    {t:'左方 = 3(7x - 8)'},
+    {t:'= [slot:s1|A]', note:'撤去括號。'},
+    {t:'= [slot:s2|A]'},
+    {t:'右方 = 7(3x - 4)'},
+    {t:'= [slot:s3|A]', note:'撤去括號。'},
+    {t:'= [slot:s4|A]'},
+    {t:'∵ 左方 [pick:p1|=,≠] 右方'},
+    {t:'[pick:c|∴ 3(7x - 8) ≡ 7(3x - 4),∴ 3(7x - 8) = 7(3x - 4) 不是恆等式。]'}
+  ],
+  banks:{A:['3 × 7x - 3 × 8','21x - 24','7 × 3x - 7 × 4','21x - 28','3 × 7x - 8','21x - 8']},
+  ans:{s1:'3 × 7x - 3 × 8', s2:'21x - 24', s3:'7 × 3x - 7 × 4', s4:'21x - 28', p1:'≠', c:'∴ 3(7x - 8) = 7(3x - 4) 不是恆等式。'},
+  wrong:{
+    s1:{'3 × 7x - 8':'3 要乘括號內每一項，包括 8。','*':'先寫出撤去括號的一步。'},
+    s2:{'21x - 8':'`3 × 8 = 24`。'},
+    s3:{'*':'先寫出撤去括號的一步：`7 × 3x - 7 × 4`。'},
+    p1:{'=':'`21x - 24` 和 `21x - 28` 的常數項不同，兩方不相等。'},
+    c:{'∴ 3(7x - 8) ≡ 7(3x - 4)':'左方 ≠ 右方，等式不是恆等式，不可用「≡」。'}
+  },
+  hints:['分別化簡左方和右方，再比較兩方的項。',
+         '左方 `= 3 × 7x - 3 × 8`',
+         '左方 `= 3(7x - 8)`<br>`= 3 × 7x - 3 × 8`<br>`= 21x - 24`<br>右方 `= 7(3x - 4)`<br>`= 7 × 3x - 7 × 4`<br>`= 21x - 28`<br>∵ 左方 ≠ 右方<br>∴ `3(7x - 8) = 7(3x - 4)` 不是恆等式。']
+});
+
+def({id:'q12', no:'12', star:2, tag:'方法二', title:'用方法二證明 `3(7x - 8) = 7(3x - 4)` 不是恆等式。<br>在每一步選出正確的算式。',
+  lines:[
+    {t:'把 x = 0 代入等式。'},
+    {t:'左方 = 3 × [7 × 0 - 8]'},
+    {t:'= [pick:a|3 × (-8),3 × 8,3 × (-1)]'},
+    {t:'= [pick:b|-24,24,-5]'},
+    {t:'右方 = 7 × [3 × 0 - 4]'},
+    {t:'= [pick:c|7 × (-4),7 × 4,7 × (-1)]'},
+    {t:'= [pick:d|-28,28,3]'},
+    {t:'∵ 左方 [pick:p1|=,≠] 右方'},
+    {t:'∴ x = 0 不滿足等式。'},
+    {t:'∴ 3(7x - 8) = 7(3x - 4) 不是恆等式。'}
+  ],
+  ans:{a:'3 × (-8)', b:'-24', c:'7 × (-4)', d:'-28', p1:'≠'},
+  wrong:{
+    a:{'3 × 8':'`7 × 0 - 8 = 0 - 8 = -8`，是負數。','3 × (-1)':'`7 × 0 = 0`，不是 7。'},
+    b:{'24':'`3 × (-8) = -24`，正數乘負數得負數。','-5':'`3 × (-8)` 是乘法，不是加法。'},
+    c:{'7 × 4':'`3 × 0 - 4 = 0 - 4 = -4`，是負數。','7 × (-1)':'`3 × 0 = 0`，不是 3。'},
+    d:{'28':'`7 × (-4) = -28`，正數乘負數得負數。','3':'`7 × (-4)` 是乘法，不是加法。'},
+    p1:{'=':'`-24` 和 `-28` 不相等。'}
+  },
+  hints:['只要找到一個 `x` 值令左方 ≠ 右方，等式便不是恆等式。',
+         '左方 `= 3 × [7 × 0 - 8] = 3 × (-8)`',
+         '左方 `= 3 × [7 × 0 - 8]`<br>`= 3 × (-8)`<br>`= -24`<br>右方 `= 7 × [3 × 0 - 4]`<br>`= 7 × (-4)`<br>`= -28`<br>∵ 左方 ≠ 右方<br>∴ `x = 0` 不滿足等式。<br>∴ `3(7x - 8) = 7(3x - 4)` 不是恆等式。']
+});
+
+def({id:'key', no:'重點', title:'完成下面兩句重點。',
+  lines:[
+    {t:'化簡後左右兩方的項 [pick:k1|完全相同,不相同]　→　等式是恆等式'},
+    {t:'找到一個 x 值令左方 [pick:k2|=,≠] 右方　→　等式不是恆等式'}
+  ],
+  ans:{k1:'完全相同', k2:'≠'},
+  wrong:{k1:{'不相同':'恆等式的左右兩方化簡後完全相同。'}, k2:{'=':'要找到一個令兩方「不相等」的 `x` 值。'}},
+  hints:['想想第 7–9 題和第 11–12 題。','恆等式：左右兩方化簡後一樣。','化簡後左右兩方的項完全相同 → 是恆等式；找到一個 `x` 值令左方 ≠ 右方 → 不是恆等式。']
+});
+
+def({id:'q13', no:'13', star:1, title:'判斷 `2(3x + 4) = 6x + 8` 是否恆等式。若是，填「✓」，不是則填「✗」。',
+  lines:[{t:'2(3x + 4) = 6x + 8　[pick:a|✓,✗]'}],
+  ans:{a:'✓'},
+  wrong:{a:{'✗':'左方 `= 2 × 3x + 2 × 4 = 6x + 8`，與右方完全相同。'}},
+  hints:['化簡左方，與右方比較。','左方 `= 2 × 3x + 2 × 4`','左方 `= 6x + 8`，與右方完全相同，所以是恆等式。']
+});
+
+def({id:'q14', no:'14', star:2, tag:'方法二', title:'用方法二證明 `2(3x + 4) = 6x + 4` 不是恆等式。',
+  lines:[
+    {t:'把 x = 0 代入等式。'},
+    {t:'左方 = 2 × [3 × 0 + 4]'},
+    {t:'= 2 × [num:n1]'},
+    {t:'= [num:n2]'},
+    {t:'右方 = 6 × 0 + 4'},
+    {t:'= [num:n3]'},
+    {t:'∵ 左方 [pick:p1|=,≠] 右方'},
+    {t:'∴ x = 0 不滿足等式。'},
+    {t:'∴ 2(3x + 4) = 6x + 4 不是恆等式。'}
+  ],
+  ans:{n1:'4', n2:'8', n3:'4', p1:'≠'},
+  wrong:{
+    n1:{'7':'`3 × 0 = 0`，所以 `3 × 0 + 4 = 4`。'},
+    n2:{'6':'`2 × 4` 是乘法：`2 × 4 = 8`。'},
+    n3:{'10':'`6 × 0 = 0`，所以 `6 × 0 + 4 = 4`。'},
+    p1:{'=':'8 和 4 不相等。'}
+  },
+  hints:['把 `x = 0` 分別代入左方和右方。','左方 `= 2 × [3 × 0 + 4] = 2 × 4`',
+         '左方 `= 2 × [3 × 0 + 4]`<br>`= 2 × 4`<br>`= 8`<br>右方 `= 6 × 0 + 4`<br>`= 4`<br>∵ 左方 ≠ 右方<br>∴ `x = 0` 不滿足等式。<br>∴ `2(3x + 4) = 6x + 4` 不是恆等式。']
+});
+
+def({id:'c1', no:'挑戰 1', star:3, title:'證明 `(x + 5)(x - 2) = x^2 - 3x - 10` 不是恆等式。',
+  tip:'不用展開兩個括號！用方法二：代入一個 `x` 值後，<b>先計算每個括號，再相乘</b>。<br>例如計算 `(x + 1)(x - 4)` 在 `x = 2` 時的值：`(2 + 1) × (2 - 4) = 3 × (-2) = -6`',
+  lines:[
+    {t:'把 x = [num:a] 代入等式。'},
+    {t:'左方 = (x + 5)(x - 2)'},
+    {t:'= [num:l1] × [num:l2]', note:'先計算每個括號。'},
+    {t:'= [num:l]'},
+    {t:'右方 = x^2 - 3x - 10'},
+    {t:'= [num:r]'},
+    {t:'∵ 左方 [pick:p|=,≠] 右方'},
+    {t:'∴ (x + 5)(x - 2) = x^2 - 3x - 10 不是恆等式。'}
+  ],
+  ans:{a:'1', l1:'6', l2:'-1', l:'-6', r:'-12', p:'≠'},
+  check:function(v){
+    var ks=['a','l1','l2','l','r','p'], bad=[], empty=0;
+    ks.forEach(function(k){ if(v[k]==null||v[k]===''||v[k]==='-'){ bad.push(k); empty++; } });
+    if (empty) return {ok:false, bad:bad, msg:'還有 '+empty+' 處未完成。'};
+    var x=Number(v.a), A=x+5, B=x-2, L=A*B, R=x*x-3*x-10, xs=x<0?'('+x+')':String(x);
+    if (Number(v.l1)!==A) bad.push('l1');
+    if (Number(v.l2)!==B) bad.push('l2');
+    if (Number(v.l)!==L) bad.push('l');
+    if (Number(v.r)!==R) bad.push('r');
+    if (bad.length) return {ok:false, bad:bad, msg:'代入 `x = '+x+'` 後再計算一次：左方 `= ('+x+' + 5) × ('+x+' - 2) = '+A+' × '+(B<0?'('+B+')':B)+'`，右方 `= '+xs+'^2 - 3 × '+xs+' - 10`。'};
+    if (L===R) return {ok:false, bad:['a'], msg:'代入 `x = '+x+'` 後兩方相等，並不表示是恆等式。試試其他 `x` 值。'};
+    if (v.p!=='≠') return {ok:false, bad:['p'], msg:'左方和右方不相等。'};
+    return {ok:true, bad:[]};
+  },
+  hints:['選一個簡單的 `x` 值，例如 1 或 2。代入後先計算每個括號，再相乘。',
+         '當 `x = 1`：左方 `= (1 + 5) × (1 - 2) = 6 × (-1)`',
+         '把 `x = 1` 代入：<br>左方 `= (1 + 5) × (1 - 2) = 6 × (-1) = -6`<br>右方 `= 1^2 - 3 × 1 - 10 = -12`<br>∵ 左方 ≠ 右方<br>∴ `(x + 5)(x - 2) = x^2 - 3x - 10` 不是恆等式。<br>（小心：若代入 `x = 0`，兩方都是 `-10`，不能用來證明！）']
+});
+
+def({id:'c2', no:'挑戰 2', star:3, title:'若 `4(3x - 2) ≡ Ax + B`，其中 `A` 和 `B` 都是常數，求 `A` 和 `B` 的值。',
+  lines:[{t:'A = [num:A]'},{t:'B = [num:B]'}],
+  ans:{A:'12', B:'-8'},
+  wrong:{B:{'8':'左方 `= 12x - 8`，常數項是 `-8`。','-2':'4 要乘括號內每一項：`4 × 2 = 8`。'}, A:{'3':'4 要乘括號內每一項：`4 × 3x = 12x`。'}},
+  hints:['先展開左方，再比較左右兩方 `x` 的係數和常數項。','左方 `= 4 × 3x - 4 × 2 = 12x - 8`','比較 `x` 的係數：`A = 12`<br>比較常數項：`B = -8`']
+});
+
+def({id:'c3', no:'挑戰 3', star:3, title:'若 `2(5x + 1) + 3 ≡ Ax + B`，其中 `A` 和 `B` 都是常數，求 `A` 和 `B` 的值。',
+  lines:[{t:'A = [num:A]'},{t:'B = [num:B]'}],
+  ans:{A:'10', B:'5'},
+  wrong:{B:{'4':'2 要乘括號內每一項：`2 × 1 = 2`，`2 + 3 = 5`。','3':'2 要乘括號內每一項：`2 × 1 = 2`，`2 + 3 = 5`。'}},
+  hints:['先化簡左方，再比較左右兩方 `x` 的係數和常數項。','左方 `= 2 × 5x + 2 × 1 + 3`','左方 `= 10x + 5`<br>比較 `x` 的係數：`A = 10`<br>比較常數項：`B = 5`']
+});
+
+/* =========================================================
+   預處理題目
+   ========================================================= */
+function hash(s){ var h=2166136261; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+function rng(seed){ return function(){ seed=(seed+0x6D2B79F5)|0; var t=Math.imul(seed^(seed>>>15),1|seed); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+function shuffle(a,seed){ var r=rng(seed), b=a.slice(); for(var i=b.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)); var x=b[i]; b[i]=b[j]; b[j]=x; } return b; }
+var TOK=/\[(pick|num|slot):(\w+)(?:\|([^\]]*))?\]/g;
+function parseT(t){
+  var out=[], last=0, m; TOK.lastIndex=0;
+  while((m=TOK.exec(t))){ if(m.index>last) out.push({text:t.slice(last,m.index)}); out.push({kind:m[1], id:m[2], arg:m[3]||''}); last=TOK.lastIndex; }
+  if(last<t.length) out.push({text:t.slice(last)});
+  return out;
+}
+Object.keys(Q).forEach(function(id){
+  var q=Q[id];
+  q._blanks=[]; q._bankLast={}; q._tiles=[]; q._bankOrder={};
+  q._lines=(q.lines||[]).map(function(ln,i){
+    var parts=parseT(ln.t);
+    parts.forEach(function(p){
+      if(p.kind){ q._blanks.push(p); if(p.kind==='slot') q._bankLast[p.arg]=i; }
+    });
+    var onlySlot = parts.length===1 && parts[0].kind==='slot';
+    return {label:ln.label, note:ln.note, parts:parts, wide:onlySlot, cont:/^\s*=/.test(ln.t)};
+  });
+  if(q.banks){
+    Object.keys(q.banks).forEach(function(b){
+      var ids=[];
+      q.banks[b].forEach(function(text){ var tid=q._tiles.length; q._tiles.push({id:tid, text:text, bank:b}); ids.push(tid); });
+      q._bankOrder[b]=shuffle(ids, hash(id+b));
+      q._bankLong=q._bankLong||{}; q._bankLong[b]=q.banks[b].some(function(x){return x.length>6;});
+    });
+  }
+});
+
+/* =========================================================
+   狀態（每部 iPad 各自保存）
+   ========================================================= */
+var KEY='identity-open-lesson-v5', S={}, T={};
+try{ S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ S={}; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function st(id){ if(!S[id]||!S[id].v) S[id]={v:{}, done:false, hint:0}; return S[id]; }
+function tr(id){ if(!T[id]) T[id]={marks:{}, msg:null}; return T[id]; }
+
+function norm(v){ return String(v==null?'':v).replace(/−/g,'-').replace(/\s+/g,'').replace(/^\+/,''); }
+function valueOf(q,b,v){
+  var raw=v[b.id];
+  if(raw==null||raw==='') return null;
+  if(b.kind==='slot'){ var t=q._tiles[raw]; return t?t.text:null; }
+  if(b.kind==='num'){ var n=norm(raw); return (n===''||n==='-')?null:n; }
+  return raw;
+}
+function same(b,a,e){
+  if(b.kind==='num'){ return Number(norm(a))===Number(norm(e)); }
+  return a===e;
+}
+function evaluate(q,v){
+  if(q.type==='sort') return evalSort(q,v);
+  if(q.check) return q.check(v,q);
+  var best=null;
+  [q.ans].concat(q.alts||[]).forEach(function(ans){
+    var bad=[], empty=0;
+    q._blanks.forEach(function(b){
+      var val=valueOf(q,b,v);
+      if(val==null){ empty++; bad.push(b.id); return; }
+      if(!same(b,val,ans[b.id])) bad.push(b.id);
+    });
+    if(!best||bad.length<best.bad.length) best={bad:bad, empty:empty};
+  });
+  if(!best.bad.length) return {ok:true, bad:[]};
+  if(best.empty===best.bad.length) return {ok:false, bad:best.bad, msg:'還有 '+best.empty+' 處未完成。'};
+  var msg=null;
+  for(var i=0;i<best.bad.length && !msg;i++){
+    var bid=best.bad[i], b=q._blanks.filter(function(x){return x.id===bid;})[0];
+    var val=valueOf(q,b,v); if(val==null) continue;
+    var w=q.wrong&&q.wrong[bid];
+    if(w){ msg = w[val] || w[norm(val)] || w['*'] || null; }
+  }
+  var filledBad=best.bad.length-best.empty;
+  if(!msg) msg='有 '+filledBad+' 處不正確（已用 ✗ 標示），試試按「💡 提示」。';
+  else if(best.empty) msg+='（另外還有 '+best.empty+' 處未完成。）';
+  return {ok:false, bad:best.bad, msg:msg};
+}
+function teacherFill(id){
+  var q=Q[id], s=st(id), used={};
+  if(q.type==='sort'){ s.v={order:q.items.map(function(_,i){return i;})}; return; }
+  s.v={};
+  q._blanks.forEach(function(b){
+    var a=q.ans[b.id];
+    if(b.kind==='slot'){
+      for(var i=0;i<q._tiles.length;i++){ var t=q._tiles[i]; if(!used[i] && t.bank===b.arg && t.text===a){ used[i]=1; s.v[b.id]=i; break; } }
+    } else s.v[b.id]=a;
+  });
+}
+
+function ensureOrder(q,s){
+  if(!s.v.order||s.v.order.length!==q.items.length){
+    var o=shuffle(q.items.map(function(_,i){return i;}), hash(q.id));
+    if(o.map(function(i){return q.items[i];}).join('|')===q.items.join('|')) o.reverse();
+    s.v.order=o;
+  }
+  return s.v.order;
+}
+function evalSort(q,v){
+  if(!v.order) return {ok:false, bad:[], msg:'請先用 ▲ ▼ 排列。'};
+  var seq=v.order.map(function(i){return q.items[i];}), best=null;
+  [q.items].concat(q.alts||[]).forEach(function(tg){
+    var bad=[]; seq.forEach(function(x,k){ if(x!==tg[k]) bad.push(String(k)); });
+    if(!best||bad.length<best.length) best=bad;
+  });
+  if(!best.length) return {ok:true, bad:[]};
+  return {ok:false, bad:best, msg:'有 '+best.length+' 行位置不正確（已用 ✗ 標示），用 ▲ ▼ 調整次序。'};
+}
+function sortHTML(q,s,t){
+  var o=ensureOrder(q,s);
+  return '<ol class="sortl">'+o.map(function(idx,pos){
+    return '<li class="srow'+(t.marks[String(pos)]?' bad':'')+'" data-q="'+q.id+'" data-p="'+pos+'"><span class="sgrip" aria-hidden="true">⠿</span><span class="spos">'+(pos+1)+'</span><span class="stext">'+math(q.items[idx])+'</span><span class="sbtn">'+
+      '<button type="button" data-act="up" data-q="'+q.id+'" data-p="'+pos+'"'+(pos===0?' disabled':'')+' aria-label="上移">▲</button>'+
+      '<button type="button" data-act="down" data-q="'+q.id+'" data-p="'+pos+'"'+(pos===o.length-1?' disabled':'')+' aria-label="下移">▼</button></span></li>';
+  }).join('')+'</ol>';
+}
+var sd=null;
+document.addEventListener('pointerdown', function(e){
+  var row=e.target.closest('.srow'); if(!row||e.target.closest('.sbtn')) return;
+  if(!e.target.closest('.sgrip,.stext,.spos')) return;
+  e.preventDefault();
+  try{ row.setPointerCapture(e.pointerId); }catch(_){}
+  var r=row.getBoundingClientRect();
+  sd={row:row, q:row.dataset.q, from:+row.dataset.p, pid:e.pointerId, sy:e.clientY, oy:e.clientY-r.top, ox:e.clientX-r.left, w:r.width, moved:false, ghost:null, to:+row.dataset.p};
+});
+document.addEventListener('pointermove', function(e){
+  if(!sd||e.pointerId!==sd.pid) return;
+  if(!sd.moved && Math.abs(e.clientY-sd.sy)<6) return;
+  if(!sd.moved){ sd.moved=true; var g=sd.row.cloneNode(true); g.classList.add('sghost'); g.classList.remove('bad'); g.style.width=sd.w+'px'; document.body.appendChild(g); sd.ghost=g; sd.row.classList.add('dragging'); }
+  sd.ghost.style.left=(e.clientX-sd.ox)+'px'; sd.ghost.style.top=(e.clientY-sd.oy)+'px';
+  var list=sd.row.parentNode, others=[].slice.call(list.querySelectorAll('.srow')).filter(function(x){return x!==sd.row;}), t=0;
+  others.forEach(function(x){ var rr=x.getBoundingClientRect(); if(e.clientY>rr.top+rr.height/2) t++; x.classList.remove('ins-before','ins-after'); });
+  sd.to=t;
+  if(others.length){ if(t<others.length) others[t].classList.add('ins-before'); else others[others.length-1].classList.add('ins-after'); }
+  var topH=document.getElementById('top').getBoundingClientRect().bottom;
+  if(e.clientY<topH+40) window.scrollBy(0,-12); else if(e.clientY>window.innerHeight-50) window.scrollBy(0,12);
+});
+function sortEnd(e,cancel){
+  if(!sd||e.pointerId!==sd.pid) return;
+  var d=sd; sd=null;
+  if(d.ghost) d.ghost.remove();
+  d.row.classList.remove('dragging');
+  [].slice.call(document.querySelectorAll('.ins-before,.ins-after')).forEach(function(x){ x.classList.remove('ins-before','ins-after'); });
+  if(cancel||!d.moved||d.to===d.from) return;
+  var q=Q[d.q], s=st(d.q), o=ensureOrder(q,s), item=o.splice(d.from,1)[0];
+  o.splice(d.to,0,item);
+  T[d.q]={marks:{}, msg:null}; save(); renderQ(d.q);
+}
+document.addEventListener('pointerup', function(e){ sortEnd(e,false); });
+document.addEventListener('pointercancel', function(e){ sortEnd(e,true); });
+
+function moveRow(id,p,d){
+  var q=Q[id], s=st(id), o=ensureOrder(q,s), j=p+d;
+  if(j<0||j>=o.length) return;
+  var x=o[p]; o[p]=o[j]; o[j]=x;
+  T[id]={marks:{}, msg:null}; save(); renderQ(id);
+}
+
+/* =========================================================
+   繪製題目
+   ========================================================= */
+function tileHTML(q,t,from){
+  return '<span class="tile" data-q="'+q.id+'" data-t="'+t.id+'" data-b="'+t.bank+'"'+(from?' data-from="'+from+'"':'')+'>'+math(t.text)+'</span>';
+}
+function blankHTML(q,b,s,t){
+  var v=s.v[b.id], mark=t.marks[b.id]?' bad':'';
+  if(b.kind==='pick'){
+    var opts=b.arg.split(','), stack=opts.some(function(o){return o.length>12;});
+    return '<span class="pick'+(stack?' stack':'')+mark+'" data-b="'+b.id+'">'+opts.map(function(o){
+      return '<button type="button" class="'+(v===o?'on':'')+'" data-act="pick" data-q="'+q.id+'" data-b="'+b.id+'" data-o="'+encodeURIComponent(o)+'" aria-pressed="'+(v===o)+'">'+math(o)+'</button>';
+    }).join('')+'</span>';
+  }
+  if(b.kind==='num'){
+    var act=(padT&&padT.q===q.id&&padT.b===b.id)?' active':'';
+    var has=v!=null&&v!=='';
+    return '<button type="button" class="num'+(has?' filled':'')+act+mark+'" data-act="num" data-q="'+q.id+'" data-b="'+b.id+'">'+(has?math(v):'&nbsp;')+'</button>';
+  }
+  // slot
+  var inner='';
+  if(v!=null&&v!==''&&q._tiles[v]) inner=tileHTML(q,q._tiles[v],b.id);
+  if(inner&&SNAP&&SNAP.q===q.id&&SNAP.b===b.id) inner=inner.replace('class="tile"','class="tile snap"');
+  var ready=(sel&&sel.q===q.id&&sel.bank===b.arg&&!inner)?' ready':'';
+  return '<span class="slot'+(q._lines.some(function(l){return l.wide&&l.parts[0].id===b.id;})?' wide':'')+(q._bankLong&&q._bankLong[b.arg]?' long':'')+ready+mark+'" data-act="slot" data-q="'+q.id+'" data-b="'+b.id+'" data-bank="'+b.arg+'">'+inner+'</span>';
+}
+function bankHTML(q,bank,s){
+  var used={};
+  q._blanks.forEach(function(b){ if(b.kind==='slot'){ var v=s.v[b.id]; if(v!=null&&v!=='') used[v]=1; } });
+  var tiles=q._bankOrder[bank].filter(function(i){return !used[i];});
+  var h='<div class="bank" data-q="'+q.id+'" data-bank="'+bank+'"><div class="bl">把卡拖到上面的空格（或先點選卡，再點空格）。點一下空格內的卡可以退回。</div>';
+  h+= tiles.length ? tiles.map(function(i){ var t=q._tiles[i]; var c=tileHTML(q,t); if(sel&&sel.q===q.id&&sel.t===i) c=c.replace('class="tile"','class="tile sel"'); return c; }).join('') : '<span class="empty">（卡已全部放好）</span>';
+  return h+'</div>';
+}
+function renderQ(id){
+  var q=Q[id], s=st(id), t=tr(id);
+  var card=document.getElementById('card-'+id); if(!card) return;
+  card.classList.toggle('done', !!s.done);
+  var body=card.querySelector('.qbody'), h='<div class="lines">';
+  if(q.type==='sort') h+=sortHTML(q,s,t);
+  q._lines.forEach(function(ln,i){
+    var parts=ln.parts, tail=null, lp=parts[parts.length-1];
+    if(parts.length>1 && lp.kind==='pick' && lp.arg.split(',').every(function(o){return o.length<=2;})){ tail=lp; parts=parts.slice(0,-1); }
+    h+='<div class="line'+(ln.cont?' cont':'')+'">';
+    if(ln.label) h+='<span class="lbl">'+ln.label+'</span>';
+    h+='<span class="lc">'+parts.map(function(p){ return p.kind ? blankHTML(q,p,s,t) : math(p.text); }).join('')+'</span>';
+    if(tail) h+='<span class="tail">'+blankHTML(q,tail,s,t)+'</span>';
+    if(ln.note) h+='<span class="note">'+ln.note+'</span>';
+    h+='</div>';
+    Object.keys(q._bankLast).forEach(function(bk){ if(q._bankLast[bk]===i) h+=bankHTML(q,bk,s); });
+  });
+  h+='</div>';
+  var nh=q.hints?q.hints.length:0;
+  h+='<div class="qbtns">';
+  if(nh) h+='<button type="button" class="btn hint" data-act="hint" data-q="'+id+'"'+(s.hint>=nh?' disabled':'')+'>💡 提示（'+s.hint+'/'+nh+'）</button>';
+  h+='<button type="button" class="btn pri" data-act="check" data-q="'+id+'">檢查答案</button>';
+  h+='<button type="button" class="btn" data-act="reset" data-q="'+id+'">重做</button>';
+  if(TEACHER) h+='<button type="button" class="btn teach" data-act="teach" data-q="'+id+'">顯示答案</button>';
+  h+='</div>';
+  if(s.hint>0){
+    h+='<div class="hints">';
+    for(var k=0;k<s.hint;k++) h+='<div class="h'+(t.newHint&&k===s.hint-1?' hnew':'')+'"><b>提示 '+(k+1)+'</b>'+fm(q.hints[k])+'</div>';
+    t.newHint=0;
+    h+='</div>';
+  }
+  if(t.msg) h+='<div class="fb '+t.msg.type+'">'+(t.msg.type==='ok'?'✓ ':t.msg.type==='no'?'✗ ':'')+fm(t.msg.text)+'</div>';
+  else if(s.done) h+='<div class="fb ok">✓ 答對了！請把步驟抄在工作紙上。</div>';
+  if(s.done){
+    var words=['做得好！','好棒！','正確！'];
+    h+='<div class="stamp'+(t.fresh?' fresh':'')+'">'+words[hash(id)%3]+'</div>';
+    t.fresh=0;
+  }
+  body.innerHTML=h;
+}
+function buildCard(id){
+  var q=Q[id], el=document.getElementById('card-'+id); if(!el) return;
+  var h='<div class="qhead"><span class="qno">'+q.no+'</span>';
+  if(q.star) h+='<span class="stars">'+'★'.repeat(q.star)+'</span>';
+  if(q.tag) h+='<span class="tag">'+q.tag+'</span>';
+  h+='<span class="donebadge">✓ 完成</span></div>';
+  h+='<div class="qtitle">'+fm(q.title)+'</div>';
+  if(q.tip) h+='<div class="tipbox"><span class="tipicon">記住</span><div>'+fm(q.tip)+'</div></div>';
+  if(q.pre) h+='<div class="pre"></div>';
+  h+='<div class="qbody"></div>';
+  el.innerHTML=h;
+  if(q.pre&&PRE[q.pre]) PRE[q.pre](el.querySelector('.pre'));
+  renderQ(id);
+}
+function setVal(id,bid,val){
+  var s=st(id), t=tr(id);
+  s.v[bid]=val; delete t.marks[bid]; t.msg=null;
+  save(); renderQ(id);
+}
+
+/* =========================================================
+   檢查、提示、重做
+   ========================================================= */
+function doCheck(id){
+  var q=Q[id], s=st(id), t=tr(id), r=evaluate(q,s.v);
+  t.marks={};
+  if(r.ok){ s.done=true; t.fresh=1; t.msg={type:'ok', text:'答對了！請把步驟抄在工作紙上。'}; }
+  else {
+    r.bad.forEach(function(b){
+      var bl=q._blanks.filter(function(x){return x.id===b;})[0];
+      if(!bl||valueOf(q,bl,s.v)!=null) t.marks[b]=1;
+    });
+    t.msg={type:'no', text:r.msg};
+  }
+  save(); renderQ(id); updateTabs();
+  var card=document.getElementById('card-'+id);
+  if(!r.ok&&card){ card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); setTimeout(function(){ card.classList.remove('shake'); },400); }
+  buddyOnCheck(id, r);
+  if(r.ok) checkTab(id);
+}
+function checkTab(id){
+  Object.keys(REQ).forEach(function(tab){
+    var req=REQ[tab]; if(req.indexOf(id)<0) return;
+    if(req.every(function(q){return st(q).done;})){
+      S._shown=S._shown||{};
+      if(!S._shown[tab]){ S._shown[tab]=1; save(); showDone(tab); }
+    }
+  });
+}
+function showDone(tab){
+  var i=TABS.map(function(x){return x.id;}).indexOf(tab);
+  document.getElementById('donePart').textContent='第 '+TABS[i].num+' 部分：'+TABS[i].name;
+  document.getElementById('doneOv').classList.add('on');
+}
+
+/* =========================================================
+   拖拉（Pointer Events）及點選
+   ========================================================= */
+var drag=null, sel=null, overEl=null, scrollRAF=null, scrollV=0;
+function slotUnder(x,y){ var e=document.elementFromPoint(x,y); return e?e.closest('.slot'):null; }
+function bankUnder(x,y){ var e=document.elementFromPoint(x,y); return e?e.closest('.bank'):null; }
+document.addEventListener('pointerdown', function(e){
+  var el=e.target.closest('.tile'); if(!el||el.classList.contains('ghost')) return;
+  e.preventDefault();
+  try{ el.setPointerCapture(e.pointerId); }catch(_){}
+  var r=el.getBoundingClientRect();
+  drag={el:el, q:el.dataset.q, t:+el.dataset.t, bank:el.dataset.b, from:el.dataset.from||null, sx:e.clientX, sy:e.clientY, ox:e.clientX-r.left, oy:e.clientY-r.top, w:r.width, moved:false, ghost:null, pid:e.pointerId};
+});
+document.addEventListener('pointermove', function(e){
+  if(!drag||e.pointerId!==drag.pid) return;
+  var dx=e.clientX-drag.sx, dy=e.clientY-drag.sy;
+  if(!drag.moved && dx*dx+dy*dy<64) return;
+  if(!drag.moved){
+    drag.moved=true;
+    var g=drag.el.cloneNode(true); g.classList.add('ghost'); g.classList.remove('sel'); g.style.width=drag.w+'px';
+    document.body.appendChild(g); drag.ghost=g; drag.el.classList.add('dragging');
+  }
+  drag.ghost.style.left=(e.clientX-drag.ox)+'px'; drag.ghost.style.top=(e.clientY-drag.oy)+'px';
+  var sl=slotUnder(e.clientX,e.clientY);
+  if(sl&&!(sl.dataset.q===drag.q&&sl.dataset.bank===drag.bank)) sl=null;
+  if(overEl&&overEl!==sl) overEl.classList.remove('over');
+  overEl=sl; if(sl) sl.classList.add('over');
+  var topH=document.getElementById('top').getBoundingClientRect().bottom;
+  scrollV = e.clientY<topH+40 ? -10 : (e.clientY>window.innerHeight-50 ? 10 : 0);
+  if(scrollV&&!scrollRAF) scrollLoop();
+});
+function scrollLoop(){ if(!drag||!scrollV){ scrollRAF=null; return; } window.scrollBy(0,scrollV); scrollRAF=requestAnimationFrame(scrollLoop); }
+function endDrag(e,cancel){
+  if(!drag||e.pointerId!==drag.pid) return;
+  var d=drag; drag=null; scrollV=0;
+  if(overEl){ overEl.classList.remove('over'); overEl=null; }
+  if(d.ghost) d.ghost.remove();
+  d.el.classList.remove('dragging');
+  if(cancel) return;
+  if(!d.moved){ tapTile(d); return; }
+  var sl=slotUnder(e.clientX,e.clientY);
+  if(sl&&sl.dataset.q===d.q&&sl.dataset.bank===d.bank){ place(d.q, sl.dataset.b, d.t, d.from); return; }
+  if(d.from){ var s=st(d.q); delete s.v[d.from]; delete tr(d.q).marks[d.from]; tr(d.q).msg=null; save(); }
+  sel=null; renderQ(d.q);
+}
+document.addEventListener('pointerup', function(e){ endDrag(e,false); });
+document.addEventListener('pointercancel', function(e){ endDrag(e,true); });
+
+function place(qid,slotId,tid,from){
+  var s=st(qid), t=tr(qid);
+  if(from&&from!==slotId) delete s.v[from];
+  s.v[slotId]=tid;
+  delete t.marks[slotId]; if(from) delete t.marks[from]; t.msg=null;
+  sel=null; save(); SNAP={q:qid,b:slotId}; renderQ(qid); SNAP=null;
+}
+var SNAP=null;
+function tapTile(d){
+  if(d.from){ var s=st(d.q); delete s.v[d.from]; delete tr(d.q).marks[d.from]; tr(d.q).msg=null; save(); sel=null; renderQ(d.q); return; }
+  if(sel&&sel.q===d.q&&sel.t===d.t) sel=null;
+  else { var old=sel; sel={q:d.q, t:d.t, bank:d.bank}; if(old&&old.q!==d.q) renderQ(old.q); }
+  renderQ(d.q);
+}
+
+/* =========================================================
+   數字鍵盤
+   ========================================================= */
+var padT=null, pad=document.getElementById('pad');
+(function(){
+  var keys=['7','8','9','⌫','4','5','6','−','1','2','3','清除','0','完成'];
+  document.getElementById('pg').innerHTML=keys.map(function(k){
+    var cls=(k==='⌫'||k==='−'||k==='清除')?'fn':(k==='完成'?'ok':'');
+    var span=(k==='完成')?' style="grid-column:span 3"':'';
+    return '<button type="button" class="'+cls+'" data-k="'+k+'"'+span+'>'+k+'</button>';
+  }).join('');
+})();
+function openPad(q,b){
+  var old=padT; padT={q:q,b:b};
+  if(old&&old.q!==q) renderQ(old.q);
+  pad.classList.add('on'); document.body.classList.add('padopen');
+  renderQ(q); updatePv();
+  var el=document.querySelector('#card-'+q+' .num[data-b="'+b+'"]');
+  if(el){ var r=el.getBoundingClientRect(); if(r.bottom>window.innerHeight-300||r.top<150) window.scrollBy({top:r.top-window.innerHeight/2+60, behavior:'smooth'}); }
+}
+function closePad(){ var old=padT; padT=null; pad.classList.remove('on'); document.body.classList.remove('padopen'); if(old) renderQ(old.q); }
+function updatePv(){ if(!padT) return; var v=st(padT.q).v[padT.b]; document.getElementById('pv').innerHTML=(v!=null&&v!=='')?nfmt(v):'&nbsp;'; }
+document.getElementById('pg').addEventListener('click', function(e){
+  var b=e.target.closest('button'); if(!b||!padT) return;
+  var k=b.dataset.k, cur=st(padT.q).v[padT.b]; cur=(cur==null)?'':String(cur);
+  if(k==='完成'){ closePad(); return; }
+  if(k==='⌫') cur=cur.slice(0,-1);
+  else if(k==='清除') cur='';
+  else if(k==='−') cur = cur.charAt(0)==='-' ? cur.slice(1) : '-'+cur;
+  else { if(cur.replace('-','').length<4) cur=(cur==='0'?'':(cur==='-0'?'-':cur))+k; }
+  setVal(padT.q, padT.b, cur); updatePv();
+});
+
+/* =========================================================
+   點擊事件
+   ========================================================= */
+document.addEventListener('click', function(e){
+  var el=e.target.closest('[data-act]'); if(!el) return;
+  if(e.target.closest('.tile')) return;
+  var act=el.dataset.act, id=el.dataset.q;
+  if(act==='pick'){ setVal(id, el.dataset.b, decodeURIComponent(el.dataset.o)); return; }
+  if(act==='up'||act==='down'){ moveRow(id, +el.dataset.p, act==='up'?-1:1); return; }
+  if(act==='num'){ openPad(id, el.dataset.b); return; }
+  if(act==='slot'){ if(sel&&sel.q===id&&sel.bank===el.dataset.bank){ place(id, el.dataset.b, sel.t, null); } return; }
+  if(act==='hint'){ var s=st(id); if(s.hint<Q[id].hints.length){ s.hint++; tr(id).newHint=1; save(); renderQ(id); lookAt(document.getElementById('card-'+id)); if(s.hint===1) buddySay('一步一步來，你一定可以！'); } return; }
+  if(act==='check'){ if(padT) closePad(); doCheck(id); return; }
+  if(act==='reset'){ S[id]={v:{}, done:false, hint:0}; T[id]={marks:{}, msg:null}; if(sel&&sel.q===id) sel=null; if(padT&&padT.q===id) closePad(); save(); renderQ(id); updateTabs(); return; }
+  if(act==='teach'){ teacherFill(id); T[id]={marks:{}, msg:{type:'info', text:'（老師模式）已顯示答案。'}}; save(); renderQ(id); return; }
+});
+
+/* =========================================================
+   互動工具：引入表格、試數值、例題逐步顯示、自評
+   ========================================================= */
+var PRE={};
+
+/* ---------- 插畫：鉛筆仔 ---------- */
+function pencilSVG(sz, mood){
+  var mouth = mood==='wow' ? '<ellipse cx="40" cy="41" rx="3" ry="3.6" fill="#1F2A44" stroke="none"/>' : '<path d="M35 39 Q40 45 45 39" fill="none"/>';
+  return '<svg class="pencil" width="'+sz+'" height="'+sz+'" viewBox="0 0 80 80" aria-hidden="true"><g transform="rotate(-28 40 40)" stroke="#1F2A44" stroke-width="2.5" stroke-linejoin="round">'+
+    '<rect x="29" y="3" width="22" height="10" rx="4" fill="#FF7F9C"/><rect x="29" y="12" width="22" height="6" fill="#C7D3E8"/>'+
+    '<rect x="29" y="18" width="22" height="38" fill="#FFE14D"/><path d="M29 56 L51 56 L40 77 Z" fill="#F6D2A8"/><path d="M36.3 70 L43.7 70 L40 77 Z" fill="#1F2A44"/>'+
+    '<circle cx="35.5" cy="31" r="2.3" fill="#1F2A44" stroke="none"/><circle cx="44.5" cy="31" r="2.3" fill="#1F2A44" stroke="none"/>'+
+    '<circle cx="33" cy="37" r="2" fill="#FF7F9C" stroke="none" opacity=".7"/><circle cx="47" cy="37" r="2" fill="#FF7F9C" stroke="none" opacity=".7"/>'+mouth+'</g></svg>';
+}
+/* SVG 內的數式：英文字母斜體、- 轉 − */
+function svgMath(s){
+  return String(s).replace(/-/g,'−').replace(/[A-Za-z]/g, function(m){ return '<tspan font-style="italic">'+m+'</tspan>'; });
+}
+var TXT='font-family="Times New Roman,serif" fill="#1F2A44"';
+
+/* ---------- 引入：文具店 ---------- */
+function penG(x,y){ return '<g transform="translate('+x+','+y+') rotate(-28)" stroke="#1F2A44" stroke-width="2" stroke-linejoin="round"><rect x="-5" y="-24" width="10" height="34" rx="2" fill="#4C9EEB"/><rect x="-5" y="-24" width="10" height="7" fill="#1F2A44"/><path d="M-5 10 L5 10 L0 20 Z" fill="#F6D2A8"/></g>'; }
+function bookG(x,y){ return '<g transform="translate('+x+','+y+')" stroke="#1F2A44" stroke-width="2"><rect x="-14" y="-18" width="28" height="36" rx="3" fill="#FF7F9C"/><line x1="-8" y1="-18" x2="-8" y2="18"/><rect x="-3" y="-9" width="13" height="8" rx="1.5" fill="#fff" stroke-width="1.5"/></g>'; }
+function tagG(x,y,t){ return '<g transform="translate('+x+','+y+')"><rect x="-19" y="-11" width="38" height="21" rx="6" fill="#FFE14D" stroke="#1F2A44" stroke-width="1.8"/><text x="0" y="5" text-anchor="middle" font-size="13" font-weight="700" '+TXT+'>'+t+'</text></g>'; }
+function shopSVG_A(){
+  var h='<svg viewBox="0 0 300 124" aria-hidden="true">';
+  [50,150,250].forEach(function(cx){
+    h+='<rect x="'+(cx-45)+'" y="6" width="90" height="112" rx="12" fill="#FFF5BF" stroke="#1F2A44" stroke-width="2" stroke-dasharray="6 4"/>';
+    h+=penG(cx-18,50)+bookG(cx+18,50)+tagG(cx-18,96,'$'+svgMath('x'))+tagG(cx+18,96,'$4');
+  });
+  return h+'</svg>';
+}
+function shopSVG_B(){
+  var h='<svg viewBox="0 0 300 124" aria-hidden="true">';
+  h+='<rect x="4" y="6" width="140" height="112" rx="12" fill="#DDEDFF" stroke="#1F2A44" stroke-width="2" stroke-dasharray="6 4"/>';
+  h+='<rect x="156" y="6" width="140" height="112" rx="12" fill="#FFE2EA" stroke="#1F2A44" stroke-width="2" stroke-dasharray="6 4"/>';
+  [38,74,110].forEach(function(x){ h+=penG(x,50); });
+  [190,226,262].forEach(function(x){ h+=bookG(x,50); });
+  h+='<text x="74" y="104" text-anchor="middle" font-size="15" font-weight="700" '+TXT+'>3 × $'+svgMath('x')+'</text>';
+  h+='<text x="226" y="104" text-anchor="middle" font-size="15" font-weight="700" '+TXT+'>3 × $4</text>';
+  return h+'</svg>';
+}
+PRE.intro=function(el){
+  var cols=[1,2,6];
+  var rows=[
+    {h:'甲的計法：`3(x + 4)`', f:function(x){return nfmt(3*(x+4));}},
+    {h:'乙的計法：`3x + 12`',  f:function(x){return nfmt(3*x+12);}},
+    {h:'甲、乙的總價相同嗎？', f:function(x){return 3*(x+4)===3*x+12?'✓':'✗';}},
+    {h:'總價剛好是 $30 嗎？', f:function(x){return 3*(x+4)===30?'✓':'✗';}}
+  ];
+  var shown={}, px=2;
+  function shopRead(){
+    var x=px, A=3*(x+4), B=3*x+12;
+    el.querySelector('#shopX').textContent=x;
+    el.querySelector('#shopA').innerHTML=math('3 × ('+x+' + 4) = $'+A);
+    el.querySelector('#shopB').innerHTML=math('3 × '+x+' + 12 = $'+B);
+    el.querySelector('#shopRes').innerHTML=
+      '<span class="badge yes">✓ 甲、乙的總價相同</span>'+
+      (A===30?'<span class="badge yes">✓ 總價剛好是 $30</span>':'<span class="badge no">✗ 總價不是 $30</span>');
+  }
+  function draw(){
+    var h='<div class="shop"><h4>🛒 拖動滑桿，改變每枝筆的價錢</h4><div class="shopcols">'+
+      '<div class="shopbox"><div class="sh">甲：每人一份，共 3 份</div>'+shopSVG_A()+'<div class="calc" id="shopA"></div></div>'+
+      '<div class="shopbox"><div class="sh">乙：筆和簿分開計</div>'+shopSVG_B()+'<div class="calc" id="shopB"></div></div></div>'+
+      '<label class="slab" for="shopR">每枝筆 $<span id="shopX"></span>（即 '+math('x')+' 的值）</label>'+
+      '<input type="range" id="shopR" min="1" max="10" step="1" value="'+px+'" aria-label="每枝筆的價錢">'+
+      '<div class="shopres" id="shopRes"></div></div>';
+    h+='<div class="line"><span class="lbl">(a)</span>代入 '+math('x = 1')+'、2、6，完成下表。</div>';
+    h+='<table class="tbl"><tr><th></th>'+cols.map(function(c){ return '<th>'+math('x = '+c)+(shown[c]?'':'<br><button type="button" class="rv" data-c="'+c+'">顯示</button>')+'</th>'; }).join('')+'</tr>';
+    rows.forEach(function(r){ h+='<tr><td class="rh">'+fm(r.h)+'</td>'+cols.map(function(c){ return '<td>'+(shown[c]?'<span class="mx">'+r.f(c)+'</span>':'')+'</td>'; }).join('')+'</tr>'; });
+    h+='</table><div class="tip">「總價剛好是 $30」可以寫成方程 '+math('3(x + 4) = 30')+'。</div>';
+    el.innerHTML=h; shopRead();
+  }
+  el.addEventListener('click', function(e){ var b=e.target.closest('.rv'); if(b){ shown[b.dataset.c]=1; draw(); } });
+  el.addEventListener('input', function(e){ if(e.target.id==='shopR'){ px=+e.target.value; shopRead(); } });
+  draw();
+};
+
+/* ---------- 天平 ---------- */
+var BAL={};
+var EQ3=[
+  {label:'(a)', l:'x + 5', r:'5 + x', L:function(x){return x+5;}, R:function(x){return 5+x;}},
+  {label:'(b)', l:'2x - 7', r:'7 - 2x', L:function(x){return 2*x-7;}, R:function(x){return 7-2*x;}},
+  {label:'(c)', l:'6x + 3x', r:'9x', L:function(x){return 9*x;}, R:function(x){return 9*x;}},
+  {label:'(d)', l:'4(x - 1)', r:'4x - 1', L:function(x){return 4*(x-1);}, R:function(x){return 4*x-1;}},
+  {label:'(e)', l:'3(x + 4)', r:'3x + 12', L:function(x){return 3*(x+4);}, R:function(x){return 3*x+12;}}
+];
+var EQ5=[
+  {label:'等式一', l:'2(x + 3)', r:'3x + 4', L:function(x){return 2*(x+3);}, R:function(x){return 3*x+4;}, start:2},
+  {label:'等式二', l:'4(x + 1)', r:'x + 4', L:function(x){return 4*(x+1);}, R:function(x){return x+4;}, start:0}
+];
+function panG(s){
+  return '<g class="pan pan'+s+'"><line x1="0" y1="0" x2="-34" y2="50" stroke="#1F2A44" stroke-width="2"/><line x1="0" y1="0" x2="34" y2="50" stroke="#1F2A44" stroke-width="2"/>'+
+    '<path d="M-46 50 Q0 88 46 50 Z" fill="'+(s==='L'?'#DDEDFF':'#FFE2EA')+'" stroke="#1F2A44" stroke-width="2.5" stroke-linejoin="round"/>'+
+    '<rect x="-32" y="74" width="64" height="28" rx="8" fill="#fff" stroke="#1F2A44" stroke-width="2"/>'+
+    '<text class="pv" x="0" y="94" text-anchor="middle" font-size="18" font-weight="700" '+TXT+'></text>'+
+    '<text x="0" y="122" text-anchor="middle" font-size="13" font-weight="800" fill="#1F2A44">'+(s==='L'?'左方':'右方')+'</text></g>';
+}
+function balanceHTML(id, eqs, title, sub){
+  BAL[id]={eqs:eqs, i:0, x:(eqs[0].start||0), tried:eqs.map(function(){return {};})};
+  var h='<div class="card plain bal" id="'+id+'"><h3>⚖️ '+title+'</h3>'+(sub?'<div class="tip">'+fm(sub)+'</div>':'');
+  if(eqs.length>1) h+='<div class="chips">'+eqs.map(function(e,i){ return '<button type="button" class="chip'+(i===0?' on':'')+'" data-bal="'+id+'" data-eq="'+i+'">'+e.label+'</button>'; }).join('')+'</div>';
+  h+='<div class="baleq"></div>';
+  h+='<svg class="balsvg" viewBox="0 0 360 246" aria-hidden="true">'+
+     '<rect x="128" y="226" width="104" height="14" rx="4" fill="#C7D3E8" stroke="#1F2A44" stroke-width="2.5"/>'+
+     '<path d="M171 226 L180 64 L189 226 Z" fill="#8B7CF6" stroke="#1F2A44" stroke-width="2.5" stroke-linejoin="round"/>'+
+     '<g class="beam"><rect x="44" y="59" width="272" height="10" rx="5" fill="#FFE14D" stroke="#1F2A44" stroke-width="2.5"/></g>'+
+     panG('L')+panG('R')+
+     '<circle cx="180" cy="64" r="8" fill="#fff" stroke="#1F2A44" stroke-width="2.5"/></svg>';
+  h+='<div class="balstat"></div>';
+  h+='<label class="slab">拖動滑桿改變 '+math('x')+' 的值：'+math('x = ')+'<b class="xv mx"></b></label>';
+  h+='<input type="range" min="-5" max="10" step="1" value="'+(eqs[0].start||0)+'" data-bal="'+id+'" class="balr" aria-label="x 的值">';
+  h+='<div class="tried"></div><div class="verdict"></div></div>';
+  return h;
+}
+function updateBal(id, record){
+  var b=BAL[id], root=document.getElementById(id); if(!b||!root) return;
+  var e=b.eqs[b.i], x=b.x, L=e.L(x), R=e.R(x), d=R-L;
+  if(record) b.tried[b.i][x]=(L===R);
+  var a = d===0 ? 0 : (d>0?1:-1)*Math.min(16, 5+Math.abs(d)*0.6);
+  root.querySelector('.beam').style.transform='rotate('+a+'deg)';
+  var r=a*Math.PI/180, c=Math.cos(r), s=Math.sin(r);
+  root.querySelector('.panL').style.transform='translate('+(180-130*c)+'px,'+(64-130*s)+'px)';
+  root.querySelector('.panR').style.transform='translate('+(180+130*c)+'px,'+(64+130*s)+'px)';
+  root.querySelector('.panL .pv').textContent=nfmt(L);
+  root.querySelector('.panR .pv').textContent=nfmt(R);
+  root.querySelector('.xv').textContent=nfmt(x);
+  root.querySelector('.baleq').innerHTML=math(e.l)+'<span class="q mx">？</span>'+math(e.r);
+  root.querySelector('.balstat').innerHTML='當 '+math('x = '+nfmt(x))+'：左方 '+math('= '+nfmt(L))+'，右方 '+math('= '+nfmt(R))+'　'+(L===R?'⚖️ 平衡（左方 = 右方）':'↘ 不平衡（左方 ≠ 右方）');
+  var t=b.tried[b.i], ks=Object.keys(t).map(Number).sort(function(p,q){return p-q;});
+  root.querySelector('.tried').innerHTML=ks.length?('已試：'+ks.map(function(k){ return '<span class="'+(t[k]?'':'u')+'">'+math('x = '+nfmt(k))+(t[k]?' 平衡':' 不平衡')+'</span>'; }).join('')):'';
+  var un=ks.filter(function(k){return !t[k];}), v;
+  var eqk=ks.filter(function(k){return t[k];});
+  if(un.length) v='找到 '+math('x = '+nfmt(un[0]))+' 令左方 ≠ 右方，所以 '+math(e.l+' = '+e.r)+' <b>不是</b>恆等式。'+
+    (eqk.length?'<br>雖然 '+math('x = '+nfmt(eqk[0]))+' 時天平平衡，但並不是對任何 '+math('x')+' 值都成立。':'');
+  else if(ks.length>=3) v='試了 '+ks.length+' 個 '+math('x')+' 值都平衡。不過試數值不能證明恆等式，要化簡左右兩方：若完全相同，便可寫成 '+math(e.l+' ≡ '+e.r)+'。';
+  else v='拖動滑桿，多試幾個 '+math('x')+' 值，看看天平會不會傾側。';
+  root.querySelector('.verdict').innerHTML=v;
+}
+document.addEventListener('input', function(e){
+  var r=e.target.closest('.balr'); if(!r) return;
+  var b=BAL[r.dataset.bal]; b.x=+r.value; updateBal(r.dataset.bal, true);
+});
+document.addEventListener('click', function(e){
+  var c=e.target.closest('[data-bal][data-eq]'); if(!c) return;
+  var id=c.dataset.bal, b=BAL[id]; b.i=+c.dataset.eq;
+  if(b.eqs[b.i].start!=null){ b.x=b.eqs[b.i].start; var sl=document.querySelector('#'+id+' .balr'); if(sl) sl.value=b.x; }
+  c.parentNode.querySelectorAll('.chip').forEach(function(k){ k.classList.toggle('on', k===c); });
+  updateBal(id, false);
+});
+
+/* ---------- 面積模型 ---------- */
+function areaHTML(){
+  return '<div class="card plain area s-whole" id="area"><h3>📐 為甚麼要乘括號內每一項？</h3>'+
+    '<div class="tip">把 '+math('3(2x + 5)')+' 想像成一個長方形：高 3，闊 '+math('2x + 5')+'。點下面的按鈕看看。</div>'+
+    '<svg class="areasvg" viewBox="0 0 400 190" aria-hidden="true"><defs><pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#fff"/><line x1="0" y1="0" x2="0" y2="9" stroke="#9AA8C4" stroke-width="4"/></pattern></defs>'+
+    '<text x="22" y="112" text-anchor="middle" font-size="22" font-weight="700" '+TXT+'>3</text>'+
+    '<g class="ablk ablkA"><rect x="40" y="52" width="200" height="110" fill="#DDEDFF" stroke="#1F2A44" stroke-width="2.5"/>'+
+      '<text x="140" y="40" text-anchor="middle" font-size="20" font-weight="700" '+TXT+'>'+svgMath('2x')+'</text>'+
+      '<text class="ts tm" x="140" y="113" text-anchor="middle" font-size="19" font-weight="700" '+TXT+'>'+svgMath('3 × 2x = 6x')+'</text></g>'+
+    '<g class="ablk ablkB"><rect x="240" y="52" width="110" height="110" fill="#FFE2EA" stroke="#1F2A44" stroke-width="2.5"/>'+
+      '<text x="295" y="40" text-anchor="middle" font-size="20" font-weight="700" '+TXT+'>5</text>'+
+      '<text class="ts" x="295" y="113" text-anchor="middle" font-size="19" font-weight="700" '+TXT+'>3 × 5 = 15</text>'+
+      '<text class="tm" x="295" y="113" text-anchor="middle" font-size="19" font-weight="800" fill="#E0344B">漏了！</text></g>'+
+    '<text class="tw" x="195" y="113" text-anchor="middle" font-size="22" font-weight="700" '+TXT+'>'+svgMath('3(2x + 5)')+'</text></svg>'+
+    '<div class="acap"></div>'+
+    '<div class="chips"><button type="button" class="chip on" data-area="whole">整個長方形</button><button type="button" class="chip" data-area="split">切開兩塊</button><button type="button" class="chip" data-area="miss">如果漏乘了……</button></div></div>';
+}
+var ACAP={
+  whole:'面積 '+math('= 3(2x + 5)'),
+  split:'面積 '+math('= 3 × 2x + 3 × 5 = 6x + 15')+'　兩塊都要計！',
+  miss:'只乘第一項：'+math('3 × 2x + 5')+' ✗　少了 '+math('3 × 5 = 15')+' 那一塊。'
+};
+function setArea(st){
+  var a=document.getElementById('area'); if(!a) return;
+  a.classList.remove('s-whole','s-split','s-miss'); a.classList.add('s-'+st);
+  a.querySelector('.acap').innerHTML=ACAP[st];
+  a.querySelectorAll('[data-area]').forEach(function(b){ b.classList.toggle('on', b.dataset.area===st); });
+}
+document.addEventListener('click', function(e){ var b=e.target.closest('[data-area]'); if(b) setArea(b.dataset.area); });
+
+/* ---------- 流程圖 ---------- */
+function flowHTML(){
+  return '<div class="card plain"><h3>🧭 怎樣判斷一條等式是不是恆等式？</h3><div class="flow">'+
+    '<div class="fbx">一條等式：左方 = 右方 ？</div><div class="farr">↓</div>'+
+    '<div class="fsplit">'+
+      '<div class="fcol"><span class="fhead">方法一</span><div class="fbx">化簡左方和右方</div><div class="farr">↓</div><div class="fq">兩方完全相同？</div>'+
+        '<div class="fyn"><div><span>是</span><div class="fbx ok">是恆等式<br>寫 <b class="eqv">≡</b></div></div><div><span>否</span><div class="fbx no">不是恆等式</div></div></div></div>'+
+      '<div class="fcol"><span class="fhead">方法二</span><div class="fbx">代入一個 '+math('x')+' 值（例如 0）</div><div class="farr">↓</div><div class="fq">左方 ≠ 右方？</div>'+
+        '<div class="fyn"><div><span>是</span><div class="fbx no">不是恆等式</div></div><div><span>否</span><div class="fbx">再試其他 '+math('x')+' 值，<br>或用方法一</div></div></div></div>'+
+    '</div></div></div>';
+}
+
+function gridHTML(k, cols, cells, total){
+  return '<div class="tip">括號外的 '+math(k)+' 要乘括號內的<b>每一項</b>。點一下格子看看。</div>'+
+    '<table class="mgrid" data-total="'+encodeURIComponent(total)+'"><tr><th class="x">×</th>'+cols.map(function(c){return '<th>'+math(c)+'</th>';}).join('')+'</tr>'+
+    '<tr><th>'+math(k)+'</th>'+cells.map(function(c){ return '<td><button type="button" class="gc" data-show="'+encodeURIComponent(c)+'" aria-label="顯示">?</button></td>'; }).join('')+'</tr></table>'+
+    '<div class="gres"></div>';
+}
+document.addEventListener('click', function(e){
+  var b=e.target.closest('.gc'); if(!b) return;
+  var td=b.parentNode, tbl=b.closest('.mgrid');
+  td.innerHTML=decodeURIComponent(b.dataset.show).split('|').map(function(x){return math(x);}).join('<br>');
+  if(!tbl.querySelector('.gc')) tbl.nextElementSibling.innerHTML='合起來：'+math(decodeURIComponent(tbl.dataset.total));
+});
+
+function initComponents(){
+  Object.keys(BAL).forEach(function(id){ updateBal(id,false); });
+  setArea('whole');
+  var dp=document.getElementById('donePen'); if(dp) dp.innerHTML=pencilSVG(96,'wow');
+}
+
+function demoHTML(id, cols){
+  return '<div class="card plain demo" id="'+id+'"><div class="dcols">'+cols.map(function(c,ci){
+    if(c.html) return '<div class="dcol"><h4>'+c.h+'</h4>'+c.html+'</div>';
+    return '<div class="dcol" data-c="'+ci+'"><h4>'+c.h+'</h4>'+c.l.map(function(l,li){ return '<div class="dl'+(/^=/.test(l)?' cont':'')+(li>0?' hid':'')+'">'+math(l)+'</div>'; }).join('')+
+      '<div class="dbtns"><button type="button" class="btn" data-d="next">下一步 ▶</button><button type="button" class="btn" data-d="all">全部顯示</button><button type="button" class="btn" data-d="reset">重設</button></div></div>';
+  }).join('')+'</div></div>';
+}
+document.addEventListener('click', function(e){
+  var b=e.target.closest('[data-d]'); if(!b) return;
+  var col=b.closest('.dcol'), ls=col.querySelectorAll('.dl'), act=b.dataset.d;
+  if(act==='next'){ for(var i=0;i<ls.length;i++){ if(ls[i].classList.contains('hid')){ ls[i].classList.remove('hid'); break; } } }
+  if(act==='all') ls.forEach(function(l){l.classList.remove('hid');});
+  if(act==='reset') ls.forEach(function(l,i){ l.classList.toggle('hid', i>0); });
+});
+
+var SELF=['我能分辨方程和恆等式。','我能證明一條等式是恆等式。','我能用兩種方法證明一條等式不是恆等式。'];
+var SELFO=['我做到','大致做到','仍需努力'];
+function selfHTML(){
+  S._self=S._self||{};
+  return SELF.map(function(t,i){
+    return '<div class="selfrow"><span class="st">'+(i+1)+'. '+t+'</span><span class="pick">'+SELFO.map(function(o){
+      return '<button type="button" class="'+(S._self[i]===o?'on':'')+'" data-self="'+i+'" data-o="'+o+'">'+o+'</button>'; }).join('')+'</span></div>';
+  }).join('');
+}
+document.addEventListener('click', function(e){
+  var b=e.target.closest('[data-self]'); if(!b) return;
+  S._self=S._self||{}; S._self[b.dataset.self]=b.dataset.o; save();
+  document.getElementById('selfBox').innerHTML=selfHTML();
+});
+
+/* =========================================================
+   各分頁內容
+   ========================================================= */
+function head(tab, say){
+  var i=TABS.map(function(x){return x.id;}).indexOf(tab), t=TABS[i], p=PH[i];
+  return '<div class="ph"><span class="big" style="background:var('+t.col+')">'+t.num+'</span><div><h2>'+t.name+'</h2>'+
+    (p?'<span class="time">'+p.s+'–'+p.e+'</span>':'<span class="time">給做得快的同學（不計時）</span>')+'<span class="sub">'+fm(say)+'</span></div></div>'+
+    '';
+}
+function qc(id){ return '<div class="card" id="card-'+id+'"></div>'; }
+
+var PAGES={
+t1: head('t1','今天去文具店：兩種計法，總價會一樣嗎？') +
+  '<div class="sticky"><h3>🎯 今日學習目標</h3>'+
+  '<div class="goal"><b>1</b><span>分辨方程和恆等式。</span></div>'+
+  '<div class="goal"><b>2</b><span>證明一條等式是恆等式。</span></div>'+
+  '<div class="goal"><b>3</b><span>用兩種方法證明一條等式不是恆等式。</span></div></div>'+
+  qc('q1'),
+
+t2: head('t2','先熱身！證明恆等式時會用到這些技巧。') +
+  qc('q2')+qc('q3')+qc('q4')+qc('q5'),
+
+t3: head('t3','用天平試一試：甚麼等式無論 `x` 是甚麼都平衡？') +
+  '<div class="card plain"><h3>恆等式的基本概念</h3><ul>'+
+  '<li>對於一個代數等式，若左右兩方的項經化簡後完全相同，則該等式便是恆等式。</li>'+
+  '<li>變量取任何值都可滿足一個恆等式。</li></ul>'+
+  '<div class="eqcmp"><div class="eqc"><span class="eqs">=</span><b>等於</b><small>兩條線</small></div>'+
+  '<div class="eqc hl"><span class="eqs">≡</span><b>恆等於</b><small>三條線</small></div></div>'+
+  '<div>證明了一條等式是恆等式後，結論要用「<b class="eqv">≡</b>」（三條線），例如 '+math('3(x + 4) ≡ 3x + 12')+'。</div>'+
+  '<div class="tip" style="margin-top:6px">比較：'+math('3(x + 4) = 30')+' 是方程，只有 '+math('x = 6')+' 時成立。</div></div>'+
+  balanceHTML('bal3', EQ3, '恆等天平', '選第 6 題的一條等式，拖動 `x`，看看天平會不會傾側。') +
+  qc('q6'),
+
+t4: head('t4','化簡左方和右方，看看是否完全相同。') +
+  areaHTML() +
+  '<div class="sticky"><h3>📝 例題</h3><div>證明 '+math('3(8x + 2) = 2(12x) + 6')+' 是恆等式。</div></div>'+
+  demoHTML('demo4',[{h:'解', l:['左方 = 3(8x + 2)','= 3 × 8x + 3 × 2','= 24x + 6','右方 = 2(12x) + 6','= 24x + 6','∵ 左方 = 右方','∴ 3(8x + 2) ≡ 2(12x) + 6']},
+    {h:'用表格計算 '+math('3(8x + 2)'), html:gridHTML('3',['8x','+ 2'],['3 × 8x|= 24x','3 × 2|= 6'],'3(8x + 2) = 24x + 6')}])+
+  '<div class="sticky"><div>做題次序：第 7 題 ★ → 第 8 題 ★★ → 第 9 題 ★★ →（做得快）第 10 題 ★★★</div></div>'+
+  qc('q7')+qc('q8')+qc('q9')+qc('q10'),
+
+t5: head('t5','只要找到一個令天平不平衡的 `x` 值就夠了！') +
+  balanceHTML('bal5', EQ5, '天平平衡，就是恆等式嗎？', '一開始天平是平衡的。拖動 `x` 試試看，它是不是對任何 `x` 值都平衡？') +
+  '<div class="sticky"><h3>📝 例題</h3><div>證明 '+math('4(5x - 3) = 2(10x + 6)')+' 不是恆等式。</div><div class="tip">提示：熱身第 4、5 題已計算過左方！</div></div>'+
+  demoHTML('demo5',[
+    {h:'方法一', l:['左方 = 4(5x - 3)','= 20x - 12','右方 = 2(10x + 6)','= 20x + 12','∵ 左方 ≠ 右方','∴ 4(5x - 3) = 2(10x + 6) 不是恆等式。']},
+    {h:'方法二', l:['把 x = 0 代入等式。','左方 = 4 × [5 × 0 - 3]','= 4 × (-3)','= -12','右方 = 2 × [10 × 0 + 6]','= 2 × 6','= 12','∵ 左方 ≠ 右方','∴ x = 0 不滿足等式。','∴ 4(5x - 3) = 2(10x + 6) 不是恆等式。']}
+  ])+
+  qc('q11')+qc('q12')+
+  '<div class="card plain">'+
+  '<div class="talk"><span class="ic">🤝</span><div><b>同桌核對（30 秒）</b><br>和同桌比較第 11、12 題的答案。</div></div>'+
+  '<div class="talk"><span class="ic">🙋</span><div><b>全班討論</b><br>兩個方法得到的結論相同嗎？哪個方法較快？</div></div></div>',
+
+t6: head('t6','最後整理一下今天學了甚麼。') +
+  flowHTML() + qc('key')+qc('q13')+qc('q14')+
+  '<div class="card plain"><h3>🪞 自評</h3><div id="selfBox"></div></div>',
+
+tc: head('tc','完成了全部題目？挑戰一下自己！') +
+  qc('c1')+
+  '<div class="sticky"><h3>求恆等式中的未知常數</h3><div>恆等式左右兩方的項經化簡後完全相同，所以可以比較左右兩方 '+math('x')+' 的係數和常數項，求出未知常數。</div></div>'+
+  qc('c2')+qc('c3')
+};
+
+/* =========================================================
+   分頁
+   ========================================================= */
+var curTab='t1', progTab='t1';
+function buildPages(){
+  var main=document.getElementById('main'), nav=document.getElementById('tabs');
+  main.innerHTML=TABS.map(function(t){ return '<section class="page" id="pg-'+t.id+'">'+PAGES[t.id]+'</section>'; }).join('');
+  nav.innerHTML=TABS.map(function(t){ return '<button type="button" class="tab" data-tab="'+t.id+'"><span class="n" style="background:var('+t.col+')">'+t.num+'</span>'+shortName(t.name)+'<span class="ok">✓</span></button>'; }).join('');
+  Object.keys(Q).forEach(buildCard);
+  initComponents();
+  var sb=document.getElementById('selfBox'); if(sb) sb.innerHTML=selfHTML();
+  nav.addEventListener('click', function(e){ var b=e.target.closest('.tab'); if(b) showTab(b.dataset.tab); });
+}
+function shortName(n){ return {'證明是恆等式':'證明是','證明不是恆等式':'證明不是','挑戰區':'挑戰'}[n]||n; }
+var TAB_IDS=null;
+function showTab(id){
+  TAB_IDS=TAB_IDS||TABS.map(function(x){return x.id;});
+  var dir=TAB_IDS.indexOf(id)-TAB_IDS.indexOf(curTab), prev=curTab;
+  curTab=id;
+  if(PH.some(function(p){return p.tab===id;})) progTab=id;
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.toggle('on', p.id==='pg-'+id); });
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('on', b.dataset.tab===id); });
+  var on=document.querySelector('.tab.on'); if(on&&on.scrollIntoView) on.scrollIntoView({inline:'nearest', block:'nearest'});
+  if(padT) closePad();
+  sel=null;
+  S._tab=id; save();
+  window.scrollTo(0,0);
+  var pg=document.getElementById('pg-'+id);
+  if(pg&&prev!==id&&!document.body.classList.contains('entering')){ pg.classList.remove('inR','inL'); void pg.offsetWidth; pg.classList.add(dir>0?'inR':'inL'); setTimeout(function(){ pg.classList.remove('inR','inL'); },360); }
+  if(typeof buddySay==='function'&&buddy){ buddySay(GREET[id]); lookAt(pg&&pg.querySelector('.ph')); }
+  resetIdle&&buddy&&resetIdle();
+  tick();
+}
+function updateTabs(){
+  document.querySelectorAll('.tab').forEach(function(b){
+    var req=REQ[b.dataset.tab];
+    b.classList.toggle('done', !!(req&&req.every(function(q){return st(q).done;})));
+  });
+}
+
+/* =========================================================
+   時間條（香港時間，自動運行）
+   ========================================================= */
+function sec(hm){ var a=hm.split(':'); return (+a[0])*3600+(+a[1])*60; }
+var L0=sec(PH[0].s), L1=sec(PH[PH.length-1].e);
+function hkSec(){ return ((Date.now()/1000+8*3600)%86400+86400)%86400; }
+var OFF=0, PV=P.get('preview');
+if(PV&&/^\d{1,2}:\d{2}$/.test(PV)) OFF=sec(PV)-hkSec(); else PV=null;
+function nowSec(){ return ((hkSec()+OFF)%86400+86400)%86400; }
+function fmtMS(s){ s=Math.max(0,Math.ceil(s)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function fmtHM(t){ t=Math.floor(t); return String(Math.floor(t/3600)).padStart(2,'0')+':'+String(Math.floor(t%3600/60)).padStart(2,'0'); }
+function phaseAt(t){ for(var i=0;i<PH.length;i++){ if(t>=sec(PH[i].s)&&t<sec(PH[i].e)) return i; } return -1; }
+function timerInfo(t,pi){
+  var r={phase:-1, before:false, after:false, status:'', pace:'', paceKind:''};
+  if(t<L0){ r.before=true; r.status='⏳ 課堂將於 14:25 開始（尚有 '+fmtMS(L0-t)+'）'; }
+  else if(t>=L1){ r.after=true; r.status='🔔 課堂已完結'; }
+  else { var i=phaseAt(t), p=PH[i]; r.phase=i; r.status='⏱ 現在 '+fmtHM(t)+'　應進行：第 '+(i+1)+' 部分 '+p.name+'（尚餘 '+fmtMS(sec(p.e)-t)+'）'; }
+  if(!r.before && pi>=0){
+    var q=PH[pi], s0=sec(q.s), e0=sec(q.e), m;
+    if(r.after && pi===PH.length-1){ r.paceKind='on'; r.pace='✓ 已到最後部分'; }
+    else if(t<s0-30){ m=Math.max(1,Math.round((s0-t)/60)); r.paceKind='ahead'; r.pace='⏩ 超前 '+m+' 分鐘'; }
+    else if(t>e0+30){ m=Math.max(1,Math.round((t-e0)/60)); r.paceKind='behind'; r.pace='⏪ 落後 '+m+' 分鐘'; }
+    else { r.paceKind='on'; r.pace='✓ 準時'; }
+    r.pace+='（實際：第 '+(pi+1)+' 部分）';
+  }
+  return r;
+}
+function buildTimer(){
+  var tot=L1-L0;
+  document.getElementById('tbar').innerHTML=PH.map(function(p,i){
+    return '<div class="seg" data-i="'+i+'" style="flex:'+(sec(p.e)-sec(p.s))+' 1 0;background-color:var('+p.col+')"><span>'+(i+1)+' '+shortName(p.name)+'</span></div>';
+  }).join('');
+  var marks=PH.map(function(p){return p.s;}).concat([PH[PH.length-1].e]);
+  document.getElementById('ticks').innerHTML=marks.map(function(m){ return '<span style="left:'+((sec(m)-L0)/tot*100)+'%">'+m+'</span>'; }).join('');
+}
+function tick(){
+  var t=nowSec(), pi=PH.map(function(p){return p.tab;}).indexOf(progTab);
+  var r=timerInfo(t,pi);
+  document.querySelectorAll('#tbar .seg').forEach(function(s,i){
+    s.classList.toggle('past', t>=sec(PH[i].e));
+    s.classList.toggle('cur', i===r.phase);
+  });
+  var ptr=document.getElementById('ptr');
+  ptr.style.display=r.before?'none':'block';
+  ptr.style.left=(Math.min(1,Math.max(0,(t-L0)/(L1-L0)))*100)+'%';
+  document.getElementById('tnow').innerHTML=r.status+(PV?' <span class="pvw">（預覽時間）</span>':'');
+  var pc=document.getElementById('tpace');
+  if(TEACHER&&r.pace){ pc.hidden=false; pc.textContent=r.pace; pc.className='pace '+r.paceKind; }
+  else pc.hidden=true;
+}
+
+/* =========================================================
+   鉛筆仔：在畫面一角陪學生做題
+   ========================================================= */
+var BUDDY_SVG='<svg viewBox="0 0 100 100" aria-hidden="true"><g class="bbody"><g transform="rotate(-24 50 54)" stroke="#1F2A44" stroke-width="3" stroke-linejoin="round">'+
+  '<rect x="34" y="4" width="32" height="14" rx="6" fill="#FF7F9C"/><rect x="34" y="17" width="32" height="8" fill="#C7D3E8"/>'+
+  '<rect x="34" y="25" width="32" height="50" fill="#FFE14D"/><line x1="44.5" y1="25" x2="44.5" y2="75" stroke-width="1.5" opacity=".35"/><line x1="55.5" y1="25" x2="55.5" y2="75" stroke-width="1.5" opacity=".35"/>'+
+  '<path d="M34 75 L66 75 L50 98 Z" fill="#F6D2A8"/><path d="M45 90 L55 90 L50 98 Z" fill="#1F2A44"/>'+
+  '<g class="beye l"><circle cx="43" cy="41" r="6" fill="#fff" stroke-width="2.2"/><circle id="bpL" cx="43" cy="41" r="2.9" fill="#1F2A44" stroke="none"/></g>'+
+  '<g class="beye r"><circle cx="57" cy="41" r="6" fill="#fff" stroke-width="2.2"/><circle id="bpR" cx="57" cy="41" r="2.9" fill="#1F2A44" stroke="none"/></g>'+
+  '<circle cx="38.5" cy="51" r="3" fill="#FF7F9C" stroke="none" opacity=".6"/><circle cx="61.5" cy="51" r="3" fill="#FF7F9C" stroke="none" opacity=".6"/>'+
+  '<path id="bMouth" d="M45 52 Q50 57.5 55 52" fill="none" stroke-width="2.4" stroke-linecap="round"/>'+
+  '</g></g></svg>';
+var GREET={
+  t1:'今天去文具店：兩種計法，總價會一樣嗎？',
+  t2:'先熱身！證明恆等式時會用到這些技巧。',
+  t3:'用天平試一試：甚麼等式無論 x 是甚麼都平衡？',
+  t4:'化簡左方和右方，看看是否完全相同。',
+  t5:'只要找到一個令天平不平衡的 x 值就夠了！',
+  t6:'最後整理一下今天學了甚麼。',
+  tc:'完成了全部題目？挑戰一下自己！'
+};
+var PRAISE=['做得好！記得把步驟抄在工作紙上。','正確！你越來越熟練了。','好棒！下一題也難不到你。','完全正確！'];
+var ENCOURAGE=['差一點！看看打了 ✗ 的位置。','不要緊，再試一次！','慢慢來，可以按「💡 提示」。'];
+var buddy, bub, bubTimer=null, eyeTarget=null, idleTimer=null, idleSaid={}, pick=0;
+function buddyBuild(){
+  buddy=document.createElement('div'); buddy.id='buddy';
+  buddy.innerHTML='<div class="bbub" id="bbub" role="status" aria-live="polite"></div><button type="button" id="buddyBtn" aria-label="鉛筆仔：點一下收起或打開">'+BUDDY_SVG+'</button>';
+  document.body.appendChild(buddy);
+  bub=buddy.querySelector('#bbub');
+  try{ if(localStorage.getItem('identity-buddy-mini')==='1') buddy.classList.add('mini'); }catch(e){}
+  buddy.querySelector('#buddyBtn').addEventListener('click', function(){
+    var m=buddy.classList.toggle('mini');
+    try{ localStorage.setItem('identity-buddy-mini', m?'1':'0'); }catch(e){}
+    if(!m) buddySay('我回來了！有需要可以按「💡 提示」。');
+  });
+  document.addEventListener('pointermove', function(e){ eyeTarget={x:e.clientX, y:e.clientY}; lookSoon(); }, {passive:true});
+  document.addEventListener('pointerdown', function(e){ eyeTarget={x:e.clientX, y:e.clientY}; lookSoon(); resetIdle(); }, {passive:true});
+}
+var lookRAF=null;
+function lookSoon(){ if(!lookRAF) lookRAF=requestAnimationFrame(function(){ lookRAF=null; look(); }); }
+function look(){
+  if(!buddy||!eyeTarget) return;
+  var r=buddy.querySelector('#buddyBtn').getBoundingClientRect();
+  var cx=r.left+r.width*0.5, cy=r.top+r.height*0.4;
+  var dx=eyeTarget.x-cx, dy=eyeTarget.y-cy, d=Math.sqrt(dx*dx+dy*dy)||1;
+  var a=24*Math.PI/180, lx=(dx*Math.cos(a)+dy*Math.sin(a))/d, ly=(-dx*Math.sin(a)+dy*Math.cos(a))/d;
+  var k=Math.min(1,d/160)*2.6;
+  ['bpL','bpR'].forEach(function(id,i){
+    var p=buddy.querySelector('#'+id); if(!p) return;
+    p.setAttribute('cx',(i?57:43)+lx*k); p.setAttribute('cy',41+ly*k);
+  });
+}
+function lookAt(el){ if(!el) return; var r=el.getBoundingClientRect(); eyeTarget={x:r.left+Math.min(r.width,300)/2, y:r.top+Math.min(r.height,200)/2}; look(); }
+function buddySay(text, mood){
+  if(!buddy||buddy.classList.contains('mini')) return;
+  bub.innerHTML=fm(text.replace(/\bx\b/g,'`x`'));
+  bub.classList.remove('show'); void bub.offsetWidth; bub.classList.add('show');
+  clearTimeout(bubTimer); bubTimer=setTimeout(function(){ bub.classList.remove('show'); }, 4200);
+  var mouth=buddy.querySelector('#bMouth');
+  if(mood){
+    buddy.classList.remove('hop','tilt'); void buddy.offsetWidth; buddy.classList.add(mood);
+    setTimeout(function(){ buddy.classList.remove(mood); }, 700);
+  }
+  if(mouth) mouth.setAttribute('d', mood==='hop' ? 'M44 51 Q50 60 56 51 Z' : mood==='tilt' ? 'M45.5 54 Q50 51.5 54.5 54' : 'M45 52 Q50 57.5 55 52');
+}
+function resetIdle(){
+  clearTimeout(idleTimer);
+  idleTimer=setTimeout(function(){
+    if(curTab==='t1'||idleSaid[curTab]) return;
+    idleSaid[curTab]=1; buddySay('卡住了嗎？可以按「💡 提示」，一步一步來。','tilt');
+  }, 75000);
+}
+function buddyOnCheck(id, r){
+  lookAt(document.getElementById('card-'+id));
+  if(r.ok) buddySay(PRAISE[(pick++)%PRAISE.length], 'hop');
+  else if(/^還有 \d+ 處未完成/.test(r.msg||'')) buddySay('還有空格未完成，慢慢來。','tilt');
+  else buddySay(ENCOURAGE[(pick++)%ENCOURAGE.length], 'tilt');
+}
+
+/* =========================================================
+   詞彙卡
+   ========================================================= */
+document.getElementById('glossBody').innerHTML=
+  '<h3>重點用語</h3><dl class="gl">'+
+  '<dt>方程</dt><dd>例如 '+math('3(x + 4) = 30')+'，只有 '+math('x = 6')+' 時成立。</dd>'+
+  '<dt>恆等式</dt><dd>例如 '+math('3(x + 4) = 3x + 12')+'，左右兩方的項經化簡後完全相同，變量取任何值都成立。</dd>'+
+  '<dt>≡</dt><dd>三條線，讀作「恆等於」，例如 '+math('3(x + 4) ≡ 3x + 12')+'。</dd>'+
+  '<dt>左方 / 右方</dt><dd>在 '+math('6x + 15 = 3(2x + 5)')+' 中，左方是 '+math('6x + 15')+'，右方是 '+math('3(2x + 5)')+'。</dd>'+
+  '<dt>撤去括號</dt><dd>括號前是「+」號：各項符號不變，'+math('+(3x - 2) = + 3x - 2')+'<br>括號前是「−」號：每一項都要變號，'+math('-(2y - 1) = - 2y + 1')+'</dd>'+
+  '<dt>同類項</dt><dd>'+math('3x')+' 和 '+math('2x')+' 是同類項；'+math('3x')+' 和 5 不是同類項。</dd>'+
+  '<dt>合併同類項</dt><dd>'+math('3x + 2x = 5x')+'</dd>'+
+  '<dt>展開</dt><dd>'+math('4(5x - 3) = 20x - 12')+'</dd>'+
+  '<dt>代入</dt><dd>把 '+math('x = 0')+' 代入 '+math('4(5x - 3)')+'：'+math('4 × [5 × 0 - 3] = -12')+'</dd>'+
+  '<dt>常數項</dt><dd>'+math('20x - 12')+' 的常數項是 '+math('-12')+'。</dd></dl>'+
+  '<h3>證明句式</h3>'+
+  '<div><b>證明是恆等式</b></div><div class="sent">左方 = …　右方 = …<br>∵ 左方 = 右方<br>∴ … ≡ …</div>'+
+  '<div><b>證明不是恆等式（方法一）</b></div><div class="sent">左方 = …　右方 = …<br>∵ 左方 ≠ 右方<br>∴ … 不是恆等式。</div>'+
+  '<div><b>證明不是恆等式（方法二）</b></div><div class="sent">把 '+math('x = 0')+' 代入等式。<br>左方 = …　右方 = …<br>∵ 左方 ≠ 右方<br>∴ '+math('x = 0')+' 不滿足等式。<br>∴ … 不是恆等式。</div>';
+document.getElementById('glossBtn').addEventListener('click', function(){ document.getElementById('glossOv').classList.add('on'); });
+document.getElementById('glossClose').addEventListener('click', function(){ document.getElementById('glossOv').classList.remove('on'); });
+document.getElementById('glossOv').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('on'); });
+document.getElementById('doneClose').addEventListener('click', function(){ document.getElementById('doneOv').classList.remove('on'); });
+
+/* =========================================================
+   啟動
+   ========================================================= */
+buildTimer();
+document.body.classList.add('entering');
+buddyBuild();
+buildPages();
+setTimeout(function(){ document.body.classList.remove('entering'); }, 1100);
+updateTabs();
+showTab(S._tab && TABS.some(function(t){return t.id===S._tab;}) ? S._tab : 't1');
+setInterval(tick, 1000);
+
+window.LESSON={Q:Q, evaluate:evaluate, teacherFill:teacherFill, st:st, timerInfo:timerInfo, sec:sec, math:math};
+})();
+</script>
+</body>
+</html>
