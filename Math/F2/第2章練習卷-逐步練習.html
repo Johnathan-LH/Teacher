@@ -1,0 +1,2514 @@
+<!doctype html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>第2章 練習卷 · 逐步練習（暫時）</title>
+<style>
+/* 逐步練習網站：B 解題路線 ＋ 標楷體作答與旁註 */
+:root {
+  --bg: #f3f5f7;
+  --card: #ffffff;
+  --ink: #15202b;
+  --muted: #5c6773;
+  --faint: #8a949e;
+  --line: #d6dce2;
+  --line2: #e8ecf0;
+  /* 性質種類：做對之後才顯示 */
+  --f-line: #0d7a80;
+  --f-par: #1f5fd1;
+  --f-tri: #c4560f;
+  --f-poly: #6a3fc0;
+  --ok: #138a5b;
+  --ok-bg: #e6f4ee;
+  --err: #7a3412;
+  --err-bg: #f5efe9;
+  --hl: #d6336c;
+  --hl-bg: #fcebf1;
+  --note: #f1f3f5;
+  --calc: #8a949e;
+  --ui: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", system-ui, sans-serif;
+  --num: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --kai: "Times New Roman", "DFKai-SB", "標楷體", "BiauKai", "KaiTi", "STKaiti", serif;
+  --var: "Times New Roman", serif;
+  --r: 12px;
+  --bar-h: 56px;
+  --spring: linear(0, 0.25 9%, 0.74 22%, 1.04 36%, 1.1 44%, 1.05 56%, 0.99 70%, 1);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--ui); -webkit-text-size-adjust: 100%; }
+button { font: inherit; color: inherit; }
+i.v { font-family: var(--var); font-style: italic; font-size: 1.12em; }
+.hint, .st .t, .st .r, .stmt, .fb, .pick, .done-card, .prop, .menu button { letter-spacing: 0; font-kerning: normal; }
+:focus-visible { outline: 3px solid var(--f-par); outline-offset: 2px; }
+
+/* ---------- 頁頭：一行 ---------- */
+.top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; height: var(--bar-h); padding: 0 16px 0 24px; background: var(--card); border-bottom: 1px solid var(--line); }
+.top .title { flex: none; font-weight: 800; white-space: nowrap; }
+.top .title span { font-weight: 400; color: var(--muted); margin-left: 8px; }
+.chips { flex: 1; min-width: 0; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; justify-content: center; padding: 0 4px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { position: relative; flex: none; display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 18px; background: none; font: 600 13px var(--num); color: var(--muted); cursor: pointer; transition: background .15s, color .15s; }
+.chip:hover { background: var(--line2); }
+.chip.started::after { content: ""; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 2px; background: var(--hl); }
+.chip.done { color: var(--ok); }
+.chip.done::after { content: ""; position: absolute; bottom: 3px; width: 10px; height: 2px; border-radius: 1px; background: var(--ok); }
+.chip.now { background: var(--ink); color: #fff; }
+.chip.now::after { background: #fff; }
+.chip.sep { margin-left: 10px; }
+.mnav { display: none; }
+.top .lib { flex: none; height: 40px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--card); font-weight: 700; font-size: 14px; cursor: pointer; }
+.top .lib:hover { border-color: var(--ink); }
+a.lib { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink); white-space: nowrap; }
+.teacher-flag { flex: none; padding: 2px 10px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 12px; }
+
+/* ---------- 主區：左圖右路線 ---------- */
+.wrap { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(380px, 1fr); height: calc(100vh - var(--bar-h)); }
+.stage { position: relative; display: flex; flex-direction: column; background: var(--card); border-right: 1px solid var(--line); overflow: hidden; }
+.stage-head { display: flex; align-items: baseline; gap: 12px; padding: 18px 24px 0; }
+.stage-head .no { font: 800 36px/1 var(--num); color: var(--ink); }
+.stage-head .meta { font-size: 13px; color: var(--muted); }
+.stage-head .star { color: var(--ink); font-weight: 700; }
+.figzone { flex: 1; min-height: 0; display: grid; place-items: center; padding: 8px 24px 24px; }
+.figzone .bigtext { max-width: 460px; font: 700 26px/1.5 var(--ui); text-align: center; color: var(--ink); }
+.figzone .bigtext small { display: block; margin-top: 10px; font: 400 15px var(--ui); color: var(--muted); }
+.side { position: relative; display: flex; flex-direction: column; min-height: 0; }
+.scroll { flex: 1; overflow-y: auto; padding: 24px 32px 28px; }
+
+/* ---------- 圖形 ---------- */
+.fig { display: block; max-width: 100%; height: auto; overflow: visible; font-family: var(--num); }
+.fig .ln { stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; transition: stroke .25s, stroke-width .25s; }
+.fig .ln.dash { stroke-dasharray: 6 5; }
+.fig .arc { fill: none; stroke: var(--ink); stroke-width: 1.6; transition: stroke .25s, stroke-width .25s; }
+.fig .mk { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke .25s; }
+.fig text { fill: var(--ink); text-anchor: middle; dominant-baseline: central; font-weight: 600; }
+.fig .pl { font-size: 17px; fill: #39434d; }
+.fig .al, .fig .lt { font-size: 16px; }
+.fig .v { font-style: italic; font-family: var(--var); font-size: 1.1em; }
+.fig .extra { display: none; }
+.fig .extra.solved, .fig .extra.hl, .fig .extra.target { display: inline; }
+.fig .solved { stroke: var(--ok); }
+.fig text.solved { fill: var(--ok); stroke: none; font-weight: 700; }
+.fig .hl { stroke: var(--hl); stroke-width: 3.2; }
+.fig text.hl { fill: var(--hl); stroke: none; stroke-width: 0; }
+.fig .arc.target { stroke: var(--hl); stroke-width: 2.6; }
+.fig .wedge { fill: var(--hl); opacity: .18; }
+.fig .wedge.flash { animation: flash .5s ease-out 2; }
+@keyframes flash { 50% { opacity: .55; } }
+.fig text.target { fill: var(--hl); font-size: 24px; font-weight: 800; }
+.fig .ov-fill { display: none; fill: var(--hl); opacity: .12; }
+.fig .ov-line { display: none; fill: none; stroke: var(--f-tri); stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; opacity: .32; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.fig .f-par { stroke: var(--f-par); fill: var(--f-par); }
+.fig .f-tri { stroke: var(--f-tri); fill: var(--f-tri); }
+.fig .f-poly { stroke: var(--f-poly); fill: var(--f-poly); }
+.fig .ov-line.f-par, .fig .ov-line.f-tri, .fig .ov-line.f-poly { fill: none; }
+.fig .show { display: inline; }
+.fig .ov-line.draw { animation: draw .7s cubic-bezier(.3, .7, .3, 1) both; }
+@keyframes draw { from { stroke-dashoffset: 1; } }
+.fig.intro .ln, .fig.intro .arc, .fig.intro text { animation: lnin .35s ease-out both; }
+@keyframes lnin { from { opacity: 0; } }
+.fig text.landing { opacity: 0; }
+.fig text.landed { animation: land .45s var(--spring) both; transform-box: fill-box; transform-origin: center; }
+@keyframes land { from { transform: scale(1.6); } }
+
+/* ---------- 題幹 ---------- */
+.parts { display: flex; gap: 6px; margin: 0 0 14px; }
+.parts button { height: 36px; min-width: 52px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 18px; background: var(--card); font: 700 14px var(--num); cursor: pointer; }
+.parts button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+.parts button.done:not(.on) { border-color: var(--ok); color: var(--ok); }
+.stem { margin: 0 0 6px; font-size: 17px; line-height: 1.75; }
+@media (min-width: 901px) {
+  .stemwrap { position: sticky; top: -24px; z-index: 3; margin: -24px -32px 0; padding: 24px 32px 10px; background: var(--bg); box-shadow: 0 1px 0 var(--line2); }
+}
+.stem.sub { font-weight: 700; }
+.cond { display: inline; padding: 1px 3px; margin: 0 -1px; border: 0; border-bottom: 2px dotted var(--faint); border-radius: 3px; background: none; font: inherit; cursor: pointer; }
+.cond:hover, .cond.on { background: var(--hl-bg); border-bottom-color: var(--hl); color: #9c1f4c; }
+.cond.tag { display: inline-flex; align-items: center; min-height: 34px; margin: 4px 6px 0 0; padding: 0 10px; border: 1.5px solid var(--line); border-radius: 17px; background: var(--card); font: 600 14px var(--ui); }
+.cond.tag:hover, .cond.tag.on { border-color: var(--hl); }
+
+/* ---------- 提示（標楷體旁註） ---------- */
+.hints { list-style: none; margin: 16px 0 0; padding: 0; }
+.hint { position: relative; margin: 0 0 8px; padding: 10px 14px 12px 44px; border-radius: var(--r); background: var(--note); font: 18px/1.65 var(--kai); color: #26313c; cursor: pointer; }
+.hint.new { animation: hintin .26s ease-out both; }
+.hint .n { position: absolute; left: 12px; top: 12px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: #fff; font: 700 12px var(--num); }
+.hint:not(.cur) { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 6px; padding-bottom: 6px; font-size: 16px; }
+.hint:not(.cur) .props { display: none; }
+.hint:not(.cur) .n { top: 8px; }
+.hint:not(.cur) .n { background: var(--faint); }
+.props { list-style: none; margin: 8px 0 0; padding: 0; }
+.props { display: flex; flex-wrap: wrap; gap: 8px; }
+.prop button { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 112px; min-height: 44px; padding: 6px 8px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); font: 15px var(--kai); color: var(--ink); cursor: pointer; }
+.prop button:hover { border-color: var(--ink); }
+.prop b { font-weight: 700; }
+.prop .pfig { display: grid; place-items: center; height: 64px; }
+.prop .fig .ov-line, .prop .fig .ov-fill { display: inline; animation: none; stroke: var(--fam); }
+.prop .fig .ov-fill { fill: var(--fam); }
+.prop .fig .ln { stroke-width: 1.6; } .prop .fig .pl { font-size: 12px; } .prop .fig .al { font-size: 12px; }
+@keyframes hintin { from { opacity: 0; transform: translateY(-6px); } }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 8px; }
+.rcard { padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid #f0d6c4; font: 14px/1.55 var(--ui); color: var(--ink); cursor: default; }
+.rcard b { display: block; font-size: 15px; }
+.rcard .tip { display: block; margin-top: 4px; color: var(--muted); }
+.rcard .fig { margin: 4px auto 0; }
+.rcard .fig .ov-line, .rcard .fig .ov-fill { display: inline; animation: none; }
+.rcard .fig .ln { stroke-width: 1.8; } .rcard .fig .pl { font-size: 14px; } .rcard .fig .al { font-size: 14px; }
+
+/* ---------- 路線 ---------- */
+.route-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 10px; }
+.route-head h3 { margin: 0; font-size: 13px; letter-spacing: .12em; color: var(--muted); font-weight: 700; }
+.linkbtn { min-height: 40px; padding: 0 4px; border: 0; background: none; color: var(--f-par); font-weight: 700; font-size: 15px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.route { position: relative; list-style: none; margin: 0; padding: 0 0 0 36px; }
+.route .rail, .route .fill { position: absolute; left: 11px; top: 14px; width: 4px; border-radius: 2px; }
+.route .rail { bottom: 22px; background: var(--line); }
+.route .fill { height: 0; background: var(--ink); transition: height .45s cubic-bezier(.3, .7, .3, 1); }
+.route.intro .rail { animation: grow .5s ease-out both; transform-origin: top; }
+@keyframes grow { from { transform: scaleY(0); } }
+.st { position: relative; padding: 0 0 20px; }
+.st .dot { position: absolute; left: -33px; top: 5px; width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 4px solid var(--line); transition: border-color .2s, background .2s; }
+.st.done .dot { border-color: var(--fam, var(--ink)); background: var(--fam, var(--ink)); }
+.st.done.pop .dot { animation: dotpop .45s var(--spring); }
+@keyframes dotpop { from { transform: scale(.4); } }
+.st.cur .dot { border-color: var(--ink); box-shadow: 0 0 0 6px rgb(21 32 43 / .1); }
+.st .k { font: 700 12px var(--num); letter-spacing: .08em; color: var(--muted); }
+.st .k .fam { margin-left: 6px; font-family: var(--ui); letter-spacing: 0; color: var(--fam); }
+.st .t { font: 20px/1.6 var(--kai); }
+.st.locked .t { color: var(--faint); font: 15px var(--ui); }
+.st.auto .t { font-size: 18px; color: #39434d; }
+.st .r { display: inline-block; margin-left: 8px; padding: 0 10px; border-radius: 11px; font: 15px/24px var(--kai); background: color-mix(in srgb, var(--fam, var(--ink)) 12%, white); color: var(--fam, var(--ink)); vertical-align: 2px; }
+.st.revealed .t::after { content: "（看了答案）"; margin-left: 6px; font: 12px var(--ui); color: var(--faint); }
+.st.end .k { color: var(--ink); }
+.st.gate .dot { border-style: dashed; }
+.gatebtn { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 0 16px; border: 2px solid var(--ink); border-radius: 12px; background: var(--card); font: 800 16px var(--ui); text-align: left; cursor: pointer; transition: transform .08s, background .15s; }
+.gatebtn span { font: 600 14px var(--ui); color: var(--muted); white-space: nowrap; }
+.gatebtn:hover { background: #f7f9fb; }
+.gatebtn:active { transform: translateY(2px); }
+.st.end.done .dot { border-color: var(--ok); background: var(--ok); }
+.st.start .t { font: 15px/1.7 var(--ui); color: #39434d; }
+
+/* 當前這一站 */
+.panel { margin-top: 8px; padding: 16px; border-radius: 14px; background: var(--card); border: 2px solid var(--ink); box-shadow: 0 6px 18px rgb(21 32 43 / .08); }
+.panel.shake { animation: shake .32s ease-in-out; }
+@keyframes shake { 25% { transform: translateX(-7px); } 60% { transform: translateX(6px); } 85% { transform: translateX(-3px); } }
+.stmt { font: 21px/2 var(--kai); }
+.blank { width: calc(var(--w, 3) * 1ch + 22px); height: 46px; margin: 0 3px; padding: 0 6px; border: 2px solid var(--line); border-radius: 10px; font: 700 20px var(--num); text-align: center; color: var(--ink); background: #fbfcfd; vertical-align: 1px; }
+.blank:focus { outline: none; border-color: var(--ink); background: #fff; }
+.blank.bad { border-color: var(--err); background: var(--err-bg); }
+.blank.good { border-color: var(--ok); background: var(--ok-bg); }
+.reasonrow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.reasonrow .lab { font-size: 14px; color: var(--muted); }
+.pick { height: 44px; padding: 0 14px; border: 2px dashed var(--line); border-radius: 22px; background: #fff; font: 700 17px var(--kai); cursor: pointer; }
+.pick.set { border-style: solid; border-color: var(--ink); }
+.pick.bad { border-color: var(--err); background: var(--err-bg); }
+.pick.good { border-color: var(--ok); background: var(--ok-bg); }
+.rp { font: 18px var(--kai); color: #39434d; }
+.choices { display: flex; gap: 10px; margin-top: 6px; }
+.choices button { min-width: 88px; height: 48px; border: 2px solid var(--line); border-radius: 12px; background: #fff; font: 700 18px var(--ui); cursor: pointer; }
+.choices button.on { border-color: var(--ink); background: var(--ink); color: #fff; }
+.fb { margin: 10px 0 0; font: 17px/1.6 var(--kai); }
+.fb:empty { display: none; }
+.fb.err { padding: 8px 12px; border-radius: 10px; background: var(--note); color: var(--err); box-shadow: inset 3px 0 0 var(--err); }
+.fb.ok { padding: 8px 12px; border-radius: 10px; background: var(--ok-bg); color: #0c5c3c; }
+.reveal { margin-top: 6px; }
+.reveal .linkbtn { color: var(--ink); }
+
+/* 理由選單 */
+.menu { position: fixed; z-index: 40; width: min(420px, calc(100vw - 32px)); max-height: min(70vh, 520px); overflow-y: auto; padding: 10px; border-radius: 14px; background: var(--card); box-shadow: 0 18px 50px rgb(21 32 43 / .25), 0 0 0 1px var(--line); animation: menuin .2s ease-out both; transform-origin: top left; }
+@keyframes menuin { from { opacity: 0; transform: scale(.96); } }
+.menu.sheet { left: auto !important; right: 0; bottom: 0; top: auto !important; width: min(560px, 100vw); max-height: 70vh; border-radius: 16px 16px 0 0; animation: sheetin .25s cubic-bezier(.3,.7,.3,1) both; }
+@keyframes sheetin { from { transform: translateY(30px); opacity: 0; } }
+.menu .echo { margin: 2px 6px 8px; padding: 8px 10px; border-radius: 8px; background: var(--note); font: 19px var(--kai); }
+.menu h4 { margin: 8px 6px 4px; font-size: 12px; color: var(--muted); letter-spacing: .08em; }
+.menu .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.menu button { min-height: 44px; padding: 4px 10px; border: 1.5px solid var(--line2); border-radius: 10px; background: #fafbfc; font: 17px var(--kai); text-align: left; cursor: pointer; }
+.menu button:hover, .menu button:focus-visible { border-color: var(--ink); background: #fff; }
+
+/* 終點：直接作答 */
+.direct { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 6px; font: 20px var(--kai); }
+
+/* 完成 */
+.done-card { margin-top: 18px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 2px solid var(--ok); }
+.done-card.new { animation: hintin .3s ease-out both; }
+.done-card .got { margin: 0 0 8px; font: 800 24px var(--kai); color: var(--ok); }
+.done-card h3 { margin: 0 0 6px; font-size: 14px; color: var(--muted); }
+.done-card ol { margin: 0; padding: 0; list-style: none; font: 19px/1.9 var(--kai); }
+.done-card ol .why { color: #39434d; white-space: nowrap; }
+.done-card .fd { display: inline-block; width: 7px; height: 7px; margin: 0 2px 2px 6px; border-radius: 50%; background: var(--fam); vertical-align: middle; }
+.done-card .why2 { margin: 6px 0 0; font: 17px/1.7 var(--kai); }
+.done-card p.copy { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+
+/* 正多邊形小工具 */
+.ngon { display: grid; justify-items: center; gap: 10px; width: 100%; max-width: 440px; }
+.ngon .read { font: 20px var(--kai); text-align: center; }
+.ngon .read b { font: 800 22px var(--num); }
+.ngon input[type="range"] { width: 100%; height: 44px; accent-color: var(--ink); }
+.ngon svg polygon { fill: #f6f8fa; stroke: var(--ink); stroke-width: 2.2; stroke-linejoin: round; }
+.ngon svg .ext { stroke: var(--hl); stroke-width: 2.4; fill: none; }
+.ngon svg .extl { stroke: var(--ink); stroke-dasharray: 5 4; stroke-width: 1.6; }
+
+/* ---------- 底部固定操作 ---------- */
+.bar { flex: none; display: flex; gap: 12px; padding: 12px 32px 16px; border-top: 1px solid var(--line); background: var(--bg); }
+.bar button { height: 54px; border-radius: 12px; font: 800 17px var(--ui); cursor: pointer; transition: transform .08s; }
+.bar button:active { transform: translateY(3px); }
+.bar .ghost { flex: 1; border: 2px solid var(--line); background: var(--card); }
+.bar .ghost:disabled { color: var(--faint); cursor: default; }
+.bar .go { flex: 2; border: 0; background: var(--ink); color: #fff; box-shadow: 0 4px 0 #000; }
+.bar .go:active { box-shadow: 0 1px 0 #000; }
+.bar .go.next { background: var(--ok); box-shadow: 0 4px 0 #0b5c3c; }
+.bar .go.soft { background: #c6cdd4; box-shadow: 0 4px 0 #a9b2bb; color: #fff; }
+.bar .ghost[hidden] { display: none; }
+
+/* 飛行中的數值 */
+.flyer { position: fixed; z-index: 50; pointer-events: none; font: 700 20px var(--kai); color: var(--ok); white-space: nowrap; }
+
+/* ---------- 性質卡庫 ---------- */
+.drawer { position: fixed; inset: 0; z-index: 60; display: none; }
+.drawer.open { display: block; }
+.drawer .shade { position: absolute; inset: 0; background: rgb(21 32 43 / .35); animation: fade .2s both; }
+@keyframes fade { from { opacity: 0; } }
+.drawer .sheet { position: absolute; top: 0; right: 0; bottom: 0; width: min(560px, 100%); overflow-y: auto; padding: 18px 22px 32px; background: var(--bg); box-shadow: -10px 0 40px rgb(21 32 43 / .2); animation: slidein .3s cubic-bezier(.3, .7, .3, 1) both; }
+@keyframes slidein { from { transform: translateX(40px); opacity: 0; } }
+.drawer .sheet header { display: flex; align-items: center; justify-content: space-between; }
+.drawer .sheet h2 { margin: 0; font-size: 18px; }
+.drawer .close { width: 44px; height: 44px; border: 0; border-radius: 22px; background: var(--card); font-size: 22px; cursor: pointer; }
+.drawer h3 { margin: 18px 0 8px; font-size: 13px; letter-spacing: .1em; }
+.drawer .cards { grid-template-columns: 1fr 1fr; }
+.drawer .rcard { border-color: var(--line); }
+.drawer .rcard.focus { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- 手機、平板 ---------- */
+@media (max-width: 900px) {
+  .top { padding: 0 8px 0 16px; gap: 8px; }
+  .top .title span { display: none; }
+  .teacher-flag { display: none; }
+  .prop button { min-width: 96px; }
+  .chips { display: none; }
+  .mnav { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; position: relative; align-self: stretch; }
+  .mnav button { width: 44px; height: 44px; border: 0; border-radius: 22px; background: none; font: 400 26px/1 var(--num); cursor: pointer; }
+  .mnav #mpos { min-width: 64px; text-align: center; font: 700 15px var(--num); }
+  .mprog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line2); }
+  .mprog i { display: block; height: 100%; width: 0; background: var(--ok); transition: width .3s; }
+  .top .title { display: none; }
+  .mnav #mpos { min-width: 0; white-space: nowrap; }
+  .top .lib { padding: 0 12px; }
+  .wrap { display: block; height: auto; }
+  .stage { position: sticky; top: var(--bar-h); z-index: 10; border-right: 0; border-bottom: 1px solid var(--line); box-shadow: 0 4px 12px rgb(21 32 43 / .06); }
+  .stage-head { display: none; }
+  .stage-head { padding: 12px 16px 0; }
+  .stage-head .no { font-size: 22px; }
+  .stage-head .meta { display: none; }
+  .figzone { padding: 6px 12px 8px; }
+  .figzone .fig { max-height: 32vh; width: auto; }
+  .st, .hint, .done-card { scroll-margin-top: calc(var(--bar-h) + 34vh); scroll-margin-bottom: 96px; }
+  .scroll { padding: 18px 16px 120px; overflow: visible; }
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; padding: 10px 16px calc(12px + env(safe-area-inset-bottom)); }
+  .drawer .cards { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="title">第 2 章 逐步練習<span>直線與多邊形的角</span></span>
+  <nav class="chips" id="chips" aria-label="題目"></nav>
+  <div class="mnav"><button type="button" id="mprev" aria-label="上一題">‹</button><span id="mpos"></span><button type="button" id="mnext" aria-label="下一題">›</button><span class="mprog"><i id="mprog"></i></span></div>
+  <a class="lib pdf" href="第2章練習卷.pdf" target="_blank" rel="noopener">練習卷</a>
+  <button type="button" class="lib" id="libbtn">性質卡</button>
+</header>
+<main class="wrap">
+  <section class="stage" aria-label="圖形">
+    <div class="stage-head"><span class="no" id="qno"></span><span class="meta" id="qmeta"></span></div>
+    <div class="figzone" id="figzone"></div>
+  </section>
+  <section class="side" aria-label="題目與解題路線">
+    <div class="scroll" id="scroll"></div>
+    <div class="bar"><button type="button" class="ghost" id="hintbtn">提示</button><button type="button" class="go" id="gobtn">檢查答案</button></div>
+  </section>
+</main>
+<div class="drawer" id="lib" role="dialog" aria-modal="true" aria-label="性質卡">
+  <div class="shade"></div>
+  <div class="sheet"><header><h2>性質卡</h2><button type="button" class="close" aria-label="關閉">×</button></header><div id="libbody"></div></div>
+</div>
+<script>
+/* 幾何計算：座標一律用數學座標（y 向上），角度用度。 */
+(function (root) {
+  const rad = (d) => (d * Math.PI) / 180;
+  const deg = (r) => (r * 180) / Math.PI;
+  const norm = (a) => ((a % 360) + 360) % 360;
+
+  const polar = (p, a, len) => [p[0] + len * Math.cos(rad(a)), p[1] + len * Math.sin(rad(a))];
+  const dir = (p, q) => norm(deg(Math.atan2(q[1] - p[1], q[0] - p[0])));
+  const dist = (p, q) => Math.hypot(q[0] - p[0], q[1] - p[1]);
+  const lerp = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+  // 由 p→q 方向延長，越過 q 再走 len
+  const extend = (p, q, len) => polar(q, dir(p, q), len);
+  // 射線 v→p 逆時針轉到 v→q 的角度，範圍 [0, 360)
+  const ccw = (v, p, q) => norm(dir(v, q) - dir(v, p));
+
+  // 兩條直線的交點：經過 p、方向 a；經過 q、方向 b
+  function meet(p, a, q, b) {
+    const u = [Math.cos(rad(a)), Math.sin(rad(a))];
+    const w = [Math.cos(rad(b)), Math.sin(rad(b))];
+    const den = u[0] * w[1] - u[1] * w[0];
+    const dx = q[0] - p[0], dy = q[1] - p[1];
+    const s = (dx * w[1] - dy * w[0]) / den;
+    return [p[0] + s * u[0], p[1] + s * u[1]];
+  }
+
+  /* 由內角建多邊形（逆時針走），前 n−2 條邊長已給，最後兩條自動求出使圖形閉合。
+     回傳頂點陣列；邊長為負代表給定的角度和邊長無法閉合。 */
+  function polygon(angles, lens, start, heading) {
+    const n = angles.length;
+    const pts = [start || [0, 0]];
+    const hd = [heading || 0];
+    for (let i = 1; i < n; i++) hd.push(hd[i - 1] + (180 - angles[i]));
+    for (let i = 0; i < n - 2; i++) pts.push(polar(pts[i], hd[i], lens[i]));
+    const a = hd[n - 2], b = hd[n - 1];
+    const last = pts[n - 2];
+    const u = [Math.cos(rad(a)), Math.sin(rad(a))];
+    const w = [Math.cos(rad(b)), Math.sin(rad(b))];
+    const tx = pts[0][0] - last[0], ty = pts[0][1] - last[1];
+    const den = u[0] * w[1] - u[1] * w[0];
+    const la = (tx * w[1] - ty * w[0]) / den;
+    const lb = (u[0] * ty - u[1] * tx) / den;
+    if (la <= 0 || lb <= 0) throw new Error('polygon 無法閉合：' + angles.join(','));
+    pts.push(polar(last, a, la));
+    return pts;
+  }
+
+  const api = { rad, deg, norm, polar, dir, dist, lerp, extend, ccw, meet, polygon };
+  root.GEOM = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 幾何圖 SVG 生成：練習卷、答案、交互網站共用同一份輸出。
+   圖形規格（數學座標，y 向上）：
+   pts    { A: [x, y], ... }            名字以 _ 開頭的點不標字母
+   segs   [{ a, b, id, ext: [越過 a 的長度, 越過 b 的長度], dash }]
+   arcs   [{ v, p, q, label, value, id, reflex, right }]  v 為頂點；預設取小於 180° 的一邊
+   par    [{ a, b, n, t }]              平行記號（箭嘴方向 a→b，n 個）
+   ticks  [{ a, b, n }]                 等長記號
+   lens   [{ a, b, text, side }]        邊長標註，side = 1 或 −1
+   labels { A: 方向角 或 [方向角, 距離px] }  覆蓋自動放置的字母位置
+   overlays [{ id, lines: [[點...]], fill: [點...] }]  交互網站用的描邊／填色層 */
+(function (root) {
+  const G = root.GEOM || (typeof require !== 'undefined' ? require('./geom.js') : null);
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const f = (n) => Math.round(n * 10) / 10;
+
+  // 變數字母用斜體
+  function rich(text) {
+    return esc(text).replace(/(^|[^A-Za-z])([xyn])(?![A-Za-z])/g, '$1<tspan class="v">$2</tspan>');
+  }
+
+  // 依 reflex 設定，回傳逆時針起點、掃過角度
+  function arcSpan(pts, a) {
+    const V = pts[a.v], P = pts[a.p], Q = pts[a.q];
+    let s = G.ccw(V, P, Q), start = G.dir(V, P);
+    const wantReflex = !!a.reflex;
+    if ((s > 180) !== wantReflex) { start = G.dir(V, Q); s = 360 - s; }
+    return { start, sweep: s };
+  }
+
+  function render(spec, opts) {
+    opts = opts || {};
+    const pts = spec.pts;
+    const values = opts.values || {};
+    const pad = opts.pad == null ? 30 : opts.pad;
+    const segs = (spec.segs || []).map((s) => {
+      const A = pts[s.a], B = pts[s.b];
+      const e = s.ext || [0, 0];
+      return Object.assign({}, s, {
+        A: e[0] ? G.extend(B, A, e[0]) : A,
+        B: e[1] ? G.extend(A, B, e[1]) : B,
+      });
+    });
+
+    // 邊界
+    const all = Object.values(pts).concat(...segs.map((s) => [s.A, s.B]));
+    let minx = Math.min(...all.map((p) => p[0])), maxx = Math.max(...all.map((p) => p[0]));
+    let miny = Math.min(...all.map((p) => p[1])), maxy = Math.max(...all.map((p) => p[1]));
+    const wU = maxx - minx || 1, hU = maxy - miny || 1;
+    const maxW = opts.maxW || 320, maxH = opts.maxH || 260;
+    const s = Math.min(opts.scale || spec.scale || 34, (maxW - 2 * pad) / wU, (maxH - 2 * pad) / hU);
+    const W = wU * s + 2 * pad, H = hU * s + 2 * pad;
+    const X = (p) => pad + (p[0] - minx) * s;
+    const Y = (p) => pad + (maxy - p[1]) * s;
+    const xy = (p) => `${f(X(p))},${f(Y(p))}`;
+    // 螢幕上沿數學角度 a 移動 d 像素
+    const off = (p, a, d) => [X(p) + d * Math.cos(G.rad(a)), Y(p) - d * Math.sin(G.rad(a))];
+
+    const out = [];
+    const id = opts.id ? ` data-diagram="${esc(opts.id)}"` : '';
+    out.push(`<svg class="fig" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f(W)} ${f(H)}" width="${f(W)}" height="${f(H)}"${id} role="img" aria-label="${esc(spec.alt || '幾何圖')}">`);
+
+    // 交互網站的填色層放最底
+    if (opts.overlays && spec.overlays) {
+      for (const o of spec.overlays) {
+        if (!o.fill) continue;
+        out.push(`<polygon class="ov-fill" data-ov="${esc(o.id)}" points="${o.fill.map((n) => xy(pts[n])).join(' ')}"/>`);
+      }
+    }
+
+    // 線段
+    for (const sg of segs) {
+      const sid = sg.id || sg.a + sg.b;
+      out.push(`<line class="ln${sg.dash ? ' dash' : ''}" data-id="${esc(sid)}" x1="${f(X(sg.A))}" y1="${f(Y(sg.A))}" x2="${f(X(sg.B))}" y2="${f(Y(sg.B))}"/>`);
+    }
+
+    // 平行記號
+    for (const pm of spec.par || []) {
+      const A = pts[pm.a], B = pts[pm.b];
+      const a = G.dir(A, B);
+      const n = pm.n || 1;
+      const m = G.lerp(A, B, pm.t == null ? 0.5 : pm.t);
+      for (let i = 0; i < n; i++) {
+        const tip = off(m, a, 4 + (i - (n - 1) / 2) * 6);
+        const tipP = [tip[0], tip[1]];
+        const l = [tipP[0] - 7 * Math.cos(G.rad(a - 32)), tipP[1] + 7 * Math.sin(G.rad(a - 32))];
+        const r = [tipP[0] - 7 * Math.cos(G.rad(a + 32)), tipP[1] + 7 * Math.sin(G.rad(a + 32))];
+        out.push(`<polyline class="mk" data-id="${esc(pm.id || pm.a + pm.b)}" points="${f(l[0])},${f(l[1])} ${f(tipP[0])},${f(tipP[1])} ${f(r[0])},${f(r[1])}"/>`);
+      }
+    }
+
+    // 等長記號
+    for (const tk of spec.ticks || []) {
+      const A = pts[tk.a], B = pts[tk.b];
+      const a = G.dir(A, B);
+      const m = G.lerp(A, B, tk.t == null ? 0.5 : tk.t);
+      const n = tk.n || 1;
+      for (let i = 0; i < n; i++) {
+        const c = off(m, a, (i - (n - 1) / 2) * 5);
+        const p1 = [c[0] + 6 * Math.cos(G.rad(a + 90)), c[1] - 6 * Math.sin(G.rad(a + 90))];
+        const p2 = [c[0] - 6 * Math.cos(G.rad(a + 90)), c[1] + 6 * Math.sin(G.rad(a + 90))];
+        out.push(`<line class="mk" data-id="${esc(tk.id || tk.a + tk.b)}" x1="${f(p1[0])}" y1="${f(p1[1])}" x2="${f(p2[0])}" y2="${f(p2[1])}"/>`);
+      }
+    }
+
+    // 角
+    const placed = [];
+    const targets = opts.targets || [];
+    const scr = segs.map((sg) => [[X(sg.A), Y(sg.A)], [X(sg.B), Y(sg.B)]]);
+    // 標籤方框是否碰到任何線段（留 2px）
+    const onLine = (b) => scr.some(([P, Q]) => {
+      const n = Math.max(2, Math.ceil(Math.hypot(Q[0] - P[0], Q[1] - P[1]) / 3));
+      for (let i = 0; i <= n; i++) {
+        const x = P[0] + ((Q[0] - P[0]) * i) / n, y = P[1] + ((Q[1] - P[1]) * i) / n;
+        if (x > b.x - 2 && x < b.x + b.w + 2 && y > b.y - 2 && y < b.y + b.h + 2) return true;
+      }
+      return false;
+    });
+    // extra：只在交互網站出現的輔助角（中間步驟），平時隱藏，解出後顯示數值
+    for (const a of spec.arcs || []) {
+      if (a.extra && !opts.overlays) continue;
+      const V = pts[a.v];
+      const { start, sweep } = arcSpan(pts, a);
+      const aid = a.id || '∠' + a.v + a.p + a.q;
+      const key = a.key || a.label;
+      const known = key != null && values[key] != null;
+      let txt = a.extra ? '' : a.label;
+      if (known) txt = values[key];
+      if (a.hideWhen && values[a.hideWhen] != null) txt = '';
+      const isTarget = !known && key != null && targets.includes(key);
+      if (isTarget && a.extra) txt = '?';
+      const cls = a.extra ? ' extra' : '';
+      if (a.right) {
+        const k = 10 * (opts.arcScale || 1);
+        const p1 = off(V, start, k), p3 = off(V, start + 90, k);
+        const p2 = [p1[0] + (p3[0] - X(V)), p1[1] + (p3[1] - Y(V))];
+        out.push(`<polyline class="arc right${cls}" data-id="${esc(aid)}" points="${f(p1[0])},${f(p1[1])} ${f(p2[0])},${f(p2[1])} ${f(p3[0])},${f(p3[1])}"/>`);
+      } else {
+        const r = (a.r || (sweep < 26 ? 34 : sweep < 45 ? 26 : sweep > 200 ? 14 : 18)) * (opts.arcScale || 1);
+        const p1 = off(V, start, r), p2 = off(V, start + sweep, r);
+        const large = sweep > 180 ? 1 : 0;
+        if (isTarget) {
+          const R = r + 16, w1 = off(V, start, R), w2 = off(V, start + sweep, R);
+          out.push(`<path class="wedge" d="M${f(X(V))},${f(Y(V))} L${f(w1[0])},${f(w1[1])} A${R},${R} 0 ${large} 0 ${f(w2[0])},${f(w2[1])} Z"/>`);
+        }
+        out.push(`<path class="arc${cls}${known ? ' solved' : ''}" data-id="${esc(aid)}" d="M${f(p1[0])},${f(p1[1])} A${r},${r} 0 ${large} 0 ${f(p2[0])},${f(p2[1])}"/>`);
+        if (txt != null && txt !== '') {
+          const len = String(txt).replace(/\s/g, '').length;
+          let d = (a.ld || 0) + r + 9 + Math.max(0, len - 2) * 3.4;
+          const la = start + sweep * (a.lt == null ? 0.5 : a.lt);
+          let c = off(V, la, d);
+          // 與已放好的角度標籤重疊時，沿角平分線向外推
+          const box = (p) => ({ x: p[0] - len * 4.3, y: p[1] - 9, w: len * 8.6, h: 18 });
+          const hit = (b) => placed.some((o) => b.x < o.x + o.w && b.x + b.w > o.x && b.y < o.y + o.h && b.y + b.h > o.y);
+          for (let k = 0; k < 12 && (hit(box(c)) || (k < 8 && onLine(box(c)))); k++) { d += 4; c = off(V, la, d); }
+          placed.push(box(c));
+          out.push(`<text class="al${cls}${known ? ' solved' : ''}${isTarget ? ' target' : ''}" data-id="${esc(aid)}" x="${f(c[0])}" y="${f(c[1])}">${rich(txt)}</text>`);
+        }
+      }
+    }
+
+    // 邊長標註
+    for (const ln of spec.lens || []) {
+      const A = pts[ln.a], B = pts[ln.b];
+      const a = G.dir(A, B);
+      const m = G.lerp(A, B, 0.5);
+      const c = off(m, a + 90 * (ln.side || 1), ln.d || 14);
+      out.push(`<text class="lt" data-id="${esc(ln.id || 'len-' + ln.a + ln.b)}" x="${f(c[0])}" y="${f(c[1])}">${rich(ln.text)}</text>`);
+    }
+
+    // 交互網站的描邊層
+    if (opts.overlays && spec.overlays) {
+      for (const o of spec.overlays) {
+        for (const line of o.lines || []) {
+          const d = line.map((n, i) => (i ? 'L' : 'M') + xy(pts[n])).join(' ');
+          out.push(`<path class="ov-line" data-ov="${esc(o.id)}" pathLength="1" d="${d}"/>`);
+        }
+      }
+    }
+
+    // 頂點字母：預設放在遠離相連線段的一側
+    const neighbourDirs = (name) => {
+      const P = pts[name], ds = [];
+      for (const sg of segs) {
+        const onSeg = (Q) => G.dist(Q, P) < 1e-6;
+        // 端點或線段上的點
+        const ab = G.dist(sg.A, sg.B), ap = G.dist(sg.A, P), pb = G.dist(P, sg.B);
+        if (Math.abs(ap + pb - ab) > 1e-6) continue;
+        if (!onSeg(sg.A)) ds.push(G.dir(P, sg.A));
+        if (!onSeg(sg.B)) ds.push(G.dir(P, sg.B));
+      }
+      return ds;
+    };
+    const cx = Object.values(pts).reduce((t, p) => t + p[0], 0) / Object.keys(pts).length;
+    const cy = Object.values(pts).reduce((t, p) => t + p[1], 0) / Object.keys(pts).length;
+    for (const name of Object.keys(pts)) {
+      if (opts.noLabels || name[0] === '_' || (spec.hide || []).includes(name)) continue;
+      const P = pts[name];
+      let a = spec.labels && spec.labels[name], dist = 13;
+      if (Array.isArray(a)) [a, dist] = a;
+      if (a == null) {
+        const ds = neighbourDirs(name);
+        let vx = 0, vy = 0;
+        for (const d of ds) { vx -= Math.cos(G.rad(d)); vy -= Math.sin(G.rad(d)); }
+        if (Math.hypot(vx, vy) < 0.35) {
+          // 在直線中間：放在遠離圖形中心的一側
+          const base = ds.length ? ds[0] + 90 : 90;
+          const away = G.dir([cx, cy], P);
+          const d1 = Math.abs(((base - away + 540) % 360) - 180);
+          a = d1 < 90 ? base : base + 180;
+        } else a = G.deg(Math.atan2(vy, vx));
+      }
+      const c = off(P, a, dist);
+      out.push(`<text class="pl" data-id="pt-${esc(name)}" x="${f(c[0])}" y="${f(c[1])}">${esc(name)}</text>`);
+    }
+
+    out.push('</svg>');
+    return out.join('');
+  }
+
+  const api = { render, arcSpan, rich };
+  root.DIAGRAM = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 中二 第 2 章 直線與多邊形的角：練習卷題目（單一資料來源）
+   paper.html、answers.html、interactive.html 都由這裡渲染。
+
+   每題 parts[]，每個分題：
+   stem   題幹（分題）
+   fig    圖形規格（見 js/diagram.js）
+   lines  標準解：t 為陳述，{數值} 是學生要填的空格；r 理由 ID；rp 平行線名稱；m 分數（1M／1A）
+          given:true 為已知條件（交互網站直接顯示）；w { 錯誤數值: 針對性回饋 }
+   choice 判斷題：{ options, answer, why }
+   hints  提示階梯 1–3（第 4 層＝逐步填充，自動產生）：t 文字、hl 要高亮的圖形元素、cards 性質卡、ov 描邊層
+   ans    答案（verify.js 核對）
+   checks 由題目數據重新計算的關係式 [說明, 左邊, 右邊] */
+(function (root) {
+  const G = root.GEOM || require('../js/geom.js');
+  const { polar, meet, polygon, extend, lerp, dir } = G;
+
+  /* ---------- 理由（性質卡） ---------- */
+  const REASONS = {
+    adj: { name: '直線上的鄰角', rule: '若 AOB 是一條直線，則 a + b = 180°。', tip: '拼成一條直線的角，加起來是 180°。' },
+    at_pt: { name: '同頂角', rule: '圍繞同一點的角，a + b + c = 360°。', tip: '圍住一整圈的角，加起來是 360°。' },
+    vert: { name: '對頂角', rule: '若 AB 與 CD 相交於 O，則 a = b 及 c = d。', tip: '兩條直線相交，相對的角相等。' },
+    corr: { name: '同位角', rule: '若 AB // CD，則同位角相等：a = b。', tip: '同位角形成「F」形。', par: true },
+    alt: { name: '內錯角', rule: '若 AB // CD，則內錯角相等：a = b。', tip: '內錯角形成「Z」形。', par: true },
+    int: { name: '同旁內角', rule: '若 AB // CD，則同旁內角相加：a + b = 180°。', tip: '同旁內角形成「C」形，是相加得 180°，不是相等。', par: true },
+    tri_sum: { name: '△ 內角和', rule: '在 △ABC 中，∠A + ∠B + ∠C = 180°。', tip: '三角形三個內角加起來是 180°。' },
+    tri_ext: { name: '△ 外角', rule: '三角形的外角等於兩個內對角之和：d = a + b。', tip: '外角和兩個內對角形成一支「旗」的形狀。' },
+    isos_base: { name: '等腰 △ 底角', rule: '在 △ABC 中，若 AB = AC，則 ∠B = ∠C。', tip: '兩條等邊所對的兩個底角相等。' },
+    isos_prop: { name: '等腰 △ 性質', rule: '在 △ABC 中，AB = AC，M 在 BC 上。BM = CM、AM ⊥ BC、∠BAM = ∠CAM 三項中，知道其中一項，就可推出另外兩項。', tip: '等腰三角形頂點的垂線，同時平分底邊和頂角。' },
+    eq_sides: { name: '等角對邊相等', rule: '在 △ABC 中，若 ∠B = ∠C，則 AB = AC。', tip: '兩個相等的角，它們所對的邊也相等。' },
+    equil: { name: '等邊 △ 性質', rule: '若 AB = BC = CA，則 ∠A = ∠B = ∠C = 60°。', tip: '等邊三角形每個角都是 60°。' },
+    poly_sum: { name: '多邊形內角和', rule: 'n 邊形的內角和 = (n − 2) × 180°。正 n 邊形每個內角 = (n − 2) × 180° ÷ n。', tip: '從一個頂點連對角線，可把 n 邊形分成 (n − 2) 個三角形。' },
+    poly_ext: { name: '多邊形外角和', rule: '凸多邊形的外角和 = 360°。正 n 邊形每個外角 = 360° ÷ n。', tip: '沿着多邊形走一圈，剛好轉了 360°。' },
+  };
+  // 理由下拉選單的次序（按課本次序）
+  const REASON_ORDER = ['adj', 'at_pt', 'vert', 'corr', 'alt', 'int', 'tri_sum', 'tri_ext', 'isos_base', 'isos_prop', 'eq_sides', 'equil', 'poly_sum', 'poly_ext'];
+
+  // 性質卡的小圖
+  (function cardFigs() {
+    let O = [0, 0];
+    REASONS.adj.fig = {
+      pts: { A: [-3, 0], O, B: [3, 0], C: polar(O, 62, 2.4) },
+      segs: [{ a: 'A', b: 'B' }, { a: 'O', b: 'C' }],
+      arcs: [{ v: 'O', p: 'C', q: 'A', label: 'a' }, { v: 'O', p: 'B', q: 'C', label: 'b' }],
+    };
+    REASONS.at_pt.fig = {
+      pts: { O, _a: polar(O, 35, 2.4), _b: polar(O, 150, 2.4), _c: polar(O, 255, 2.4) }, hide: ['O'],
+      segs: [{ a: 'O', b: '_a' }, { a: 'O', b: '_b' }, { a: 'O', b: '_c' }],
+      arcs: [{ v: 'O', p: '_a', q: '_b', label: 'a' }, { v: 'O', p: '_b', q: '_c', label: 'b' }, { v: 'O', p: '_c', q: '_a', label: 'c' }],
+    };
+    REASONS.vert.fig = {
+      pts: { A: polar(O, 155, 2.6), B: polar(O, 335, 2.6), C: polar(O, 215, 2.6), D: polar(O, 35, 2.6), O }, hide: ['O'],
+      segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'D' }],
+      arcs: [{ v: 'O', p: 'A', q: 'C', label: 'a' }, { v: 'O', p: 'B', q: 'D', label: 'b' }, { v: 'O', p: 'D', q: 'A', label: 'c' }, { v: 'O', p: 'C', q: 'B', label: 'd' }],
+    };
+    const parFig = (gx, gdir, arcG, arcH, ov) => {
+      const G1 = [gx, 2.2], H1 = meet(G1, gdir, [0, 0], 0);
+      return {
+        pts: { A: [-2.6, 2.2], B: [2.6, 2.2], C: [-2.6, 0], D: [2.6, 0], _g: G1, _h: H1, _e: polar(G1, gdir + 180, 0.9), _f: polar(H1, gdir, 0.9) },
+        segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'D' }, { a: '_e', b: '_f' }],
+        par: [{ a: 'A', b: 'B' }, { a: 'C', b: 'D' }],
+        arcs: [Object.assign({ v: '_g', label: 'a' }, arcG), Object.assign({ v: '_h', label: 'b' }, arcH)],
+        overlays: [ov],
+      };
+    };
+    REASONS.corr.fig = parFig(0.5, 250, { p: 'B', q: '_e' }, { p: 'D', q: '_g' }, { id: 'F', lines: [['_f', '_e'], ['_g', 'B'], ['_h', 'D']] });
+    REASONS.alt.fig = parFig(0.8, 235, { p: 'A', q: '_h' }, { p: 'D', q: '_g' }, { id: 'Z', lines: [['A', '_g', '_h', 'D']] });
+    REASONS.int.fig = parFig(0.9, 245, { p: 'B', q: '_h' }, { p: 'D', q: '_g' }, { id: 'C', lines: [['B', '_g', '_h', 'D']] });
+    const B = [0, 0], C = [4, 0];
+    const A = meet(B, 62, C, 128);
+    REASONS.tri_sum.fig = {
+      pts: { A, B, C }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+      arcs: [{ v: 'A', p: 'B', q: 'C' }, { v: 'B', p: 'C', q: 'A' }, { v: 'C', p: 'A', q: 'B' }],
+    };
+    REASONS.tri_ext.fig = {
+      pts: { A, B, C, D: [6, 0] }, segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'A' }, { a: 'B', b: 'D' }],
+      arcs: [{ v: 'A', p: 'B', q: 'C', label: 'a' }, { v: 'B', p: 'C', q: 'A', label: 'b' }, { v: 'C', p: 'D', q: 'A', label: 'd' }],
+      overlays: [{ id: 'flag', fill: ['A', 'B', 'C'], lines: [['B', 'A', 'C', 'D']] }],
+    };
+    const I = [2, 3.4];
+    REASONS.isos_base.fig = {
+      pts: { A: I, B, C }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+      ticks: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C' }],
+      arcs: [{ v: 'B', p: 'C', q: 'A' }, { v: 'C', p: 'A', q: 'B' }],
+    };
+    REASONS.isos_prop.fig = {
+      pts: { A: I, B, C, M: [2, 0] }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }, { a: 'A', b: 'M' }],
+      ticks: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C' }, { a: 'B', b: 'M', n: 2 }, { a: 'M', b: 'C', n: 2 }],
+      arcs: [{ v: 'M', p: 'C', q: 'A', right: true }, { v: 'A', p: 'B', q: 'M', r: 22 }, { v: 'A', p: 'M', q: 'C', r: 26 }],
+    };
+    REASONS.eq_sides.fig = {
+      pts: { A: I, B, C }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+      ticks: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C' }],
+      arcs: [{ v: 'B', p: 'C', q: 'A' }, { v: 'C', p: 'A', q: 'B' }],
+    };
+    const E = [2, 2 * Math.sqrt(3)];
+    REASONS.equil.fig = {
+      pts: { A: E, B, C }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+      ticks: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+      arcs: [{ v: 'A', p: 'B', q: 'C', label: '60°' }, { v: 'B', p: 'C', q: 'A', label: '60°' }, { v: 'C', p: 'A', q: 'B', label: '60°' }],
+    };
+    const pg = polygon([108, 108, 108, 108, 108], [2.4, 2.4, 2.4]);
+    REASONS.poly_sum.fig = {
+      pts: { _0: pg[0], _1: pg[1], _2: pg[2], _3: pg[3], _4: pg[4] },
+      segs: [0, 1, 2, 3, 4].map((i) => ({ a: '_' + i, b: '_' + ((i + 1) % 5) })).concat([{ a: '_0', b: '_2', dash: true }, { a: '_0', b: '_3', dash: true }]),
+    };
+    const qd = polygon([75, 105, 95, 85], [3, 2.4]);
+    const qp = {};
+    qd.forEach((p, i) => { qp['_' + i] = p; qp['_e' + i] = extend(qd[(i + 3) % 4], p, 1.1); });
+    REASONS.poly_ext.fig = {
+      pts: qp,
+      segs: [0, 1, 2, 3].map((i) => ({ a: '_' + i, b: '_' + ((i + 1) % 4) })).concat([0, 1, 2, 3].map((i) => ({ a: '_' + i, b: '_e' + i }))),
+      arcs: [0, 1, 2, 3].map((i) => ({ v: '_' + i, p: '_e' + i, q: '_' + ((i + 1) % 4) })),
+    };
+  })();
+
+  /* ---------- 題目 ---------- */
+  const Q = [];
+
+  // 1 直線上的鄰角
+  (function () {
+    const O = [0, 0];
+    Q.push({
+      id: 'Q1', no: 1, sec: 'A', marks: 2, min: 2, topic: '直線上的鄰角',
+      parts: [{
+        stem: '圖中，AOB 是一條直線。求 x。',
+        fig: {
+          alt: '直線 AOB 上，從 O 引出 OC 和 OD，∠AOC = 57°，∠COD 是直角，∠DOB = x',
+          pts: { A: [-4.5, 0], O, B: [4.5, 0], C: polar(O, 123, 3.6), D: polar(O, 33, 3.6) },
+          segs: [{ a: 'A', b: 'B' }, { a: 'O', b: 'C' }, { a: 'O', b: 'D' }],
+          arcs: [
+            { id: 'g57', v: 'O', p: 'C', q: 'A', label: '57°', value: 57 },
+            { id: 'g90', v: 'O', p: 'D', q: 'C', right: true, value: 90 },
+            { id: 'ax', v: 'O', p: 'B', q: 'D', label: 'x', value: 33 },
+          ],
+        },
+        lines: [
+          { t: 'x + 57° + 90° = {180}°', r: 'adj', m: '1M', w: { 360: '這三個角拼成一條直線，不是圍住一整圈。直線上的鄰角之和是 180°。' } },
+          { t: 'x = {33}°', m: '1A', w: { 123: '別漏了直角 ∠COD = 90°，三個角都要減去。' } },
+        ],
+        hints: [
+          { t: 'A、O、B 在同一條直線上。沿着這條直線，57°、直角和 x 三個角剛好拼在一起。', hl: ['AB', 'g57', 'g90', 'ax'] },
+          { t: '拼成一條直線的角，要用這個性質：', cards: ['adj'] },
+          { t: '把三個角加起來，寫成一條方程。直角記號代表 90°，別漏掉。' },
+        ],
+        ans: { x: 33 },
+        checks: (a) => [['直線上的鄰角', a.x + 57 + 90, 180]],
+        space: 3,
+      }],
+    });
+  })();
+
+  // 2 同頂角
+  (function () {
+    const O = [0, 0], L = 3.3;
+    Q.push({
+      id: 'Q2', no: 2, sec: 'A', marks: 2, min: 2, topic: '同頂角',
+      parts: [{
+        stem: '圖中，求 x。',
+        fig: {
+          alt: '四條線段由 O 點射出，四個角分別是 2x、95°、x、100°',
+          pts: { O, _a: polar(O, 20, L), _b: polar(O, 130, L), _c: polar(O, 225, L), _d: polar(O, 280, L) },
+          segs: [{ a: 'O', b: '_a' }, { a: 'O', b: '_b' }, { a: 'O', b: '_c' }, { a: 'O', b: '_d' }],
+          hide: ['O'],
+          arcs: [
+            { id: 'a2x', v: 'O', p: '_a', q: '_b', label: '2x', value: 110 },
+            { id: 'g95', v: 'O', p: '_b', q: '_c', label: '95°', value: 95 },
+            { id: 'ax', v: 'O', p: '_c', q: '_d', label: 'x', value: 55 },
+            { id: 'g100', v: 'O', p: '_d', q: '_a', label: '100°', value: 100 },
+          ],
+        },
+        lines: [
+          { t: '2x + 95° + x + 100° = {360}°', r: 'at_pt', m: '1M', w: { 180: '這四個角圍住 O 點一整圈，不是拼成一條直線。同頂角之和是 360°。' } },
+          { t: '3x + {195}° = 360°' },
+          { t: '3x = {165}°' },
+          { t: 'x = {55}°', m: '1A', w: { 165: '165° 是 3x，還要除以 3。', 110: '110° 是 2x 的值，題目求的是 x。' } },
+        ],
+        hints: [
+          { t: '四個角都以 O 為頂點，合起來剛好圍住 O 點一整圈。', hl: ['a2x', 'g95', 'ax', 'g100'] },
+          { t: '圍住一整圈的角，要用這個性質：', cards: ['at_pt'] },
+          { t: '把四個角加起來等於 360°。2x 和 x 可以合併成 3x。' },
+        ],
+        ans: { x: 55 },
+        checks: (a) => [['同頂角', 2 * a.x + 95 + a.x + 100, 360]],
+        space: 4,
+      }],
+    });
+  })();
+
+  // 3 對頂角
+  (function () {
+    const O = [0, 0], L = 3.6;
+    Q.push({
+      id: 'Q3', no: 3, sec: 'A', marks: 2, min: 2, topic: '對頂角',
+      parts: [{
+        stem: '圖中，直線 AB 與 CD 相交於 O。求 x 和 y。',
+        fig: {
+          alt: '直線 AB 與 CD 相交於 O，∠AOD = 128°，∠BOC = x，∠AOC = y',
+          pts: { A: polar(O, 160, L), B: polar(O, 340, L), C: polar(O, 108, L), D: polar(O, 288, L), O },
+          segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'D' }],
+          labels: { O: [314, 24] },
+          arcs: [
+            { id: 'g128', v: 'O', p: 'A', q: 'D', label: '128°', value: 128 },
+            { id: 'ax', v: 'O', p: 'B', q: 'C', label: 'x', value: 128 },
+            { id: 'ay', v: 'O', p: 'C', q: 'A', label: 'y', value: 52 },
+          ],
+        },
+        lines: [
+          { t: 'x = {128}°', r: 'vert', m: '1A', w: { 52: 'x 和 128° 在交點的兩邊、互相相對，它們是相等的。' } },
+          { t: 'y + 128° = {180}°', r: 'adj', w: { 360: 'y 和 128° 合起來是直線 AB 的一邊，加起來是 180°。' } },
+          { t: 'y = {52}°', m: '1A' },
+        ],
+        hints: [
+          { t: '兩條直線相交於 O。x 在 128° 的正對面；y 就在 128° 的旁邊。', hl: ['g128', 'ax', 'ay', 'AB', 'CD'] },
+          { t: '相對的角用「對頂角」，相鄰而合成直線的角用「直線上的鄰角」：', cards: ['vert', 'adj'] },
+          { t: '先寫出 x，再用 y + 128° = 180° 求 y。' },
+        ],
+        ans: { x: 128, y: 52 },
+        checks: (a) => [['對頂角', a.x, 128], ['直線上的鄰角', a.y + 128, 180]],
+        space: 3,
+      }],
+    });
+  })();
+
+  // 4 平行線的三種角
+  (function () {
+    const A = [-4, 2.6], B = [4, 2.6], C = [-4, 0], D = [4, 0];
+    const base = { A, B, C, D };
+    const par = [{ a: 'A', b: 'B', t: 0.14 }, { a: 'C', b: 'D', t: 0.14 }];
+    const lines4 = [{ a: 'A', b: 'B' }, { a: 'C', b: 'D' }, { id: 'EF', a: 'E', b: 'F' }];
+    const ga = [-0.6 + 2.6 / Math.tan(G.rad(74)), 2.6], ha = [-0.6, 0];
+    const gb = [0.9, 2.6], hb = meet(gb, 238, [0, 0], 0);
+    const gc = [1.1, 2.6], hc = meet(gc, 243, [0, 0], 0);
+    Q.push({
+      id: 'Q4', no: 4, sec: 'A', marks: 3, min: 3, topic: '同位角、內錯角、同旁內角',
+      stem: '下列各題中，AB // CD。求 x。',
+      parts: [
+        {
+          label: '(a)', stem: '',
+          fig: {
+            alt: 'AB // CD，直線 EF 與 AB 交於 G、與 CD 交於 H，∠EGB = 74°，∠GHD = x',
+            pts: Object.assign({}, base, { G: ga, H: ha, E: polar(ga, 74, 1.5), F: polar(ha, 254, 1.5) }),
+            segs: lines4, par, labels: { G: 150, H: 215 },
+            arcs: [
+              { id: 'g74', v: 'G', p: 'B', q: 'E', label: '74°', value: 74 },
+              { id: 'ax', v: 'H', p: 'D', q: 'G', label: 'x', value: 74 },
+            ],
+            overlays: [{ id: 'F', lines: [['F', 'E'], ['G', 'B'], ['H', 'D']] }],
+          },
+          lines: [{ t: 'x = {74}°', r: 'corr', rp: 'AB // CD', m: '1A', w: { 106: '這兩個角是同位角（F 形），同位角相等，不是相加得 180°。' } }],
+          hints: [
+            { t: '74° 和 x 都在截線的右上方：一個在 AB 上，一個在 CD 上，位置一樣。', hl: ['g74', 'ax'] },
+            { t: '把這兩個角連起來，會看到一個「F」形：', cards: ['corr'], ov: 'F' },
+            { t: '同位角相等，所以 x 等於多少？' },
+          ],
+          ans: { x: 74 }, checks: (a) => [['同位角', a.x, 74]], space: 2,
+        },
+        {
+          label: '(b)', stem: '',
+          fig: {
+            alt: 'AB // CD，直線 EF 與 AB 交於 G、與 CD 交於 H，∠AGH = 58°，∠GHD = x',
+            pts: Object.assign({}, base, { G: gb, H: hb, E: polar(gb, 58, 1.4), F: polar(hb, 238, 1.4) }),
+            segs: lines4, par, labels: { G: 118, H: 300 },
+            arcs: [
+              { id: 'g58', v: 'G', p: 'A', q: 'H', label: '58°', value: 58 },
+              { id: 'ax', v: 'H', p: 'D', q: 'G', label: 'x', value: 58 },
+            ],
+            overlays: [{ id: 'Z', lines: [['A', 'G', 'H', 'D']] }],
+          },
+          lines: [{ t: 'x = {58}°', r: 'alt', rp: 'AB // CD', m: '1A', w: { 122: '這兩個角是內錯角（Z 形），內錯角相等。' } }],
+          hints: [
+            { t: '58° 和 x 都夾在兩條平行線之間，分別在截線的兩旁。', hl: ['g58', 'ax'] },
+            { t: '把這兩個角連起來，會看到一個「Z」形：', cards: ['alt'], ov: 'Z' },
+            { t: '內錯角相等，所以 x 等於多少？' },
+          ],
+          ans: { x: 58 }, checks: (a) => [['內錯角', a.x, 58]], space: 2,
+        },
+        {
+          label: '(c)', stem: '',
+          fig: {
+            alt: 'AB // CD，直線 EF 與 AB 交於 G、與 CD 交於 H，∠BGH = 117°，∠GHD = x',
+            pts: Object.assign({}, base, { G: gc, H: hc, E: polar(gc, 63, 1.4), F: polar(hc, 243, 1.4) }),
+            segs: lines4, par, labels: { G: 120, H: 210 },
+            arcs: [
+              { id: 'g117', v: 'G', p: 'B', q: 'H', label: '117°', value: 117 },
+              { id: 'ax', v: 'H', p: 'D', q: 'G', label: 'x', value: 63 },
+            ],
+            overlays: [{ id: 'C', lines: [['B', 'G', 'H', 'D']] }],
+          },
+          lines: [
+            { t: 'x + 117° = {180}°', r: 'int', rp: 'AB // CD', m: '', w: { 117: '這兩個角是同旁內角（C 形），是相加得 180°，不是相等。' } },
+            { t: 'x = {63}°', m: '1A', w: { 117: '同旁內角相加得 180°，不是相等。' } },
+          ],
+          hints: [
+            { t: '117° 和 x 都夾在兩條平行線之間，而且在截線的同一旁（右邊）。', hl: ['g117', 'ax'] },
+            { t: '把這兩個角連起來，會看到一個「C」形：', cards: ['int'], ov: 'C' },
+            { t: '同旁內角不是相等，而是相加得 180°。' },
+          ],
+          ans: { x: 63 }, checks: (a) => [['同旁內角', a.x + 117, 180]], space: 3,
+        },
+      ],
+    });
+  })();
+
+  // 5 △ 內角和
+  (function () {
+    const B = [0, 0], C = [6, 0], A = meet(B, 86, C, 129);
+    Q.push({
+      id: 'Q5', no: 5, sec: 'A', marks: 2, min: 2, topic: '△ 內角和',
+      parts: [{
+        stem: '圖中，求 x。',
+        fig: {
+          alt: '△ABC，∠A = x，∠B = 2x，∠C = 51°',
+          pts: { A, B, C }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+          arcs: [
+            { id: 'ax', v: 'A', p: 'B', q: 'C', label: 'x', value: 43 },
+            { id: 'a2x', v: 'B', p: 'C', q: 'A', label: '2x', value: 86 },
+            { id: 'g51', v: 'C', p: 'A', q: 'B', label: '51°', value: 51 },
+          ],
+        },
+        lines: [
+          { t: 'x + 2x + 51° = {180}°', r: 'tri_sum', m: '1M', w: { 360: '三角形的內角和是 180°；360° 是同頂角或四邊形的內角和。' } },
+          { t: '3x = {129}°' },
+          { t: 'x = {43}°', m: '1A', w: { 129: '129° 是 3x，還要除以 3。', 86: '86° 是 2x（∠B）的值，題目求的是 x。' } },
+        ],
+        hints: [
+          { t: '三個角都是 △ABC 的內角：x、2x 和 51°。', hl: ['ax', 'a2x', 'g51'] },
+          { t: '三角形的三個內角，用這個性質：', cards: ['tri_sum'] },
+          { t: 'x + 2x 可以合併成 3x，再移項求 x。' },
+        ],
+        ans: { x: 43 },
+        checks: (a) => [['△ 內角和', a.x + 2 * a.x + 51, 180]],
+        space: 4,
+      }],
+    });
+  })();
+
+  // 6 △ 外角
+  (function () {
+    const B = [0, 0], C = [5.5, 0], D = [9, 0], A = meet(B, 71, C, 117);
+    Q.push({
+      id: 'Q6', no: 6, sec: 'A', marks: 2, min: 1.5, topic: '△ 外角',
+      parts: [{
+        stem: '圖中，BCD 是一條直線。求 x。',
+        fig: {
+          alt: '△ABC，BC 延長至 D，∠A = 46°，∠ACD = 117°，∠B = x',
+          pts: { A, B, C, D }, segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'A' }, { id: 'BD', a: 'B', b: 'D' }],
+          arcs: [
+            { id: 'g46', v: 'A', p: 'B', q: 'C', label: '46°', value: 46 },
+            { id: 'ax', v: 'B', p: 'C', q: 'A', label: 'x', value: 71 },
+            { id: 'g117', v: 'C', p: 'D', q: 'A', label: '117°', value: 117 },
+          ],
+          overlays: [{ id: 'flag', fill: ['A', 'B', 'C'], lines: [['B', 'A', 'C', 'D']] }],
+        },
+        lines: [
+          { t: 'x + 46° = {117}°', r: 'tri_ext', m: '1M', w: { 180: '117° 是 △ABC 的外角，它等於兩個內對角之和，不用 180°。' } },
+          { t: 'x = {71}°', m: '1A', w: { 63: '63° 是 ∠ACB，不是 x。外角 117° 等於 ∠A + ∠B。', 163: '外角等於兩個內對角之和，所以要用 117° − 46°。' } },
+        ],
+        hints: [
+          { t: '117° 是 △ABC 在 C 點的外角；它不相鄰的兩個內角是 46° 和 x。', hl: ['g117', 'g46', 'ax'] },
+          { t: '外角和兩個內對角形成一支「旗」：', cards: ['tri_ext'], ov: 'flag' },
+          { t: '外角 = 兩個內對角之和，寫成 x + 46° = 117°。' },
+        ],
+        ans: { x: 71 },
+        checks: (a) => [['△ 外角', a.x + 46, 117]],
+        space: 3,
+      }],
+    });
+  })();
+
+  // 7 等腰 △ 底角
+  (function () {
+    const B = [0, 0], C = [4.2, 0], A = [2.1, 2.1 * Math.tan(G.rad(71))];
+    Q.push({
+      id: 'Q7', no: 7, sec: 'A', marks: 2, min: 2, topic: '等腰 △ 底角',
+      parts: [{
+        stem: '圖中，AB = AC。求 x。',
+        fig: {
+          alt: '等腰三角形 ABC，AB = AC，∠A = 38°，∠B = x',
+          pts: { A, B, C }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+          ticks: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C' }],
+          arcs: [
+            { id: 'g38', v: 'A', p: 'B', q: 'C', label: '38°', value: 38 },
+            { id: 'ax', v: 'B', p: 'C', q: 'A', label: 'x', value: 71 },
+            { id: 'aC', v: 'C', p: 'A', q: 'B', extra: true, key: 'C', value: 71 },
+          ],
+        },
+        lines: [
+          { t: '∠C = x', r: 'isos_base' },
+          { t: 'x + x + 38° = {180}°', r: 'tri_sum', m: '1M' },
+          { t: '2x = {142}°' },
+          { t: 'x = {71}°', m: '1A', w: { 142: '142° 是 2x，還要除以 2。', 38: '38° 是頂角 ∠A，x 是底角。' } },
+        ],
+        hints: [
+          { t: 'AB 和 AC 上有相同的短刻記號，表示 AB = AC。這兩條等邊所對的角是 ∠C 和 ∠B。', hl: ['AB', 'AC', 'ax', 'aC'] },
+          { t: '等腰三角形的兩個底角相等，再用三角形內角和：', cards: ['isos_base', 'tri_sum'] },
+          { t: '∠C 也是 x，所以 x + x + 38° = 180°。' },
+        ],
+        ans: { x: 71 },
+        checks: (a) => [['△ 內角和', 2 * a.x + 38, 180]],
+        space: 4,
+      }],
+    });
+  })();
+
+  // 8 等腰 △ 性質
+  (function () {
+    const M = [0, 0], A = [0, 5.2], h = 5.2 * Math.tan(G.rad(27));
+    const B = [-h, 0], C = [h, 0];
+    Q.push({
+      id: 'Q8', no: 8, sec: 'A', marks: 2, min: 2, topic: '等腰 △ 性質',
+      parts: [{
+        stem: '圖中，BMC 是一條直線，AB = AC 及 AM ⊥ BC。求 x 和 y。',
+        fig: {
+          alt: '等腰三角形 ABC，AM 垂直 BC，∠BAM = 27°，∠CAM = x，BM = 7 cm，CM = y cm',
+          pts: { A, B, C, M }, segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }, { a: 'A', b: 'M' }],
+          ticks: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C' }],
+          arcs: [
+            { id: 'g27', v: 'A', p: 'B', q: 'M', label: '27°', value: 27, r: 42 },
+            { id: 'ax', v: 'A', p: 'M', q: 'C', label: 'x', value: 27, r: 42 },
+            { id: 'g90', v: 'M', p: 'C', q: 'A', right: true, value: 90 },
+          ],
+          lens: [{ id: 'g7', a: 'B', b: 'M', text: '7 cm', side: -1, d: 15 }, { id: 'ay', a: 'M', b: 'C', text: 'y cm', side: -1, d: 15 }],
+          labels: { M: 270 },
+        },
+        lines: [
+          { t: 'x = {27}°', r: 'isos_prop', m: '1A', w: { 63: '63° 是底角 ∠C。AM 把頂角平分，所以 x = ∠BAM。' } },
+          { t: 'y = {7}', r: 'isos_prop', m: '1A', w: { 14: 'AM 把底邊 BC 平分，所以 CM = BM，不是 BC 的兩倍。' } },
+        ],
+        hints: [
+          { t: '△ABC 是等腰三角形（AB = AC），而 AM 是從頂點 A 垂直於底邊 BC 的線。', hl: ['AB', 'AC', 'AM', 'g90'] },
+          { t: '等腰三角形頂點的垂線，同時平分頂角和底邊：', cards: ['isos_prop'] },
+          { t: 'x 和 27° 是頂角被平分出來的兩半；y cm 和 7 cm 是底邊被平分出來的兩半。' },
+        ],
+        ans: { x: 27, y: 7 },
+        checks: (a) => [['等腰 △ 性質（角）', a.x, 27], ['等腰 △ 性質（邊）', a.y, 7]],
+        space: 3,
+      }],
+    });
+  })();
+
+  // 9 等角對邊相等
+  (function () {
+    const Qp = [0, 0], R = [4.6, 0], P = [2.3, 2.3 * Math.tan(G.rad(64))];
+    Q.push({
+      id: 'Q9', no: 9, sec: 'A', marks: 3, min: 2.5, topic: '等角對邊相等',
+      parts: [{
+        stem: '圖中，求 x。',
+        fig: {
+          alt: '△PQR，∠P = 52°，∠Q = 64°，PQ = 9 cm，PR = x cm',
+          pts: { P, Q: Qp, R }, segs: [{ a: 'P', b: 'Q' }, { a: 'Q', b: 'R' }, { a: 'R', b: 'P' }],
+          arcs: [
+            { id: 'g52', v: 'P', p: 'Q', q: 'R', label: '52°', value: 52 },
+            { id: 'g64', v: 'Q', p: 'R', q: 'P', label: '64°', value: 64 },
+            { id: 'aR', v: 'R', p: 'P', q: 'Q', extra: true, key: 'R', value: 64 },
+          ],
+          lens: [{ id: 'g9', a: 'Q', b: 'P', text: '9 cm', side: 1, d: 24 }, { id: 'ax', a: 'P', b: 'R', text: 'x cm', side: 1, d: 24 }],
+        },
+        lines: [
+          { t: '∠R + 52° + 64° = {180}°', r: 'tri_sum', m: '1M' },
+          { t: '∠R = {64}°', m: '1A' },
+          { t: '∵ ∠Q = ∠R = 64°' },
+          { t: '∴ PR = PQ', r: 'eq_sides' },
+          { t: 'x = {9}', m: '1A', w: { 64: '64° 是角的大小；x 是邊長（cm）。' } },
+        ],
+        hints: [
+          { t: '圖中只給了兩個角。先求第三個角 ∠R，看看會發現甚麼。', hl: ['g52', 'g64', 'aR'] },
+          { t: '先用三角形內角和，再看兩個相等的角：', cards: ['tri_sum', 'eq_sides'] },
+          { t: '∠R 和 ∠Q 一樣大。∠Q 對着 PR，∠R 對着 PQ，所以 PR = PQ。' },
+        ],
+        ans: { x: 9 },
+        checks: (a) => [['△ 內角和', 64 + 52 + 64, 180], ['等角對邊相等', a.x, 9]],
+        space: 5,
+      }],
+    });
+  })();
+
+  // 10 等邊 △ 性質
+  (function () {
+    const B = [0, 0], C = [4.4, 0], A = [2.2, 2.2 * Math.sqrt(3)], D = [7.6, 0];
+    Q.push({
+      id: 'Q10', no: 10, sec: 'A', marks: 2, min: 1.5, topic: '等邊 △ 性質',
+      parts: [{
+        stem: '圖中，AB = BC = CA，BCD 是一條直線。求 y。',
+        fig: {
+          alt: '等邊三角形 ABC，BC 延長至 D，∠ACD = y',
+          pts: { A, B, C, D }, segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'A' }, { id: 'BD', a: 'B', b: 'D' }],
+          ticks: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'A' }],
+          arcs: [
+            { id: 'ay', v: 'C', p: 'D', q: 'A', label: 'y', value: 120 },
+            { id: 'aC', v: 'C', p: 'A', q: 'B', extra: true, key: 'ACB', value: 60 },
+          ],
+        },
+        lines: [
+          { t: '∠ACB = {60}°', r: 'equil', m: '1A' },
+          { t: 'y + 60° = {180}°', r: 'adj' },
+          { t: 'y = {120}°', m: '1A', w: { 60: '60° 是三角形裏面的 ∠ACB；y 在直線的另一邊。' } },
+        ],
+        hints: [
+          { t: '三條邊都有相同的短刻記號，所以 △ABC 是等邊三角形。y 和 ∠ACB 在 C 點拼成直線 BD。', hl: ['AB', 'BC', 'CA', 'ay', 'aC'] },
+          { t: '先用等邊三角形的性質，再用直線上的鄰角：', cards: ['equil', 'adj'] },
+          { t: '∠ACB 是多少度？y + ∠ACB = 180°。' },
+        ],
+        ans: { y: 120 },
+        checks: (a) => [['直線上的鄰角', a.y + 60, 180]],
+        space: 3,
+      }],
+    });
+  })();
+
+  // 11 凹多邊形、正多邊形（判斷）
+  (function () {
+    const hex = [[0, 0], [4, 0], [5.6, 1.8], [4, 3.6], [0, 3.6], [1.6, 1.8]];
+    const hp = {}; hex.forEach((p, i) => { hp['_' + i] = p; });
+    const r0 = [0, 0], r1 = [3.4, 0], r3 = polar(r0, 70, 3.4), r2 = [r1[0] + r3[0], r3[1]];
+    Q.push({
+      id: 'Q11', no: 11, sec: 'A', marks: 2, min: 1, topic: '凹多邊形、正多邊形',
+      stem: '下列各題中，在適當的方格內填「✓」。',
+      parts: [
+        {
+          label: '(a)', stem: '圖中的六邊形是否一個凹多邊形？',
+          fig: {
+            alt: '一個箭頭形的六邊形，左邊凹入',
+            pts: hp, segs: hex.map((_, i) => ({ a: '_' + i, b: '_' + ((i + 1) % 6) })),
+            arcs: [{ id: 'aR', v: '_5', p: '_0', q: '_4', reflex: true, extra: true, key: 'R', value: 360 - 2 * G.deg(Math.atan2(1.8, 1.6)) }],
+          },
+          choice: { options: ['是', '否'], answer: '是', why: '這個六邊形左邊凹入，那個內角大於 180°（是一個反角），所以它是凹多邊形。' },
+          hints: [
+            { t: '逐個看六邊形的內角。左邊凹入的那個角，是在形狀的裏面量的。', hl: ['aR'] },
+            { t: '凹多邊形：至少有一個內角大於 180°。凸多邊形：所有內角都小於 180°。' },
+          ],
+          lines: [{ t: '有一個內角大於 180°', m: '1A' }],
+          ans: { choice: '是' }, checks: () => [], space: 0,
+        },
+        {
+          label: '(b)', stem: '圖中的四邊形四條邊都相等。它是否一個正多邊形？',
+          fig: {
+            alt: '四條邊相等的菱形，兩個角分別是 70° 和 110°',
+            pts: { _0: r0, _1: r1, _2: r2, _3: r3 },
+            segs: [0, 1, 2, 3].map((i) => ({ a: '_' + i, b: '_' + ((i + 1) % 4) })),
+            ticks: [0, 1, 2, 3].map((i) => ({ a: '_' + i, b: '_' + ((i + 1) % 4) })),
+            arcs: [
+              { id: 'g70', v: '_0', p: '_1', q: '_3', label: '70°', value: 70 },
+              { id: 'g110', v: '_1', p: '_2', q: '_0', label: '110°', value: 110 },
+            ],
+          },
+          choice: { options: ['是', '否'], answer: '否', why: '正多邊形要所有邊相等，以及所有角相等。這個四邊形邊相等，但角有 70° 也有 110°，不全相等，所以不是正多邊形。' },
+          hints: [
+            { t: '邊都相等了，再看看角：70° 和 110° 一樣嗎？', hl: ['g70', 'g110'] },
+            { t: '正多邊形要同時符合兩個條件：所有邊相等，以及所有角相等。' },
+          ],
+          lines: [{ t: '角不全相等', m: '1A' }],
+          ans: { choice: '否' }, checks: () => [], space: 0,
+        },
+      ],
+    });
+  })();
+
+  // 12 多邊形內角和
+  (function () {
+    const pg = polygon([115, 100, 110, 120, 95], [4.2, 3.4, 3.6]);
+    const [A, B, C, D, E] = pg;
+    const pts = { A, B, C, D, E };
+    const names = 'ABCDE';
+    const vals = [115, 100, 110, 120, 95], labs = ['x', '100°', '110°', '120°', '95°'];
+    Q.push({
+      id: 'Q12', no: 12, sec: 'A', marks: 2, min: 2, topic: '多邊形內角和',
+      parts: [{
+        stem: '圖中，ABCDE 是一個五邊形。求 x。',
+        fig: {
+          alt: '五邊形 ABCDE，∠A = x，其餘四個角是 100°、110°、120°、95°',
+          pts, segs: [0, 1, 2, 3, 4].map((i) => ({ a: names[i], b: names[(i + 1) % 5] })),
+          arcs: [0, 1, 2, 3, 4].map((i) => ({ id: i ? 'g' + vals[i] : 'ax', v: names[i], p: names[(i + 1) % 5], q: names[(i + 4) % 5], label: labs[i], value: vals[i] })),
+          overlays: [{ id: 'fan', lines: [['A', 'C'], ['A', 'D']] }],
+        },
+        lines: [
+          { t: 'x + 100° + 110° + 120° + 95° = ({5} − 2) × 180°', r: 'poly_sum', m: '1M', w: { 360: '五邊形的內角和不是 360°；把 n = 5 代入 (n − 2) × 180°。', 3: '括號裏要填邊數 n，五邊形 n = 5。' } },
+          { t: 'x + {425}° = {540}°' },
+          { t: 'x = {115}°', m: '1A' },
+        ],
+        hints: [
+          { t: '五個角都是五邊形 ABCDE 的內角，其中一個是 x。', hl: ['ax', 'g100', 'g110', 'g120', 'g95'] },
+          { t: '從 A 點連兩條對角線，五邊形分成 3 個三角形：', cards: ['poly_sum'], ov: 'fan' },
+          { t: '五邊形的內角和 = (5 − 2) × 180° = 540°。五個角加起來等於 540°。' },
+        ],
+        ans: { x: 115 },
+        checks: (a) => [['多邊形內角和', a.x + 100 + 110 + 120 + 95, (5 - 2) * 180]],
+        space: 4,
+      }],
+    });
+  })();
+
+  // 13 多邊形外角和
+  (function () {
+    const pg = polygon([60, 120, 85, 95], [5, 3]);
+    const names = 'ABCD';
+    const pts = {};
+    pg.forEach((p, i) => { pts[names[i]] = p; pts['_e' + i] = extend(pg[(i + 3) % 4], p, 1.7); });
+    const ext = [120, 60, 95, 85], labs = ['2x', 'x', '95°', '85°'], ids = ['a2x', 'ax', 'g95', 'g85'];
+    Q.push({
+      id: 'Q13', no: 13, sec: 'A', marks: 2, min: 2, topic: '多邊形外角和',
+      parts: [{
+        stem: '圖中，ABCD 是一個四邊形，四個外角分別是 2x、x、95° 和 85°。求 x。',
+        fig: {
+          alt: '四邊形 ABCD 每條邊延長，四個外角是 2x、x、95°、85°',
+          pts,
+          segs: [0, 1, 2, 3].map((i) => ({ a: names[i], b: names[(i + 1) % 4] })).concat([0, 1, 2, 3].map((i) => ({ id: 'e' + i, a: names[i], b: '_e' + i }))),
+          arcs: [0, 1, 2, 3].map((i) => ({ id: ids[i], v: names[i], p: '_e' + i, q: names[(i + 1) % 4], label: labs[i], value: ext[i] })),
+        },
+        lines: [
+          { t: '2x + x + 95° + 85° = {360}°', r: 'poly_ext', m: '1M', w: { 180: '外角和是 360°，不論多邊形有多少條邊。' } },
+          { t: '3x + {180}° = 360°' },
+          { t: 'x = {60}°', m: '1A', w: { 180: '180° 是 3x，還要除以 3。', 120: '120° 是 2x 的值，題目求的是 x。' } },
+        ],
+        hints: [
+          { t: '四個角都在四邊形外面：每條邊延長後，和下一條邊所夾的角就是外角。', hl: ['a2x', 'ax', 'g95', 'g85'] },
+          { t: '不論多邊形有多少條邊，外角加起來都一樣：', cards: ['poly_ext'] },
+          { t: '四個外角加起來等於 360°。2x 和 x 合併成 3x。' },
+        ],
+        ans: { x: 60 },
+        checks: (a) => [['多邊形外角和', 2 * a.x + a.x + 95 + 85, 360]],
+        space: 4,
+      }],
+    });
+  })();
+
+  // 14 正多邊形的內角、外角
+  (function () {
+    const n = 10, pg = polygon(Array(n).fill(144), Array(n - 2).fill(1.5));
+    const pts = {}; pg.forEach((p, i) => { pts['_' + i] = p; });
+    pts._x = extend(pg[n - 1], pg[0], 1.2);
+    const fig = {
+      alt: '正十邊形，標示一個內角和一個外角',
+      pts, segs: pg.map((_, i) => ({ a: '_' + i, b: '_' + ((i + 1) % n) })).concat([{ id: 'ext', a: '_0', b: '_x', dash: true }]),
+      ticks: pg.map((_, i) => ({ a: '_' + i, b: '_' + ((i + 1) % n) })),
+      arcs: [
+        { id: 'aInt', v: '_0', p: '_1', q: '_' + (n - 1), extra: true, key: 'int', value: 144 },
+        { id: 'aExt', v: '_0', p: '_x', q: '_1', extra: true, key: 'ext', value: 36 },
+      ],
+    };
+    Q.push({
+      id: 'Q14', no: 14, sec: 'A', marks: 2, min: 2.5, topic: '正多邊形的內角和外角',
+      stem: '考慮一個正十邊形。',
+      parts: [
+        {
+          label: '(a)', stem: '求該十邊形每個內角的大小。', ifig: fig,
+          lines: [
+            { t: '每個內角 = ({10} − 2) × 180° ÷ {10}', r: 'poly_sum', w: { 8: '括號裏先填邊數 n = 10，再減 2。' } },
+            { t: '= {144}°', m: '1A', w: { 1440: '1440° 是內角和；正十邊形有 10 個相等的內角，還要除以 10。' } },
+          ],
+          hints: [
+            { t: '正十邊形有 10 條相等的邊和 10 個相等的內角。', hl: ['aInt'] },
+            { t: '先求內角和，再平均分給 10 個角：', cards: ['poly_sum'] },
+            { t: '內角和 = (10 − 2) × 180° = 1440°，每個內角 = 1440° ÷ 10。' },
+          ],
+          ans: { int: 144 }, checks: (a) => [['正多邊形內角', a.int * 10, (10 - 2) * 180]], space: 3,
+        },
+        {
+          label: '(b)', stem: '求該十邊形每個外角的大小。', ifig: fig,
+          lines: [
+            { t: '每個外角 = 360° ÷ {10}', r: 'poly_ext' },
+            { t: '= {36}°', m: '1A', w: { 144: '144° 是內角。外角 + 內角 = 180°。' } },
+          ],
+          hints: [
+            { t: '虛線是一條邊的延長線，它和下一條邊所夾的角就是外角。', hl: ['aExt', 'ext'] },
+            { t: '外角和永遠是 360°，正十邊形有 10 個相等的外角：', cards: ['poly_ext'] },
+            { t: '360° 平均分成 10 份。（也可以用 180° − 144° 檢查。）' },
+          ],
+          ans: { ext: 36 }, checks: (a) => [['正多邊形外角', a.ext * 10, 360], ['外角 + 內角', a.ext + 144, 180]], space: 2,
+        },
+      ],
+    });
+  })();
+
+  /* ---------- 乙部 ---------- */
+
+  // 15 平行線 + 等腰 △
+  (function () {
+    const A = [-3.4, 4], B = [5, 4], C = [-3.4, 0], D = [5, 0], E = [0.8, 4];
+    const F = meet(E, 250, [0, 0], 0), Gp = meet(E, 290, [0, 0], 0);
+    Q.push({
+      id: 'Q15', no: 15, sec: 'B', marks: 4, min: 4, topic: '平行線、等腰 △',
+      parts: [{
+        stem: '圖中，AB // CD。E 是 AB 上的一點，F 和 G 是 CD 上的點，EF = EG 及 ∠AEF = 70°。求 x。',
+        fig: {
+          alt: 'AB // CD，E 在 AB 上，F、G 在 CD 上，EF = EG，∠AEF = 70°，∠FEG = x',
+          pts: { A, B, C, D, E, F, G: Gp },
+          segs: [{ a: 'A', b: 'B' }, { a: 'C', b: 'D' }, { a: 'E', b: 'F' }, { a: 'E', b: 'G' }],
+          par: [{ a: 'A', b: 'B', t: 0.2 }, { a: 'C', b: 'D', t: 0.2 }],
+          ticks: [{ a: 'E', b: 'F' }, { a: 'E', b: 'G' }],
+          labels: { E: 90, F: 270, G: 270 },
+          arcs: [
+            { id: 'g70', v: 'E', p: 'A', q: 'F', label: '70°', value: 70, r: 22 },
+            { id: 'ax', v: 'E', p: 'F', q: 'G', label: 'x', value: 40, r: 30 },
+            { id: 'aF', v: 'F', p: 'G', q: 'E', extra: true, key: 'EFG', value: 70 },
+            { id: 'aG', v: 'G', p: 'E', q: 'F', extra: true, key: 'EGF', value: 70 },
+          ],
+          overlays: [{ id: 'Z', lines: [['A', 'E', 'F', 'G']] }, { id: 'tri', fill: ['E', 'F', 'G'] }],
+        },
+        lines: [
+          { t: '∠EFG = {70}°', r: 'alt', rp: 'AB // CD', m: '1A', w: { 110: '110° 是 180° − 70°，那是同旁內角（C 形）的做法。∠AEF 和 ∠EFG 連起來是 Z 形，是內錯角，內錯角相等。' } },
+          { t: '∠EGF = {70}°', r: 'isos_base', m: '1A' },
+          { t: 'x + 70° + 70° = {180}°', r: 'tri_sum', m: '1M' },
+          { t: 'x = {40}°', m: '1A', w: { 110: '△EFG 有兩個 70° 的底角，兩個都要減去。', 70: '70° 是底角，x 是頂角 ∠FEG。' } },
+        ],
+        hints: [
+          { t: 'x 是 △EFG 的頂角。要求 x，先求這個三角形的兩個底角 ∠EFG 和 ∠EGF。', hl: ['ax', 'aF', 'aG'], ov: 'tri' },
+          { t: '∠AEF 和 ∠EFG 形成「Z」形；EF = EG 表示兩個底角相等：', cards: ['alt', 'isos_base', 'tri_sum'], ov: 'Z' },
+          { t: '先求 ∠EFG（內錯角），再求 ∠EGF（等腰 △ 底角），最後用 △ 內角和求 x。' },
+        ],
+        ans: { x: 40 },
+        checks: (a) => [['內錯角', 70, 70], ['△ 內角和', a.x + 70 + 70, 180], ['直線 AB 上', 70 + a.x + 70, 180]],
+        space: 6,
+      }],
+    });
+  })();
+
+  // 16 兩個等腰 △ + 外角
+  (function () {
+    const B = [0, 0], C = [4, 0], A = [2, 2 * Math.tan(G.rad(70))];
+    const D = [C[0] + G.dist(C, A), 0];
+    Q.push({
+      id: 'Q16', no: 16, sec: 'B', marks: 5, min: 5, topic: '等腰 △、△ 外角',
+      parts: [{
+        stem: '圖中，BCD 是一條直線，AB = AC = CD 及 ∠ABC = 70°。求 x 和 y。',
+        fig: {
+          alt: 'BCD 是直線，AB = AC = CD，∠ABC = 70°，∠ADC = x，∠BAD = y',
+          pts: { A, B, C, D },
+          segs: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C' }, { a: 'A', b: 'D' }, { id: 'BD', a: 'B', b: 'D' }],
+          ticks: [{ a: 'A', b: 'B' }, { a: 'A', b: 'C', t: 0.72 }, { a: 'C', b: 'D' }],
+          labels: { C: 270 },
+          arcs: [
+            { id: 'g70', v: 'B', p: 'C', q: 'A', label: '70°', value: 70 },
+            { id: 'ax', v: 'D', p: 'A', q: 'C', label: 'x', value: 35 },
+            { id: 'ay', v: 'A', p: 'B', q: 'D', label: 'y', value: 75, r: 50, lt: 0.3 },
+            { id: 'aACB', v: 'C', p: 'A', q: 'B', extra: true, key: 'ACB', value: 70 },
+            { id: 'aCAD', v: 'A', p: 'C', q: 'D', extra: true, key: 'CAD', value: 35, r: 20, hideWhen: 'y' },
+            { id: 'aBAC', v: 'A', p: 'B', q: 'C', extra: true, key: 'BAC', value: 40, r: 20, hideWhen: 'y' },
+          ],
+          overlays: [{ id: 'left', fill: ['A', 'B', 'C'] }, { id: 'right', fill: ['A', 'C', 'D'] }, { id: 'flag', lines: [['B', 'C', 'A', 'D', 'C']] }],
+        },
+        lines: [
+          { t: '∠ACB = {70}°', r: 'isos_base', m: '1A', w: { 40: '40° 是頂角 ∠BAC。AB = AC，所以 ∠ACB 等於底角 ∠ABC。' } },
+          { t: '∠CAD = x', r: 'isos_base' },
+          { t: 'x + x = {70}°', r: 'tri_ext', m: '1M', w: { 110: '在 △ACD 中，∠ACB 是外角，它等於 ∠CAD + ∠ADC；不是用 ∠ACD。', 180: '△ACD 的外角 ∠ACB 等於兩個內對角之和。' } },
+          { t: 'x = {35}°', m: '1A' },
+          { t: '∠BAC + 70° + 70° = {180}°', r: 'tri_sum', m: '1M' },
+          { t: '∠BAC = {40}°' },
+          { t: 'y = ∠BAC + ∠CAD = 40° + 35° = {75}°', m: '1A', w: { 40: 'y 是整個 ∠BAD，包括 ∠BAC 和 ∠CAD 兩部分。' } },
+        ],
+        hints: [
+          { t: '圖中有兩個等腰三角形：左邊 △ABC（AB = AC），右邊 △ACD（CA = CD）。', hl: ['AB', 'AC', 'CD'], ov: 'left' },
+          { t: '∠ACB 是右邊 △ACD 的外角，它和 x、∠CAD 形成一支「旗」：', cards: ['isos_base', 'tri_ext'], ov: 'flag' },
+          { t: '先求 ∠ACB；△ACD 中 ∠CAD = x，所以 x + x = ∠ACB。y 是 ∠BAC 和 ∠CAD 合起來的角。' },
+        ],
+        ans: { x: 35, y: 75 },
+        checks: (a) => [['△ACD 外角', a.x + a.x, 70], ['△ABD 內角和', 70 + a.y + a.x, 180]],
+        alt: '另解：在 △ABD 中，y + 70° + x = 180°（△ 內角和），y = 75°。',
+        space: 8,
+      }],
+    });
+  })();
+
+  // 17 對頂角 + 多邊形內角和
+  (function () {
+    const pg = polygon([115, 108, 88, 108, 121], [2.7, 3.6, 3.6], [0, 0], -8);
+    const [P, Qv, R, S, T] = pg;
+    const U = extend(P, Qv, 1.8), V = extend(R, Qv, 1.8);
+    const names = ['P', 'Q', 'R', 'S', 'T'];
+    const pts = { P, Q: Qv, R, S, T, U, V };
+    const labs = ['115°', null, 'x', 'x + 20°', '121°'], vals = [115, 108, 88, 108, 121], ids = ['g115', 'aPQR', 'ax', 'ax20', 'g121'];
+    const qLab = (G.dir(Qv, P) + G.dir(Qv, V)) / 2 + (Math.abs(G.dir(Qv, P) - G.dir(Qv, V)) > 180 ? 180 : 0);
+    Q.push({
+      id: 'Q17', no: 17, sec: 'B', marks: 4, min: 4, topic: '對頂角、多邊形內角和',
+      parts: [{
+        stem: '圖中，PQRST 是一個五邊形，PQU 和 RQV 都是直線。求 x。',
+        fig: {
+          alt: '五邊形 PQRST，PQ 延長至 U，RQ 延長至 V，∠UQV = 108°，∠P = 115°，∠R = x，∠S = x + 20°，∠T = 121°',
+          pts,
+          segs: [0, 1, 2, 3, 4].map((i) => ({ a: names[i], b: names[(i + 1) % 5] })).concat([{ a: 'Q', b: 'U' }, { a: 'Q', b: 'V' }]),
+          labels: { Q: [qLab, 20] },
+          arcs: [0, 1, 2, 3, 4].map((i) => ({ id: ids[i], v: names[i], p: names[(i + 1) % 5], q: names[(i + 4) % 5], label: labs[i], value: vals[i], extra: i === 1, key: i === 1 ? 'PQR' : undefined }))
+            .concat([{ id: 'g108', v: 'Q', p: 'U', q: 'V', label: '108°', value: 108 }]),
+        },
+        lines: [
+          { t: '∠PQR = {108}°', r: 'vert', m: '1A', w: { 72: '∠PQR 和 108° 是對頂角（兩條直線相交，相對的角），它們相等。' } },
+          { t: '115° + 108° + x + (x + 20°) + 121° = ({5} − 2) × 180°', r: 'poly_sum', m: '1M' },
+          { t: '2x + {364}° = {540}°', m: '1M' },
+          { t: 'x = {88}°', m: '1A', w: { 176: '176° 是 2x，還要除以 2。', 108: '108° 是 ∠S = x + 20° 的值，題目求的是 x。' } },
+        ],
+        hints: [
+          { t: '108° 不在五邊形裏面。它在 Q 點，和五邊形的內角 ∠PQR 正好相對。', hl: ['g108', 'aPQR', 'QU', 'QV'] },
+          { t: '先用對頂角找出 ∠PQR，再用五邊形的內角和：', cards: ['vert', 'poly_sum'] },
+          { t: '五個內角加起來 = 540°。x 和 (x + 20°) 合起來是 2x + 20°。' },
+        ],
+        ans: { x: 88 },
+        checks: (a) => [['多邊形內角和', 115 + 108 + a.x + (a.x + 20) + 121, 540]],
+        space: 6,
+      }],
+    });
+  })();
+
+  // 18 反角 + 凹五邊形
+  (function () {
+    const B = [0, 0], C = [7, 0], A = [0, 5.5], D = [7, 5.5], E = [3.5, 5.5 - 3.5 * Math.tan(G.rad(20))];
+    Q.push({
+      id: 'Q18', no: 18, sec: 'B', marks: 4, min: 5, topic: '反角、多邊形內角和',
+      parts: [{
+        stem: '圖中，ABCDE 是一個凹五邊形，∠ABC = ∠BCD = 90°。求 x。',
+        fig: {
+          alt: '凹五邊形 ABCDE，B、C 是直角，∠A = ∠D = x，E 點外側的角是 140°',
+          pts: { A, B, C, D, E },
+          segs: [{ a: 'A', b: 'B' }, { a: 'B', b: 'C' }, { a: 'C', b: 'D' }, { a: 'D', b: 'E' }, { a: 'E', b: 'A' }],
+          labels: { E: 270 },
+          arcs: [
+            { id: 'gB', v: 'B', p: 'C', q: 'A', right: true, value: 90 },
+            { id: 'gC', v: 'C', p: 'D', q: 'B', right: true, value: 90 },
+            { id: 'axA', v: 'A', p: 'B', q: 'E', label: 'x', value: 70 },
+            { id: 'axD', v: 'D', p: 'E', q: 'C', label: 'x', value: 70 },
+            { id: 'g140', v: 'E', p: 'D', q: 'A', label: '140°', value: 140 },
+            { id: 'aAED', v: 'E', p: 'A', q: 'D', reflex: true, extra: true, key: 'AED', value: 220 },
+          ],
+        },
+        lines: [
+          { t: '反角 ∠AED + 140° = {360}°', r: 'at_pt', w: { 180: 'E 點的兩個角圍住一整圈，加起來是 360°。' } },
+          { t: '反角 ∠AED = {220}°', m: '1A', w: { 140: '140° 在五邊形外面。五邊形在 E 點的內角是另一邊的反角。' } },
+          { t: 'x + 90° + 90° + x + 220° = ({5} − 2) × 180°', r: 'poly_sum', m: '1M' },
+          { t: '2x + {400}° = {540}°', m: '1M', w: { 320: '五個內角是 x、90°、90°、x 和反角 220°，常數加起來是 400°。' } },
+          { t: 'x = {70}°', m: '1A', w: { 140: '140° 是 2x，還要除以 2。' } },
+        ],
+        hints: [
+          { t: '140° 在五邊形的外面。五邊形在 E 點的內角是凹進去的那一邊，大於 180°。', hl: ['g140', 'aAED'] },
+          { t: 'E 點兩邊的角圍住一整圈；再用五邊形內角和：', cards: ['at_pt', 'poly_sum'] },
+          { t: '反角 ∠AED = 360° − 140°。五個內角加起來 = 540°。' },
+        ],
+        ans: { x: 70 },
+        checks: (a) => [['同頂角', 220 + 140, 360], ['多邊形內角和', a.x + 90 + 90 + a.x + 220, 540]],
+        space: 6,
+      }],
+    });
+  })();
+
+  // 19 正多邊形逆推邊數
+  Q.push({
+    id: 'Q19', no: 19, sec: 'B', marks: 4, min: 4, topic: '正多邊形的邊數',
+    stem: '',
+    parts: [
+      {
+        label: '(a)', stem: '一個正多邊形每個外角是 24°。求該多邊形的邊數。',
+        lines: [
+          { t: '邊數 = 360° ÷ {24}°', r: 'poly_ext', m: '1M' },
+          { t: '= {15}', m: '1A', w: { 7.5: '每個外角是 24°，要用外角和 360° 除以 24°，不是 180°。' } },
+        ],
+        hints: [
+          { t: '正多邊形的外角全部相等。有幾條邊，就有幾個外角。' },
+          { t: '所有外角加起來永遠是 360°：', cards: ['poly_ext'] },
+          { t: '24° × 邊數 = 360°，所以邊數 = 360° ÷ 24°。' },
+        ],
+        ans: { n: 15 }, checks: (a) => [['外角和', a.n * 24, 360]], space: 3,
+      },
+      {
+        label: '(b)', stem: '另一個正多邊形每個內角是 150°。求該多邊形的邊數。',
+        lines: [
+          { t: '每個外角 = 180° − 150° = {30}°', r: 'adj', m: '1M' },
+          { t: '邊數 = 360° ÷ 30° = {12}', r: 'poly_ext', m: '1A', w: { 2.4: '要用外角和 360° 除以每個外角 30°，不是除以內角 150°。' } },
+        ],
+        hints: [
+          { t: '內角 150° 不能直接用 360° 去除。先把它變成外角。' },
+          { t: '每個頂點的外角和內角拼成一條直線：', cards: ['adj', 'poly_ext'] },
+          { t: '外角 = 180° − 150°，邊數 = 360° ÷ 外角。' },
+        ],
+        ans: { n: 12 }, checks: (a) => [['外角和', a.n * 30, 360], ['內角', (a.n - 2) * 180 / a.n, 150]], space: 4,
+      },
+    ],
+  });
+
+  // 20 ★ 平行線 + △ 外角
+  (function () {
+    const A = [-1, 4], B = [4, 4], C = [-1.6, 0];
+    const F = meet(B, 228, [0, 0], 0), E = lerp(B, F, 0.55), D = meet(E, 329, [0, 0], 0);
+    Q.push({
+      id: 'Q20', no: 20, sec: 'B', marks: 4, min: 4, star: true, topic: '平行線、△ 外角',
+      parts: [{
+        stem: '圖中，AB // CD，BE 延長後與 CD 相交於 F。∠ABE = 48° 及 ∠EDF = 31°。求 x。',
+        fig: {
+          alt: 'AB // CD，E 在兩線之間，BE 延長交 CD 於 F，∠ABE = 48°，∠EDF = 31°，∠BED = x',
+          pts: { A, B, C, D, E, F },
+          segs: [{ a: 'A', b: 'B', ext: [0, 1.4] }, { a: 'C', b: 'D', ext: [0, 1] }, { id: 'BF', a: 'B', b: 'F' }, { a: 'E', b: 'D' }],
+          par: [{ a: 'A', b: 'B', t: 0.25 }, { a: 'C', b: 'D', t: 0.18 }],
+          labels: { B: 90, F: 270, D: 270, E: 150 },
+          arcs: [
+            { id: 'g48', v: 'B', p: 'A', q: 'E', label: '48°', value: 48, r: 24 },
+            { id: 'g31', v: 'D', p: 'F', q: 'E', label: '31°', value: 31 },
+            { id: 'ax', v: 'E', p: 'B', q: 'D', label: 'x', value: 79 },
+            { id: 'aF', v: 'F', p: 'D', q: 'E', extra: true, key: 'EFD', value: 48 },
+          ],
+          overlays: [{ id: 'Z', lines: [['A', 'B', 'F', 'D']] }, { id: 'tri', fill: ['E', 'F', 'D'] }],
+        },
+        lines: [
+          { t: '∠EFD = {48}°', r: 'alt', rp: 'AB // CD', m: '1A', w: { 132: '∠ABF 和 ∠BFD 是內錯角（Z 形），它們相等。' } },
+          { t: 'x = ∠EFD + ∠EDF', r: 'tri_ext', m: '1M' },
+          { t: 'x = 48° + {31}°', m: '1M' },
+          { t: 'x = {79}°', m: '1A', w: { 101: '101° 是 △EFD 的內角 ∠FED。x 是它旁邊的外角。' } },
+        ],
+        hints: [
+          { t: '把 x 看成 △EFD 在 E 點的外角（BEF 是一條直線）。它的兩個內對角是 ∠EFD 和 ∠EDF。', hl: ['ax', 'aF', 'g31'], ov: 'tri' },
+          { t: '∠EFD 未知，但它和 48° 形成「Z」形：', cards: ['alt', 'tri_ext'], ov: 'Z' },
+          { t: '先用內錯角求 ∠EFD，再用 x = ∠EFD + ∠EDF。' },
+        ],
+        ans: { x: 79 },
+        checks: (a) => [['△ 外角', a.x, 48 + 31]],
+        space: 6,
+      }],
+    });
+  })();
+
+  // 21 ★ 正五邊形 + 等腰 △
+  (function () {
+    const O = [0, 0], r = 3.2, names = 'ABCDE';
+    const pts = {}; for (let i = 0; i < 5; i++) pts[names[i]] = polar(O, 90 + 72 * i, r);
+    const fig = {
+      alt: '正五邊形 ABCDE，連對角線 AC 和 AD',
+      pts,
+      segs: [0, 1, 2, 3, 4].map((i) => ({ a: names[i], b: names[(i + 1) % 5] })).concat([{ a: 'A', b: 'C' }, { a: 'A', b: 'D' }]),
+      ticks: [0, 1, 2, 3, 4].map((i) => ({ a: names[i], b: names[(i + 1) % 5] })),
+      arcs: [
+        { id: 'aABC', v: 'B', p: 'C', q: 'A', extra: true, key: 'ABC', value: 108 },
+        { id: 'aBAC', v: 'A', p: 'B', q: 'C', extra: true, key: 'BAC', value: 36, r: 34 },
+        { id: 'aBCA', v: 'C', p: 'A', q: 'B', extra: true, key: 'BCA', value: 36 },
+        { id: 'aCAD', v: 'A', p: 'C', q: 'D', extra: true, key: 'CAD', value: 36, r: 34 },
+        { id: 'aDAE', v: 'A', p: 'D', q: 'E', extra: true, key: 'DAE', value: 36, r: 34 },
+      ],
+      overlays: [{ id: 'triL', fill: ['A', 'B', 'C'] }, { id: 'triR', fill: ['A', 'D', 'E'] }],
+    };
+    Q.push({
+      id: 'Q21', no: 21, sec: 'B', marks: 5, min: 5, star: true, topic: '正多邊形、等腰 △',
+      stem: '圖中，ABCDE 是一個正五邊形。連接 AC 和 AD。',
+      fig,
+      parts: [
+        {
+          label: '(a)', stem: '求 ∠ABC。',
+          lines: [
+            { t: '∠ABC = ({5} − 2) × 180° ÷ {5}', r: 'poly_sum', m: '1M' },
+            { t: '= {108}°', m: '1A', w: { 540: '540° 是內角和；正五邊形 5 個內角相等，還要除以 5。' } },
+          ],
+          hints: [
+            { t: '∠ABC 是正五邊形的一個內角。', hl: ['aABC'] },
+            { t: '正多邊形每個內角 = 內角和 ÷ 邊數：', cards: ['poly_sum'] },
+            { t: '(5 − 2) × 180° = 540°，再除以 5。' },
+          ],
+          ans: { ABC: 108 }, checks: (a) => [['正五邊形內角', a.ABC * 5, 540]], space: 3,
+        },
+        {
+          label: '(b)', stem: '求 ∠BAC。',
+          lines: [
+            { t: '∵ BA = BC（正五邊形的邊）' },
+            { t: '∴ ∠BCA = ∠BAC', r: 'isos_base' },
+            { t: '2∠BAC + 108° = {180}°', r: 'tri_sum', m: '1M' },
+            { t: '∠BAC = {36}°', m: '1A', w: { 72: '72° 是 2∠BAC，還要除以 2。' } },
+          ],
+          hints: [
+            { t: '看 △ABC：BA 和 BC 都是正五邊形的邊，所以它們相等。', hl: ['AB', 'BC', 'aBAC', 'aBCA'], ov: 'triL' },
+            { t: '兩條等邊所對的底角相等，再用三角形內角和：', cards: ['isos_base', 'tri_sum'] },
+            { t: '△ABC 的頂角 ∠ABC = 108°，兩個底角相等，合起來是 180° − 108°。' },
+          ],
+          ans: { BAC: 36 }, checks: (a) => [['△ABC 內角和', 2 * a.BAC + 108, 180]], space: 4,
+        },
+        {
+          label: '(c)', stem: '求 ∠CAD。',
+          lines: [
+            { t: '同理，∠DAE = {36}°' },
+            { t: '∠CAD = 108° − 36° − 36° = {36}°', m: '1A', w: { 72: '∠BAE = 108° 要減去兩邊的 ∠BAC 和 ∠DAE，兩個都要減。' } },
+          ],
+          hints: [
+            { t: 'A 點的內角 ∠BAE（108°）被兩條對角線分成三份：∠BAC、∠CAD、∠DAE。', hl: ['aBAC', 'aCAD', 'aDAE'], ov: 'triR' },
+            { t: '△ADE 和 △ABC 的形狀一樣（同理），所以 ∠DAE 也等於 (b) 的答案。' },
+            { t: '∠CAD = 108° − ∠BAC − ∠DAE。' },
+          ],
+          ans: { CAD: 36 }, checks: (a) => [['A 點內角', 36 + a.CAD + 36, 108]], space: 3,
+        },
+      ],
+    });
+  })();
+
+  const META = {
+    title: '第 2 章　直線與多邊形的角',
+    subtitle: '中二數學　練習卷',
+    minutes: 60,
+    notes: ['本卷共兩部，全部題目均須作答。', '除特別指明外，須寫出所有理由。', '圖中各圖並非按比例繪畫。', '答案須以度（°）表示。'],
+  };
+
+  const DATA = { META, REASONS, REASON_ORDER, QUESTIONS: Q };
+  root.CH2 = DATA;
+  if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 三個頁面共用的文字渲染：題幹、標準解、理由、核對摘要。 */
+(function (root) {
+  const D = root.CH2;
+  const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // 變數 x、y、n 用斜體；保留 ∠、△ 等符號
+  function fmt(text) {
+    return esc(text).replace(/(^|[^A-Za-z])([xyn])(?![A-Za-z])/g, '$1<i class="v">$2</i>');
+  }
+
+  function reasonText(line) {
+    if (!line.r) return '';
+    const r = D.REASONS[line.r];
+    return r.name + (line.rp ? '，' + line.rp : '');
+  }
+
+  // 標準解一行：{數值} 換成數值
+  function solvedText(t) {
+    return t.replace(/\{([^}]*)\}/g, '$1');
+  }
+
+  function blanks(t) {
+    const out = []; t.replace(/\{([^}]*)\}/g, (_, v) => { out.push(v); return ''; });
+    return out;
+  }
+
+  function markCount(m) {
+    if (!m) return 0;
+    return m.split('+').reduce((s, x) => s + (parseInt(x, 10) || 0), 0);
+  }
+
+  function partMarks(p) {
+    return (p.lines || []).reduce((s, l) => s + markCount(l.m), 0);
+  }
+
+  // 完整題幹文字（核對三個頁面是否一致用）
+  function fullStem(q) {
+    return [q.stem || ''].concat(q.parts.map((p) => p.stem || '')).join(' ').replace(/\s+/g, ' ').trim();
+  }
+
+  // 從已渲染的頁面收集題目摘要，寫進 #audit（verify.js 讀取）
+  function collectAudit(doc, scope) {
+    const items = [];
+    (scope || doc).querySelectorAll('[data-qid]').forEach((el) => {
+      const stem = Array.from(el.querySelectorAll('[data-stem]')).map((s) => s.textContent).join(' ').replace(/\s+/g, ' ').trim();
+      const figs = Array.from(el.querySelectorAll('svg[data-diagram]')).map((svg) => {
+        const labels = Array.from(svg.querySelectorAll('text.pl, text.al:not(.extra), text.lt')).map((t) => t.textContent).sort();
+        return svg.getAttribute('data-diagram') + '|' + svg.querySelectorAll('line.ln').length + '|' + labels.join(',');
+      });
+      items.push({ id: el.getAttribute('data-qid'), stem, figs });
+    });
+    return items;
+  }
+
+  function writeAudit(doc, items) {
+    let s = doc.getElementById('audit');
+    if (!s) { s = doc.createElement('script'); s.type = 'application/json'; s.id = 'audit'; doc.body.appendChild(s); }
+    s.textContent = JSON.stringify(items);
+  }
+
+  const api = { esc, fmt, reasonText, solvedText, blanks, markCount, partMarks, fullStem, collectAudit, writeAudit };
+  root.CONTENT = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 逐步練習網站：題目、圖形、標準解全部來自 data/questions.js（與練習卷同一來源） */
+(function () {
+  const D = window.CH2, C = window.CONTENT, R = window.DIAGRAM, G = window.GEOM;
+  const { fmt } = C;
+  const esc = (v) => C.esc(v).replace(/"/g, '&quot;');
+  const Q = D.QUESTIONS;
+  const params = new URLSearchParams(location.search);
+  const TEACHER = params.get('teacher') === '1';
+  const AUDIT = params.has('audit');
+  const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const FAMILY = { adj: 'line', at_pt: 'line', vert: 'line', corr: 'par', alt: 'par', int: 'par', tri_sum: 'tri', tri_ext: 'tri', isos_base: 'tri', isos_prop: 'tri', eq_sides: 'tri', equil: 'tri', poly_sum: 'poly', poly_ext: 'poly' };
+  const FAM_NAME = { line: '直線與點', par: '平行線', tri: '三角形', poly: '多邊形' };
+  const FAM_DESC = { line: '直線上或同一點周圍的角', par: '兩條平行線之間的角', tri: '三角形的角或邊', poly: '多邊形的內角或外角' };
+  const famVar = (r) => (r ? `var(--f-${FAMILY[r]})` : 'var(--ink)');
+
+  /* ---------- 進度（只存在這部機的瀏覽器） ---------- */
+  const KEY = 'ch2-drill-v1', POS = 'ch2-drill-pos';
+  let progress = {};
+  if (!TEACHER) { try { progress = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { progress = {}; } }
+  const save = () => {
+    if (TEACHER) return;
+    try { localStorage.setItem(KEY, JSON.stringify(progress)); localStorage.setItem(POS, JSON.stringify({ qi: ui.qi, pi: ui.pi })); } catch (e) { /* 無痕模式等：不保存也能用 */ }
+  };
+  function ps(q, pi) {
+    const s = progress[q.id] || (progress[q.id] = { p: [] });
+    return s.p[pi] || (s.p[pi] = { hints: 0, open: false, st: {}, done: false, tries: {}, rev: 0 });
+  }
+
+  /* ---------- 站點 ---------- */
+  function stationsOf(p) {
+    if (p.choice) return [{ i: 0, kind: 'choice' }];
+    return p.lines.map((l, i) => ({ i, l, kind: C.blanks(l.t).length ? 'fill' : l.r ? 'reason' : 'auto' }));
+  }
+  function settleAuto(p, s) {
+    for (const st of stationsOf(p)) {
+      if (s.st[st.i] && s.st[st.i].done) continue;
+      if (st.kind === 'auto' && s.open) { s.st[st.i] = { done: true }; continue; }
+      break;
+    }
+    if (!p.choice && stationsOf(p).every((st) => s.st[st.i] && s.st[st.i].done)) s.done = true;
+  }
+  function curStation(p, s) {
+    return stationsOf(p).find((st) => !(s.st[st.i] && s.st[st.i].done));
+  }
+  // 一行解答求出的是哪個量（用於圖上寫回、標示目標角）
+  function lineKey(t) {
+    let m = t.match(/^(?:反角 |同理，|∴ )?∠([A-Z]{1,3}) = /);
+    if (m) return m[1];
+    m = t.match(/^([xy]) = /);
+    return m ? m[1] : null;
+  }
+  function lineResult(t) {
+    const m = t.match(/= \{([\d.]+)\}°?$/);
+    return m ? Number(m[1]) : null;
+  }
+
+  function knownValues(q, pi) {
+    const p = q.parts[pi], s = ps(q, pi), v = {};
+    if (s.done && p.ans) for (const [k, x] of Object.entries(p.ans)) if (typeof x === 'number') v[k] = x;
+    if (p.lines) {
+      for (let pass = 0; pass < 2; pass++) {
+        p.lines.forEach((l, i) => {
+          if (!s.done && !(s.st[i] && s.st[i].done)) return;
+          const k = lineKey(l.t), r = lineResult(l.t);
+          if (k && r != null) v[k] = r;
+          let m = l.t.match(/^(?:∴ )?∠([A-Z]{1,3}) = ([xy])$/);
+          if (m && v[m[2]] != null) v[m[1]] = v[m[2]];
+          m = l.t.match(/^(?:∴ )?∠([A-Z]{1,3}) = ∠([A-Z]{1,3})$/);
+          if (m && v[m[2]] != null) v[m[1]] = v[m[2]];
+        });
+      }
+    }
+    return v;
+  }
+  function labelValue(label, v) {
+    const m = String(label).match(/^(\d*)([xy])(?:\s*\+\s*(\d+)°)?$/);
+    if (!m || v[m[2]] == null) return null;
+    return (m[1] ? Number(m[1]) : 1) * v[m[2]] + (m[3] ? Number(m[3]) : 0);
+  }
+
+  /* ---------- 圖形 ---------- */
+  function figOf(q, pi) {
+    const p = q.parts[pi];
+    if (p.fig) return { spec: p.fig, id: `${q.id}-${pi}` };
+    if (q.fig) return { spec: q.fig, id: `${q.id}-q` };
+    if (p.ifig) return { spec: p.ifig, id: null };
+    return null;
+  }
+  function figValues(spec, v) {
+    const out = {};
+    for (const a of spec.arcs || []) {
+      const k = a.key || a.label;
+      if (k == null) continue;
+      let n = v[k];
+      if (n == null) n = labelValue(k, v);
+      if (n != null) out[k] = `${Math.round(n * 100) / 100}°`;
+    }
+    return out;
+  }
+  function segIds(spec, name) {
+    const [a, b] = name.split('');
+    const P = spec.pts[a], Qp = spec.pts[b];
+    const ids = [a + b, b + a];
+    if (!P || !Qp) return ids;
+    for (const s of spec.segs || []) {
+      const A = spec.pts[s.a], B = spec.pts[s.b];
+      const on = (X) => Math.abs(G.dist(A, X) + G.dist(X, B) - G.dist(A, B)) < 1e-6;
+      if (on(P) && on(Qp)) ids.push(s.id || s.a + s.b);
+    }
+    return ids;
+  }
+  function arcIds(spec, name) {
+    const [x, v, y] = name.split('');
+    const V = spec.pts[v], X = spec.pts[x], Y = spec.pts[y];
+    if (!V || !X || !Y) return [];
+    const want = [G.dir(V, X), G.dir(V, Y)].sort((m, n) => m - n);
+    const same = (m, n) => Math.abs(m - n) < 0.5;
+    return (spec.arcs || []).filter((a) => {
+      if (a.v !== v) return false;
+      const got = [G.dir(V, spec.pts[a.p]), G.dir(V, spec.pts[a.q])].sort((m, n) => m - n);
+      return same(got[0], want[0]) && same(got[1], want[1]);
+    }).map((a) => a.id || '∠' + a.v + a.p + a.q);
+  }
+  function keyArcIds(spec, key) {
+    if (!spec || key == null) return [];
+    return (spec.arcs || []).filter((a) => (a.key || a.label) === key).map((a) => a.id || '∠' + a.v + a.p + a.q);
+  }
+
+  // 題幹中的已知條件：可點擊，圖上標出對應的線或角
+  const CONDS = [
+    [/直線 ([A-Z]{2}) 與 ([A-Z]{2}) 相交於 [A-Z]/g, (m, f) => segIds(f, m[1]).concat(segIds(f, m[2]))],
+    [/([A-Z]{2}) \/\/ ([A-Z]{2})/g, (m, f) => segIds(f, m[1]).concat(segIds(f, m[2]))],
+    [/([A-Z]{2}) ⊥ ([A-Z]{2})/g, (m, f) => segIds(f, m[1]).concat(segIds(f, m[2]), (f.arcs || []).filter((a) => a.right).map((a) => a.id))],
+    [/∠[A-Z]{3}(?: = ∠[A-Z]{3})* = \d+°/g, (m, f) => (m[0].match(/∠[A-Z]{3}/g) || []).flatMap((n) => arcIds(f, n.slice(1)))],
+    [/[A-Z]{2}(?: = [A-Z]{2})+/g, (m, f) => m[0].split(' = ').flatMap((n) => segIds(f, n))],
+    [/([A-Z]{3,4}) 是一條直線/g, (m, f) => pathIds(f, m[1])],
+    [/([A-Z]{3}) 和 ([A-Z]{3}) 都是直線/g, (m, f) => pathIds(f, m[1]).concat(pathIds(f, m[2]))],
+  ];
+  function pathIds(f, path) {
+    const out = [];
+    for (let i = 0; i + 1 < path.length; i++) out.push(...segIds(f, path[i] + path[i + 1]));
+    return out;
+  }
+  function condRanges(text, spec) {
+    if (!spec) return [];
+    const out = [];
+    for (const [re, fn] of CONDS) {
+      re.lastIndex = 0;
+      let m;
+      while ((m = re.exec(text))) {
+        const s = m.index, e = s + m[0].length;
+        if (out.some((r) => s < r.e && e > r.s)) continue;
+        out.push({ s, e, ids: fn(m, spec) });
+      }
+    }
+    return out.sort((a, b) => a.s - b.s);
+  }
+  function stemHTML(text, spec) {
+    const rs = condRanges(text, spec);
+    let html = '', at = 0;
+    for (const r of rs) {
+      html += fmt(text.slice(at, r.s));
+      html += `<button type="button" class="cond" data-hl="${esc(JSON.stringify(r.ids))}">${fmt(text.slice(r.s, r.e))}</button>`;
+      at = r.e;
+    }
+    return html + fmt(text.slice(at));
+  }
+
+  /* ---------- 介面狀態 ---------- */
+  const ui = { qi: 0, pi: 0, hl: [], ov: null, ovDraw: false, cond: null, pick: null, vals: {}, choice: null, fb: null, fbKind: '', intro: true, dir: 0, fillH: 0, menu: null };
+  (function initPos() {
+    let pos = null;
+    try { pos = JSON.parse(localStorage.getItem(POS)); } catch (e) { pos = null; }
+    const qn = parseInt(params.get('q'), 10);
+    if (qn >= 1 && qn <= Q.length) { ui.qi = qn - 1; ui.pi = 0; } else if (pos && Q[pos.qi]) { ui.qi = pos.qi; ui.pi = Math.min(pos.pi || 0, Q[pos.qi].parts.length - 1); }
+  })();
+
+  if (TEACHER) {
+    for (const q of Q) q.parts.forEach((p, pi) => {
+      const s = ps(q, pi);
+      s.open = true; s.hints = p.hints.length; s.done = true;
+      stationsOf(p).forEach((st) => { s.st[st.i] = { done: true }; });
+    });
+  }
+
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const cur = () => { const q = Q[ui.qi]; return { q, p: q.parts[ui.pi], s: ps(q, ui.pi) }; };
+
+  function resetLocal() { ui.hl = []; ui.ov = null; ui.ovDraw = false; ui.cond = null; ui.pick = null; ui.pickState = ''; ui.marks = null; ui.vals = {}; ui.choice = null; ui.fb = null; ui.fbKind = ''; ui.fillH = 0; }
+
+  function partStatus(q, pi) {
+    const s = progress[q.id] && progress[q.id].p[pi];
+    if (!s) return '';
+    if (s.done) return 'done';
+    if (s.hints || s.open || Object.keys(s.st || {}).length) return 'started';
+    return '';
+  }
+  function qStatus(q) {
+    const st = q.parts.map((_, i) => partStatus(q, i));
+    if (st.every((x) => x === 'done')) return 'done';
+    return st.some((x) => x) ? 'started' : '';
+  }
+
+  /* ---------- 頁頭 ---------- */
+  function renderTop() {
+    $('#chips').innerHTML = Q.map((q, i) => {
+      const cls = ['chip', qStatus(q), i === ui.qi ? 'now' : '', q.no === 15 ? 'sep' : ''].join(' ');
+      const st = qStatus(q) === 'done' ? '，已完成' : qStatus(q) === 'started' ? '，做緊' : '';
+      return `<button type="button" class="${cls}" data-q="${i}" aria-label="第 ${q.no} 題${st}"${i === ui.qi ? ' aria-current="true"' : ''}>${q.no}</button>`;
+    }).join('');
+    const now = $('#chips .now');
+    if (now) now.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+
+  /* ---------- 左邊：圖形 ---------- */
+  function figSize() {
+    const zone = $('#figzone');
+    const mobile = window.innerWidth <= 900;
+    const w = Math.max(240, mobile ? window.innerWidth - 32 : zone.clientWidth - 48);
+    const h = Math.max(170, mobile ? Math.round(window.innerHeight * 0.3) : zone.clientHeight - 40);
+    return { maxW: Math.min(w, 820), maxH: Math.min(h, 640), scale: mobile ? 48 : 92 };
+  }
+  function renderStage() {
+    const { q, p, s } = cur();
+    $('#qno').textContent = q.no;
+    $('#qmeta').innerHTML = `卷面第 ${q.no} 題${q.parts.length > 1 ? ` ${esc(p.label)}` : ''}　${q.sec === 'A' ? '甲部' : '乙部'}　${q.marks} 分${q.star ? '　<span class="star">★ 挑戰題</span>' : ''}`;
+    const f = figOf(q, ui.pi);
+    const zone = $('#figzone');
+    if (f) {
+      const vals = figValues(f.spec, knownValues(q, ui.pi));
+      zone.innerHTML = R.render(f.spec, Object.assign({ overlays: true, values: vals, targets: targetKeys(), id: f.id || undefined }, figSize()));
+      const svg = zone.querySelector('svg');
+      if (!f.id) svg.removeAttribute('data-diagram');
+      if (ui.intro || ui.figIntro) svg.classList.add('intro');
+      ui.figIntro = false;
+      paint(svg);
+    } else if (q.id === 'Q19' && (s.hints >= 2 || s.done)) {
+      if (s.done && p.ans.n) ngonN = p.ans.n;
+      zone.innerHTML = ngonHTML();
+      bindNgon();
+    } else {
+      zone.innerHTML = `<p class="bigtext">${fmt(p.stem)}<small>這題沒有圖。可以先在紙上畫一個簡單的草圖。</small></p>`;
+    }
+  }
+  // 正在求的量：當前這一站（或未打開路線時的答案）
+  function targetKeys() {
+    const { q, p, s } = cur();
+    if (s.done || !p.lines) return [];
+    let keys = [];
+    const st = s.open ? curStation(p, s) : null;
+    if (st && st.l) keys = [lineKey(st.l.t)].filter(Boolean);
+    else if (!s.open && p.ans) keys = Object.keys(p.ans);
+    const known = knownValues(q, ui.pi);
+    return keys.filter((k) => known[k] == null);
+  }
+  const OV_FAM = { F: 'par', Z: 'par', C: 'par', flag: 'tri', tri: 'tri', left: 'tri', right: 'tri', triL: 'tri', triR: 'tri', fan: 'poly' };
+  function paint(svg) {
+    const { q } = cur();
+    const f = figOf(q, ui.pi);
+    const add = (id, cls) => svg.querySelectorAll(`[data-id="${CSS.escape(id)}"]`).forEach((el) => el.classList.add(cls));
+    ui.hl.forEach((id) => add(id, 'hl'));
+    if (f) targetKeys().forEach((k) => keyArcIds(f.spec, k).forEach((id) => svg.querySelectorAll(`path[data-id="${CSS.escape(id)}"]`).forEach((el) => el.classList.add('target'))));
+    if (ui.ov) svg.querySelectorAll(`[data-ov="${CSS.escape(ui.ov)}"]`).forEach((el) => { el.classList.add('show', 'f-' + (OV_FAM[ui.ov] || 'tri')); if (ui.ovDraw && !reduceMotion) el.classList.add('draw'); });
+    ui.ovDraw = false;
+  }
+
+  // 正多邊形小工具（第 19 題）
+  let ngonN = 6;
+  function ngonHTML() {
+    return `<div class="ngon"><div id="ngonfig"></div>
+      <label class="sr" for="ngonr">邊數 n</label>
+      <input id="ngonr" type="range" min="3" max="24" step="1" value="${ngonN}">
+      <p class="read" id="ngonread"></p></div>`;
+  }
+  function bindNgon() {
+    const draw = () => {
+      const n = ngonN, R0 = 110, cx = 150, cy = 140;
+      const pts = [];
+      for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + (2 * Math.PI * i) / n; pts.push([cx + R0 * Math.cos(a), cy + R0 * Math.sin(a)]); }
+      const A = pts[0], B = pts[1], Z = pts[n - 1];
+      const ux = A[0] - Z[0], uy = A[1] - Z[1], L = Math.hypot(ux, uy);
+      const E = [A[0] + (ux / L) * 60, A[1] + (uy / L) * 60];
+      const a1 = Math.atan2(E[1] - A[1], E[0] - A[0]), a2 = Math.atan2(B[1] - A[1], B[0] - A[0]);
+      const r = 26, p1 = [A[0] + r * Math.cos(a1), A[1] + r * Math.sin(a1)], p2 = [A[0] + r * Math.cos(a2), A[1] + r * Math.sin(a2)];
+      $('#ngonfig').innerHTML = `<svg viewBox="0 0 300 290" width="300" height="290" role="img" aria-label="正 ${n} 邊形"><polygon points="${pts.map((p) => p.join(',')).join(' ')}"/><line class="extl" x1="${A[0]}" y1="${A[1]}" x2="${E[0]}" y2="${E[1]}"/><path class="ext" d="M${p1} A${r},${r} 0 0 1 ${p2}"/></svg>`;
+      const ext = Math.round((360 / n) * 100) / 100;
+      $('#ngonread').innerHTML = `正 <b>${n}</b> 邊形：每個外角 = 360° ÷ ${n} = <b>${ext}°</b>，每個內角 = <b>${Math.round((180 - ext) * 100) / 100}°</b>`;
+    };
+    $('#ngonr').addEventListener('input', (e) => { ngonN = Number(e.target.value); draw(); });
+    draw();
+  }
+
+  /* ---------- 右邊：題幹、提示、路線 ---------- */
+  function partLabel(p) { return p.label || ''; }
+  function targetLabel(k) {
+    return { x: 'x', y: 'y', n: '邊數', int: '每個內角', ext: '每個外角' }[k] || '∠' + k;
+  }
+  function unitFor(p, k) {
+    const v = p.ans[k];
+    const l = p.lines.slice().reverse().find((x) => lineResult(x.t) === v);
+    return l && /°$/.test(l.t) ? '°' : '';
+  }
+  function cardHTML(r, withFig) {
+    const R0 = D.REASONS[r];
+    const fig = withFig && R0.fig ? R.render(R0.fig, { overlays: true, maxW: 220, maxH: 120, scale: 26 }) : '';
+    return `<div class="rcard" data-r="${r}" style="--fam:${famVar(r)}"><b>${esc(R0.name)}</b>${fmt(R0.rule)}<span class="tip">${fmt(R0.tip)}</span>${fig}</div>`;
+  }
+
+  function propRow(r) {
+    const R0 = D.REASONS[r];
+    const fig = R0.fig ? R.render(R0.fig, { overlays: true, maxW: 104, maxH: 64, scale: 22, noLabels: true, arcScale: 0.5, pad: 6 }) : '';
+    return `<li class="prop" style="--fam:${famVar(r)}"><button type="button" data-card="${r}" title="${esc(R0.rule)}"><span class="pfig">${fig}</span><b>${esc(R0.name)}</b></button></li>`;
+  }
+
+  function lineInputs(l, stIndex) {
+    const parts = l.t.split(/(\{[^}]*\})/);
+    let k = 0;
+    return parts.map((seg) => {
+      const m = seg.match(/^\{([^}]*)\}$/);
+      if (!m) return fmt(seg);
+      const idx = k++;
+      const key = `${stIndex}:${idx}`;
+      const val = ui.vals[key] != null ? ui.vals[key] : '';
+      const w = Math.max(2, m[1].length + 1);
+      return `<input class="blank" inputmode="decimal" autocomplete="off" style="--w:${w}" data-k="${key}" value="${esc(val)}" aria-label="第 ${idx + 1} 個空格">`;
+    }).join('');
+  }
+
+  function reasonText(r, rp) { return r ? D.REASONS[r].name + (rp ? '，' + rp : '') : ''; }
+
+  function renderSide() {
+    const { q, p, s } = cur();
+    const f = figOf(q, ui.pi);
+    settleAuto(p, s);
+    const out = [];
+    out.push('<div class="stemwrap">');
+    if (q.stem) out.push(`<p class="stem" data-stem>${stemHTML(q.stem, f && f.spec)}</p>`);
+    if (q.parts.length > 1) {
+      out.push(`<div class="parts" role="tablist">${q.parts.map((pp, i) => `<button type="button" role="tab" data-part="${i}" class="${i === ui.pi ? 'on' : ''} ${partStatus(q, i)}" aria-selected="${i === ui.pi}">${esc(pp.label)}</button>`).join('')}</div>`);
+    }
+    if (p.stem) out.push(`<p class="stem${q.stem ? ' sub' : ''}" data-stem>${stemHTML(p.stem, f && f.spec)}</p>`);
+    out.push('</div>');
+
+    // 提示
+    if (s.hints && !s.done) {
+      out.push(`<ol class="hints" aria-label="提示">${p.hints.slice(0, s.hints).map((h, i) =>
+        `<li class="hint${i === s.hints - 1 ? ' cur' : ''}${i === ui.newHint ? ' new' : ''}" data-hint="${i}"><span class="n">${i + 1}</span>${fmt(h.t)}${h.cards ? `<ul class="props">${h.cards.map(propRow).join('')}</ul>` : ''}</li>`).join('')}</ol>`);
+    }
+
+    // 路線
+    const sts = stationsOf(p);
+    const stepCount = sts.filter((x) => x.kind !== 'auto').length;
+    if (p.choice) out.push(choiceHTML(p, s));
+    else {
+      if (!s.done || ui.holdRoute) {
+      out.push(`<div class="route-head"><h3>解題路線　${stepCount} 站</h3></div>`);
+      out.push(`<ol class="route${ui.intro ? ' intro' : ''}"><span class="rail"></span><span class="fill" style="height:${ui.fillH}px"></span>`);
+      const allStem = [q.stem, p.stem].filter(Boolean).join(' ');
+      const conds = condRanges(allStem, f && f.spec);
+      const chips = conds.map((r) => `<button type="button" class="cond tag" data-hl="${esc(JSON.stringify(r.ids))}">${fmt(allStem.slice(r.s, r.e))}</button>`).join('');
+      out.push(`<li class="st start done"><span class="dot"></span><div class="k">已知</div><div class="t">${chips || '圖上標示了的角和邊'}</div></li>`);
+      if (!s.open) out.push(`<li class="st gate"><span class="dot"></span><button type="button" class="gatebtn" data-act="open">從第 1 站開始，一步一步做<span>→</span></button></li>`);
+      let n = 0, later = 0;
+      const curSt = curStation(p, s);
+      for (const st of sts) {
+        const done = s.st[st.i] && s.st[st.i].done;
+        const isCur = s.open && !s.done && curSt && curSt.i === st.i;
+        if (st.kind !== 'auto') n++;
+        const fam = st.l.r ? famVar(st.l.r) : 'var(--calc)';
+        if (done && (s.open || s.done)) {
+          const rs = st.l.r ? `<span class="r">${esc(reasonText(st.l.r, st.l.rp))}</span>` : '';
+          const fn = '';
+          out.push(`<li class="st done${st.kind === 'auto' ? ' auto' : ''}${s.st[st.i].rev ? ' revealed' : ''}${ui.popAt === st.i ? ' pop' : ''}" style="--fam:${fam}" data-st="${st.i}"><span class="dot"></span>${st.kind === 'auto' ? '' : `<div class="k">第 ${n} 站${fn}</div>`}<div class="t">${fmt(C.solvedText(st.l.t))}${rs}</div></li>`);
+        } else if (isCur) {
+          out.push(`<li class="st cur" data-st="${st.i}"><span class="dot"></span><div class="k">第 ${n} 站</div>${panelHTML(p, s, st)}</li>`);
+        } else if (st.kind !== 'auto' && s.open && !s.done) {
+          later++;
+        }
+      }
+      if (later) out.push(`<li class="st locked"><span class="dot"></span><div class="k">還有 ${later} 站</div></li>`);
+      // 終點
+      const keys = Object.keys(p.ans);
+      if (s.done) {
+        out.push(`<li class="st end done pop"><span class="dot"></span><div class="k">終點</div><div class="t">${keys.map((k) => `${fmt(targetLabel(k))} = ${p.ans[k]}${unitFor(p, k)}`).join('，')}</div></li>`);
+      } else if (!s.open) {
+        out.push(`<li class="st end cur"><span class="dot"></span><div class="k">終點</div><div class="direct">${keys.map((k) => `<label>${fmt(targetLabel(k))} = <input class="blank" inputmode="decimal" autocomplete="off" style="--w:4" data-k="end:${k}" value="${esc(ui.vals['end:' + k] || '')}" aria-label="${esc(targetLabel(k))} 的答案">${unitFor(p, k)}</label>`).join('')}</div><p class="fb ${ui.fbKind}" role="status" aria-live="polite">${ui.fb || ''}</p></li>`);
+      } else {
+        out.push(`<li class="st end"><span class="dot"></span><div class="k">終點</div><div class="t">${keys.map((k) => `${fmt(targetLabel(k))} = ？`).join('，')}</div></li>`);
+      }
+      out.push('</ol>');
+      }
+    }
+
+    if (s.done && !ui.holdRoute) out.push(doneHTML(q, p, s));
+    const sc = $('#scroll');
+    sc.innerHTML = out.join('');
+    if (ui.dir && !reduceMotion) { sc.animate([{ opacity: 0, transform: `translateX(${ui.dir * 40}px)` }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.3,.7,.3,1)' }); }
+    ui.dir = 0;
+    // 答錯的空格加紅框
+    if (ui.marks) {
+      const inputs = sc.querySelectorAll('.st.cur .blank');
+      ui.marks.marks.forEach((ok, k) => { if (inputs[k] && !ok) inputs[k].classList.add('bad'); });
+    }
+    updateFill();
+    renderBar();
+  }
+
+  function panelHTML(p, s, st) {
+    const l = st.l;
+    const tries = (s.tries[st.i] || 0);
+    const reason = l.r ? `<div class="reasonrow"><button type="button" class="pick${ui.pick ? ' set' : ''}${ui.pickState ? ' ' + ui.pickState : ''}" data-act="pick" aria-haspopup="menu">${ui.pick ? esc(D.REASONS[ui.pick].name) : '揀理由 ▾'}</button>${l.rp && ui.pick ? `<span class="rp">，${esc(l.rp)}</span>` : ''}</div>` : '';
+    const stmt = st.kind === 'fill' ? lineInputs(l, st.i) : fmt(l.t);
+    const rev = tries >= 2 ? '<div class="reveal"><button type="button" class="linkbtn" data-act="reveal">顯示這一步的答案</button></div>' : '';
+    return `<div class="panel"><div class="stmt">${stmt}</div>${reason}<p class="fb ${ui.fbKind}" role="status" aria-live="polite">${ui.fb || ''}</p>${rev}</div>`;
+  }
+
+  function choiceHTML(p, s) {
+    const ans = s.done ? p.choice.answer : ui.choice;
+    return `<div class="route-head"><h3>判斷</h3></div><div class="panel"><div class="choices" role="radiogroup">${p.choice.options.map((o) => `<button type="button" role="radio" aria-checked="${ans === o}" class="${ans === o ? 'on' : ''}" data-choice="${esc(o)}"${s.done ? ' disabled' : ''}>${esc(o)}</button>`).join('')}</div><p class="fb ${ui.fbKind}" role="status" aria-live="polite">${ui.fb || ''}</p></div>`;
+  }
+
+  function doneHTML(q, p, s) {
+    const tail = [];
+    if (s.hints && !TEACHER) tail.push(`用了 ${s.hints} 個提示`);
+    if (s.rev && !TEACHER) tail.push(`看了 ${s.rev} 步答案`);
+    if (p.choice) {
+      return `<section class="done-card${ui.justDone ? ' new' : ''}"><h3>完成</h3><p class="why2">答案：${esc(p.choice.answer)}。${fmt(p.choice.why)}</p>${tail.length ? `<p class="copy">${tail.join('，')}</p>` : ''}</section>`;
+    }
+    const lines = p.lines.map((l) => `<li>${fmt(C.solvedText(l.t))}${l.r ? `<span class="why" style="--fam:${famVar(l.r)}"><i class="fd"></i>（${esc(reasonText(l.r, l.rp))}）</span>` : ''}</li>`).join('');
+    const ans = Object.keys(p.ans).map((k) => `${fmt(targetLabel(k))} = ${p.ans[k]}${unitFor(p, k)}`).join('，');
+    return `<section class="done-card${ui.justDone ? ' new' : ''}"><p class="got">${ans}</p><h3>完整寫法：抄到卷上第 ${q.no} 題${esc(partLabel(p))}</h3><ol>${lines}</ol>${p.alt ? `<p class="why2">${fmt(p.alt)}</p>` : ''}${tail.length ? `<p class="copy">${tail.join('，')}</p>` : ''}</section>`;
+  }
+
+  function updateFill() {
+    const route = $('.route');
+    if (!route) return;
+    const done = route.querySelectorAll('.st.done');
+    const last = done[done.length - 1];
+    const h = last ? last.offsetTop : 0;
+    const fill = route.querySelector('.fill');
+    requestAnimationFrame(() => { fill.style.height = h + 'px'; ui.fillH = h; });
+  }
+
+  function renderBar() {
+    const { q, p, s } = cur();
+    const hint = $('#hintbtn'), go = $('#gobtn');
+    const left = p.hints.length - s.hints;
+    hint.disabled = false;
+    hint.hidden = s.done;
+    if (s.done) { /* 完成後不需要提示 */ }
+    else if (left > 0) hint.textContent = `提示 ${s.hints}/${p.hints.length}`;
+    else if (!s.open && !p.choice) hint.textContent = '一步一步做';
+    else { hint.textContent = '提示已用完'; hint.disabled = true; }
+    let ready = true;
+    if (!s.done) {
+      if (p.choice) ready = !!ui.choice;
+      else if (!s.open) ready = Object.keys(p.ans).some((k) => String(ui.vals['end:' + k] || '').trim());
+      else {
+        const st = curStation(p, s);
+        if (st && st.l) ready = C.blanks(st.l.t).every((_, k) => String(ui.vals[`${st.i}:${k}`] || '').trim()) && (!st.l.r || !!ui.pick);
+      }
+    }
+    go.classList.toggle('soft', !ready);
+    const pos = $('#mpos'); if (pos) pos.textContent = `卷面第 ${q.no} 題${q.parts.length > 1 ? ' ' + p.label : ''}`;
+    const bar = $('#mprog'); if (bar) bar.style.width = `${(Q.filter((x) => qStatus(x) === 'done').length / Q.length) * 100}%`;
+    go.classList.toggle('next', s.done);
+    if (s.done) {
+      const nextPart = ui.pi + 1 < q.parts.length;
+      go.textContent = nextPart ? `下一部分 ${q.parts[ui.pi + 1].label} →` : ui.qi + 1 < Q.length ? '下一題 →' : '回到第 1 題';
+    } else if (p.choice) go.textContent = '檢查';
+    else go.textContent = s.open ? '檢查這一站' : '檢查答案';
+  }
+
+  function renderAll() {
+    renderTop();
+    renderStage();
+    renderSide();
+    ui.intro = false;
+    ui.popAt = null;
+    ui.newHint = null;
+    ui.justDone = false;
+    save();
+  }
+
+  /* ---------- 動作 ---------- */
+  function setHighlight(ids, ov) {
+    ui.hl = ids || []; ui.ov = ov || null; ui.ovDraw = !!ov;
+    renderStage();
+  }
+
+  function showHint() {
+    const { p, s } = cur();
+    if (s.hints < p.hints.length) {
+      s.hints++;
+      ui.newHint = s.hints - 1;
+      const h = p.hints[s.hints - 1];
+      ui.hl = h.hl || []; ui.ov = h.ov || null; ui.ovDraw = !!h.ov;
+      renderAll();
+      const li = $(`.hint[data-hint="${s.hints - 1}"]`);
+      if (li) li.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+    } else if (!s.open && !p.choice) openRoute();
+  }
+
+  function openRoute() {
+    const { s } = cur();
+    s.open = true; ui.fb = null; ui.fbKind = '';
+    renderAll();
+    focusFirst();
+  }
+
+  function focusFirst() {
+    const el = $('#scroll .st.cur .blank') || $('#scroll .st.cur .pick');
+    if (el && window.innerWidth > 900) el.focus({ preventScroll: true });
+    const st = $('#scroll .st.cur');
+    if (st) st.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
+  const parseNum = (v) => {
+    const t = String(v || '').replace(/[０-９．]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/[°\s度]/g, '');
+    if (t === '' || isNaN(Number(t))) return null;
+    return Number(t);
+  };
+  const near = (a, b) => a != null && Math.abs(a - b) < 1e-6;
+
+  function wrongMsg(lines, val) {
+    for (const l of lines) if (l.w && l.w[String(val)]) return l.w[String(val)];
+    return null;
+  }
+  const ASK = { line: '這些角是拼成一條直線、圍住一點，還是兩線相交的相對角？', par: '把這兩個角連起來，是 F、Z 還是 C 形？', tri: '這個角在哪個三角形裏？那個三角形有甚麼特別？', poly: '這是多邊形的內角，還是外角？' };
+  function reasonMsg(want, got) {
+    const W = D.REASONS[want], Gt = D.REASONS[got];
+    if (FAMILY[want] === FAMILY[got]) return `不是「${Gt.name}」。${Gt.tip}這一步的角符合嗎？再看看圖。`;
+    return `「${Gt.name}」用在${FAM_DESC[FAMILY[got]]}；這一步要看的是${FAM_DESC[FAMILY[want]]}。`;
+  }
+
+  function fail(msg, st) {
+    const { s } = cur();
+    if (st != null) s.tries[st] = (s.tries[st] || 0) + 1;
+    ui.fb = msg; ui.fbKind = 'err';
+    renderSide();
+    save();
+    const panel = $('#scroll .st.cur .panel') || $('#scroll .st.end.cur');
+    if (panel && !reduceMotion) { panel.classList.remove('shake'); void panel.offsetWidth; panel.classList.add('shake'); }
+    document.querySelectorAll('#figzone .wedge').forEach((w) => { w.classList.remove('flash'); void w.getBBox(); w.classList.add('flash'); });
+    const bad = $('#scroll .blank.bad') || $('#scroll .st.cur .blank');
+    if (bad && window.innerWidth > 900) bad.focus({ preventScroll: true });
+  }
+
+  function checkStation() {
+    const { q, p, s } = cur();
+    const st = curStation(p, s);
+    if (!st) return;
+    const l = st.l;
+    const want = C.blanks(l.t).map(Number);
+    const got = want.map((_, k) => parseNum(ui.vals[`${st.i}:${k}`]));
+    const marks = got.map((g, k) => near(g, want[k]));
+    if (got.some((g) => g == null) || (l.r && !ui.pick)) {
+      ui.marks = null;
+      return fail(got.some((g) => g == null) ? '先把空格填好。' : '揀一個理由。', null);
+    }
+    const okVals = marks.every(Boolean), okReason = !l.r || ui.pick === l.r;
+    if (okVals && okReason) return passStation(st);
+    let msg = null;
+    if (!(s.tries[st.i] > 0)) {
+      // 第一次答錯：只指出錯在哪裏，再追問一句
+      const ask = l.r ? ASK[FAMILY[l.r]] : '再按次序算一次。';
+      msg = !okVals && !okReason ? `數值和理由都不對。${ask}` : !okVals ? (l.r ? '理由對了，數值不對。用這個性質再算一次。' : '數值不對，再按次序算一次。') : `數值對了，理由不對。${ask}`;
+    } else {
+      const hv = (l.r && p.hints.find((h) => h.ov && OV_FAM[h.ov] === FAMILY[l.r])) || p.hints.find((h) => h.ov);
+      if (hv) { ui.ov = hv.ov; ui.ovDraw = true; ui.hl = []; renderStage(); }
+      got.forEach((g, k) => { if (!marks[k] && !msg) msg = (l.w && l.w[String(g)]) || null; });
+      if (!msg && !okVals) msg = okReason || !l.r ? '數值還是不對。可以按「提示」，或者顯示這一步。' : '數值和理由都要再看看。';
+      if (okVals && !okReason) msg = reasonMsg(l.r, ui.pick);
+    }
+    ui.pickState = l.r ? (okReason ? 'good' : 'bad') : '';
+    ui.marks = { st: st.i, marks };
+    fail(msg, st.i);
+  }
+  function passStation(st, revealed) {
+    const { q, p, s } = cur();
+    const src = $('#scroll .st.cur .blank:last-of-type') || $('#scroll .st.cur .panel');
+    const from = src ? src.getBoundingClientRect() : null;
+    s.st[st.i] = { done: true, rev: !!revealed };
+    if (revealed) s.rev = (s.rev || 0) + 1;
+    ui.pick = null; ui.pickState = ''; ui.vals = {}; ui.fb = null; ui.fbKind = ''; ui.marks = null;
+    ui.popAt = st.i;
+    const key = lineKey(st.l.t);
+    settleAuto(p, s);
+    ui.justDone = s.done;
+    ui.holdRoute = s.done && !reduceMotion;
+    renderAll();
+    const finish = () => {
+      if (!ui.holdRoute) return;
+      ui.holdRoute = false;
+      ui.justDone = true;
+      renderSide();
+      ui.justDone = false;
+      const d = $('.done-card'); if (d) d.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+    };
+    const flew = flyTo(key, from, () => setTimeout(finish, 150));
+    if (!s.done) focusFirst();
+    else if (!flew) setTimeout(finish, 300);
+  }
+
+  // 解出的數值沿路線飛進圖上對應的角
+  function flyTo(key, from, done) {
+    if (!key || !from || reduceMotion) return false;
+    const { q } = cur();
+    const f = figOf(q, ui.pi);
+    if (!f) return false;
+    const ids = keyArcIds(f.spec, key);
+    const svg = $('#figzone svg');
+    const target = ids.map((id) => svg && svg.querySelector(`text[data-id="${CSS.escape(id)}"]`)).find(Boolean);
+    if (!target || target.getBoundingClientRect().width === 0) return false;
+    const to = target.getBoundingClientRect();
+    const fl = document.createElement('div');
+    fl.className = 'flyer';
+    fl.textContent = target.textContent.replace(/^.*= /, '');
+    document.body.appendChild(fl);
+    target.classList.add('landing');
+    const x0 = from.left + from.width / 2, y0 = from.top + from.height / 2;
+    const x1 = to.left + to.width / 2, y1 = to.top + to.height / 2;
+    fl.style.left = x0 + 'px'; fl.style.top = y0 + 'px';
+    const anim = fl.animate([
+      { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${(x1 - x0) * 0.5}px), calc(-50% + ${(y1 - y0) * 0.5 - 40}px)) scale(1.12)`, offset: 0.5 },
+      { transform: `translate(calc(-50% + ${x1 - x0}px), calc(-50% + ${y1 - y0}px)) scale(1)` },
+    ], { duration: 420, easing: 'cubic-bezier(.4,.1,.3,1)' });
+    anim.onfinish = () => { fl.remove(); target.classList.remove('landing'); target.classList.add('landed'); if (done) done(); };
+    return true;
+  }
+
+  function checkDirect() {
+    const { q, p, s } = cur();
+    const keys = Object.keys(p.ans);
+    const got = keys.map((k) => parseNum(ui.vals['end:' + k]));
+    if (got.some((g) => g == null)) return fail('先把答案填好。', null);
+    const ok = keys.every((k, i) => near(got[i], p.ans[k]));
+    if (ok) {
+      s.done = true; ui.justDone = true;
+      stationsOf(p).forEach((st) => { if (!s.st[st.i]) s.st[st.i] = { done: true }; });
+      ui.fb = null; ui.fbKind = ''; ui.vals = {};
+      renderAll();
+      const d = $('.done-card'); if (d) d.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+      return;
+    }
+    let msg = null;
+    got.forEach((g, i) => { if (!msg && !near(g, p.ans[keys[i]])) msg = wrongMsg(p.lines, g); });
+    fail(msg || '還未對。可以按「提示」，或者按「一步一步做」。', 'end');
+  }
+
+  function checkChoice() {
+    const { p, s } = cur();
+    if (!ui.choice) return fail('先揀「是」或「否」。', null);
+    if (ui.choice === p.choice.answer) {
+      s.done = true; s.st[0] = { done: true }; ui.fb = null; ui.fbKind = ''; ui.justDone = true;
+      renderAll();
+      return;
+    }
+    const h = p.hints[p.hints.length - 1];
+    fail(`再想想。${h ? h.t : ''}`, 0);
+  }
+
+  function primary() {
+    const { q, p, s } = cur();
+    if (s.done) {
+      if (ui.pi + 1 < q.parts.length) goPart(ui.pi + 1);
+      else goQ(ui.qi + 1 < Q.length ? ui.qi + 1 : 0);
+      return;
+    }
+    if (p.choice) return checkChoice();
+    if (!s.open) return checkDirect();
+    checkStation();
+  }
+
+  function reveal() {
+    const { p, s } = cur();
+    const st = curStation(p, s);
+    if (st) passStation(st, true);
+  }
+
+  function goQ(i) {
+    if (i === ui.qi) return;
+    ui.dir = i > ui.qi ? 1 : -1;
+    ui.qi = i; ui.pi = 0; resetLocal(); ui.figIntro = true;
+    const p = cur().p, s = cur().s;
+    if (s.hints && !s.done) { const h = p.hints[s.hints - 1]; ui.hl = h.hl || []; ui.ov = h.ov || null; }
+    renderAll();
+    $('#scroll').scrollTop = 0;
+    history.replaceState(null, '', `?q=${Q[i].no}${TEACHER ? '&teacher=1' : ''}`);
+  }
+  function goPart(i) {
+    ui.dir = i > ui.pi ? 1 : -1;
+    ui.pi = i; resetLocal();
+    renderAll();
+  }
+
+  /* 理由選單 */
+  function openMenu(btn) {
+    closeMenu();
+    const groups = ['line', 'par', 'tri', 'poly'];
+    const m = document.createElement('div');
+    m.className = 'menu'; m.setAttribute('role', 'menu');
+    m.innerHTML = groups.map((g) => `<h4>${FAM_NAME[g]}</h4><div class="grid">${D.REASON_ORDER.filter((r) => FAMILY[r] === g).map((r) => `<button type="button" role="menuitem" data-reason="${r}">${esc(D.REASONS[r].name)}</button>`).join('')}</div>`).join('');
+    document.body.appendChild(m);
+    const b = btn.getBoundingClientRect();
+    const mh = m.offsetHeight, mw = m.offsetWidth;
+    const stmt = btn.closest('.panel') && btn.closest('.panel').querySelector('.stmt');
+    if (b.bottom + 6 + mh <= window.innerHeight - 8) { m.style.top = b.bottom + 6 + 'px'; m.style.left = Math.min(Math.max(8, b.left), window.innerWidth - mw - 8) + 'px'; }
+    else if (b.top - mh - 6 >= 8 && !(stmt && stmt.getBoundingClientRect().top < b.top && b.top - mh - 6 < stmt.getBoundingClientRect().bottom)) { m.style.top = b.top - mh - 6 + 'px'; m.style.left = Math.min(Math.max(8, b.left), window.innerWidth - mw - 8) + 'px'; }
+    else {
+      m.classList.add('sheet');
+      if (stmt) {
+        const c = stmt.cloneNode(true);
+        c.querySelectorAll('input').forEach((i, k) => { i.replaceWith(document.createTextNode(stmt.querySelectorAll('input')[k].value || '＿＿')); });
+        m.insertAdjacentHTML('afterbegin', `<p class="echo">${esc(c.textContent.trim())}</p>`);
+      }
+    }
+    ui.menu = { el: m, btn };
+    m.querySelector('button').focus();
+  }
+  function closeMenu(refocus) {
+    if (!ui.menu) return;
+    ui.menu.el.remove();
+    if (refocus) { const b = $('#scroll .pick'); if (b) b.focus(); }
+    ui.menu = null;
+  }
+
+  /* 性質卡庫 */
+  function openLib(focus) {
+    const groups = ['line', 'par', 'tri', 'poly'];
+    $('#libbody').innerHTML = groups.map((g) => `<h3 style="color:var(--f-${g})">${FAM_NAME[g]}</h3><div class="cards">${D.REASON_ORDER.filter((r) => FAMILY[r] === g).map((r) => cardHTML(r, true)).join('')}</div>`).join('');
+    $('#lib').classList.add('open');
+    $('#lib .close').focus();
+    if (focus) { const c = $(`#libbody [data-r="${focus}"]`); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('focus'); } }
+  }
+  function closeLib() { $('#lib').classList.remove('open'); $('#libbtn').focus(); }
+
+  /* ---------- 事件 ---------- */
+  function bind() {
+    $('#chips').addEventListener('click', (e) => { const b = e.target.closest('[data-q]'); if (b) goQ(Number(b.dataset.q)); });
+    $('#mprev').addEventListener('click', () => goQ(Math.max(0, ui.qi - 1)));
+    $('#mnext').addEventListener('click', () => goQ(Math.min(Q.length - 1, ui.qi + 1)));
+    $('#hintbtn').addEventListener('click', showHint);
+    $('#gobtn').addEventListener('click', primary);
+    $('#libbtn').addEventListener('click', openLib);
+    $('#lib').addEventListener('click', (e) => { if (e.target.closest('.close') || e.target.classList.contains('shade')) closeLib(); });
+    const sc = $('#scroll');
+    sc.addEventListener('input', (e) => {
+      const k = e.target.dataset && e.target.dataset.k;
+      if (k) {
+        ui.vals[k] = e.target.value; e.target.classList.remove('bad', 'good');
+        const idx = Number(k.split(':')[1]);
+        if (ui.marks && !isNaN(idx)) ui.marks.marks[idx] = true;
+        renderBar();
+      }
+    });
+    sc.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList.contains('blank')) { e.preventDefault(); primary(); } });
+    sc.addEventListener('click', (e) => {
+      const t = e.target;
+      const cond = t.closest('.cond');
+      if (cond) {
+        const ids = JSON.parse(cond.dataset.hl);
+        const same = ui.cond === cond.textContent;
+        ui.cond = same ? null : cond.textContent;
+        setHighlight(same ? [] : ids, null);
+        sc.querySelectorAll('.cond').forEach((c) => c.classList.toggle('on', !same && c.textContent === cond.textContent));
+        return;
+      }
+      const card = t.closest('[data-card]');
+      if (card) { openLib(card.dataset.card); return; }
+      const hint = t.closest('.hint');
+      if (hint && !t.closest('.rcard')) { const h = cur().p.hints[Number(hint.dataset.hint)]; setHighlight(h.hl, h.ov); return; }
+      const act = t.closest('[data-act]');
+      if (act) {
+        if (act.dataset.act === 'open') openRoute();
+        if (act.dataset.act === 'pick') openMenu(act);
+        if (act.dataset.act === 'reveal') reveal();
+        return;
+      }
+      const part = t.closest('[data-part]');
+      if (part) { goPart(Number(part.dataset.part)); return; }
+      const ch = t.closest('[data-choice]');
+      if (ch) { ui.choice = ch.dataset.choice; ui.fb = null; ui.fbKind = ''; renderSide(); }
+    });
+    document.addEventListener('click', (e) => {
+      if (!ui.menu) return;
+      const r = e.target.closest('[data-reason]');
+      if (r) { ui.pick = r.dataset.reason; ui.pickState = ''; ui.fb = null; ui.fbKind = ''; closeMenu(); renderSide(); const b = $('#scroll .pick'); if (b) b.focus(); return; }
+      if (!e.target.closest('.menu') && !e.target.closest('[data-act="pick"]')) closeMenu();
+    }, true);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { if (ui.menu) closeMenu(true); else if ($('#lib').classList.contains('open')) closeLib(); }
+      if (ui.menu && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        const bs = Array.from(ui.menu.el.querySelectorAll('button'));
+        const i = bs.indexOf(document.activeElement);
+        bs[(i + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length].focus();
+        e.preventDefault();
+      }
+    });
+    let rt;
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { renderStage(); updateFill(); }, 120); });
+  }
+
+  /* ---------- 核對模式：逐題渲染題幹和圖形（verify.js 用） ---------- */
+  function audit() {
+    const root = document.createElement('div');
+    root.id = 'audit-root';
+    root.hidden = true;
+    root.innerHTML = Q.map((q) => {
+      const figs = [];
+      if (q.fig) figs.push(R.render(q.fig, { overlays: true, id: `${q.id}-q` }));
+      q.parts.forEach((p, i) => { if (p.fig) figs.push(R.render(p.fig, { overlays: true, id: `${q.id}-${i}` })); });
+      const anyFig = q.fig || q.parts.find((p) => p.fig);
+      const spec = anyFig ? (q.fig || anyFig.fig) : null;
+      const stems = [q.stem ? `<p data-stem>${stemHTML(q.stem, spec)}</p>` : ''].concat(q.parts.map((p) => (p.stem ? `<p data-stem>${stemHTML(p.stem, p.fig || spec)}</p>` : ''))).join('');
+      return `<section data-qid="${q.id}">${stems}${figs.join('')}</section>`;
+    }).join('');
+    document.body.appendChild(root);
+    C.writeAudit(document, C.collectAudit(document, root));
+  }
+
+  if (AUDIT) { audit(); return; }
+  if (TEACHER) { const t = document.createElement('span'); t.className = 'teacher-flag'; t.textContent = '老師模式'; $('.top .title').after(t); }
+  bind();
+  // 初次進入：若上次有提示，恢復提示的標示
+  (function restore() { const { p, s } = cur(); if (s.hints && !s.done) { const h = p.hints[s.hints - 1]; ui.hl = h.hl || []; ui.ov = h.ov || null; } })();
+  renderAll();
+})();
+
+</script>
+</body>
+</html>
