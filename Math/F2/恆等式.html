@@ -401,6 +401,53 @@ body.padopen #buddy{bottom:300px}
   .tile.snap,.card.shake,.hints .h.hnew,#pad.on,.page.inR,.page.inL,body.entering #top,body.entering .page.on>*,body.entering #buddy,#buddy.hop .bbody,#buddy.tilt .bbody,.beye{animation:none !important}
   .bbub{transition:none}
 }
+
+/* ===== 自主練習 ===== */
+:root{--s7:#E6F4B8;--lime:#7DA30B}
+.lvpick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.lvbtn{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 10px 14px;min-height:132px;border:2px solid var(--line);border-radius:16px;background:#fff;text-align:center;
+  transition:transform .2s cubic-bezier(.3,1.6,.5,1),border-color .2s,box-shadow .2s,background-color .2s}
+.lvbtn .lvs{font-size:1.9rem;letter-spacing:2px;line-height:1.1;color:var(--lime)}
+.lvbtn .lvn{font-size:1.25rem;font-weight:900}
+.lvbtn .lvd{font-size:.82rem;color:var(--muted);font-weight:600;line-height:1.35}
+.lvbtn:active{transform:scale(.97)}
+.lvbtn.on{background:var(--s7);border-color:var(--ink);box-shadow:4px 4px 0 var(--ink);transform:translateY(-2px)}
+.lvbtn.on::after{content:"已選";position:absolute;top:-10px;right:10px;background:var(--ink);color:#fff;border-radius:6px;padding:0 8px;font-size:.75rem;font-weight:800}
+.tpempty{border:2px dashed var(--line);border-radius:16px;padding:28px 16px;text-align:center;color:var(--muted);font-weight:700;background:rgba(255,255,255,.7)}
+.tpbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px 10px 8px 16px;margin-top:16px;font-variant-numeric:tabular-nums}
+.tplist{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.tpq{padding-left:18px;margin:16px 0 0}
+.tpq::before{display:none}
+.tph{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tpn{font-weight:900;font-size:1.02rem}
+.tpid{font:700 1rem "Times New Roman","PingFang HK",serif;background:var(--s7);border:2px solid var(--ink);border-radius:8px;padding:1px 8px;letter-spacing:.5px}
+.tpcopy{margin-left:auto;min-height:40px;padding:0 12px;border-radius:10px;border:2px dashed var(--line);background:#fff;font-weight:800;font-size:.88rem;color:var(--muted)}
+.tpq.copied{border-color:var(--good);box-shadow:4px 4px 0 var(--good)}
+.tpq.copied .tpcopy{border:2px solid var(--good);background:var(--mint2);color:var(--good)}
+.tpq .qtitle{font-size:1.12rem}
+.tpframe{border:1.5px dashed var(--line);border-radius:12px;padding:8px 12px;margin:4px 0 6px;background:#FBFCFF}
+.tpfl{font-size:.8rem;color:var(--muted);font-weight:700;margin-bottom:2px}
+.al{font-size:1.08rem;line-height:1.75}
+.al.c{padding-left:2.4em}
+.am{display:inline-block;margin:8px 0 2px;font-weight:900;background:var(--s7);border-radius:6px;padding:0 8px}
+.an{margin-top:6px;font-size:.9rem;font-weight:700;color:var(--muted)}
+.tpans{margin-top:10px;border-top:1.5px dashed var(--line);padding-top:8px}
+.tpkrow{padding:12px 0;border-bottom:1.5px dashed var(--line)}
+.tpkrow:last-child{border-bottom:0}
+.tpkq{font-weight:700}
+.tpkrow .tpans{border-top:0;margin-top:4px;padding-top:0}
+@keyframes tpIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.tplist.tpin .tpq{animation:tpIn .36s cubic-bezier(.2,.9,.3,1.2) both}
+.tplist.tpin .tpq:nth-child(2){animation-delay:.05s}
+.tplist.tpin .tpq:nth-child(3){animation-delay:.1s}
+.tplist.tpin .tpq:nth-child(4){animation-delay:.15s}
+.tplist.tpin .tpq:nth-child(5){animation-delay:.2s}
+.tplist.tpin .tpq:nth-child(6){animation-delay:.25s}
+@media (max-width:760px){ .tplist{grid-template-columns:1fr} }
+@media (max-width:520px){ .lvpick{grid-template-columns:1fr} .lvbtn{min-height:0;flex-direction:row;justify-content:flex-start;text-align:left;gap:10px} }
+@media (prefers-reduced-motion:reduce){ .tplist.tpin .tpq{animation:none} .lvbtn{transition:none} }
+@media (max-width:900px){ .tabs{gap:5px} .tab{padding:0 8px 0 5px;font-size:.86rem;gap:4px} }
+@media print{ #top,#buddy,.tpcopy,.lvpick{display:none !important} }
 </style>
 </head>
 <body>
@@ -476,6 +523,7 @@ var PH = [
 ];
 var TABS = PH.map(function(p,i){ return {id:p.tab, num:String(i+1), name:p.name, col:p.col}; });
 TABS.push({id:'tc', num:'★', name:'挑戰區', col:'--sun2'});
+TABS.push({id:'tp', num:'✎', name:'自主練習', col:'--s7'});
 var REQ = {t1:['q1'], t2:['q2','q3','q4','q5'], t3:['q6'], t4:['q7','q8','q9'], t5:['q11','q12'], t6:['q13','q14']};
 
 /* =========================================================
@@ -868,7 +916,7 @@ Object.keys(Q).forEach(function(id){
 /* =========================================================
    狀態（每部 iPad 各自保存）
    ========================================================= */
-var KEY='identity-open-lesson-v5', S={}, T={};
+var KEY='identity-open-lesson-v7', S={}, T={};
 try{ S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ S={}; }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 function st(id){ if(!S[id]||!S[id].v) S[id]={v:{}, done:false, hint:0}; return S[id]; }
@@ -1478,12 +1526,187 @@ document.addEventListener('click', function(e){
 });
 
 /* =========================================================
+   自主練習題庫（課後作業）
+   kind: chain（化簡／展開／求值）、proof（判斷或證明）、const（求未知常數）
+   所有算式以 `-` 寫減號，排版時自動轉為 −
+   ========================================================= */
+var BANK = [
+  /* ---------------- ★ ---------------- */
+  {id:'★-01', lv:1, kind:'chain', q:'化簡 `(4x + 7) + (3x - 5)`。', start:'(4x + 7) + (3x - 5)',
+   steps:['4x + 7 + 3x - 5','4x + 3x + 7 - 5','7x + 2']},
+  {id:'★-02', lv:1, kind:'chain', q:'化簡 `(9x + 2) - (5x - 4)`。', start:'(9x + 2) - (5x - 4)',
+   tip:'括號前是「−」號：撤去括號後，括號內每一項都要變號。',
+   steps:['9x + 2 - 5x + 4','9x - 5x + 2 + 4','4x + 6']},
+  {id:'★-03', lv:1, kind:'chain', q:'化簡 `(7x - 3) - (2x + 6)`。', start:'(7x - 3) - (2x + 6)',
+   tip:'括號前是「−」號：撤去括號後，括號內每一項都要變號。',
+   steps:['7x - 3 - 2x - 6','7x - 2x - 3 - 6','5x - 9']},
+  {id:'★-04', lv:1, kind:'chain', q:'展開 `3(4x - 5)`。', start:'3(4x - 5)',
+   steps:['3 × 4x - 3 × 5','12x - 15']},
+  {id:'★-05', lv:1, kind:'chain', q:'若 `x = 0`，求 `6(2x - 5)` 的值。', start:'6(2x - 5)', at:0,
+   steps:['6 × [2 × 0 - 5]','6 × (-5)','-30']},
+  {id:'★-06', lv:1, kind:'proof', judge:true, L:['4(x + 3)','4 × x + 4 × 3','4x + 12'], R:['4x + 12'], verdict:'yes'},
+  {id:'★-07', lv:1, kind:'proof', judge:true, L:['2(x - 5)','2 × x - 2 × 5','2x - 10'], R:['2x - 5'], verdict:'no'},
+  {id:'★-08', lv:1, kind:'proof', judge:true, L:['(6x + 1) - (2x - 3)','6x + 1 - 2x + 3','4x + 4'], R:['4x + 4'], verdict:'yes'},
+  {id:'★-09', lv:1, kind:'proof', L:['9x - 4x','5x'], R:['2x + 3x','5x'], verdict:'yes',
+   frame:['左方 = 9x - 4x','= (　　)x','右方 = 2x + 3x','= (　　)x','∵ 左方 (　　) 右方','∴ 9x - 4x (　　) 2x + 3x']},
+  {id:'★-10', lv:1, kind:'proof', L:['5(x + 2)','5 × x + 5 × 2','5x + 10'], R:['5x + 10'], verdict:'yes',
+   frame:['左方 = 5(x + 2)','= 5 × (　　) + 5 × (　　)','= (　　　　)','右方 = 5x + 10','∵ 左方 (　　) 右方','∴ 5(x + 2) (　　) 5x + 10']},
+
+  /* ---------------- ★★ ---------------- */
+  {id:'★★-01', lv:2, kind:'proof', L:['3(2x + 4)','3 × 2x + 3 × 4','6x + 12'], R:['2(3x + 6)','2 × 3x + 2 × 6','6x + 12'], verdict:'yes'},
+  {id:'★★-02', lv:2, kind:'proof', L:['4(3x - 2) + 5','4 × 3x - 4 × 2 + 5','12x - 8 + 5','12x - 3'], R:['3(4x - 1)','3 × 4x - 3 × 1','12x - 3'], verdict:'yes'},
+  {id:'★★-03', lv:2, kind:'proof', L:['5(x + 3) - 2','5 × x + 5 × 3 - 2','5x + 15 - 2','5x + 13'], R:['5(x + 2) + 3','5 × x + 5 × 2 + 3','5x + 10 + 3','5x + 13'], verdict:'yes'},
+  {id:'★★-04', lv:2, kind:'proof', L:['2(7x - 1) - (4x - 6)','2 × 7x - 2 × 1 - 4x + 6','14x - 2 - 4x + 6','10x + 4'], R:['2(5x + 2)','2 × 5x + 2 × 2','10x + 4'], verdict:'yes'},
+  {id:'★★-05', lv:2, kind:'proof', L:['6(x + 2) - 3(x + 1)','6 × x + 6 × 2 - 3 × x - 3 × 1','6x + 12 - 3x - 3','3x + 9'], R:['3(x + 3)','3 × x + 3 × 3','3x + 9'], verdict:'yes'},
+  {id:'★★-06', lv:2, kind:'proof', L:['3(4x + 5)','3 × 4x + 3 × 5','12x + 15'], R:['4(3x + 4)','4 × 3x + 4 × 4','12x + 16'], verdict:'no',
+   m2:{x:0, L:['3 × [4 × 0 + 5]','3 × 5','15'], R:['4 × [3 × 0 + 4]','4 × 4','16']}},
+  {id:'★★-07', lv:2, kind:'proof', L:['2(5x - 3)','2 × 5x - 2 × 3','10x - 6'], R:['5(2x - 1)','5 × 2x - 5 × 1','10x - 5'], verdict:'no',
+   m2:{x:0, L:['2 × [5 × 0 - 3]','2 × (-3)','-6'], R:['5 × [2 × 0 - 1]','5 × (-1)','-5']}},
+  {id:'★★-08', lv:2, kind:'proof', L:['4(2x + 3) - 5','4 × 2x + 4 × 3 - 5','8x + 12 - 5','8x + 7'], R:['2(4x + 3)','2 × 4x + 2 × 3','8x + 6'], verdict:'no',
+   m2:{x:0, L:['4 × [2 × 0 + 3] - 5','4 × 3 - 5','7'], R:['2 × [4 × 0 + 3]','2 × 3','6']}},
+  {id:'★★-09', lv:2, kind:'proof', L:['7(x - 2) + 3','7 × x - 7 × 2 + 3','7x - 14 + 3','7x - 11'], R:['7(x - 1) - 5','7 × x - 7 × 1 - 5','7x - 7 - 5','7x - 12'], verdict:'no',
+   m2:{x:0, L:['7 × [0 - 2] + 3','7 × (-2) + 3','-11'], R:['7 × [0 - 1] - 5','7 × (-1) - 5','-12']}},
+  {id:'★★-10', lv:2, kind:'proof', L:['(8x + 3) - (2x - 5)','8x + 3 - 2x + 5','6x + 8'], R:['2(3x + 4)','2 × 3x + 2 × 4','6x + 8'], verdict:'yes'},
+
+  /* ---------------- ★★★ ---------------- */
+  {id:'★★★-01', lv:3, kind:'proof', L:['3(2x - 5) - 2(x - 4)','3 × 2x - 3 × 5 - 2 × x + 2 × 4','6x - 15 - 2x + 8','4x - 7'], R:['4(x - 2) + 1','4 × x - 4 × 2 + 1','4x - 8 + 1','4x - 7'], verdict:'yes'},
+  {id:'★★★-02', lv:3, kind:'proof', L:['5(3x + 2) - 4(2x + 3)','5 × 3x + 5 × 2 - 4 × 2x - 4 × 3','15x + 10 - 8x - 12','7x - 2'], R:['7(x - 1) + 5','7 × x - 7 × 1 + 5','7x - 7 + 5','7x - 2'], verdict:'yes'},
+  {id:'★★★-03', lv:3, kind:'proof', L:['(x + 3)(x - 4)'], R:['x^2 - 12'], verdict:'no', trap:true,
+   m2:{x:1, L:['(1 + 3) × (1 - 4)','4 × (-3)','-12'], R:['1^2 - 12','1 - 12','-11']}},
+  {id:'★★★-04', lv:3, kind:'proof', L:['(x + 2)(x + 5)'], R:['x^2 + 10'], verdict:'no', trap:true,
+   m2:{x:1, L:['(1 + 2) × (1 + 5)','3 × 6','18'], R:['1^2 + 10','1 + 10','11']}},
+  {id:'★★★-05', lv:3, kind:'proof', L:['3(x + 2)','3 × x + 3 × 2','3x + 6'], R:['2(x + 3)','2 × x + 2 × 3','2x + 6'], verdict:'no', trap:true,
+   m2:{x:1, L:['3 × (1 + 2)','3 × 3','9'], R:['2 × (1 + 3)','2 × 4','8']}},
+  {id:'★★★-06', lv:3, kind:'proof', L:['5(x - 4) + 20','5 × x - 5 × 4 + 20','5x - 20 + 20','5x'], R:['2(x + 3) - 6','2 × x + 2 × 3 - 6','2x + 6 - 6','2x'], verdict:'no', trap:true,
+   m2:{x:1, L:['5 × (1 - 4) + 20','5 × (-3) + 20','5'], R:['2 × (1 + 3) - 6','2 × 4 - 6','2']}},
+  {id:'★★★-07', lv:3, kind:'const', lhs:'5(2x - 3)', rhs:'Ax + B', A:10, B:-15,
+   L:['5(2x - 3)','5 × 2x - 5 × 3','10x - 15'], cmp:['比較 `x` 的係數：`A = 10`','比較常數項：`B = -15`']},
+  {id:'★★★-08', lv:3, kind:'const', lhs:'3(4x + 1) - 2(x - 5)', rhs:'Ax + B', A:10, B:13,
+   L:['3(4x + 1) - 2(x - 5)','3 × 4x + 3 × 1 - 2 × x + 2 × 5','12x + 3 - 2x + 10','10x + 13'], cmp:['比較 `x` 的係數：`A = 10`','比較常數項：`B = 13`']},
+  {id:'★★★-09', lv:3, kind:'const', lhs:'A(x + 2)', rhs:'3x + B', A:3, B:6,
+   L:['A(x + 2)','Ax + 2A'], cmp:['比較 `x` 的係數：`A = 3`','比較常數項：`2A = B`','`B = 2 × 3`','`B = 6`']},
+  {id:'★★★-10', lv:3, kind:'const', lhs:'4(x - 3) + A', rhs:'Bx + 1', A:13, B:4,
+   L:['4(x - 3) + A','4 × x - 4 × 3 + A','4x - 12 + A'], cmp:['比較 `x` 的係數：`B = 4`','比較常數項：`-12 + A = 1`','`A = 13`']}
+];
+
+/* =========================================================
+   自主練習：選難度 → 6 題 → 抄在工作紙第 8 頁
+   ========================================================= */
+var LV_INFO={
+  1:{stars:'★',   name:'基礎', desc:'撤去括號、展開、判斷是否恆等式', say:'先打好基礎，一步一步來！'},
+  2:{stars:'★★',  name:'進階', desc:'完整證明是／不是恆等式',       say:'好！試試完整的證明，記得兩方都要化簡。'},
+  3:{stars:'★★★', name:'挑戰', desc:'較複雜的證明、陷阱題、求未知常數', say:'有挑戰精神！小心代入 x = 0 的陷阱。'}
+};
+function bankQ(id){ for(var i=0;i<BANK.length;i++) if(BANK[i].id===id) return BANK[i]; return null; }
+function eqText(q){ return q.kind==='const' ? q.lhs+' ≡ '+q.rhs : q.L[0]+' = '+q.R[0]; }
+function qText(q){
+  if(q.kind==='chain') return q.q;
+  if(q.kind==='const') return '若 `'+q.lhs+' ≡ '+q.rhs+'`，其中 `A` 和 `B` 都是常數，求 `A` 和 `B` 的值。';
+  if(q.judge) return '判斷 `'+eqText(q)+'` 是否恆等式。';
+  return '證明 `'+eqText(q)+'` '+(q.verdict==='yes'?'是':'不是')+'恆等式。';
+}
+function chainHTML(head, arr){
+  return arr.map(function(t,i){ return '<div class="al'+(i?' c':'')+'">'+(i?math('= '+t):head+math(' = '+t))+'</div>'; }).join('');
+}
+function ansHTML(q){
+  var h='';
+  if(q.kind==='chain'){
+    h+='<div class="al">'+math(q.start)+'</div>'+q.steps.map(function(t){ return '<div class="al c">'+math('= '+t)+'</div>'; }).join('');
+    return h;
+  }
+  if(q.kind==='const'){
+    h+=chainHTML('左方',q.L)+'<div class="al">右方 '+math('= '+q.rhs)+'</div>';
+    h+=q.cmp.map(function(t){ return '<div class="al">'+fm(t)+'</div>'; }).join('');
+    return h;
+  }
+  var eq=eqText(q), yes=q.verdict==='yes', m1=q.L.length>1||q.R.length>1;
+  if(m1){
+    if(!yes&&q.m2) h+='<div class="am">方法一</div>';
+    h+=chainHTML('左方',q.L)+chainHTML('右方',q.R);
+    h+='<div class="al">∵ 左方 '+(yes?'=':'≠')+' 右方</div>';
+    h+='<div class="al">∴ '+(yes?math(eq.replace(' = ',' ≡ ')):math(eq)+' 不是恆等式。')+'</div>';
+  }
+  if(!yes&&q.m2){
+    var m=q.m2;
+    h+='<div class="am">'+(m1?'方法二':'解')+'</div>';
+    h+='<div class="al">把 '+math('x = '+m.x)+' 代入等式。</div>';
+    h+='<div class="al">左方 '+math('= '+m.L[0])+'</div>'+m.L.slice(1).map(function(t){ return '<div class="al c">'+math('= '+t)+'</div>'; }).join('');
+    h+='<div class="al">右方 '+math('= '+m.R[0])+'</div>'+m.R.slice(1).map(function(t){ return '<div class="al c">'+math('= '+t)+'</div>'; }).join('');
+    h+='<div class="al">∵ 左方 ≠ 右方</div><div class="al">∴ '+math('x = '+m.x)+' 不滿足等式。</div><div class="al">∴ '+math(eq)+' 不是恆等式。</div>';
+    if(q.trap) h+='<div class="an">注意：代入 '+math('x = 0')+' 時左方 = 右方，不能用來證明，要改試其他 '+math('x')+' 值。</div>';
+  }
+  return h;
+}
+function pickSet(lv, avoid, seed){
+  var ids=BANK.filter(function(q){ return q.lv===lv; }).map(function(q){ return q.id; });
+  for(var k=0;k<20;k++){
+    var s=shuffle(ids, seed+k*7919).slice(0,6).sort();
+    if(!avoid||s.join()!==avoid.join()) return s;
+  }
+  return ids.slice(0,6);
+}
+function tpState(){ S._tp=S._tp||{lv:0, sets:{}, done:{}}; return S._tp; }
+
+function tpHTML(){
+  return '<div class="card plain"><h3>選擇難度</h3>'+
+    '<div class="tip">按自己的程度選一個難度。網站會給你 6 題，把<b>題號和題目</b>抄在工作紙第 8 頁的 6 個格內，回家完成。</div>'+
+    '<div class="lvpick" role="radiogroup" aria-label="難度">'+[1,2,3].map(function(l){ var I=LV_INFO[l];
+      return '<button type="button" class="lvbtn" role="radio" data-lv="'+l+'" aria-checked="false"><span class="lvs">'+I.stars+'</span><span class="lvn">'+I.name+'</span><span class="lvd">'+I.desc+'</span></button>'; }).join('')+'</div></div>'+
+    '<div id="tpBody"></div>'+
+    (TEACHER?'<div class="card plain tpkey"><h3>題庫答案（老師用）</h3><div class="tip">學生抄下的題號對應下面的題目。</div><div class="chips" id="tpKeyLv">'+
+      [1,2,3].map(function(l){ return '<button type="button" class="chip" data-keylv="'+l+'">'+LV_INFO[l].stars+'</button>'; }).join('')+'</div><div id="tpKey"></div></div>':'');
+}
+function tpCard(id, n){
+  var q=bankQ(id), st=tpState(), done=!!st.done[id];
+  return '<div class="card tpq'+(done?' copied':'')+'" data-id="'+id+'">'+
+    '<div class="tph"><span class="tpn">練習 '+n+'</span><span class="tpid" aria-label="題號">'+id+'</span>'+
+    '<button type="button" class="tpcopy" data-copy="'+id+'" aria-pressed="'+done+'">'+(done?'✓ 已抄':'抄好了')+'</button></div>'+
+    '<div class="qtitle">'+fm(qText(q))+'</div>'+
+    (q.tip?'<div class="tipbox"><span class="tipicon">記住</span><div>'+fm(q.tip)+'</div></div>':'')+
+    (q.frame?'<div class="tpframe"><div class="tpfl">可以參考這個格式：</div>'+q.frame.map(function(t){ return '<div class="al'+(/^=/.test(t)?' c':'')+'">'+math(t)+'</div>'; }).join('')+'</div>':'')+
+    (TEACHER?'<button type="button" class="btn teach" data-tpans="'+id+'">顯示答案</button><div class="tpans" hidden>'+ansHTML(q)+'</div>':'')+
+  '</div>';
+}
+function renderTP(anim){
+  var st=tpState(), body=document.getElementById('tpBody'); if(!body) return;
+  document.querySelectorAll('.lvbtn').forEach(function(b){ var on=+b.dataset.lv===st.lv; b.classList.toggle('on',on); b.setAttribute('aria-checked',on); });
+  if(!st.lv){ body.innerHTML='<div class="tpempty">選一個難度，題目便會在這裏出現。</div>'; return; }
+  var set=st.sets[st.lv], cnt=set.filter(function(id){ return st.done[id]; }).length;
+  body.innerHTML='<div class="tpbar"><div><b>'+LV_INFO[st.lv].stars+' '+LV_INFO[st.lv].name+'</b>　已抄 '+cnt+' / 6 題</div>'+
+    '<button type="button" class="btn" id="tpNew">換一組題目</button></div>'+
+    '<div class="tplist'+(anim?' tpin':'')+'">'+set.map(function(id,i){ return tpCard(id,i+1); }).join('')+'</div>'+
+    (cnt===6?'<div class="fb ok">6 題都抄好了！回家把證明寫完，下一節課交。</div>':'');
+}
+function renderKey(lv){
+  var el=document.getElementById('tpKey'); if(!el) return;
+  document.querySelectorAll('[data-keylv]').forEach(function(b){ b.classList.toggle('on', +b.dataset.keylv===lv); });
+  el.innerHTML=BANK.filter(function(q){ return q.lv===lv; }).map(function(q){
+    return '<div class="tpkrow"><div class="tpkq"><span class="tpid">'+q.id+'</span> '+fm(qText(q))+'</div><div class="tpans">'+ansHTML(q)+'</div></div>'; }).join('');
+}
+document.addEventListener('click', function(e){
+  var b=e.target.closest('.lvbtn');
+  if(b){ var st=tpState(), lv=+b.dataset.lv, changed=st.lv!==lv; st.lv=lv;
+    if(!st.sets[lv]) st.sets[lv]=pickSet(lv, null, (Date.now()%100000));
+    save(); renderTP(changed); if(changed&&typeof buddySay==='function') buddySay(LV_INFO[lv].say,'hop'); return; }
+  if(e.target.closest('#tpNew')){ var st2=tpState(), old=st2.sets[st2.lv];
+    st2.sets[st2.lv]=pickSet(st2.lv, old, (Date.now()%100000)+13); save(); renderTP(true);
+    if(typeof buddySay==='function') buddySay('換了一組新題目，記得連題號一起抄！'); return; }
+  var c=e.target.closest('[data-copy]');
+  if(c){ var st3=tpState(), id=c.dataset.copy; st3.done[id]=!st3.done[id]; save(); renderTP(false);
+    var all=st3.sets[st3.lv].every(function(x){ return st3.done[x]; });
+    if(all&&st3.done[id]&&typeof buddySay==='function') buddySay('全部抄好了！回家加油！','hop'); return; }
+  var a=e.target.closest('[data-tpans]');
+  if(a){ var box=a.nextElementSibling; box.hidden=!box.hidden; a.textContent=box.hidden?'顯示答案':'隱藏答案'; return; }
+  var k=e.target.closest('[data-keylv]'); if(k){ renderKey(+k.dataset.keylv); }
+});
+
+/* =========================================================
    各分頁內容
    ========================================================= */
 function head(tab, say){
   var i=TABS.map(function(x){return x.id;}).indexOf(tab), t=TABS[i], p=PH[i];
   return '<div class="ph"><span class="big" style="background:var('+t.col+')">'+t.num+'</span><div><h2>'+t.name+'</h2>'+
-    (p?'<span class="time">'+p.s+'–'+p.e+'</span>':'<span class="time">給做得快的同學（不計時）</span>')+'<span class="sub">'+fm(say)+'</span></div></div>'+
+    (p?'<span class="time">'+p.s+'–'+p.e+'</span>':'<span class="time">'+(tab==='tp'?'課後作業（不計時）':'給做得快的同學（不計時）')+'</span>')+'<span class="sub">'+fm(say)+'</span></div></div>'+
     '';
 }
 function qc(id){ return '<div class="card" id="card-'+id+'"></div>'; }
@@ -1537,7 +1760,9 @@ t6: head('t6','最後整理一下今天學了甚麼。') +
 tc: head('tc','完成了全部題目？挑戰一下自己！') +
   qc('c1')+
   '<div class="sticky"><h3>求恆等式中的未知常數</h3><div>恆等式左右兩方的項經化簡後完全相同，所以可以比較左右兩方 '+math('x')+' 的係數和常數項，求出未知常數。</div></div>'+
-  qc('c2')+qc('c3')
+  qc('c2')+qc('c3'),
+
+tp: head('tp','選一個適合自己的難度，把 6 題抄在工作紙第 8 頁。') + tpHTML()
 };
 
 /* =========================================================
@@ -1551,9 +1776,10 @@ function buildPages(){
   Object.keys(Q).forEach(buildCard);
   initComponents();
   var sb=document.getElementById('selfBox'); if(sb) sb.innerHTML=selfHTML();
+  renderTP(false); if(TEACHER) renderKey(1);
   nav.addEventListener('click', function(e){ var b=e.target.closest('.tab'); if(b) showTab(b.dataset.tab); });
 }
-function shortName(n){ return {'證明是恆等式':'證明是','證明不是恆等式':'證明不是','挑戰區':'挑戰'}[n]||n; }
+function shortName(n){ return {'證明是恆等式':'證明是','證明不是恆等式':'證明不是','挑戰區':'挑戰','自主練習':'自主練習'}[n]||n; }
 var TAB_IDS=null;
 function showTab(id){
   TAB_IDS=TAB_IDS||TABS.map(function(x){return x.id;});
@@ -1569,7 +1795,7 @@ function showTab(id){
   window.scrollTo(0,0);
   var pg=document.getElementById('pg-'+id);
   if(pg&&prev!==id&&!document.body.classList.contains('entering')){ pg.classList.remove('inR','inL'); void pg.offsetWidth; pg.classList.add(dir>0?'inR':'inL'); setTimeout(function(){ pg.classList.remove('inR','inL'); },360); }
-  if(typeof buddySay==='function'&&buddy){ buddySay(GREET[id]); lookAt(pg&&pg.querySelector('.ph')); }
+  if(typeof buddySay==='function'&&buddy){ if(!buddy._greeted){ buddy._greeted=1; buddySay('我是鉛筆仔，這節課陪你一起做題！'); } lookAt(pg&&pg.querySelector('.ph')); }
   resetIdle&&buddy&&resetIdle();
   tick();
 }
@@ -1650,7 +1876,8 @@ var GREET={
   t4:'化簡左方和右方，看看是否完全相同。',
   t5:'只要找到一個令天平不平衡的 x 值就夠了！',
   t6:'最後整理一下今天學了甚麼。',
-  tc:'完成了全部題目？挑戰一下自己！'
+  tc:'完成了全部題目？挑戰一下自己！',
+  tp:'選一個適合自己的難度吧！'
 };
 var PRAISE=['做得好！記得把步驟抄在工作紙上。','正確！你越來越熟練了。','好棒！下一題也難不到你。','完全正確！'];
 var ENCOURAGE=['差一點！看看打了 ✗ 的位置。','不要緊，再試一次！','慢慢來，可以按「💡 提示」。'];
