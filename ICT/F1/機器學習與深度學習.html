@@ -513,6 +513,25 @@ input[type=range]{height:44px}
 #t-pw input{width:6em;min-height:44px;border:2px solid var(--border-strong);border-radius:8px;padding:0 8px}
 #t-pw-m{font-weight:700;color:var(--bad)}
 @media print{#t-lock,#t-pw{display:none!important}}
+/* ---- v3：各節總結 ---- */
+.sumjump{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border:2px solid var(--border-strong);border-radius:99px;background:#fff;font-weight:800;font-size:.9rem;text-decoration:none;color:var(--text)}
+.sumjump:hover{border-color:var(--primary);background:var(--primary-soft)}
+.sumc{background:var(--sun-soft);border:4px solid var(--border-strong)}
+.sumc .act-h .n.sumstar{background:#fff;border:2px solid var(--border-strong)}
+.sumstar svg{width:24px;height:24px}
+.sum-pts{display:grid;gap:10px;margin:8px 0 12px}
+.sum-p{transition:box-shadow .2s,background .2s}
+.sum-p.on{box-shadow:0 0 0 4px var(--border-strong);background:#fff}
+.sum-pts .card{background:#fff}
+.src{display:inline-block;margin-top:4px;font-size:.8rem;font-weight:700;border:1.5px solid var(--border-strong);border-radius:99px;padding:0 10px;color:var(--text-muted)}
+.sum-one{border:4px solid var(--border-strong);border-radius:var(--r-md);background:#fff;padding:12px 18px;margin:8px 0 12px;text-align:center}
+.sum-one b{display:inline-block;border-bottom:3px solid var(--primary);margin-bottom:4px}
+.sum-one p{margin:0;font-size:1.35rem;font-weight:800;line-height:1.5}
+.sum-t td,.sum-t th{font-size:.85rem;text-align:center}
+.sum-home{margin:12px 0 0}
+.sum-home .wq{font-weight:800;text-decoration:underline}
+@media (prefers-reduced-motion:reduce){.sum-p{transition:none}}
+.lnk44{min-width:44px;justify-content:center;padding:0 10px}
 </style>
 </head>
 <body>
@@ -546,7 +565,7 @@ input[type=range]{height:44px}
 </section>
 
 <section class="sec" id="s1">
- <div class="sec-head rv"><div class="sec-no">2.1</div><h2>人類學習與機器學習</h2><span class="ref t-only">課件 p.2–14</span><span class="sec-m" data-mood="happy"></span></div>
+ <div class="sec-head rv"><div class="sec-no">2.1</div><h2>人類學習與機器學習</h2><span class="ref t-only">課件 p.2–14</span><a class="sumjump" href="#sum1">跳到本節總結</a><span class="sec-m" data-mood="happy"></span></div>
 
  <!-- 1 開場 -->
  <article class="act rv" id="a11">
@@ -678,6 +697,8 @@ input[type=range]{height:44px}
  </article>
 
  <!-- 7 檢查站 -->
+ <article class="act rv" id="sum1"></article>
+
  <article class="act rv" id="a17">
   <div class="act-h"><span class="n">★</span><h3>2.1 檢查站</h3></div>
   <div id="cp1"></div>
@@ -685,7 +706,7 @@ input[type=range]{height:44px}
 </section>
 
 <section class="sec" id="s2">
- <div class="sec-head rv"><div class="sec-no">2.2</div><h2>機器學習的流程</h2><span class="ref t-only">課件 p.15–35</span><span class="sec-m" data-mood="think"></span></div>
+ <div class="sec-head rv"><div class="sec-no">2.2</div><h2>機器學習的流程</h2><span class="ref t-only">課件 p.15–35</span><a class="sumjump" href="#sum2">跳到本節總結</a><span class="sec-m" data-mood="think"></span></div>
 
  <!-- 1 五步驟：生活例子 → 應用 -->
  <article class="act rv" id="a21">
@@ -813,6 +834,8 @@ input[type=range]{height:44px}
   <div class="card stack" style="margin-top:16px"><div id="cf2-q"></div><div class="t-only note"><b>課件 p.27：</b>搜集更多資料並重新訓練模型，直至得出精準的預測結果。</div></div>
  </article>
 
+ <article class="act rv" id="sum2"></article>
+
  <article class="act rv" id="a28">
   <div class="act-h"><span class="n">★</span><h3>2.2 檢查站</h3></div>
   <div id="cp2"></div>
@@ -820,7 +843,7 @@ input[type=range]{height:44px}
 </section>
 
 <section class="sec" id="s3">
- <div class="sec-head rv"><div class="sec-no">2.3</div><h2>機器學習的種類</h2><span class="ref t-only">課件 p.36–57</span><span class="sec-m" data-mood="neutral"></span></div>
+ <div class="sec-head rv"><div class="sec-no">2.3</div><h2>機器學習的種類</h2><span class="ref t-only">課件 p.36–57</span><a class="sumjump" href="#sum3">跳到本節總結</a><span class="sec-m" data-mood="neutral"></span></div>
 
  <!-- 1 四種 -->
  <article class="act rv" id="a31">
@@ -942,6 +965,8 @@ input[type=range]{height:44px}
   <div class="wscue" data-q="8"></div>
  </article>
 
+ <article class="act rv" id="sum3"></article>
+
  <article class="act rv" id="a37">
   <div class="act-h"><span class="n">★</span><h3>2.3 檢查站</h3></div>
   <div id="cp3"></div>
@@ -949,7 +974,7 @@ input[type=range]{height:44px}
 </section>
 
 <section class="sec" id="s4">
- <div class="sec-head rv"><div class="sec-no">2.4</div><h2>深度學習</h2><span class="ref t-only">課件 p.58–63</span><span class="sec-m" data-mood="wow"></span></div>
+ <div class="sec-head rv"><div class="sec-no">2.4</div><h2>深度學習</h2><span class="ref t-only">課件 p.58–63</span><a class="sumjump" href="#sum4">跳到本節總結</a><span class="sec-m" data-mood="wow"></span></div>
 
  <!-- 1 神經網絡 -->
  <article class="act rv" id="a41">
@@ -991,6 +1016,8 @@ input[type=range]{height:44px}
   <div class="wscue" data-q="10"></div>
  </article>
 
+ <article class="act rv" id="sum4"></article>
+
  <article class="act rv" id="a45">
   <div class="act-h"><span class="n">★</span><h3>2.4 檢查站</h3></div>
   <div id="cp4"></div>
@@ -1002,6 +1029,7 @@ input[type=range]{height:44px}
 
  <article class="act rv" id="a51">
   <div class="act-h"><span class="n">1</span><h3>課文總結</h3><span class="ref t-only">p.64–67</span></div>
+  <p class="muted" style="margin:0 0 8px">想先看某一節的總結？<span id="sum-links"></span></p>
   <div class="grid2">
    <div class="card pt"><div class="ic">1</div><div>電腦從大量數據中學習，最後分析出有用的資訊，用作幫助人類判斷或預測事件。為了讓電腦像人類一般聰明，科學家會有系統地利用不同方法去訓練電腦。</div></div>
    <div class="card pt"><div class="ic">2</div><div>機器學習主要分為四種：<b>監督式學習、非監督式學習、半監督式學習和強化式學習</b>。</div></div>
@@ -1373,6 +1401,62 @@ function dtClassify(t,w,s){const p=['#dt-r'];let r;
  return{r,p}}
 function dtScore(t,rows){rows=rows||DT_DATA;return rows.filter(d=>dtClassify(t,d[0],d[1]).r===d[2]).length}
 if(typeof module!=='undefined')module.exports={SIM_PH,SIM_NEW,simTrain,simPredict,simEval,SIM_PRESET,fruitGen,simCentre,DT_DATA,DT_OPTS,DT_LEAF,dtClassify,dtScore,dtCond};
+/* ================= 各小節「本節總結」 ================= */
+const SUMS={
+ 1:{t:'2.1 人類學習與機器學習',
+  pts:[['機器學習是從<b>大量數據</b>中學習，分析出有用的資訊，幫助人類判斷或預測事件。','第 1 部分　電腦怎樣變聰明'],
+   ['分類時，要先學習物件的<b>特徵</b>，再根據特徵把物件分類。','第 2、3 部分　分類、水果分類器'],
+   ['電腦要靠<b>大量資料</b>來訓練，連簡單的圖案也需要龐大的資料集。','Quick, Draw!'],
+   ['訓練大型 AI 要長時間投入巨大的<b>能源</b>，產生<b>碳足跡</b>。開發人員應評估 AI 的能源消耗量，作出<b>權衡</b>（夠用就好）。','第 5 部分　AI 開發人員']],
+  one:'電腦靠大量資料學習特徵，但要留意訓練的能源成本。',
+  home:[['第 3 部分　水果分類器',1],['Quick, Draw!',2],['第 5 部分　AI 開發人員',3]],
+  tip:'Quick, Draw! 與碳足跡任務可留作功課；水果分類器、回收站較短，建議在課堂完成。'},
+ 2:{t:'2.2 機器學習的流程',
+  pts:[['機器學習有五個步驟：<b>定義問題 → 搜集資料 → 處理資料 → 建立和修正模型 → 推論與預測</b>。','第 1 部分　五個步驟'],
+   ['適合機器學習的問題要能<b>客觀判斷</b>；沒有規律或隨機的問題不適合。','第 2 部分　定義問題'],
+   ['好的資料集要<b>清晰、標籤正確、兩類數量相近、有不同種類</b>；模糊或標籤錯誤的照片會令 AI 學錯。','第 3、4、5 部分　搜集和處理資料、訓練你自己的 AI'],
+   ['資料分成<b>訓練資料集</b>（讓電腦學習）和<b>測試資料集</b>（測試學習成果）。','第 5 部分　訓練你自己的 AI'],
+   ['理想的模型有 <b>70–90%</b> 可以進行正確的推論；只有約 51% 確認，表示不能作出「有信心」的預測。','第 7 部分　推論與預測']],
+  one:'資料好，AI 才學得好；用沒見過的資料來測試，才知道它是否真的學會了。',
+  home:[['第 1 部分　五個步驟',4],['第 2 部分　定義問題',5],['第 5 部分　訓練你自己的 AI',6],['第 6 部分　試用你的 AI',7]],
+  tip:'「搜集資料」和「數據偵探」可保留在課堂；「訓練你自己的 AI」實驗和「試用你的 AI」可留作功課。'},
+ 3:{t:'2.3 機器學習的種類',
+  pts:[['判斷四種學習方式，只需問兩條問題：<b>「資料有標籤嗎？」「有沒有正面或負面的反饋？」</b>','第 6 部分　流程圖'],
+   ['<b>監督式學習</b>：所有資料都有標籤（標準答案）。決策樹是其中一種方法。','第 1、2 部分　四種學習方式、決策樹'],
+   ['<b>非監督式學習</b>：沒有標準答案，電腦按特徵的相似度自行<b>分群</b>；群組的名稱是人類看過後才取的。','第 3 部分　分群'],
+   ['<b>半監督式學習</b>：只標註少部分資料，電腦再分類其餘資料；人力成本介乎兩者之間。','第 4 部分　半監督式學習'],
+   ['<b>強化式學習</b>：不標註資料，靠正面和負面的反饋，反覆修正，越來越準確。','第 5 部分　強化式學習']],
+  table:[['','監督式','非監督式','半監督式','強化式'],['資料標籤','全部有','沒有','只有少部分','不標註'],['人力成本','最高','較少','介乎兩者之間','—'],['預測準確度','較高','較低','通常比非監督式更精準','反覆訓練後越來越準確'],['對電腦的挑戰','最簡單','最大','—','—']],
+  one:'看資料有沒有標籤、有沒有反饋，就能分出四種學習方式。',
+  home:[['第 2 部分　決策樹',9],['第 6 部分　流程圖',8]],
+  tip:'分群、半監督式和強化式迷宮可留作功課；若只教到前兩種，用上面的重點和對照表收課也可以。'},
+ 4:{t:'2.4 深度學習',
+  pts:[['<b>深度學習</b>是機器學習的<b>分支</b>，模擬人類的<b>神經網絡</b>，能處理大量數據，作出更準確的判斷（清晰照片、黑白照、不完整的照片都能分辨）。','第 1、2 部分　神經網絡'],
+   ['三者的關係：<b>人工智能 ⊃ 機器學習 ⊃ 深度學習</b>。','第 3 部分　同心圓'],
+   ['<b>機器學習</b>處理<b>簡單</b>圖片，所需資料較少、成本較低、訓練時間較短。<b>深度學習</b>處理<b>複雜</b>圖片，所需資料較多、成本較高、訓練時間較長。','第 4 部分　選工具（課件 p.63）'],
+   ['如果機器學習已經夠用，就不必用深度學習，可以節省能源（呼應 2.1 的碳足跡）。','第 4 部分　選工具']],
+  one:'圖片越複雜，越需要深度學習；但成本和能源也越高。',
+  home:[['第 4 部分　選工具',10]],
+  tip:'2.4 的活動都較短，一般可在課堂完成；若時間不夠，可只做「選工具」，其餘留作功課。'}};
+function initSum(){
+ const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.800l2.800 5.900 6.400.8-4.700 4.400 1.200 6.400L12 17.200l-5.700 3.100 1.200-6.400-4.700-4.400 6.400-.8z" fill="#FFC83D" stroke="#B27A00" stroke-width="1.500" stroke-linejoin="round"/></svg>';
+ Object.entries(SUMS).forEach(([k,d])=>{
+  const host=$('#sum'+k);if(!host)return;
+  host.classList.add('sumc');
+  host.innerHTML=`<div class="act-h"><span class="n sumstar">${STAR}</span><h3>本節總結：${d.t}</h3></div>
+   <p class="lead" style="margin-bottom:10px">課堂最後 1 分鐘，一起讀一讀。</p>
+   <div class="sum-pts">${d.pts.map((p,i)=>`<div class="card pt sum-p" data-i="${i}"><div class="ic">${i+1}</div><div><div>${p[0]}</div><span class="src">來自：${p[1]}</span></div></div>`).join('')}</div>
+   ${d.table?`<div class="tbl-wrap"><table class="t sum-t">${d.table.map((r,i)=>`<tr>${r.map((c,j)=>i===0||j===0?`<th>${c}</th>`:`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div><p class="muted" style="font-size:.8rem;margin:4px 0 0">「—」：課件沒有這一項。</p>`:''}
+   <div class="sum-one sum-p" data-i="${d.pts.length}"><b>一句話記住</b><p>${d.one}</p></div>
+   <div class="row"><button class="btn sm sec2 sum-read" type="button">逐句帶讀（按一下讀下一句）</button><span class="muted sum-rs" role="status"></span></div>
+   <p class="sum-home"><b>回家可以做：</b>還沒做完網頁的部分，回家完成後，把結果寫在工作紙：${d.home.map(h=>`${h[0]} → <span class="wq" data-q="${h[1]}">工作紙第 ${h[1]} 題</span>`).join('；')}。</p>
+   <div class="t-only note"><b>老師提示：</b>如果時間不夠，用 1 分鐘帶讀這個總結即可收課。${d.tip}</div>`;
+  let at=-1;const ps=$$('.sum-p',host),btn=$('.sum-read',host),st=$('.sum-rs',host);
+  btn.onclick=()=>{at=(at+1)%ps.length;ps.forEach((p,i)=>p.classList.toggle('on',i===at));ps[at].scrollIntoView({block:'center',behavior:reduced?'auto':'smooth'});
+   st.textContent=`${at+1} / ${ps.length}`;btn.textContent=at===ps.length-1?'重新帶讀':'逐句帶讀（按一下讀下一句）'};
+ });
+ const q=$('#sum-links');if(q)q.innerHTML=Object.entries(SUMS).map(([k,d])=>`<a class="lnk44" href="#sum${k}">${d.t.split(' ')[0]}</a>`).join('　');
+}
 /* ================= 2.1 ================= */
 function initS1(){
  /* --- 圖書館 --- */
@@ -2366,6 +2450,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const run=(n,f)=>{try{f()}catch(e){console.error('[init '+n+']',e)}};
  run('mascots',()=>{$('#brand-m').innerHTML=mascot('happy');$('#hero-m').innerHTML=mascot('happy');$('#hero-mouse').innerHTML=mouse(true);$$('.sec-m').forEach(e=>e.innerHTML=mascot(e.dataset.mood||'neutral'))});
  [['s1',typeof initS1!=='undefined'&&initS1],['s2',typeof initS2!=='undefined'&&initS2],['s3',typeof initS3!=='undefined'&&initS3],['s4',typeof initS4!=='undefined'&&initS4],['s5',typeof initS5!=='undefined'&&initS5]].forEach(([n,f])=>f&&run(n,f));
+ run('sum',initSum);
  run('chrome',initChrome);
 });
 </script>
