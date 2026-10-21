@@ -69,6 +69,24 @@ README.md             給人看的簡短說明
 - 設計風格：明亮、圓潤、可愛，吸引學生，有電腦和數學元素。
 - 改完後保持：讀取 CSV、按科目 → 年級 → 課題分組、搜尋、相對路徑連結轉換（`fullUrl()`）等功能正常。
 
+### ICT 課件同步（兩個倉庫，必須）
+
+教師的 ICT 課件同時放在兩個網站，**每次新增、更新、下架或移動 ICT 課件，必須兩邊一起做**：
+
+| | 本倉庫 Teacher | 另一個倉庫 Johnathan-LH/Maryknoll-ICT-Courseware |
+|---|---|---|
+| 網站 | https://johnathan-lh.github.io/Teacher/ | https://johnathan-lh.github.io/Maryknoll-ICT-Courseware/ |
+| HTML 位置 | `ICT/F{n}/簡短檔名.html` | `F{n}/{課件名稱}.html`（檔名＝課件名稱） |
+| 試算表 | 「課件清單」（科目 ICT） | 「ICT課件清單」（見該倉庫 AGENTS.md） |
+| 試算表欄名 | 科目、年級、課題、課件名稱、連結、簡介、標籤 | 年級、單元、課題、課件名稱、連結、簡介、標籤、上傳者、更新日期 |
+
+- 兩邊的 HTML 檔案內容必須**完全相同**；更新時兩邊都要覆蓋。
+- 兩邊的試算表各自加／改／刪對應的行；另一邊的「單元」（中四至中六用 DSE 單元代號）要填上，「上傳者」填 `Johnathan`，「更新日期」填香港時間 `yyyy-MM-dd HH:mm`。
+- 兩個倉庫各自在 `CHANGELOG.md` 記錄。
+- 數學課件只放在 Teacher，不用同步。
+- 教師明確說「只更新其中一個」時，才可以只改一邊，並在 CHANGELOG 註明原因。
+- 做完後確認兩個網站的頁面都已更新（兩邊 GitHub Pages 約 1–3 分鐘生效）。
+
 ### 不要做的事
 - **不要重新加入自動產生 index.html 的腳本或 GitHub Actions**（舊的 `generate_index.py` 已於 2026-09-30 移除，因為它會覆蓋 index.html）。
 - 不要把課件清單寫死在 index.html 裡。
