@@ -69,23 +69,23 @@ README.md             給人看的簡短說明
 - 設計風格：明亮、圓潤、可愛，吸引學生，有電腦和數學元素。
 - 改完後保持：讀取 CSV、按科目 → 年級 → 課題分組、搜尋、相對路徑連結轉換（`fullUrl()`）等功能正常。
 
-### ICT 課件同步（兩個倉庫，必須）
+### ICT 課件同步（Teacher ⇄ Maryknoll-ICT-Courseware，必須）
 
-教師的 ICT 課件同時放在兩個網站，**每次新增、更新、下架或移動 ICT 課件，必須兩邊一起做**：
+ICT 課件同時放在兩個網站，**內容必須保持一致**：
+- 個人網站：本倉庫 Teacher（`ICT/F1/`…`ICT/F6/`，試算表「課件清單」，科目＝ICT）
+- 學校網站：https://github.com/Johnathan-LH/Maryknoll-ICT-Courseware （`F1/`…`F6/`，試算表「ICT課件清單」）
 
-| | 本倉庫 Teacher | 另一個倉庫 Johnathan-LH/Maryknoll-ICT-Courseware |
-|---|---|---|
-| 網站 | https://johnathan-lh.github.io/Teacher/ | https://johnathan-lh.github.io/Maryknoll-ICT-Courseware/ |
-| HTML 位置 | `ICT/F{n}/簡短檔名.html` | `F{n}/{課件名稱}.html`（檔名＝課件名稱） |
-| 試算表 | 「課件清單」（科目 ICT） | 「ICT課件清單」（見該倉庫 AGENTS.md） |
-| 試算表欄名 | 科目、年級、課題、課件名稱、連結、簡介、標籤 | 年級、單元、課題、課件名稱、連結、簡介、標籤、上傳者、更新日期 |
+檔案對照表在 Maryknoll-ICT-Courseware 倉庫的 `ict-sync.tsv`（兩邊檔名可以不同，以此表為準）。完整步驟見該倉庫 AGENTS.md 第 4 節，這裏只列要點。
 
-- 兩邊的 HTML 檔案內容必須**完全相同**；更新時兩邊都要覆蓋。
-- 兩邊的試算表各自加／改／刪對應的行；另一邊的「單元」（中四至中六用 DSE 單元代號）要填上，「上傳者」填 `Johnathan`，「更新日期」填香港時間 `yyyy-MM-dd HH:mm`。
-- 兩個倉庫各自在 `CHANGELOG.md` 記錄。
-- 數學課件只放在 Teacher，不用同步。
-- 教師明確說「只更新其中一個」時，才可以只改一邊，並在 CHANGELOG 註明原因。
-- 做完後確認兩個網站的頁面都已更新（兩邊 GitHub Pages 約 1–3 分鐘生效）。
+**每次新增或修改任何一個 ICT 課件時（不論先改哪一邊）：**
+1. 把同一份 HTML 寫到兩個倉庫的對應路徑，兩邊檔案必須完全相同。
+2. 新課件：在 `ict-sync.tsv` 加一行；兩個試算表各加一行（ICT課件清單另有「單元」「上傳者」「更新日期」三欄，上傳者填 `Johnathan`，更新日期用香港時間）。
+3. 改名或移動：同時更新兩邊檔案、兩個試算表的「連結」及 `ict-sync.tsv`。
+4. 兩個倉庫的 `CHANGELOG.md` 都要記錄（註明「已同步」）。
+5. 完成後在 Maryknoll-ICT-Courseware 倉庫執行 `bash tools/check-ict-sync.sh <Teacher 路徑> .`，全部顯示 ✓ 才算完成。
+6. 下架或刪除只在教師明確要求時做，並問清楚是兩邊一起還是只處理一邊。
+
+數學課件只放在 Teacher，不用同步。同事經學校網站「上傳課件」上載的檔案不會自動出現在 Teacher；檢查腳本列出「Maryknoll 有、對照表沒有」的課件時，先問教師是否要複製到 Teacher。
 
 ### 不要做的事
 - **不要重新加入自動產生 index.html 的腳本或 GitHub Actions**（舊的 `generate_index.py` 已於 2026-09-30 移除，因為它會覆蓋 index.html）。
