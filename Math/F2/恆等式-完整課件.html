@@ -450,6 +450,88 @@ body.kb-open{padding-bottom:200px}
 }
 .kk-sq{font-size:1.05rem}
 
+/* ===== 動手操作（拖放引擎＋第 1 關） ===== */
+.unit.playmode .ub{display:none}
+.unit.playmode:not(.pcheck) .act-check{display:none}
+.play{position:relative;margin:6px 0 4px;padding:12px 10px 14px;border-radius:14px;background:var(--soft);min-height:80px}
+.ptool{display:flex;justify-content:flex-end;margin:-4px -2px 4px}
+.ptool:empty{display:none}
+.ptool .ib{width:40px;height:40px;font-size:1.2rem;font-weight:700}
+.ptool .ib:disabled{opacity:.3;box-shadow:none;cursor:default}
+.prow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;min-height:52px;max-width:100%}
+.grp{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.prow+.prow,.prow+.dz,.dz+.prow,.baskets,.ansrow{margin-top:12px}
+.tok{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:48px;min-height:48px;padding:0 12px;background:#fff;border:2px solid var(--ink);border-radius:var(--r-tile);box-shadow:0 3px 0 var(--ink);cursor:grab;color:var(--ink);font-size:1rem;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:box-shadow .12s,transform .12s}
+.play [data-drag]{touch-action:none}
+.tok.fix{cursor:default;box-shadow:none;background:#fff;border-style:solid;border-color:rgba(27,32,51,.35)}
+.tok:not(.fix):active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.tok.sel{transform:translateY(-4px);box-shadow:0 7px 0 var(--ink);outline:3px dashed var(--lv);outline-offset:3px}
+.tok.lifted{opacity:.25}
+.ghost{position:fixed;z-index:90;margin:0;pointer-events:none;cursor:grabbing;box-shadow:0 14px 26px rgba(27,32,51,.28),0 3px 0 var(--ink);transform-origin:center;will-change:transform}
+.dz{position:relative;border:2px dashed rgba(27,32,51,.35);border-radius:12px;transition:background .15s,border-color .15s,transform .15s}
+.dz.over,.play.selecting .dz:hover{border-style:solid;border-color:var(--lv);background:#fff;transform:scale(1.02)}
+.play.selecting .dz,.play.dragging .dz{border-color:var(--lv)}
+.tok[data-drop].over{outline:3px solid var(--lv);outline-offset:2px}
+.nope{animation:shake .35s}
+.appear{animation:chipin .3s var(--ease-snap) both}
+.pop{animation:smash .4s var(--ease-snap)}
+@keyframes smash{0%{transform:scale(1.35)}45%{transform:scale(.88)}100%{transform:scale(1)}}
+.flipin{animation:flipcard .45s ease-out}
+@keyframes flipcard{0%{transform:rotateY(180deg)}100%{transform:rotateY(0)}}
+.flash{position:absolute;left:50%;top:-30px;transform:translateX(-50%);white-space:nowrap;background:var(--gold);border:2px solid var(--ink);border-radius:8px;padding:0 8px;font:700 .85rem/1.6 var(--f-hand);pointer-events:none;animation:flashup .9s ease-out forwards}
+@keyframes flashup{0%{opacity:0;transform:translate(-50%,6px)}20%{opacity:1;transform:translate(-50%,0)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-8px)}}
+.cue{animation:cue 1.6s ease-in-out infinite}
+@keyframes cue{0%,100%{box-shadow:0 3px 0 var(--ink),0 0 0 0 color-mix(in srgb,var(--lv) 45%,transparent)}50%{box-shadow:0 3px 0 var(--ink),0 0 0 8px color-mix(in srgb,var(--lv) 0%,transparent)}}
+.expr{gap:6px}
+.par{font-size:1.8rem;font-weight:300;line-height:1;color:var(--ink2)}
+.signbtn,.circ{width:48px;height:48px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:1.4rem;font-weight:700;cursor:pointer;box-shadow:0 3px 0 var(--ink);display:grid;place-items:center;padding:0}
+.signbtn{background:var(--gold)}
+.circ{font-size:1.2rem}
+.baskets{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.bk{flex:1 1 90px;max-width:150px;min-height:76px;display:grid;place-items:center;padding:8px;border-radius:12px 12px 30px 30px;border-width:3px;background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(27,32,51,.05) 10px 12px)}
+.bk.has{border-style:solid}
+.ansrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:10px;min-height:68px;background:#fff;border:3px solid var(--ink);border-radius:12px}
+.ans-eq{flex:none;max-width:100%;overflow-x:auto}
+.slot{flex:1 0 56px;height:48px;border:2px dashed var(--line);border-radius:10px}
+.mults{justify-content:flex-start}
+.tok.mult{background:var(--gold)}
+.times{font-size:1.4rem;font-weight:700;color:var(--ink2)}
+.tok.tgt{flex-direction:column;gap:0;padding:4px 14px;cursor:default;box-shadow:none;border-style:dashed;min-height:56px}
+.tok.tgt.full{border-style:solid}
+.hits{font-size:.7rem;letter-spacing:2px;color:var(--lv);line-height:1}
+.prods{min-height:56px;border-top:2px dashed var(--line);padding-top:10px}
+.bal{position:relative;padding:8px 0 30px}
+.beamline{height:8px;margin:0 6%;background:var(--lv);border:2px solid var(--ink);border-radius:6px}
+.bal.wob .beamline{animation:wob .5s}
+.pans{display:flex;align-items:stretch;gap:6px;margin-top:-2px}
+.bpan{flex:1 1 0;min-width:0;min-height:76px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px;padding:8px 4px;background:#fff;border:2px solid var(--ink);border-radius:6px 6px 26px 26px;box-shadow:0 3px 0 var(--ink)}
+.eqmark{align-self:center;font-size:1.6rem;font-weight:700}
+.fulcrum{position:absolute;left:50%;bottom:0;width:0;height:0;margin-left:-16px;border:16px solid transparent;border-bottom:24px solid var(--ink);border-top:0}
+.zero{color:var(--ink2)}
+.divz{display:grid;place-items:center;width:84px;height:60px;margin:12px auto 0;border-width:3px}
+.divsym{font-size:1.8rem;font-weight:700}
+.xsplit{display:inline-flex;align-items:center;gap:2px;border:2px solid var(--ink);border-radius:var(--r-tile);background:#fff;padding:2px 10px 2px 2px}
+.tok.coef{min-width:44px;background:var(--gold)}
+.formula{gap:4px;font-size:1.05rem}
+.formula .dz.slot{flex:none;width:64px;height:56px;display:grid;place-items:center;border-width:3px;border-radius:10px}
+.calc{margin-top:12px;text-align:center;max-width:100%;overflow-x:auto;font-size:1.05rem}
+.pdone{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;padding:6px 0}
+.pdone .btn{min-height:44px;font-size:.95rem}
+/* 挑戰題能量條 */
+.energy{display:flex;align-items:center;gap:6px;margin:4px 0 6px}
+.en-ico .ico{width:26px;height:26px}
+.en-bar{flex:1;height:14px;border:2px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
+.en-bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(135deg,var(--gold) 0 8px,#ffd54a 8px 16px);transition:width .5s var(--ease-snap)}
+.energy.up .en-ico{animation:bump .45s var(--ease-snap)}
+.energy.full .en-bar{box-shadow:0 0 0 3px var(--gold)}
+.guide.ult .av{animation:ult 1s var(--ease-snap)}
+.guide.ult::before{content:"";position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:repeating-conic-gradient(var(--gold) 0 12deg,transparent 12deg 30deg);animation:rays 1s linear;pointer-events:none;z-index:-1}
+@keyframes ult{0%{transform:scale(1)}25%{transform:scale(1.9) rotate(-8deg)}55%{transform:scale(1.7) rotate(6deg)}100%{transform:scale(1)}}
+@keyframes rays{0%{transform:scale(.3) rotate(0);opacity:0}30%{opacity:1}100%{transform:scale(2.2) rotate(90deg);opacity:0}}
+@media (max-width:420px){.tok{padding:0 9px}.prow{gap:6px}}
+@media print{.play,.energy,.ghost{display:none!important}.unit.playmode .ub{display:block!important}.unit.playmode .act-check{display:none!important}}
+.chal .uh{flex-wrap:wrap}.chal .uh .ul{order:2}.chal .uh .up{order:3;flex:1 1 100%}.chal .uh .ic{order:1}
+
 </style>
 </head>
 <body data-sheet="s30" data-view="map">
@@ -1839,15 +1921,19 @@ body.kb-open{padding-bottom:200px}
   const segHTML = s => s.t === 'tex' ? '<span class="m">' + tex(s.v) + '</span>' : s.t === 'txt' ? '<span class="t">' + rich(s.v) + '</span>' : fieldHTML(s);
   const sceneBox = live => '<div class="scene' + (live ? ' live' : '') + '" aria-hidden="true"' + (live ? '' : ' hidden') + '><div class="sc-stage"></div>' + (live ? '' : '<button type="button" class="ib sc-skip" aria-label="略過動畫">' + ico('i-skip') + '</button>') + '</div>';
 
+  const rowsHTML = u => u.rows.map(r => '<div class="row' + (r.stage > 1 ? ' stg-off' : '') + '" data-stage="' + r.stage + '">' + r.segs.map(segHTML).join('') + '</div>').join('');
   function unitHTML(u, q, isLast) {
     const showPrompt = u.pr || (!q.stem && u.kind !== 'proof');
-    const rows = u.rows.map(r => '<div class="row' + (r.stage > 1 ? ' stg-off' : '') + '" data-stage="' + r.stage + '">' + r.segs.map(segHTML).join('') + '</div>').join('');
+    const rows = rowsHTML(u);
+    const play = !isLast && hasPlay(u);
     const m2 = u.m2 ? '<details class="m2"><summary>方法二：代入 x 值</summary><div class="m2b"><span>x =</span> <input class="fld m2x" type="text" inputmode="text" size="3" autocomplete="off" aria-label="輸入 x 的值"> <button type="button" class="btn m2go">代入</button><div class="m2out" aria-live="polite"></div></div></details>' : '';
     const live = u.v && u.v.k === 'tf';
-    return '<article class="unit' + (isLast ? ' chal' : '') + '" id="u-' + u.id + '" data-uid="' + u.id + '">' +
+    return '<article class="unit' + (isLast ? ' chal' : '') + (play ? ' playmode' : '') + '" id="u-' + u.id + '" data-uid="' + u.id + '">' +
       '<div class="uh">' + (isLast ? '<span class="chalband">' + ico('i-swords') + '<span>挑戰題</span></span>' : '') + (u.label ? '<span class="ul">' + esc(u.label) + '</span>' : '') + (showPrompt ? '<span class="up">' + (u.pr ? rich(u.pr) : tex(u.prompt)) + '</span>' : '') +
       '<span class="ic"><span class="badge" data-badge></span><button type="button" class="ib act-hint" aria-label="提示" title="提示">' + ico('i-bulb') + '</button><button type="button" class="ib act-sol" aria-label="看解答" title="看解答" aria-disabled="true">' + ico('i-book') + '</button></span></div>' +
       (live ? sceneBox(true) : '') +
+      (isLast && u.sheet === 's30' ? '<div class="energy" aria-hidden="true"><span class="en-ico">' + ico('i-flame') + '</span><span class="en-bar"><i></i></span></div>' : '') +
+      (play ? '<div class="play" data-play="' + u.id + '"></div>' : '') +
       '<div class="ub">' + rows + '</div>' + m2 + (live ? '' : sceneBox(false)) +
       '<div class="fb" role="status" aria-live="polite"></div><div class="hintbox" hidden></div><div class="solbox" hidden></div>' +
       '<button type="button" class="btn primary big act-check">檢查</button>' +
@@ -1910,6 +1996,7 @@ body.kb-open{padding-bottom:200px}
     $('#main').innerHTML = sheetHTML(SHEET_BY_ID[id]);
     UNITS.filter(u => u.sheet === id).forEach(u => { RT[u.id] = null; badge(u); });
     initLiveScales();
+    mountPlays(id);
     const us = unitsOf(id); let first = us.findIndex(u => !S.u[u.id]); if (first < 0) first = 0;
     IDX = first; showIdx(first, true); updateProgress();
   }
@@ -2025,11 +2112,12 @@ body.kb-open{padding-bottom:200px}
         fb.innerHTML = '<span class="fbi">✓</span> 呢步啱喇';
         tone([660]);
         const el = $('.row[data-stage="' + r.stage + '"] input.fld, .row[data-stage="' + r.stage + '"] select.fld', card);
-        if (el) { try { el.focus(); } catch (e) { /* ignore */ } }
-        return;
+        if (el && !card.classList.contains('playmode')) { try { el.focus(); } catch (e) { /* ignore */ } }
+        energy(u, card, (r.stage - 1) / maxStage(u));
+        return 'stage';
       }
       complete(u, card);
-      return;
+      return 'done';
     }
     const shorts = bad.filter(x => !x.empty && x.msg).map(x => x.msg).filter((m, i, a) => a.indexOf(m) === i).slice(0, 2);
     const whys = bad.filter(x => !x.empty && x.why).map(x => x.why).filter((m, i, a) => a.indexOf(m) === i).slice(0, 2);
@@ -2039,7 +2127,10 @@ body.kb-open{padding-bottom:200px}
       r.wrong = true; setCombo(0); cardFx(card, 'fx-bad');
       G.say('wrong', shorts.some(m => /負號/.test(m)) ? '睇下負號喇～' : pick(TRY));
       tone([220]);
-    } else mood('think');
+      return 'wrong';
+    }
+    mood('think');
+    return 'empty';
   }
 
   function flyStar(from) {
@@ -2068,12 +2159,16 @@ body.kb-open{padding-bottom:200px}
       setCombo(combo + 1);
       const negQ = fieldsOf(u).some(f => (f.f === 'poly' || f.f === 'num') && /-/.test(f.ans));
       if (negQ && !r.wrong && !S.h[u.id]) S.neg[u.id] = 1;
-      G.say(combo >= 3 || last ? 'great' : 'correct', combo >= 3 ? pick(GREAT) : pick(PRAISE));
+      if (last && $('.energy', card)) G.say('cheer', '大招！犀利！');
+      else G.say(combo >= 3 || last ? 'great' : 'correct', combo >= 3 ? pick(GREAT) : pick(PRAISE));
       burst(); flyStar($('.act-check', card));
       cardFx(card, 'fx-ok'); tone([660, 880]);
     }
     save(); badge(u); updateProgress();
     if (!r.sol) checkBadges(u);
+    energy(u, card, 1);
+    if (PLAY[u.id]) playDone(PLAY[u.id]);
+    if (u.sheet === 's30') { if (RM) afterScene(u, card, last); else setTimeout(() => afterScene(u, card, last), 450); return; }
     playScene(u, card, () => afterScene(u, card, last));
   }
   function afterScene(u, card, last) {
@@ -2168,11 +2263,559 @@ body.kb-open{padding-bottom:200px}
     $('.cgo', ov).focus();
   }
 
+  /* =====================================================================
+     動手操作：共用拖放引擎＋第 1 關玩法
+     - 拖放用原生 Pointer Events（觸控／滑鼠）；另有「點選 → 點目標」及鍵盤（Tab/Enter/Esc）
+     - 每個玩法 = impl{ init, view, drop, tap, after, check }；狀態可複製 → ↶ 撤銷
+     - 所有對錯最終交返 checkUnit（Alg）判斷；卡片、干擾卡由 SHEETS 資料即場產生
+     ===================================================================== */
+  const PLAY = {};
+  let drag = null, suppressClick = false, uidSeq = 0;
+  const later = (fn, ms) => { if (RM) fn(); else setTimeout(fn, ms); };
+  const nid = p => (p || 'k') + (++uidSeq);
+
+  /* ---- 項（term）工具：沿用 Alg 多項式運算 ---- */
+  const tPoly = t => { const p = {}; p[t.k] = { c: t.c, m: t.m }; return p; };
+  const tAdd = (a, b) => one(A.padd(tPoly(a), tPoly(b)));
+  const tMul = (a, b) => one(A.pmul(tPoly(a), tPoly(b)));
+  const tNeg = a => ({ k: a.k, c: A.F(-a.c.n, a.c.d), m: a.m });
+  const tAbs = a => ({ k: a.k, c: A.F(Math.abs(a.c.n), a.c.d), m: a.m });
+  const tEq = (a, b) => a.k === b.k && A.feq(a.c, b.c);
+  const hasX = t => Object.keys(t.m).length > 0;
+  function termStr(t, lead) {
+    const vars = Object.keys(t.m).filter(k => t.m[k] > 0).sort(), n = Math.abs(t.c.n), d = t.c.d;
+    const coef = (n === d && vars.length) ? '' : (d === 1 ? String(n) : '(' + n + '/' + d + ')');
+    return (t.c.n < 0 ? '-' : (lead ? '' : '+')) + coef + vars.map(v => v + (t.m[v] > 1 ? '^' + t.m[v] : '')).join('');
+  }
+  const tTex = (t, lead) => monoTex(t.c, t.m, lead);
+  const fromNum = v => one(A.parse(String(v)).poly) || { k: '', c: A.F(0), m: {} };
+  function shuffleSeed(arr, seed) {
+    let h = 0; for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+    const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { h = (h * 1103515245 + 12345) >>> 0; const j = h % (i + 1); const t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function uniqTerms(list, avoid) {
+    const out = [];
+    list.forEach(t => { if (!t || !t.k && A.feq(t.c, A.F(0))) return; if (avoid.some(a => tEq(a, t)) || out.some(a => tEq(a, t))) return; out.push(t); });
+    return out;
+  }
+
+  /* ---- 卡片／放置區 HTML ---- */
+  function tok(st, id, o) {
+    o = o || {};
+    const t = st.cards[id], lead = !!o.lead;
+    const lab = o.label !== undefined ? o.label : tex(tTex(t, lead));
+    return '<button type="button" class="tok' + (o.cls ? ' ' + o.cls : '') + '"' + (o.drag === false ? '' : ' data-drag="' + id + '"') + (o.drop ? ' data-drop="' + o.drop + '"' : '') +
+      ' data-fid="' + id + '" aria-label="卡片 ' + esc(o.aria || termStr(t, lead)) + '">' + lab + '</button>';
+  }
+  const zone = (id, inner, cls, aria) => '<div class="dz' + (cls ? ' ' + cls : '') + '" data-drop="' + id + '" role="button" tabindex="0" aria-label="' + esc(aria || '放置區') + '">' + inner + '</div>';
+
+  /* ---- 掛載 ---- */
+  function hasPlay(u) { return u.sheet === 's30' && !!IMPL(u); }
+  function mountPlays(sheet) {
+    Object.keys(PLAY).forEach(k => { delete PLAY[k]; });
+    const us = unitsOf(sheet);
+    us.forEach((u, i) => {
+      const card = $('#u-' + u.id), host = card && $('.play', card); if (!host) return;
+      const impl = IMPL(u); if (!impl) return;
+      const w = { u, card, host, impl, hist: [], sel: null, st: null };
+      PLAY[u.id] = w;
+      w.st = S.u[u.id] ? { done: true } : impl.init(w);
+      renderW(w, { anim: false });
+    });
+  }
+  function playDone(w) { w.st = { done: true }; w.hist = []; renderW(w, {}); }
+  function replay(w) {
+    RT[w.u.id] = null;
+    $('.ub', w.card).innerHTML = rowsHTML(w.u);
+    $('.fb', w.card).innerHTML = '';
+    w.hist = []; w.st = w.impl.init(w); renderW(w, {});
+  }
+
+  /* ---- 繪製（FLIP：同一張卡由舊位置滑去新位置） ---- */
+  function renderW(w, fx, from) {
+    fx = fx || {};
+    const before = {};
+    if (!RM) $$('[data-fid]', w.host).forEach(e => { before[e.dataset.fid] = e.getBoundingClientRect(); });
+    Object.assign(before, from || {});
+    const act = document.activeElement, focusKey = act && w.host.contains(act) ? (act.dataset.drag || act.dataset.drop || act.dataset.tap || (act.classList.contains('pundo') ? '__undo' : '')) : '';
+    const body = w.st.done ? doneView(w) : w.impl.view(w.st, w);
+    w.host.innerHTML = '<div class="ptool">' + (w.st.done ? '' : '<button type="button" class="ib pundo" aria-label="撤銷上一步"' + (w.hist.length ? '' : ' disabled') + '>↶</button>') + '</div>' + body;
+    w.sel = null; w.host.classList.remove('selecting');
+    w.card.classList.toggle('pcheck', !w.st.done && !!(w.impl.check && w.st.ph === 'answer'));
+    if (focusKey) {
+      const f = focusKey === '__undo' ? $('.pundo', w.host) : w.host.querySelector('[data-drag="' + focusKey + '"],[data-drop="' + focusKey + '"],[data-tap="' + focusKey + '"]');
+      if (f) { try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+    }
+    if (RM) return;
+    $$('[data-fid]', w.host).forEach(e => {
+      const id = e.dataset.fid, a = before[id];
+      if (fx.flip && fx.flip.indexOf(id) >= 0) e.classList.add('flipin');
+      if (fx.pop && fx.pop.indexOf(id) >= 0) e.classList.add('pop');
+      if (a) {
+        const b = e.getBoundingClientRect(), dx = a.left - b.left, dy = a.top - b.top;
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+          e.style.transition = 'none'; e.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; void e.offsetWidth;
+          e.style.transition = 'transform .28s cubic-bezier(.2,.8,.2,1)'; e.style.transform = '';
+          setTimeout(() => { e.style.transition = ''; }, 300);
+        }
+      } else if (fx.anim !== false) e.classList.add('appear');
+    });
+    (fx.flash || []).forEach(id => {
+      const e = w.host.querySelector('[data-fid="' + id + '"]'); if (!e) return;
+      const f = document.createElement('span'); f.className = 'flash'; f.textContent = fx.flashText || '變號！'; f.setAttribute('aria-hidden', 'true');
+      e.appendChild(f); setTimeout(() => f.remove(), 900);
+    });
+    if (fx.wob) { const b = $('.bal', w.host); if (b) b.classList.add('wob'); }
+  }
+  function doneView(w) {
+    const v = w.u.v; let t;
+    if (v.k === 'equiv') t = A.texOf(v.e) + '=' + A.texOf(v.a);
+    else if (v.k === 'solve') t = 'x=' + v.a;
+    else t = v.solve + '=' + v.a;
+    return '<div class="pdone">' + tex(t) + '<span class="sc-ok" aria-hidden="true"><svg viewBox="0 0 24 24" class="ck"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><button type="button" class="btn preplay">↺ 再玩</button></div>';
+  }
+  function pfb(w, msg) { const fb = $('.fb', w.card); fb.innerHTML = msg ? '<span class="fbi">✗</span> ' + esc(msg) : ''; }
+
+  /* ---- 動作：複製狀態 → 執行 → 成功就入歷史 ---- */
+  function act(w, fn, extraFrom) {
+    const st = JSON.parse(JSON.stringify(w.st)), r = fn(st) || {};
+    if (r.err !== undefined) { if (r.err) { pfb(w, r.err); mood('think'); } return false; }
+    w.hist.push(w.st); w.st = st;
+    const from = {}; if (r.from) Object.keys(r.from).forEach(k => { from[k] = r.from[k] === 'ghost' ? extraFrom.ghost : r.from[k] === 'zone' ? extraFrom.zone : r.from[k]; });
+    if (!r.keepFb) pfb(w, '');
+    renderW(w, r.fx || {}, from);
+    if (r.snap) tone([880]);
+    if (w.impl.after) w.impl.after(w);
+    return true;
+  }
+  function dropW(w, cid, zid, ghostRect, zoneRect) {
+    if (w.st.done) return false;
+    return act(w, st => w.impl.drop(st, cid, zid, w) || { err: '' }, { ghost: ghostRect, zone: zoneRect });
+  }
+  function undoW(w) { if (!w.hist.length) return; w.st = w.hist.pop(); pfb(w, ''); renderW(w, { anim: false }); }
+  function checkpoint(w, mut) { w.hist = []; mut(w.st); renderW(w, {}); }
+  function setField(card, f, val) {
+    const el = card.querySelector('[data-id="' + f.id + '"]'); if (!el) return;
+    el.value = String(val);
+  }
+  /* 把目前階段嘅欄位填好（值由操作結果得出），交 checkUnit 判斷 */
+  function submitStage(w, vals) {
+    const u = w.u, r = rt(u), stage = r.stage;
+    u.rows.filter(rw => rw.stage === stage).forEach(rw => rw.segs.forEach(f => { if (f.t === 'f') setField(w.card, f, vals && vals[f.id] !== undefined ? vals[f.id] : f.ans); }));
+    return checkUnit(u, w.card);
+  }
+  function submitAll(w, last) {
+    let guard = 0, res;
+    while (guard++ < 6) { const atLast = rt(w.u).stage === maxStage(w.u); res = submitStage(w, atLast ? last : null); if (res !== 'stage') break; }
+    return res;
+  }
+  function playCheck(w) { if (w.impl.check) w.impl.check(w); }
+
+  /* ---- 點選替代操作 ---- */
+  function playDeselect() { Object.keys(PLAY).forEach(k => { const w = PLAY[k]; if (w.sel) { w.sel = null; w.host.classList.remove('selecting'); $$('.tok.sel', w.host).forEach(e => e.classList.remove('sel')); } }); }
+  function playClick(e) {
+    const t = e.target, host = t.closest('.play'), w = host && PLAY[host.dataset.play];
+    if (!w) return false;
+    if (suppressClick) { suppressClick = false; e.preventDefault(); return true; }
+    if (t.closest('.pundo')) { undoW(w); return true; }
+    if (t.closest('.preplay')) { replay(w); return true; }
+    if (w.st.done) return true;
+    const tapEl = t.closest('[data-tap]');
+    if (tapEl) { if (w.impl.tap) act(w, st => w.impl.tap(st, tapEl.dataset.tap, w) || { err: '' }); return true; }
+    const dragEl = t.closest('[data-drag]'), dropEl = t.closest('[data-drop]');
+    if (w.sel && dropEl && dropEl.dataset.drop !== w.sel && dropEl.dataset.drag !== w.sel) {
+      const ok = dropW(w, w.sel, dropEl.dataset.drop, null, null);
+      if (!ok) { nope(dropEl); playDeselect(); }
+      return true;
+    }
+    if (dragEl) {
+      const id = dragEl.dataset.drag;
+      if (w.sel === id) { playDeselect(); return true; }
+      playDeselect(); w.sel = id; dragEl.classList.add('sel'); w.host.classList.add('selecting');
+      return true;
+    }
+    return true;
+  }
+  function nope(el) { if (!el || RM) return; el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope'); }
+
+  /* ---- 拖放（Pointer Events） ---- */
+  document.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    const el = e.target.closest && e.target.closest('.play [data-drag]'); if (!el) return;
+    const w = PLAY[el.closest('.play').dataset.play]; if (!w || w.st.done) return;
+    drag = { el, w, id: el.dataset.drag, x0: e.clientX, y0: e.clientY, pid: e.pointerId, on: false, over: null };
+  });
+  document.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.pid) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
+    if (!drag.on) {
+      if (Math.hypot(dx, dy) < 7) return;
+      drag.on = true; playDeselect();
+      const r = drag.el.getBoundingClientRect(); drag.r = r;
+      const g = drag.el.cloneNode(true); g.classList.add('ghost'); g.removeAttribute('data-drag'); g.removeAttribute('data-drop'); g.removeAttribute('data-fid');
+      g.style.left = r.left + 'px'; g.style.top = r.top + 'px'; g.style.width = r.width + 'px'; g.style.height = r.height + 'px';
+      document.body.appendChild(g); drag.g = g; drag.el.classList.add('lifted'); drag.w.host.classList.add('dragging');
+      try { drag.el.setPointerCapture(e.pointerId); } catch (er) { /* ignore */ }
+    }
+    e.preventDefault();
+    drag.g.style.transform = 'translate(' + dx + 'px,' + dy + 'px)' + (RM ? '' : ' scale(1.08) rotate(-2deg)');
+    const under = document.elementFromPoint(e.clientX, e.clientY), z = under && under.closest('[data-drop]');
+    const zz = z && drag.w.host.contains(z) && z !== drag.el ? z : null;
+    if (drag.over !== zz) { if (drag.over) drag.over.classList.remove('over'); if (zz) zz.classList.add('over'); drag.over = zz; }
+    if (e.clientY < 70) window.scrollBy(0, -10); else if (e.clientY > window.innerHeight - 70) window.scrollBy(0, 10);
+  }, { passive: false });
+  function endDrag(e, cancel) {
+    if (!drag || (e && e.pointerId !== drag.pid)) return;
+    const d = drag; drag = null;
+    if (!d.on) return;
+    suppressClick = true; setTimeout(() => { suppressClick = false; }, 60);
+    d.w.host.classList.remove('dragging');
+    if (d.over) d.over.classList.remove('over');
+    const gr = d.g.getBoundingClientRect(), zr = d.over ? d.over.getBoundingClientRect() : null;
+    const ok = !cancel && d.over ? dropW(d.w, d.id, d.over.dataset.drop, gr, zr) : false;
+    if (ok) { d.g.remove(); return; }
+    if (d.over) nope(d.over);
+    d.g.style.transition = RM ? 'none' : 'transform .25s cubic-bezier(.3,1.3,.5,1)'; d.g.style.transform = 'translate(0,0)';
+    setTimeout(() => { d.g.remove(); d.el.classList.remove('lifted'); }, RM ? 0 : 260);
+  }
+  document.addEventListener('pointerup', e => endDrag(e, false));
+  document.addEventListener('pointercancel', e => endDrag(e, true));
+
+  /* ---- 挑戰題能量條＋呂 Sir 大招 ---- */
+  function energy(u, card, frac) {
+    const en = card && $('.energy', card); if (!en) return;
+    const bar = $('.en-bar i', en), was = parseFloat(bar.dataset.v || '0');
+    if (frac <= was) return;
+    bar.dataset.v = frac; bar.style.width = (frac * 100) + '%';
+    en.classList.remove('up'); void en.offsetWidth; en.classList.add('up');
+    if (frac >= 1) { en.classList.add('full'); ultimate(); }
+  }
+  function ultimate() {
+    mood('cheer', true); burst(); setTimeout(burst, 300);
+    const g = $('#guide'); if (!g || RM) { setTimeout(() => mood('explain'), 1000); return; }
+    g.classList.remove('ult'); void g.offsetWidth; g.classList.add('ult');
+    setTimeout(() => { g.classList.remove('ult'); mood('explain'); }, 1100);
+  }
+
+  /* =====================================================================
+     共用階段：合併（籃）→ 組答案（答案列）
+     ===================================================================== */
+  function startMerge(st, ids) {
+    const keys = []; ids.forEach(id => { const k = st.cards[id].k; if (keys.indexOf(k) < 0) keys.push(k); });
+    if (keys.length === ids.length) return false;           // 冇同類項就唔使合併
+    st.ph = 'merge'; st.pool = ids; st.bk = keys.map(() => null);
+    return true;
+  }
+  function viewMerge(st) {
+    return '<div class="prow pool">' + st.pool.map(id => tok(st, id, { lead: false })).join('') + '</div>' +
+      '<div class="baskets">' + st.bk.map((id, i) => zone('b' + i, id ? tok(st, id, { lead: true, drag: false, cls: 'inbk' }) : '', 'bk' + (id ? ' has' : ''), '籃 ' + (i + 1))).join('') + '</div>';
+  }
+  function dropMerge(st, cid, zid, w) {
+    if (!/^b\d+$/.test(zid) || st.pool.indexOf(cid) < 0) return { err: '' };
+    const i = +zid.slice(1), cur = st.bk[i], t = st.cards[cid];
+    st.pool = st.pool.filter(x => x !== cid);
+    let fx = {}, from = {};
+    if (!cur) { st.bk[i] = cid; from[cid] = 'ghost'; }
+    else {
+      if (st.cards[cur].k !== t.k) return { err: '唔係同類項' };
+      const s = tAdd(st.cards[cur], t), id = nid('m');
+      st.cards[id] = s || { k: t.k, c: A.F(0), m: t.m }; st.bk[i] = id; fx.pop = [id];
+    }
+    if (!st.pool.length) startAnswer(st, st.bk.filter(x => x && !A.feq(st.cards[x].c, A.F(0))), w);
+    return { fx, from, snap: true };
+  }
+  function startAnswer(st, ids, w) {
+    const correct = ids.map(id => st.cards[id]);
+    const dis = (w.impl.distract ? w.impl.distract(st, correct) : []).slice(0, 3);
+    const dids = dis.map(t => { const id = nid('d'); st.cards[id] = t; return id; });
+    st.ph = 'answer'; st.ans = []; st.pool = shuffleSeed(ids.concat(dids), w.u.id);
+  }
+  function viewAnswer(st) {
+    return zone('pool', st.pool.map(id => tok(st, id)).join(''), 'prow pool', '卡片池') +
+      zone('ans', '<span class="ans-eq">' + tex(st.lhsTex + '=') + '</span>' + st.ans.map((id, i) => tok(st, id, { lead: i === 0, drop: 'a:' + id })).join('') + '<span class="slot" aria-hidden="true"></span>', 'ansrow', '答案列');
+  }
+  function dropAnswer(st, cid, zid) {
+    const inPool = st.pool.indexOf(cid) >= 0, inAns = st.ans.indexOf(cid) >= 0;
+    if (zid === 'ans' && inPool) { st.pool = st.pool.filter(x => x !== cid); st.ans.push(cid); return { from: { [cid]: 'ghost' }, snap: true }; }
+    if (zid.indexOf('a:') === 0) {
+      const tgt = zid.slice(2); if (tgt === cid) return { err: '' };
+      st.pool = st.pool.filter(x => x !== cid); st.ans = st.ans.filter(x => x !== cid);
+      st.ans.splice(st.ans.indexOf(tgt), 0, cid); return { from: { [cid]: 'ghost' }, snap: true };
+    }
+    if (inAns && (zid === 'pool' || zid === 'out')) { st.ans = st.ans.filter(x => x !== cid); st.pool.push(cid); return { from: { [cid]: 'ghost' } }; }
+    return { err: '' };
+  }
+  function checkAnswer(w) {
+    const st = w.st;
+    if (!st.ans.length) { pfb(w, '答案列仲係空'); return; }
+    const str = st.ans.map((id, i) => termStr(st.cards[id], i === 0)).join('');
+    const res = submitStage(w, { ans: str });
+    if (res === 'wrong') nope($('.ansrow', w.host));
+  }
+  const ansImpl = { view: viewAnswer, drop: dropAnswer };
+
+  /* =====================================================================
+     第 1 關玩法
+     ===================================================================== */
+  function IMPL(u) {
+    if (u.sheet !== 's30' || !u.v) return null;
+    const us = unitsOf(u.sheet); if (us[us.length - 1] === u) return null;   // 挑戰題保留打字
+    if (u.v.k === 'equiv') return A.parse(u.v.e).ast.t === 'mul' ? EXPAND(u) : SIMPLIFY(u);
+    if (u.v.k === 'solve') { const [L, R] = u.v.eq.split('='); return SOLVE(u, L, R, 'x'); }
+    if (u.v.k === 'subst') return SUBST(u);
+    return null;
+  }
+
+  /* --- 化簡：撤括號（點「−」變號／點圓圈揀符號）→ 同類項入籃 → 組答案 --- */
+  function SIMPLIFY(u) {
+    const v = u.v, ast = A.parse(v.e).ast, hasOps = fieldsOf(u).some(f => f.f === 'op');
+    const gTerms = n => rawTerms(n.t === 'paren' ? n.e : n).filter(p => Object.keys(p).length).map(one);
+    return {
+      init() {
+        const st = { ph: 'open', op: ast.t === 'sub' ? '-' : '+', opened: false, cards: {}, g1: [], g2: [], circ: [], lhsTex: A.texOf(v.e) };
+        gTerms(ast.l).forEach(t => { const id = nid('c'); st.cards[id] = t; st.g1.push(id); });
+        gTerms(ast.r).forEach(t => { const id = nid('c'); st.cards[id] = t; st.g2.push(id); });
+        st.circ = st.g2.map(() => null);
+        return st;
+      },
+      view(st) {
+        if (st.ph === 'open') {
+          let h = '<div class="prow expr">' + st.g1.map((id, i) => tok(st, id, { lead: i === 0, drag: false, cls: 'fix' })).join('');
+          if (!st.opened) {
+            h += '<button type="button" class="signbtn cue" data-tap="sign" aria-label="撤去括號（括號前係' + (st.op === '-' ? '減號' : '加號') + '）">' + (st.op === '-' ? '−' : '+') + '</button><span class="grp"><span class="par">(</span>' +
+              st.g2.map((id, i) => tok(st, id, { lead: i === 0, drag: false, cls: 'fix' })).join('') + '<span class="par">)</span></span>';
+          } else {
+            st.g2.forEach((id, i) => {
+              const c = st.circ[i];
+              h += '<span class="grp"><button type="button" class="circ' + (c ? '' : ' cue') + '" data-tap="c' + i + '" aria-label="揀符號：而家係' + (c === '+' ? '加' : c === '-' ? '減' : '未揀') + '">' + (c === '+' ? '＋' : c === '-' ? '－' : '?') + '</button>' +
+                tok(st, id, { drag: false, cls: 'fix', label: tex(tTex(tAbs(st.cards[id]), true)) }) + '</span>';
+            });
+          }
+          return h + '</div>';
+        }
+        return st.ph === 'merge' ? viewMerge(st) : viewAnswer(st);
+      },
+      tap(st, id, w) {
+        if (st.ph !== 'open') return { err: '' };
+        if (id === 'sign' && !st.opened) {
+          st.opened = true;
+          if (hasOps) return {};
+          let fx = {};
+          if (st.op === '-') { st.g2.forEach(i => { st.cards[i] = tNeg(st.cards[i]); }); fx = { flip: st.g2.slice(), flash: st.g2.slice() }; }
+          const ids = st.g1.concat(st.g2);
+          if (!startMerge(st, ids)) startAnswer(st, ids, w);
+          return { fx };
+        }
+        const m = /^c(\d)$/.exec(id); if (!m) return { err: '' };
+        const i = +m[1]; st.circ[i] = st.circ[i] === '+' ? '-' : '+';
+        return {};
+      },
+      after(w) {
+        const st = w.st;
+        if (st.ph !== 'open' || !hasOps || !st.opened || st.circ.some(c => !c)) return;
+        const opFields = fieldsOf(w.u, 1).filter(f => f.f === 'op'), vals = {};
+        opFields.forEach((f, i) => { vals[f.id] = st.circ[i]; });
+        const res = submitStage(w, vals);
+        if (res === 'stage') checkpoint(w, s => {
+          s.g2.forEach((id, i) => { const a = tAbs(s.cards[id]); s.cards[id] = s.circ[i] === '-' ? tNeg(a) : a; });
+          const ids = s.g1.concat(s.g2); if (!startMerge(s, ids)) startAnswer(s, ids, w);
+        });
+        else if (res === 'wrong') $$('.circ', w.host).forEach(nope);
+      },
+      drop(st, cid, zid, w) { return st.ph === 'merge' ? dropMerge(st, cid, zid, w) : st.ph === 'answer' ? dropAnswer(st, cid, zid) : { err: '' }; },
+      check: checkAnswer,
+      distract(st, correct) {
+        const L = rawTerms(ast.l.t === 'paren' ? ast.l.e : ast.l), R = rawTerms(ast.r.t === 'paren' ? ast.r.e : ast.r);
+        let wrong = {}; L.concat(R).forEach(p => { wrong = A.padd(wrong, p); });        // 漏咗變號
+        const absSum = {}; L.concat(R).forEach(p => { const t = one(p); if (t) absSum[t.k] = absSum[t.k] ? tAdd(absSum[t.k], tAbs(t)) : tAbs(t); });
+        const c1 = Object.keys(wrong).map(k => one({ [k]: wrong[k] }));
+        return uniqTerms(c1.concat(correct.map(tNeg), Object.keys(absSum).map(k => absSum[k])), correct);
+      }
+    };
+  }
+
+  /* --- 展開：拖乘數去碰括號內每一項 → 產生積卡 → （合併）→ 組答案 --- */
+  function EXPAND(u) {
+    const v = u.v, ast = A.parse(v.e).ast;
+    const lt = (ast.l.t === 'paren' ? rawTerms(ast.l.e) : rawTerms(ast.l)).map(one);
+    const rtm = rawTerms(ast.r.t === 'paren' ? ast.r.e : ast.r).map(one);
+    const stage1 = maxStage(u) > 1;
+    function next(st, w) { const ids = st.prods.slice(); if (!startMerge(st, ids)) startAnswer(st, ids, w); }
+    return {
+      init() {
+        const st = { ph: 'touch', cards: {}, mul: [], tgt: [], hit: {}, prods: [], lhsTex: A.texOf(v.e) };
+        lt.forEach(t => { const id = nid('u'); st.cards[id] = t; st.mul.push(id); });
+        rtm.forEach(t => { const id = nid('t'); st.cards[id] = t; st.tgt.push(id); });
+        return st;
+      },
+      view(st) {
+        if (st.ph === 'touch') {
+          const need = st.mul.length;
+          return '<div class="prow mults">' + st.mul.map((id, i) => tok(st, id, { lead: i === 0, cls: 'mult cue', aria: '乘數 ' + termStr(st.cards[id], true) })).join('') + '<span class="times" aria-hidden="true">×</span></div>' +
+            '<div class="prow tgts"><span class="par">(</span>' + st.tgt.map((id, i) => {
+              const n = st.mul.filter(m => st.hit[m + '|' + id]).length;
+              return tok(st, id, { lead: i === 0, drag: false, drop: 'x:' + id, cls: 'tgt' + (n === need ? ' full' : ''), label: tex(tTex(st.cards[id], i === 0)) + '<span class="hits" aria-hidden="true">' + st.mul.map(m => st.hit[m + '|' + id] ? '●' : '○').join('') + '</span>' });
+            }).join('') + '<span class="par">)</span></div>' +
+            '<div class="prow prods" aria-label="積">' + st.prods.map(id => tok(st, id, { drag: false, cls: 'fix' })).join('') + '</div>';
+        }
+        return st.ph === 'merge' ? viewMerge(st) : viewAnswer(st);
+      },
+      drop(st, cid, zid, w) {
+        if (st.ph === 'merge') return dropMerge(st, cid, zid, w);
+        if (st.ph === 'answer') return dropAnswer(st, cid, zid);
+        if (st.mul.indexOf(cid) < 0 || zid.indexOf('x:') !== 0) return { err: '' };
+        const tg = zid.slice(2), key = cid + '|' + tg;
+        if (st.hit[key]) return { err: '已經乘過喇' };
+        const p = tMul(st.cards[cid], st.cards[tg]), id = nid('p');
+        st.cards[id] = p; st.hit[key] = id; st.prods.push(id);
+        const all = st.mul.every(m => st.tgt.every(t => st.hit[m + '|' + t]));
+        if (all && !stage1) next(st, w);
+        return { fx: { pop: [id] }, from: { [id]: 'zone' }, snap: true };
+      },
+      after(w) {
+        const st = w.st;
+        if (st.ph !== 'touch' || !stage1 || !st.mul.every(m => st.tgt.every(t => st.hit[m + '|' + t]))) return;
+        const k = st.cards[st.mul[0]], vals = {};
+        fieldsOf(w.u, 1).forEach((f, i) => { vals[f.id] = i < 2 ? termStr(k, true) : termStr(tAbs(st.cards[st.tgt[1]]), true); });
+        if (submitStage(w, vals) === 'stage') checkpoint(w, s => next(s, w));
+      },
+      check: checkAnswer,
+      distract(st, correct) {
+        const c = rtm.slice(1).concat(correct.map(tNeg));
+        correct.forEach(t => { if (t.m.x === 2) c.unshift({ k: 'x1', c: t.c, m: { x: 1 } }); });   // x·x 當成 x
+        return uniqTerms(c, correct);
+      }
+    };
+  }
+
+  /* --- 解方程：天秤；卡過「＝」自動變號；同類項疊埋合併；係數拖去「÷」 --- */
+  function solveInit(st, L, R, vn) {
+    st.vn = vn; st.L = []; st.R = []; st.div = false;
+    termsOf(L).forEach(t => { const id = nid('e'); st.cards[id] = t; st.L.push(id); });
+    termsOf(R).forEach(t => { const id = nid('e'); st.cards[id] = t; st.R.push(id); });
+    st.ph = 'eq';
+  }
+  function solveForm(st) {
+    const sides = [st.L, st.R];
+    for (let s = 0; s < 2; s++) {
+      const a = sides[s], b = sides[1 - s];
+      if (a.length === 1 && hasX(st.cards[a[0]]) && b.every(id => !hasX(st.cards[id])) && b.length <= 1) return { xs: s, xid: a[0], cid: b[0] || null };
+    }
+    return null;
+  }
+  function solveValue(st) {
+    const f = solveForm(st); if (!f) return null;
+    const c = st.cards[f.xid].c, d = f.cid ? st.cards[f.cid].c : A.F(0);
+    return A.F(d.n * c.d, d.d * c.n);
+  }
+  const fracStr = f => f.d === 1 ? String(f.n) : f.n + '/' + f.d;
+  function viewSolve(st) {
+    const f = solveForm(st);
+    const side = (k, ids) => zone(k, ids.length ? ids.map((id, i) => {
+      const t = st.cards[id];
+      if (f && f.xid === id && !st.div && !(t.c.n === 1 && t.c.d === 1)) {
+        return '<span class="xsplit" data-fid="' + id + '">' + tok(st, 'coef', { label: tex(fracTex(t.c)), aria: '係數 ' + fracStr(t.c), cls: 'coef cue' }).replace('data-fid="coef"', 'data-fid="coef' + id + '"') + '<span class="xv">' + tex(st.vn) + '</span></span>';
+      }
+      return tok(st, id, { lead: i === 0, drop: 'c:' + id });
+    }).join('') : '<span class="zero">' + tex('0') + '</span>', 'bpan', k === 'L' ? '左方秤盤' : '右方秤盤');
+    if (st.div) {
+      const val = solveValue(st);
+      return '<div class="bal solved"><div class="beamline"></div><div class="pans"><div class="dz bpan">' + tex(st.vn) + '</div><span class="eqmark">=</span><div class="dz bpan">' + tex(fracTex(val)) + '</div></div></div>';
+    }
+    return '<div class="bal"><div class="beamline"></div><div class="pans">' + side('L', st.L) + '<span class="eqmark" aria-hidden="true">=</span>' + side('R', st.R) + '</div><div class="fulcrum" aria-hidden="true"></div></div>' +
+      (f && !(st.cards[f.xid].c.n === 1 && st.cards[f.xid].c.d === 1) ? zone('div', '<span class="divsym">÷</span>', 'divz cue', '除位') : '');
+  }
+  function dropSolve(st, cid, zid) {
+    if (cid === 'coef') {
+      if (zid !== 'div') return { err: '' };
+      st.div = true; st.ph = 'solved'; return { snap: true, fx: { wob: true } };
+    }
+    const inL = st.L.indexOf(cid) >= 0, from = inL ? 'L' : 'R', to = inL ? 'R' : 'L';
+    if (st.L.indexOf(cid) < 0 && st.R.indexOf(cid) < 0) return { err: '' };
+    let target = zid;
+    if (zid.indexOf('c:') === 0) {
+      const other = zid.slice(2), oSide = st.L.indexOf(other) >= 0 ? 'L' : 'R';
+      if (oSide === from) {                                     // 同一邊：合併
+        if (st.cards[other].k !== st.cards[cid].k) return { err: '唔係同類項' };
+        const s = tAdd(st.cards[other], st.cards[cid]), arr = st[from];
+        st[from] = arr.filter(x => x !== cid);
+        if (!s) { st[from] = st[from].filter(x => x !== other); return { snap: true, fx: { wob: true } }; }
+        const id = nid('e'); st.cards[id] = s; st[from][st[from].indexOf(other)] = id;
+        return { fx: { pop: [id], wob: true }, snap: true };
+      }
+      target = oSide;
+    }
+    if (target === from) return { err: '' };
+    if (target !== 'L' && target !== 'R') return { err: '' };
+    st[from] = st[from].filter(x => x !== cid); st.cards[cid] = tNeg(st.cards[cid]); st[to].push(cid);   // 過「＝」變號
+    const f = solveForm(st); if (f && st.cards[f.xid].c.n === 1 && st.cards[f.xid].c.d === 1) { st.div = true; st.ph = 'solved'; }
+    return { fx: { flip: [cid], flash: [cid], wob: true }, from: { [cid]: 'ghost' }, snap: true };
+  }
+  function finishSolve(w) {
+    if (w.st.ph !== 'solved') return;
+    const val = solveValue(w.st), last = {};
+    fieldsOf(w.u).forEach(f => { if (u2last(w.u, f)) last[f.id] = fracStr(val); });
+    later(() => submitAll(w, last), 450);
+  }
+  function u2last(u, f) { return u.rows.some(r => r.stage === maxStage(u) && r.segs.indexOf(f) >= 0); }
+  function SOLVE(u, L, R, vn) {
+    return {
+      init() { const st = { cards: {} }; solveInit(st, L, R, vn); return st; },
+      view: viewSolve, drop: dropSolve, after: finishSolve
+    };
+  }
+
+  /* --- 代入法：數字卡拖入變量空格 → 即時計出結果（或變成解方程） --- */
+  function SUBST(u) {
+    const v = u.v, gv = Object.keys(v.given)[0], gval = v.given[gv];
+    const [Lf, Rf] = v.f.split('=');
+    const sib = UNITS.filter(x => x.sheet === u.sheet && x.qno === u.qno && x !== u && x.v && x.v.given).map(x => x.v.given[Object.keys(x.v.given)[0]]);
+    const nums = (Rf.match(/\d+/g) || []).map(Number);
+    const sub = s => s.replace(/[A-Za-z]/g, ch => ch === gv ? '(' + gval + ')' : ch);
+    const formulaHTML = (st) => {
+      const pieces = v.f.split(gv), slot = zone('slot', st.placed ? tok(st, st.placed, { drag: false, cls: 'fix' }) : '', 'slot cue', '變量 ' + gv + ' 嘅空格');
+      return '<div class="prow formula">' + pieces.map(p => p ? '<span class="fp">' + tex(p.replace(/\*/g, '\\times ')) + '</span>' : '').join(slot) + '</div>';
+    };
+    return {
+      init() {
+        const st = { ph: 'drop', cards: {}, nums: [], placed: null };
+        const vals = [gval].concat(sib, [-gval], nums).filter((x, i, a) => a.indexOf(x) === i).slice(0, 4);
+        vals.forEach(x => { const id = nid('n'); st.cards[id] = fromNum(x); st.nums.push(id); });
+        st.nums = shuffleSeed(st.nums, u.id);
+        return st;
+      },
+      view(st) {
+        if (st.ph === 'drop') return formulaHTML(st) + '<div class="prow pool">' + st.nums.map(id => tok(st, id, { lead: true })).join('') + '</div>';
+        if (st.ph === 'calc') {
+          const r = A.substitute(Rf, { [gv]: A.F(gval) });
+          return formulaHTML(st) + '<div class="calc appear">' + tex(Lf + '=' + r.tex + '=' + fracTex(r.value)) + '</div>';
+        }
+        return '<div class="prow formula given">' + tex(A.texOf(Lf.trim() === gv ? String(gval) : Lf) + '=' + A.texOf(Rf.trim() === gv ? String(gval) : Rf)) + '</div>' + viewSolve(st);
+      },
+      drop(st, cid, zid) {
+        if (st.ph === 'eq') return dropSolve(st, cid, zid);
+        if (st.ph !== 'drop' || zid !== 'slot') return { err: '' };
+        const t = st.cards[cid];
+        if (!A.feq(t.c, A.F(gval)) || hasX(t)) return { err: '唔係呢個值' };
+        st.placed = cid; st.nums = st.nums.filter(x => x !== cid);
+        if (Lf.trim() === v.solve) { st.ph = 'calc'; return { from: { [cid]: 'ghost' }, snap: true }; }
+        solveInit(st, sub(Lf), sub(Rf), v.solve);
+        return { snap: true };
+      },
+      after(w) {
+        if (w.st.ph === 'calc') { const last = {}; fieldsOf(w.u).forEach(f => { if (u2last(w.u, f)) last[f.id] = String(v.a); }); later(() => submitAll(w, last), 600); }
+        else finishSolve(w);
+      }
+    };
+  }
+
   /* ---------- 事件 ---------- */
   function closeMenu() { $('#menu').hidden = true; $('#menuBtn').setAttribute('aria-expanded', 'false'); }
   document.addEventListener('click', e => {
     const t = e.target;
     if (!t.closest('#menu') && !t.closest('#menuBtn')) closeMenu();
+    if (t.closest('.play') && playClick(e)) return;
     const go = t.closest('[data-go]'); if (go) { showSheet(go.dataset.go); return; }
     if (t.closest('#mapBtn')) { showMap(); return; }
     if (t.closest('.dot')) { showIdx(Number(t.closest('.dot').dataset.i)); return; }
@@ -2183,7 +2826,7 @@ body.kb-open{padding-bottom:200px}
     if (card) {
       const u = BY_ID[card.dataset.uid];
       if (t.closest('.sc-skip')) return;
-      if (t.closest('.act-check')) { checkUnit(u, card); updateSolBtn(card, u); return; }
+      if (t.closest('.act-check')) { if (PLAY[u.id] && PLAY[u.id].st.ph === 'answer') playCheck(PLAY[u.id]); else checkUnit(u, card); updateSolBtn(card, u); return; }
       if (t.closest('.act-hint')) { showHint(u, card); return; }
       if (t.closest('.act-sol')) { showSol(u, card); return; }
       if (t.closest('.m2go')) { runMethod2(u, card); updateSolBtn(card, u); return; }
@@ -2219,7 +2862,8 @@ body.kb-open{padding-bottom:200px}
   });
   document.addEventListener('change', e => { if (e.target.matches && e.target.matches('select.fld')) setMark(e.target, null); });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeMenu();
+    if (e.key === 'Escape') { closeMenu(); playDeselect(); }
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('.play [data-drop]:not(button)')) { e.preventDefault(); e.target.click(); return; }
     if (e.key === 'Enter' && e.target.matches && e.target.matches('input.fld')) {
       e.preventDefault();
       const card = e.target.closest('.unit'); if (!card) return;
@@ -2245,7 +2889,7 @@ body.kb-open{padding-bottom:200px}
     im.onload = () => { const svg = $('#lusir'); if (svg) { im.className = 'lusir-img'; im.alt = ''; svg.replaceWith(im); } };
     im.src = 'assets/lusir.png';
   }
-  window.__app = { S, RT, checkUnit, BY_ID, showSheet, showIdx, showMap, boot, hintsFor, G, getCombo: () => combo, playScene, termsOf, polyTex };
+  window.__app = { PLAY, S, RT, checkUnit, BY_ID, showSheet, showIdx, showMap, boot, hintsFor, G, getCombo: () => combo, playScene, termsOf, polyTex };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
 
