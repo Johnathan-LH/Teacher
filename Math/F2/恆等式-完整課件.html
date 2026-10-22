@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1B2033">
+<title>呂 Sir 的數學冒險｜恆等式</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+/* ===== 呂 Sir 的數學冒險：視覺 tokens ===== */
+:root{
+  --paper:#F3F6FB; --grid:rgba(40,70,140,.08); --card:#fff;
+  --ink:#1B2033; --ink2:#4A5068; --line:#C9D2E3;
+  --gold:#F2B705; --ok:#13703A; --bad:#B3261E;
+  --lv-s30:#26784C; --lv-s31a:#5B3FD1; --lv-s31b:#9A520C; --lv-s32:#B82D4C; --lv-s33:#086F88;
+  --lv:var(--lv-s30); --soft:#E6F2EB;
+  --r-tile:10px; --r-card:18px;
+  --sh-token:0 3px 0 var(--ink); --sh-card:0 4px 0 var(--ink),0 10px 24px rgba(27,32,51,.10);
+  --f-hand:"LXGW WenKai TC","Noto Sans TC","PingFang HK","Microsoft JhengHei",serif;
+  --f-body:"Noto Sans TC","PingFang HK","Microsoft JhengHei",system-ui,sans-serif;
+  --ease-snap:cubic-bezier(.3,1.5,.5,1); --ease-out:cubic-bezier(.2,.8,.2,1);
+}
+body[data-sheet=s30]{--lv:var(--lv-s30);--soft:#E4F1E9}
+body[data-sheet=s31a]{--lv:var(--lv-s31a);--soft:#ECE8FC}
+body[data-sheet=s31b]{--lv:var(--lv-s31b);--soft:#F8EDDF}
+body[data-sheet=s32]{--lv:var(--lv-s32);--soft:#F9E5EA}
+body[data-sheet=s33]{--lv:var(--lv-s33);--soft:#E0F1F5}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;color:var(--ink);font:17px/1.8 var(--f-body);padding-bottom:120px;
+  background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px}
+button,input,select{font:inherit;color:inherit}
+.katex{font-size:1.2em}
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none}
+.ico.inl{width:1em;height:1em;color:var(--gold)}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+/* ===== 頂欄 ===== */
+.top{position:sticky;top:0;z-index:30;background:var(--ink);color:#fff}
+.top-in{max-width:680px;margin:0 auto;padding:6px 10px;display:flex;align-items:center;gap:8px;position:relative}
+.tbtn{flex:none;width:44px;height:44px;display:grid;place-items:center;border:2px solid rgba(255,255,255,.35);border-radius:var(--r-tile);background:transparent;color:#fff;cursor:pointer}
+.tbtn:active{transform:translateY(1px)}
+.tbtn .ico{width:22px;height:22px}
+.ttl{flex:1;min-width:0;font:700 1.05rem/1.3 var(--f-hand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.combo,.stars{flex:none;display:flex;align-items:center;gap:3px;font-weight:700;font-variant-numeric:tabular-nums}
+.stars .ico,.combo .ico{width:22px;height:22px;color:var(--gold)}
+.combo{background:#fff;color:var(--ink);border-radius:999px;padding:0 8px 0 4px;height:30px}
+.combo[hidden]{display:none}
+.bump{animation:bump .45s var(--ease-snap)}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+.menu{position:absolute;right:10px;top:56px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:14px;padding:6px;display:flex;flex-direction:column;min-width:190px;box-shadow:var(--sh-card);transform-origin:top right;animation:pop .2s var(--ease-out)}
+.menu[hidden]{display:none}
+.menu button{min-height:46px;display:flex;align-items:center;gap:10px;text-align:left;border:0;background:none;padding:0 12px;cursor:pointer;border-radius:8px}
+.menu button:hover{background:var(--paper)}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+
+/* ===== 地圖 ===== */
+body[data-view=map] .levelview{display:none}
+body[data-view=level] .mapview{display:none}
+body[data-view=map] #mapBtn{visibility:hidden}
+.mapin{max-width:520px;margin:0 auto;padding:18px 12px 0}
+.maphead{text-align:center}
+.maphead h1{font:700 1.85rem/1.25 var(--f-hand);margin:6px 0 0}
+.maphead p{margin:0;color:var(--ink2);font-size:.95rem}
+.mapstars{display:inline-flex;align-items:center;gap:4px;margin-top:6px;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:2px 14px;box-shadow:var(--sh-token);font-variant-numeric:tabular-nums}
+.mapstars .ico{width:22px;height:22px;color:var(--gold)}
+.mapstars b{font-size:1.15rem}.mapstars span{color:var(--ink2)}
+.board{position:relative;width:100%;aspect-ratio:360/680;margin-top:4px}
+.trail{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.tr-base{fill:none;stroke:var(--ink);stroke-width:3;stroke-dasharray:1 11;stroke-linecap:round;opacity:.55}
+.tr-lit{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;opacity:0}
+.tr-lit.on{opacity:1;filter:drop-shadow(0 2px 0 var(--ink))}
+.flag{opacity:.35}.flag.on{opacity:1}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:8px;border:0;background:none;padding:0;cursor:pointer;color:var(--ink);text-align:left;-webkit-tap-highlight-color:transparent}
+.node.l{flex-direction:row-reverse;text-align:right}
+.node.drop{animation:drop .5s var(--ease-snap) both;animation-delay:var(--d)}
+@keyframes drop{from{opacity:0;transform:translate(-50%,-80%)}to{opacity:1;transform:translate(-50%,-50%)}}
+.med{position:relative;flex:none;width:86px;height:86px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:var(--sh-token);display:grid;place-items:center;transition:transform .15s}
+.node:active .med{transform:translateY(3px);box-shadow:none}
+.med .ring{position:absolute;inset:-9px;width:calc(100% + 18px);height:calc(100% + 18px);transform:rotate(-90deg)}
+.rbg{fill:none;stroke:rgba(27,32,51,.08);stroke-width:7}
+.rfg{fill:none;stroke:var(--lv);stroke-width:7;stroke-linecap:round}
+.med .glyph{width:46px;height:46px;color:var(--lv)}
+.med .num{position:absolute;left:-6px;top:-6px;width:30px;height:30px;border-radius:50%;background:var(--lv);color:#fff;border:2px solid var(--ink);display:grid;place-items:center;font:700 1rem/1 var(--f-hand)}
+.node.done .med{background:var(--lv)}.node.done .med .glyph{color:#fff}
+.seal{position:absolute;right:-14px;bottom:-8px;transform:rotate(-14deg);font:700 .8rem/1 var(--f-hand);color:var(--ink);background:var(--gold);border:2px solid var(--ink);border-radius:6px;padding:4px 6px;box-shadow:0 2px 0 var(--ink)}
+.node.newdone .seal{animation:stamp .5s var(--ease-snap) 1.1s both}
+@keyframes stamp{from{opacity:0;transform:rotate(-14deg) scale(1.8)}to{opacity:1;transform:rotate(-14deg) scale(1)}}
+.pawn{position:absolute;left:50%;top:-34px;width:26px;height:30px;margin-left:-13px;background:var(--gold);border:2px solid var(--ink);border-radius:50% 50% 50% 50%/40% 40% 60% 60%;box-shadow:0 2px 0 var(--ink);animation:pawn 1.2s ease-in-out infinite}
+.pawn::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-6px;border:6px solid transparent;border-top:8px solid var(--ink)}
+@keyframes pawn{50%{transform:translateY(-6px)}}
+.nl{display:flex;flex-direction:column;line-height:1.3;background:rgba(243,246,251,.92);border-radius:8px;padding:2px 6px}
+.nl b{font:700 1.15rem/1.3 var(--f-hand);white-space:nowrap}
+.ns{display:flex;align-items:center;gap:3px;font-size:.88rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+.node.l .ns{justify-content:flex-end}
+.ns .ico{width:16px;height:16px;color:var(--gold)}
+
+/* ===== 關卡頁 ===== */
+main{max-width:680px;margin:0 auto;padding:14px 12px 24px}
+.print-id{display:none}
+.banner{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;color:#fff;background-color:var(--lv);border:2px solid var(--ink);border-radius:var(--r-card);padding:12px 14px 16px;box-shadow:var(--sh-card);overflow:hidden;background-size:44px 44px}
+body[data-sheet=s30] .banner{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M6 30l8-14 8 14z' fill='none' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3Ccircle cx='34' cy='10' r='2' fill='%23fff' fill-opacity='.15'/%3E%3C/svg%3E")}
+body[data-sheet=s31a] .banner{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M22 8v24M12 14h20M12 14l-4 8h8zM32 14l-4 8h8zM16 34h12' fill='none' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3C/svg%3E")}
+body[data-sheet=s31b] .banner{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Ccircle cx='22' cy='22' r='12' fill='none' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3Cpath d='M22 6v5M22 33v5M6 22h5M33 22h5' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3C/svg%3E")}
+body[data-sheet=s32] .banner{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Crect x='8' y='8' width='26' height='26' fill='none' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3Cpath d='M24 8v26M8 24h26' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3C/svg%3E")}
+body[data-sheet=s33] .banner{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M0 22h44' stroke='%23fff' stroke-opacity='.18' stroke-width='2' stroke-dasharray='5 4'/%3E%3Ccircle cx='14' cy='12' r='3' fill='none' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3Ccircle cx='14' cy='32' r='3' fill='none' stroke='%23fff' stroke-opacity='.15' stroke-width='2'/%3E%3C/svg%3E")}
+.bmed{width:58px;height:58px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:grid;place-items:center;box-shadow:var(--sh-token)}
+.bmed .glyph{width:36px;height:36px;color:var(--lv)}
+.btxt{min-width:0;line-height:1.3}
+.blv{font:700 .9rem/1 var(--f-hand);opacity:.9}
+.banner h1{font:700 1.55rem/1.25 var(--f-hand);margin:2px 0}
+.bsub{font-size:.8rem;opacity:.92;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bstar{display:flex;align-items:center;gap:4px;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:0 10px;height:34px;font-weight:700;font-variant-numeric:tabular-nums;align-self:start}
+.bstar .ico{color:var(--gold);width:20px;height:20px}
+.bbar{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.25)}
+.bbar i{display:block;height:100%;width:0;background:var(--gold);transition:width .5s var(--ease-out)}
+.eg{margin-top:14px;background:#fff;border:2px solid var(--ink);border-radius:14px}
+.eg>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px;cursor:pointer;min-height:52px}
+.eg>summary::-webkit-details-marker{display:none}
+.core{display:flex;flex-wrap:wrap;gap:0 18px;min-width:0;font-weight:500}
+.cf{max-width:100%;overflow-x:auto}
+.egbtn{flex:none;display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:2px solid var(--ink);border-radius:var(--r-tile);padding:2px 12px;font-weight:700;font-size:.92rem}
+.eg[open] .egbtn{background:var(--lv);color:#fff}
+.egbody{padding:4px 14px 12px;border-top:2px dashed var(--line)}
+.goals{background:var(--soft);border-radius:10px;padding:6px 12px;margin:10px 0;font-size:.95rem}
+.goals ul{margin:.1em 0 0;padding-left:1.2em}
+.ksec h3{margin:.8em 0 .2em;font:700 1.05rem/1.4 var(--f-hand)}
+.kbody{display:flex;flex-wrap:wrap;gap:4px 20px}
+.kt{margin:.2em 0;flex:1 1 100%;font-size:.95rem}
+.kf{flex:1 1 100%;text-align:center;background:var(--soft);border-radius:10px;overflow-x:auto}
+.dv{flex:1 1 240px;min-width:0;margin:.2em 0}
+.dh{font-weight:700;font-size:.95rem}
+.dl{display:flex;flex-wrap:wrap;gap:0 10px;align-items:baseline}
+.dm{overflow-x:auto;max-width:100%}
+.dn{font-size:.85rem;color:var(--ink2)}
+.dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:12px}
+.dot{width:28px;height:28px;border:2px solid transparent;border-radius:8px;background:none;cursor:pointer;font-size:1.05rem;line-height:1;color:var(--lv);padding:0;transition:transform .15s}
+.dot:active{transform:scale(.9)}
+.dot.cur{border-color:var(--ink);background:#fff;box-shadow:0 2px 0 var(--ink)}
+.dot.done{animation:none}
+
+/* ===== 題卡 ===== */
+.qwrap{display:none;margin-top:24px}
+.qwrap.cur{display:block}
+.qwrap.in-r{animation:inr .32s var(--ease-out)}
+.qwrap.in-l{animation:inl .32s var(--ease-out)}
+.qwrap.edge-r{animation:edr .25s}.qwrap.edge-l{animation:edl .25s}
+@keyframes inr{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes inl{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes edr{50%{transform:translateX(-12px)}}@keyframes edl{50%{transform:translateX(12px)}}
+.instr{font-size:.95rem;font-weight:500;color:var(--ink2);margin:0 0 6px;line-height:1.6}
+.gnote{margin:0 0 6px;font-size:.9rem;color:var(--ink2)}
+.qh{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
+.qn{font:700 1.4rem/1 var(--f-hand);color:var(--lv)}
+.qs{min-width:0;max-width:100%;overflow-x:auto;line-height:1.8}
+.qtag{font-size:.78rem;color:var(--ink2)}
+.unit{position:relative;background:var(--card);border:2px solid var(--ink);border-radius:var(--r-card);padding:14px 16px 18px;min-width:0;box-shadow:var(--sh-card);line-height:1.8}
+.unit.done{box-shadow:0 4px 0 var(--lv),0 10px 24px rgba(27,32,51,.10)}
+.unit.fx-ok::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(242,183,5,.35) 48%,transparent 66%);background-size:250% 100%;animation:sweep .6s ease-out forwards}
+@keyframes sweep{from{background-position:100% 0;opacity:1}80%{opacity:1}to{background-position:-60% 0;opacity:0}}
+.unit.fx-bad{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-7px)}45%{transform:translateX(6px)}70%{transform:translateX(-3px)}}
+.stamp{position:absolute;right:12px;top:-14px;width:40px;height:40px;border-radius:50%;background:var(--gold);border:2px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:1.25rem;transform:rotate(-12deg) scale(0);pointer-events:none}
+.unit.done .stamp{transform:rotate(-12deg) scale(1)}
+.unit.fx-ok .stamp{animation:stampin .45s var(--ease-snap)}
+@keyframes stampin{from{transform:rotate(-12deg) scale(1.9);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
+.chal{border-width:3px;background-image:repeating-linear-gradient(135deg,transparent 0 14px,rgba(27,32,51,.035) 14px 16px)}
+.chalband{flex:none;display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;border-radius:8px;padding:2px 12px 2px 8px;font:700 .95rem/1.6 var(--f-hand)}
+.chalband .ico{color:var(--gold)}
+.chal .stamp{right:auto;left:auto;right:12px}
+.uh{display:flex;gap:8px;align-items:center;font-size:1.05rem;min-height:44px}
+.ul{font-weight:700}
+.up{overflow-x:auto;max-width:100%;min-width:0}
+.ic{margin-left:auto;display:flex;align-items:center;gap:4px;flex:none}
+.badge{display:inline-grid;place-items:center;min-width:0}
+.badge .ico{width:22px;height:22px;color:var(--gold)}
+.ib{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:var(--r-tile);background:#fff;cursor:pointer;padding:0;color:var(--ink);box-shadow:0 2px 0 var(--ink);transition:transform .1s,box-shadow .1s}
+.ib:active{transform:translateY(2px);box-shadow:none}
+.ib .ico{width:20px;height:20px}
+.ib[aria-disabled=true]{opacity:.4;box-shadow:none;border-style:dashed}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:12px 0;font-size:1.05rem}
+.stg-off,.row-past{display:none}
+.sumline{margin:10px 0;color:var(--ink2);font-size:.9rem;line-height:1.7;overflow-x:auto;opacity:.85}
+.sumline .katex{font-size:1.05em}
+.sk{display:inline-grid;place-items:center;width:1.3em;height:1.3em;border:1.5px solid currentColor;border-radius:50%;font-size:.8em}
+.fw{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px;max-width:100%}
+.fld{height:48px;min-width:3.2em;border:2px solid var(--ink2);border-radius:var(--r-tile);padding:0 10px;background:#fff;text-align:center;max-width:100%;transition:border-color .15s,box-shadow .2s}
+input.poly{text-align:left;min-width:6em}
+select.fld{padding:0 6px}
+select.op{width:50px;border-radius:50%;text-align:center}
+.fld:focus{outline:none;border-color:var(--lv);box-shadow:0 0 0 5px color-mix(in srgb,var(--lv) 22%,transparent),0 0 18px color-mix(in srgb,var(--lv) 30%,transparent)}
+.fld.ok{border-color:var(--ok);border-width:3px;background:#F1FAF4}
+.fld.bad{border-color:var(--bad);border-style:dashed;border-width:3px;background:#FFF6F5}
+.mark{font-weight:900;min-width:1ch;font-size:1.15rem}
+.ok+.mark{color:var(--ok)}.bad+.mark{color:var(--bad)}
+.pv{flex-basis:100%;font-size:.9rem;color:var(--ink2);overflow-x:auto}
+.pv:empty{display:none}
+.tfw{width:100%}.tfg{display:flex;gap:10px;width:100%}
+.tfb{flex:1 1 0;white-space:nowrap;min-height:56px;min-width:0;padding:0 14px;border:2px solid var(--ink);border-radius:14px;background:#fff;font-weight:700;cursor:pointer;font-size:1rem;box-shadow:var(--sh-token);transition:transform .1s,box-shadow .1s}
+.tfb:active{transform:translateY(3px);box-shadow:none}
+.tfb[aria-pressed=true]{background:var(--ink);color:#fff;transform:translateY(3px);box-shadow:none}
+.tfg.ok .tfb[aria-pressed=true]{background:var(--ok);border-color:var(--ink)}
+.tfg.bad .tfb[aria-pressed=true]{background:#fff;color:var(--bad);border:3px dashed var(--bad)}
+.po{display:none}
+.fb{margin-top:10px;font-weight:700;font-size:1rem}
+.fb:empty{display:none}
+.fbi{display:inline-grid;place-items:center;width:1.55em;height:1.55em;border:2px solid var(--ink);border-radius:50%;font-size:.8rem;margin-right:4px;background:#fff}
+.why{display:inline-block;font-weight:400;font-size:.9rem;margin-left:4px}
+.why summary{cursor:pointer;text-decoration:underline;display:inline}
+.why div{margin-top:4px;color:var(--ink2)}
+.undo{border:0;background:none;text-decoration:underline;cursor:pointer;color:var(--lv);font-weight:700;min-height:32px;padding:0 6px}
+.hintbox,.solbox{margin-top:10px;padding:8px 12px;border-radius:12px;font-size:.95rem;line-height:1.7}
+.hintbox{background:var(--soft);animation:pop .2s var(--ease-out)}
+.solbox{background:var(--paper);border:2px dashed var(--line)}
+.sl{overflow-x:auto;max-width:100%}
+.btn{min-height:48px;padding:0 18px;border:2px solid var(--ink);border-radius:var(--r-tile);background:#fff;font-weight:700;cursor:pointer;box-shadow:var(--sh-token);transition:transform .1s,box-shadow .1s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.primary{background:var(--lv);color:#fff}
+.btn.big{display:flex;width:100%;min-height:56px;margin-top:16px;font:700 1.2rem/1 var(--f-hand);letter-spacing:.1em}
+.btn:disabled{opacity:.35;cursor:default;box-shadow:none;transform:none}
+.m2{margin-top:12px;border-top:2px dashed var(--line);padding-top:4px}
+.m2 summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-size:.95rem;color:var(--ink2)}
+.m2b{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:4px 0}
+.m2out{flex-basis:100%;font-size:.95rem}
+.ans-space{display:none}
+.navrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:24px}
+.btn.nav{font-size:.95rem;padding:0 14px}
+#posText{font-size:.9rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+
+/* ===== 關卡演示（舞台） ===== */
+.scene{position:relative;margin-top:12px;border-radius:14px;background:var(--soft);padding:12px 10px 14px;overflow:hidden}
+.scene[hidden]{display:none}
+.scene.live{margin:4px 0 8px}
+.sc-stage{min-height:40px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.sc-skip{position:absolute;right:8px;top:8px;width:34px;height:34px}
+.scene.ended .sc-skip{display:none}
+.sc-src{font-size:.95rem;color:var(--ink2);max-width:100%;overflow-x:auto}
+.chips,.side{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:100%}
+.chip{display:inline-flex;align-items:center;min-height:40px;padding:0 10px;background:#fff;border:2px solid var(--ink);border-radius:var(--r-tile);box-shadow:0 2px 0 var(--ink);will-change:transform}
+.chip.in{animation:chipin .35s var(--ease-snap) both}
+@keyframes chipin{from{opacity:0;transform:translateY(-10px) scale(.8)}to{opacity:1;transform:none}}
+.chip.pop{animation:bump .4s var(--ease-snap)}
+.chip.gone{opacity:0;transform:scale(.6);transition:all .25s}
+.chip.flipsign{background:var(--gold)}
+.eqrow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:100%}
+.eqs{font-size:1.6rem;font-weight:700}
+.side{min-width:60px;padding:6px;border-radius:12px;border:2px dashed var(--line)}
+.sc-out:empty,.sc-cap:empty{display:none}
+.sc-final{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--ink);border-radius:12px;padding:2px 12px;box-shadow:var(--sh-token);animation:chipin .35s var(--ease-snap);max-width:100%;overflow-x:auto}
+.sc-ok{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--gold);border:2px solid var(--ink);font-weight:900;flex:none}
+.chip,.lcell,.plate,.sc-final,.sc-cap,.fe,.etop,.eleft{white-space:nowrap}
+.sc-cap{font-size:.95rem;max-width:100%;overflow-x:auto;animation:pop .25s var(--ease-out)}
+/* 天秤 */
+.scale{position:relative;width:100%;max-width:340px;height:156px}
+.scale .s-post{position:absolute;left:50%;top:26px;width:8px;height:108px;margin-left:-4px;background:var(--ink);border-radius:4px}
+.scale .s-base{position:absolute;left:50%;bottom:6px;width:110px;height:14px;margin-left:-55px;background:var(--ink);border-radius:8px 8px 4px 4px}
+.scale .beam{position:absolute;top:26px;height:8px;background:var(--lv);border:2px solid var(--ink);border-radius:6px;transform:rotate(var(--r,0deg));transition:transform .6s var(--ease-snap)}
+.scale .beam::after{content:"";position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px;border-radius:50%;background:var(--gold);border:2px solid var(--ink)}
+.pan{position:absolute;width:0;height:0;transition:left .6s var(--ease-snap),top .6s var(--ease-snap)}
+.str{position:absolute;left:-1px;top:0;width:2px;height:28px;background:var(--ink)}
+.plate{position:absolute;left:0;top:28px;transform:translateX(-50%);white-space:nowrap;width:max-content;background:#fff;border:2px solid var(--ink);border-radius:6px 6px 16px 16px;padding:2px 10px 4px;font-size:.88rem;box-shadow:0 3px 0 var(--ink);transition:opacity .2s}
+.plate.swap{opacity:0}
+.scale .sign{position:absolute;left:50%;top:66px;transform:translateX(-50%) scale(0);background:#fff;border:2px solid var(--ink);border-radius:50%;width:42px;height:42px;display:grid;place-items:center;transition:transform .3s var(--ease-snap)}
+.scale .sign.show{transform:translateX(-50%) scale(1)}
+.scale .sign.ne{border-style:dashed}
+.scale.wob .beam{animation:wob .5s}
+@keyframes wob{30%{transform:rotate(calc(var(--r,0deg) + 4deg))}65%{transform:rotate(calc(var(--r,0deg) - 2deg))}}
+/* 密碼鎖 */
+.lock{display:grid;grid-template-rows:auto 34px auto;gap:0;width:100%;max-width:420px}
+.lrow{display:grid;grid-template-columns:repeat(var(--cols,2),1fr);gap:6px;justify-items:center}
+.lcell{background:#fff;border:2px solid var(--ink);border-radius:var(--r-tile);padding:0 8px;min-height:40px;display:flex;align-items:center;font-size:.9rem;max-width:100%;overflow-x:auto;box-shadow:0 2px 0 var(--ink)}
+.lb .lcell{background:var(--paper)}
+.wire{width:4px;height:100%;background:var(--ink2);opacity:.2;transform:scaleY(0);transform-origin:top;transition:transform .3s var(--ease-out)}
+.wire.on{transform:scaleY(1)}
+.wire.key{width:6px;background:var(--lv);opacity:1;border-radius:3px}
+.dials{display:flex;flex-wrap:wrap;gap:10px 16px;justify-content:center;margin-top:4px}
+.dial{display:inline-flex;align-items:center;gap:6px}
+.win{position:relative;display:block;height:44px;min-width:58px;overflow:hidden;background:var(--ink);color:#fff;border:2px solid var(--ink);border-radius:10px;box-shadow:inset 0 6px 8px rgba(0,0,0,.4)}
+.win::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(27,32,51,.6),transparent 30%,transparent 70%,rgba(27,32,51,.6));pointer-events:none}
+.strip{display:flex;flex-direction:column;transition:transform .6s cubic-bezier(.25,1.4,.5,1)}
+.strip>span{height:40px;display:grid;place-items:center;padding:0 8px}
+.strip .katex{font-size:1.15em}
+.dial.roll .strip{transform:translateY(calc(-40px * var(--n)))}
+.dial.open .win{background:var(--gold);color:var(--ink);transition:background .2s}
+.dial.open .win::after{display:none}
+/* 面積模型 */
+.area{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;width:min(250px,74vw);--p:60%}
+.etop{grid-column:2;display:flex;font-size:.82rem;line-height:1.6}
+.etop>span{display:flex;justify-content:center;white-space:nowrap}
+.etop>span:first-child{flex:0 0 var(--p)}.etop>span:last-child{flex:1;min-width:0}
+.eleft{grid-column:1;grid-row:2;display:flex;flex-direction:column;font-size:.82rem;padding-right:4px}
+.eleft>span{display:flex;align-items:center;justify-content:flex-end;white-space:nowrap}
+.eleft>span:first-child{flex:0 0 var(--p)}.eleft>span:last-child{flex:1}
+.area .sq{grid-column:2;grid-row:2;position:relative;width:100%;aspect-ratio:1;border:3px solid var(--ink);background:#fff}
+.pc{position:absolute;display:grid;place-items:center;font-size:.85rem;overflow:hidden;transition:opacity .3s,background-color .3s,transform .3s var(--ease-snap)}
+.plus .pc{opacity:0;transform:scale(.85);border:1.5px solid var(--ink)}
+.plus .pc.on{opacity:1;transform:none}
+.plus .a2{left:0;top:0;width:var(--p);height:var(--p);background:color-mix(in srgb,var(--lv) 30%,#fff)}
+.plus .ab1{left:var(--p);top:0;right:0;height:var(--p);background:var(--gold)}
+.plus .ab2{left:0;top:var(--p);width:var(--p);bottom:0;background:var(--gold)}
+.plus .b2{left:var(--p);top:var(--p);right:0;bottom:0;background:#fff;background-image:repeating-linear-gradient(45deg,transparent 0 6px,rgba(27,32,51,.12) 6px 8px)}
+.plus .pc.pair{animation:pairpulse .6s var(--ease-snap);outline:3px solid var(--ink);outline-offset:-3px;z-index:1}
+@keyframes pairpulse{40%{transform:scale(1.06)}}
+.minus .full{inset:0;background:color-mix(in srgb,var(--lv) 30%,#fff);align-items:start;padding-top:12%}
+.minus .full.dim{place-items:start center}
+.minus .sr,.minus .sb,.minus .cn,.minus .in{opacity:0}
+.minus .sr{left:var(--p);top:0;right:0;bottom:0;background:repeating-linear-gradient(-45deg,rgba(255,255,255,.85) 0 6px,rgba(27,32,51,.22) 6px 9px);border-left:2px dashed var(--ink)}
+.minus .sb{left:0;top:var(--p);right:0;bottom:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.85) 0 6px,rgba(27,32,51,.22) 6px 9px);border-top:2px dashed var(--ink)}
+.minus .cn{left:var(--p);top:var(--p);right:0;bottom:0;background:var(--gold);border:2px solid var(--ink);z-index:2}
+.minus .in{left:0;top:0;width:var(--p);height:var(--p);border:3px solid var(--ink);background:color-mix(in srgb,var(--lv) 45%,#fff);font-weight:700;z-index:2}
+.minus .pc.on{opacity:1}
+.minus .sr.on,.minus .sb.on{place-items:end center;padding-bottom:4px}
+.minus .sr.on{place-items:center}
+/* 切割 */
+.cut{position:relative;margin:30px auto 0;left:24px}
+.cut .pc{border:2px solid var(--ink);background:color-mix(in srgb,var(--lv) 30%,#fff);left:0;top:0;transition:transform .6s var(--ease-snap),opacity .3s,background-color .3s}
+.cut .p2{background:color-mix(in srgb,var(--lv) 55%,#fff)}
+.cut .p3{background:#fff;background-image:repeating-linear-gradient(45deg,transparent 0 6px,rgba(27,32,51,.14) 6px 8px)}
+.cut .p3.cutting{border-style:dashed;animation:pairpulse .4s}
+.cut .p3.away{transform:translate(14px,18px) rotate(8deg);opacity:.45}
+.cut .p2.moved{background:var(--gold)}
+.frame{position:absolute;left:0;top:0;border:3px solid var(--ink);border-radius:2px;opacity:0;transition:opacity .3s;pointer-events:none}
+.frame.on{opacity:1}
+.fe{position:absolute;font-size:.82rem;white-space:nowrap;background:var(--soft);padding:0 4px;border-radius:4px}
+.ft{left:50%;top:-26px;transform:translateX(-50%)}
+.fl{left:-6px;top:50%;transform:translate(-100%,-50%)}
+
+/* ===== 嚮導 ===== */
+.guide{position:fixed;right:10px;bottom:10px;z-index:40;display:flex;align-items:flex-end;gap:8px;max-width:calc(100vw - 20px);pointer-events:none}
+.guide>*{pointer-events:auto}
+body.kb-open .guide{bottom:68px}
+body.kb-open{padding-bottom:200px}
+.av{position:relative;flex:none;width:56px;height:56px;padding:0;border:2px solid var(--ink);border-radius:50%;background:#fff;overflow:hidden;cursor:pointer;box-shadow:var(--sh-token);transform-origin:50% 100%}
+.av.off{opacity:.5;width:40px;height:40px}
+.lusir,.lusir-img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.lusir .m,.lusir .shades{display:none}
+.av[data-mood=explain] .m-explain,.av[data-mood=correct] .m-correct,.av[data-mood=great] .m-great,.av[data-mood=wrong] .m-wrong,.av[data-mood=think] .m-think,.av[data-mood=cheer] .m-cheer{display:inline}
+.av.cool .shades{display:inline}.av.cool .specs{display:none}
+.av.anim[data-mood=correct]{animation:hop .5s var(--ease-snap)}
+.av.anim[data-mood=great]{animation:hop2 .6s var(--ease-snap)}
+.av.anim[data-mood=cheer]{animation:hop2 .6s var(--ease-snap) 2}
+.av.anim[data-mood=wrong]{animation:nod .5s}
+.av.anim[data-mood=think]{animation:tilt .6s}
+@keyframes hop{40%{transform:translateY(-12px)}}
+@keyframes hop2{30%{transform:translateY(-16px) rotate(-6deg)}60%{transform:translateY(-6px) rotate(5deg)}}
+@keyframes nod{30%{transform:rotate(-6deg)}60%{transform:rotate(5deg)}}
+@keyframes tilt{50%{transform:rotate(-8deg)}}
+.burst{position:absolute;right:16px;bottom:18px;width:22px;height:22px;color:var(--gold);pointer-events:none;animation:burst .6s var(--ease-out) forwards}
+.burst .ico{width:22px;height:22px}
+@keyframes burst{from{transform:translate(0,0) scale(.4);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(1);opacity:0}}
+.bubble{position:relative;border:2px solid var(--ink);border-radius:14px;background:#fff;padding:4px 12px;font:700 1.02rem/1.5 var(--f-hand);max-width:calc(100vw - 100px);margin-bottom:10px;box-shadow:var(--sh-token)}
+.bubble.pop{animation:pop .2s var(--ease-out);transform-origin:right bottom}
+.bubble[hidden]{display:none}
+.bubble::after{content:"";position:absolute;right:-10px;bottom:10px;border:7px solid transparent;border-left:10px solid var(--ink);border-right:0}
+
+/* ===== 星飛入、提示、對話框 ===== */
+.flystar{position:fixed;z-index:60;width:28px;height:28px;color:var(--gold);pointer-events:none;transition:transform .55s cubic-bezier(.5,0,.3,1)}
+.flystar .ico{width:28px;height:28px}
+.toast{position:fixed;left:50%;top:62px;z-index:55;transform:translateX(-50%);display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:6px 14px 6px 8px;box-shadow:var(--sh-card);max-width:calc(100vw - 24px);font-size:.95rem}
+.toast[hidden]{display:none}
+.toast.in{animation:toastin .4s var(--ease-snap)}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,-14px)}to{opacity:1;transform:translateX(-50%)}}
+.toast .medal{width:40px;height:40px;flex:none}
+.toast span{white-space:nowrap}
+.ck{width:70%;height:70%}
+.medal{color:var(--ink)}
+.dlg,.cele{position:fixed;inset:0;z-index:100;background:rgba(27,32,51,.55);display:grid;place-items:center;padding:16px;overflow:hidden}
+.dlgbox{background:#fff;border:2px solid var(--ink);border-radius:var(--r-card);padding:14px 16px 18px;width:min(440px,100%);box-shadow:var(--sh-card);animation:pop .25s var(--ease-out)}
+.dlgh{display:flex;align-items:center;justify-content:space-between}
+.dlgh h2{font:700 1.4rem/1.3 var(--f-hand);margin:0}
+.bgrid{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:12px 8px}
+.bcell{display:flex;flex-direction:column;align-items:center;text-align:center;line-height:1.35}
+.bcell .medal{width:62px;height:62px}
+.bcell b{font:700 .95rem/1.3 var(--f-hand);margin-top:4px}
+.bcell span{font-size:.75rem;color:var(--ink2)}
+.bcell:not(.on) b{color:var(--ink2)}
+.cbox{position:relative;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:22px 20px 18px;text-align:center;width:min(360px,100%);box-shadow:var(--sh-card);animation:celein .5s var(--ease-snap)}
+@keyframes celein{from{opacity:0;transform:scale(.85) rotate(-3deg)}to{opacity:1;transform:none}}
+.cmed{position:relative;display:inline-grid;place-items:center;width:96px;height:96px;border-radius:50%;background:var(--lv);border:3px solid var(--ink);box-shadow:var(--sh-token);margin-top:-60px}
+.cmed .glyph{width:54px;height:54px;color:#fff}
+.cmed .seal{animation:stamp .5s var(--ease-snap) .35s both}
+.ct{font:700 1.35rem/1.3 var(--f-hand);margin-top:12px}
+.cst{display:flex;justify-content:center;align-items:center;gap:4px;font-size:1.05rem;margin:6px 0 14px}
+.cst .ico{color:var(--gold);width:24px;height:24px}
+.cst b{font-size:1.4rem}
+.cbtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cs{position:absolute;top:-40px;width:26px;height:26px;color:var(--gold);animation:fall 2.6s linear forwards}
+.cs .ico{width:26px;height:26px}
+@keyframes fall{to{transform:translateY(110vh) rotate(300deg)}}
+
+/* ===== 符號鍵盤 ===== */
+.kb{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:6px;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:var(--ink);transform:translateY(110%);transition:transform .2s var(--ease-out);visibility:hidden}
+.kb.on{transform:none;visibility:visible}
+.kk{flex:1 1 0;max-width:62px;min-width:0;height:46px;border:2px solid var(--ink);border-radius:var(--r-tile);background:#fff;cursor:pointer;font-size:1.15rem;padding:0;box-shadow:0 3px 0 #000}
+.kk:active{transform:translateY(3px);box-shadow:none}
+
+/* ===== 減少動態效果 ===== */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0ms!important}
+  .cs,.burst,.flystar{display:none!important}
+}
+@media (max-width:420px){
+  body{font-size:16px}
+  .unit{padding:14px 12px 16px}
+  .tfb{min-width:0}
+  .banner{padding:10px 12px 14px;gap:8px}
+  .banner h1{font-size:1.35rem}
+  .bmed{width:48px;height:48px}.bmed .glyph{width:30px;height:30px}
+  .med{width:74px;height:74px}.med .glyph{width:40px;height:40px}
+  .nl b{font-size:1.05rem}
+  .maphead h1{font-size:1.6rem}
+}
+
+/* ===== 列印：黑白、列出全部題目與空白作答位置；隱藏地圖、動畫、徽章 ===== */
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{overflow:visible}
+  body{background:#fff!important;color:#000;font-size:12pt;padding:0!important}
+  body .mapview,.top,.guide,.kb,.menu,.cele,.dlg,.toast,.flystar,.dots,.navrow,.ic,.act-check,.sumline,.pv,.fb,.hintbox,.solbox,.mark,.m2,.egbtn,.scene,.stamp,.chalband,.bstar,.bbar,.bmed{display:none!important}
+  body .levelview{display:block!important}
+  .print-id{display:block;margin:0 0 8px}
+  .ln{display:inline-block;border-bottom:1px solid #000;width:6em}.ln.s{width:4em}
+  main{max-width:none;padding:0}
+  .banner{display:block;background:none!important;color:#000;border:0;border-bottom:2px solid #000;border-radius:0;box-shadow:none;padding:0 0 4px}
+  .banner h1{font-size:16pt;display:inline;margin-right:8px}.blv{display:inline}.bsub{display:inline;font-size:11pt}
+  .eg{border:1.5px solid #000;border-radius:6px}
+  .eg>summary{padding:4px 8px}
+  .goals,.kf{background:#fff!important;border:1px solid #000}
+  .qwrap{display:block!important;margin-top:10px;break-inside:avoid;animation:none!important}
+  .qwrap:not(.gfirst) .instr,.qwrap:not(.gfirst) .gnote{display:none}
+  .qwrap:not(.pfirst) .qh{display:none}
+  .instr{color:#000;border-left:6px solid #000;padding-left:8px;font-weight:700}
+  .qn{color:#000}
+  .unit,.unit.done,.chal{border:1.5px solid #000;border-radius:8px;box-shadow:none!important;padding:8px 12px;background:none}
+  .unit::after{display:none}
+  .row-past,.stg-off{display:flex!important}
+  .fld{color:transparent!important;border:0!important;border-bottom:1.5px solid #000!important;border-radius:0!important;background:none!important;box-shadow:none!important;appearance:none;-webkit-appearance:none;min-width:3.5em}
+  input.poly{min-width:9em}
+  select.op{border:1.5px solid #000!important;border-radius:50%!important;width:2em;height:2em}
+  select.sel{min-width:5em;border:1.5px solid #000!important;border-radius:4px!important}
+  .tfg{display:none}.po{display:inline}
+  .ans-space{display:block;height:70px;border-bottom:1px dotted #000}
+  .dn,.qtag{color:#000}
+}
+.kk-sq{font-size:1.05rem}
+
+</style>
+</head>
+<body data-sheet="s30" data-view="map">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z M9 4v14 M15 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor" stroke="#1B2033" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-star-o" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-4-1-6 1-9z" fill="#F2B705" stroke="#1B2033" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13c1.5 1.5 2.5 2.5 2.5 4a2.5 2.5 0 0 1-5 0c0-1.5 1-2.5 2.5-4z" fill="#fff" stroke="#1B2033" stroke-width="1.2"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.8.6 1.1 1.4 1.1 2.2h5c0-.8.3-1.6 1.1-2.2A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5c3-1 5-1 8 1 3-2 5-2 8-1v14c-3-1-5-1-8 1-3-2-5-2-8-1z M12 6v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-swords" viewBox="0 0 24 24"><path d="M4 4l10 10M20 4L10 14M14 14l2 2-2 2-2-2M10 14l-2 2 2 2 2-2M6 18l-2 2M18 18l2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-skip" viewBox="0 0 24 24"><path d="M5 5l9 7-9 7zM17 5v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-medal" viewBox="0 0 24 24"><path d="M8 2h8l-2 6h-4zM12 22a7 7 0 1 0 0-14 7 7 0 0 0 0 14z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <!-- 關卡徽記 -->
+    <symbol id="g-s30" viewBox="0 0 48 48"><path d="M6 40L22 10l16 30z M22 10v30 M14 40l8-14 8 14" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M36 40l5-10 3 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="g-s31a" viewBox="0 0 48 48"><path d="M24 8v32M14 42h20M8 16h32M8 16l-5 12h10zM40 16l-5 12h10z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="24" cy="8" r="3" fill="currentColor"/></symbol>
+    <symbol id="g-s31b" viewBox="0 0 48 48"><rect x="8" y="20" width="32" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 20v-6a9 9 0 0 1 18 0v6" fill="none" stroke="currentColor" stroke-width="3"/><path d="M16 28v6M24 28v6M32 28v6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="g-s32" viewBox="0 0 48 48"><rect x="6" y="6" width="36" height="36" fill="none" stroke="currentColor" stroke-width="3"/><path d="M28 6v36M6 28h36" stroke="currentColor" stroke-width="3"/><rect x="6" y="6" width="22" height="22" fill="currentColor" opacity=".35"/></symbol>
+    <symbol id="g-s33" viewBox="0 0 48 48"><rect x="6" y="6" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3"/><path d="M24 24h12v12H24z" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="3 3"/><circle cx="38" cy="38" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="44" cy="31" r="3" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M35 35l6-6" stroke="currentColor" stroke-width="2.5"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="top-in">
+    <button type="button" class="tbtn" id="mapBtn" aria-label="返回關卡地圖"><svg class="ico"><use href="#i-map"/></svg></button>
+    <div class="ttl" id="topTitle">呂 Sir 的數學冒險</div>
+    <div class="combo" id="combo" aria-live="polite" hidden><svg class="ico"><use href="#i-flame"/></svg><span id="comboN">×0</span></div>
+    <div class="stars" id="starTotal" aria-label="總星星數"><svg class="ico"><use href="#i-star"/></svg><span id="starN">0</span></div>
+    <button type="button" class="tbtn" id="menuBtn" aria-label="更多選項" aria-haspopup="true" aria-expanded="false"><svg class="ico"><use href="#i-dots"/></svg></button>
+    <div class="menu" id="menu" hidden>
+      <button type="button" id="badgeBtn"><svg class="ico"><use href="#i-medal"/></svg><span id="badgeLbl">徽章</span></button>
+      <button type="button" id="printBtn"><svg class="ico"><use href="#i-print"/></svg>列印本關</button>
+      <button type="button" id="soundBtn" aria-pressed="false"><svg class="ico"><use href="#i-sound"/></svg><span id="soundLbl">聲音：關</span></button>
+      <button type="button" id="resetBtn"><svg class="ico"><use href="#i-reset"/></svg>重設進度</button>
+    </div>
+  </div>
+</header>
+
+<section id="mapView" class="mapview" aria-label="關卡地圖"></section>
+<main id="main" class="levelview"></main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<aside class="guide" id="guide" aria-label="呂 Sir 嚮導">
+  <div class="bubble" id="gb" hidden role="status" aria-live="polite"></div>
+  <button type="button" class="av" id="guideAv" data-mood="explain" aria-label="呂 Sir：撳一下開關對白" aria-pressed="true">
+    <!-- 想用自己相片？把圖片放在 assets/lusir.png，頁面會自動改用該圖片 -->
+    <svg id="lusir" class="lusir" viewBox="0 0 120 120" role="img" aria-label="卡通版呂 Sir">
+      <g class="body">
+        <path d="M14 122c2-20 20-28 46-28s44 8 46 28z" fill="#7d7a5c" stroke="#1B2033" stroke-width="2.4"/>
+        <path d="M60 118 44 94h32z" fill="#d7e6f5" stroke="#1B2033" stroke-width="1.8"/>
+        <path d="M44 94l9 5 7 17-18-12zM76 94l-9 5-7 17 18-12z" fill="#eef5fb" stroke="#1B2033" stroke-width="1.6"/>
+        <rect x="51" y="80" width="18" height="16" rx="6" fill="#efc29b"/>
+      </g>
+      <g class="head">
+        <ellipse cx="31" cy="58" rx="5" ry="8" fill="#f3c9a3" stroke="#1B2033" stroke-width="2"/>
+        <ellipse cx="89" cy="58" rx="5" ry="8" fill="#f3c9a3" stroke="#1B2033" stroke-width="2"/>
+        <rect x="33" y="24" width="54" height="60" rx="25" fill="#f7d6b6" stroke="#1B2033" stroke-width="2.4"/>
+        <path d="M30 52C25 18 46 7 62 9c22 1 34 16 29 43-1-11-6-19-13-22-12 6-31 5-41 0-4 6-6 12-7 22z" fill="#1d1918"/>
+        <path d="M45 13c6-3 14-3 20 0" stroke="#3a3433" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <g class="specs" fill="rgba(255,255,255,.35)" stroke="#3b3b3b" stroke-width="2.4"><rect x="36" y="46" width="21" height="16" rx="7"/><rect x="63" y="46" width="21" height="16" rx="7"/><path d="M57 53q3-3 6 0M36 52l-5-2M84 52l5-2" fill="none"/></g>
+      </g>
+      <!-- 1 講解 -->
+      <g class="m m-explain">
+        <circle cx="46.5" cy="54.5" r="2.8" fill="#1B2033"/><circle cx="73.5" cy="54.5" r="2.8" fill="#1B2033"/>
+        <path d="M40 42q6-4 12 0M68 42q6-4 12 0" stroke="#1d1918" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <path d="M50 70q10 11 20 0z" fill="#fff" stroke="#7a2b2b" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M100 108v-26" stroke="#efc29b" stroke-width="7" stroke-linecap="round"/><circle cx="100" cy="80" r="4.5" fill="#efc29b" stroke="#1B2033" stroke-width="1.6"/>
+      </g>
+      <!-- 2 答對：豎拇指 -->
+      <g class="m m-correct">
+        <path d="M41 56q5.5-6 11 0M68 56q5.5-6 11 0" stroke="#1B2033" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M47 69q13 16 26 0z" fill="#fff" stroke="#7a2b2b" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M40 41q6-5 12-1M68 40q6-4 12 1" stroke="#1d1918" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <rect x="94" y="92" width="18" height="16" rx="6" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/>
+        <rect x="99" y="74" width="8" height="21" rx="4" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/>
+      </g>
+      <!-- 3 大讚：雙手拇指＋星眼 -->
+      <g class="m m-great">
+        <path d="M46 49l1.6 3.4 3.7.4-2.8 2.5.8 3.7-3.3-1.9-3.3 1.9.8-3.7-2.8-2.5 3.7-.4zM73 49l1.6 3.4 3.7.4-2.8 2.5.8 3.7-3.3-1.9-3.3 1.9.8-3.7-2.8-2.5 3.7-.4z" fill="#F2B705" stroke="#1B2033" stroke-width="1.2" stroke-linejoin="round"/>
+        <path d="M46 68q14 19 28 0z" fill="#fff" stroke="#7a2b2b" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M40 39q6-6 12-2M68 37q6-4 12 2" stroke="#1d1918" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <rect x="94" y="92" width="18" height="16" rx="6" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/><rect x="99" y="74" width="8" height="21" rx="4" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/>
+        <rect x="8" y="92" width="18" height="16" rx="6" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/><rect x="13" y="74" width="8" height="21" rx="4" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/>
+      </g>
+      <!-- 4 答錯：鼓勵（握拳） -->
+      <g class="m m-wrong">
+        <circle cx="46.5" cy="56" r="2.8" fill="#1B2033"/><circle cx="73.5" cy="56" r="2.8" fill="#1B2033"/>
+        <path d="M40 44l12-3M80 44l-12-3" stroke="#1d1918" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <path d="M51 73q9 5 18 0" stroke="#7a2b2b" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <rect x="93" y="84" width="17" height="17" rx="6" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/><path d="M97 89h9M97 94h9" stroke="#1B2033" stroke-width="1.2"/>
+      </g>
+      <!-- 5 思考 -->
+      <g class="m m-think">
+        <circle cx="48" cy="52.5" r="2.8" fill="#1B2033"/><circle cx="75" cy="52.5" r="2.8" fill="#1B2033"/>
+        <path d="M40 42q6-3 12 0M68 36q6-5 12 0" stroke="#1d1918" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <ellipse cx="62" cy="74" rx="4" ry="3.2" fill="#7a2b2b"/>
+        <ellipse cx="78" cy="92" rx="9" ry="6.5" fill="#efc29b" stroke="#1B2033" stroke-width="1.8"/>
+        <circle cx="100" cy="22" r="4" fill="#fff" stroke="#1B2033" stroke-width="1.6"/><circle cx="108" cy="11" r="6" fill="#fff" stroke="#1B2033" stroke-width="1.6"/>
+      </g>
+      <!-- 6 慶祝：雙手高舉 -->
+      <g class="m m-cheer">
+        <path d="M41 56q5.5-6 11 0M68 56q5.5-6 11 0" stroke="#1B2033" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+        <path d="M46 67q14 20 28 0z" fill="#fff" stroke="#7a2b2b" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M24 100L10 70M96 100l14-30" stroke="#efc29b" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="10" cy="68" r="5" fill="#efc29b" stroke="#1B2033" stroke-width="1.6"/><circle cx="110" cy="68" r="5" fill="#efc29b" stroke="#1B2033" stroke-width="1.6"/>
+        <path d="M18 30l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1zM104 34l2 4 4 1-3 3 1 4-4-2-4 2 1-4-3-3 4-1z" fill="#F2B705" stroke="#1B2033" stroke-width="1"/>
+      </g>
+      <!-- 太陽眼鏡（連擊 3+） -->
+      <g class="shades">
+        <path d="M33 46h54v4h-3c0 9-4 13-11 13s-10-5-11-11h-4c-1 6-4 11-11 11s-11-4-11-13h-3z" fill="#1B2033"/>
+        <path d="M40 50l6 0M67 50l6 0" stroke="#7d8bb0" stroke-width="2" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </button>
+</aside>
+
+<div class="kb" id="kb" aria-hidden="true" role="toolbar" aria-label="符號鍵盤">
+  <button type="button" class="kk" data-ins="x">x</button><button type="button" class="kk" data-ins="y">y</button><button type="button" class="kk kk-sq" data-ins="²" aria-label="平方">x²</button><button type="button" class="kk" data-ins="+" aria-label="加">＋</button><button type="button" class="kk" data-ins="-" aria-label="減">－</button><button type="button" class="kk" data-ins="(">(</button><button type="button" class="kk" data-ins=")">)</button><button type="button" class="kk" data-ins="⌫" aria-label="刪除">⌫</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+/* 代數引擎：解析、展開、等價比對、化簡檢查、錯誤診斷、KaTeX 輸出 */
+(function (g) {
+  'use strict';
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) { const t = a % b; a = b; b = t; } return a || 1; };
+  const F = (n, d = 1) => { if (d < 0) { n = -n; d = -d; } const k = gcd(n, d); return { n: n / k, d: d / k }; };
+  const fadd = (a, b) => F(a.n * b.d + b.n * a.d, a.d * b.d);
+  const fmul = (a, b) => F(a.n * b.n, a.d * b.d);
+  const fneg = a => F(-a.n, a.d);
+  const fz = a => a.n === 0;
+  const feq = (a, b) => a.n === b.n && a.d === b.d;
+  const fdiv = (a, b) => F(a.n * b.d, a.d * b.n);
+  const fnum = a => a.n / a.d;
+
+  /* ---------- 多項式 ---------- */
+  const mkey = m => Object.keys(m).filter(k => m[k] > 0).sort().map(k => k + m[k]).join('');
+  const pconst = c => fz(c) ? {} : { '': { c, m: {} } };
+  const pvar = v => ({ [mkey({ [v]: 1 })]: { c: F(1), m: { [v]: 1 } } });
+  function padd(p, q) {
+    const r = {};
+    for (const k in p) r[k] = { c: p[k].c, m: p[k].m };
+    for (const k in q) {
+      if (r[k]) { const c = fadd(r[k].c, q[k].c); if (fz(c)) delete r[k]; else r[k] = { c, m: r[k].m }; }
+      else r[k] = { c: q[k].c, m: q[k].m };
+    }
+    return r;
+  }
+  const pneg = p => { const r = {}; for (const k in p) r[k] = { c: fneg(p[k].c), m: p[k].m }; return r; };
+  const psub = (p, q) => padd(p, pneg(q));
+  function pmul(p, q) {
+    let r = {};
+    for (const a in p) for (const b in q) {
+      const m = Object.assign({}, p[a].m);
+      for (const v in q[b].m) m[v] = (m[v] || 0) + q[b].m[v];
+      r = padd(r, { [mkey(m)]: { c: fmul(p[a].c, q[b].c), m } });
+    }
+    return r;
+  }
+  function ppow(p, e) { let r = pconst(F(1)); for (let i = 0; i < e; i++) r = pmul(r, p); return r; }
+  function peq(p, q) {
+    const a = Object.keys(p), b = Object.keys(q);
+    if (a.length !== b.length) return false;
+    return a.every(k => q[k] && feq(p[k].c, q[k].c));
+  }
+  function constVal(p) {
+    const ks = Object.keys(p);
+    if (ks.length === 0) return F(0);
+    if (ks.length === 1 && ks[0] === '') return p[''].c;
+    return null;
+  }
+
+  /* ---------- 輸入正規化 / 詞法 ---------- */
+  function normalize(s) {
+    return String(s)
+      .replace(/[\s\u00a0\u3000]/g, '')
+      .replace(/[\u2212\u2013\u2014\uff0d\ufe63\u2010]/g, '-')
+      .replace(/\uff0b/g, '+')
+      .replace(/[\u00d7\u00b7\u22c5\u2217\uff0a]/g, '*')
+      .replace(/[\u00f7\uff0f]/g, '/')
+      .replace(/[\uff08\uff3b\[\{\uff5b]/g, '(')
+      .replace(/[\uff09\uff3d\]\}\uff5d]/g, ')')
+      .replace(/\u00b2/g, '^2').replace(/\u00b3/g, '^3').replace(/\uff3e/g, '^')
+      .replace(/[\uff10-\uff19\uff21-\uff3a\uff41-\uff5a]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+  }
+  function tokenize(s) {
+    const t = []; let i = 0;
+    while (i < s.length) {
+      const c = s[i];
+      if (/[0-9.]/.test(c)) {
+        let j = i; while (j < s.length && /[0-9.]/.test(s[j])) j++;
+        const v = s.slice(i, j);
+        if (!/^(\d+\.?\d*|\.\d+)$/.test(v)) throw new Error('數字格式唔啱');
+        t.push({ k: 'num', v }); i = j;
+      } else if (/[A-Za-z]/.test(c)) { t.push({ k: 'var', v: c }); i++; }
+      else if ('+-*/^()'.indexOf(c) >= 0) { t.push({ k: c }); i++; }
+      else if (c === '=') throw new Error('呢格唔使打「＝」，淨係填式子就得');
+      else throw new Error('唔明嘅符號「' + c + '」');
+    }
+    return t;
+  }
+  const numF = str => { const [ip, fp = ''] = str.split('.'); return F(parseInt((ip || '0') + fp, 10), Math.pow(10, fp.length)); };
+
+  /* ---------- 語法分析 ---------- */
+  function parseTokens(tk) {
+    let i = 0;
+    const peek = () => tk[i], next = () => tk[i++];
+    const isStart = t => t && (t.k === 'num' || t.k === 'var' || t.k === '(');
+    const lastIsVar = n => n.t === 'var' || (n.t === 'mul' && lastIsVar(n.r));
+    function expr() {
+      let l = term();
+      while (peek() && (peek().k === '+' || peek().k === '-')) {
+        const op = next().k; const r = term();
+        l = { t: op === '+' ? 'add' : 'sub', l, r };
+      }
+      return l;
+    }
+    function term() {
+      let l = unary();
+      for (;;) {
+        const p = peek(); if (!p) break;
+        if (p.k === '*') { next(); l = { t: 'mul', l, r: unary() }; }
+        else if (p.k === '/') { next(); l = { t: 'div', l, r: unary() }; }
+        else if (isStart(p)) {
+          if (p.k === 'num' && lastIsVar(l)) throw new Error('「x2」係咪想寫平方呢？請用 x^2 或者 x² 。');
+          l = { t: 'mul', l, r: power() };
+        } else break;
+      }
+      return l;
+    }
+    function unary() {
+      const p = peek();
+      if (p && p.k === '-') { next(); return { t: 'neg', e: unary() }; }
+      if (p && p.k === '+') { next(); return unary(); }
+      return power();
+    }
+    function power() {
+      const b = atom();
+      if (peek() && peek().k === '^') {
+        next();
+        let e;
+        if (peek() && peek().k === 'num') e = next().v;
+        else if (peek() && peek().k === '(' && tk[i + 1] && tk[i + 1].k === 'num' && tk[i + 2] && tk[i + 2].k === ')') { next(); e = next().v; next(); }
+        else throw new Error('指數要係正整數，例如 x^2');
+        const ev = parseInt(e, 10);
+        if (!/^\d+$/.test(e) || ev > 8) throw new Error('指數要係 1 至 8 嘅整數');
+        return { t: 'pow', b, e: ev };
+      }
+      return b;
+    }
+    function atom() {
+      const p = next();
+      if (!p) throw new Error('式子好似未打完');
+      if (p.k === 'num') return { t: 'num', v: p.v };
+      if (p.k === 'var') return { t: 'var', name: p.v };
+      if (p.k === '(') {
+        const e = expr();
+        if (!peek() || peek().k !== ')') throw new Error('括號未配對，檢查下有冇漏咗「)」');
+        next(); return { t: 'paren', e };
+      }
+      throw new Error('式子嘅格式唔啱（符號擺錯位置？）');
+    }
+    const ast = expr();
+    if (i < tk.length) throw new Error(tk[i].k === ')' ? '多咗一個「)」' : '式子嘅格式唔啱');
+    return ast;
+  }
+
+  function evalAST(n) {
+    switch (n.t) {
+      case 'num': return pconst(n.F || (n.F = numF(n.v)));
+      case 'var': return pvar(n.name);
+      case 'paren': return evalAST(n.e);
+      case 'neg': return pneg(evalAST(n.e));
+      case 'add': return padd(evalAST(n.l), evalAST(n.r));
+      case 'sub': return psub(evalAST(n.l), evalAST(n.r));
+      case 'mul': return pmul(evalAST(n.l), evalAST(n.r));
+      case 'pow': return ppow(evalAST(n.b), n.e);
+      case 'div': {
+        const d = constVal(evalAST(n.r));
+        if (!d || fz(d)) throw new Error('除數只可以係一個唔係 0 嘅數');
+        const l = evalAST(n.l), r = {};
+        for (const k in l) r[k] = { c: fdiv(l[k].c, d), m: l[k].m };
+        return r;
+      }
+    }
+    throw new Error('式子嘅格式唔啱');
+  }
+
+  /* ---------- 是否已化簡（冇括號、冇未合併嘅同類項） ---------- */
+  function flatTerms(n) {
+    if (n.t === 'add' || n.t === 'sub') return flatTerms(n.l).concat(flatTerms(n.r));
+    return [n];
+  }
+  function flatFactors(n) {
+    if (n.t === 'mul') return flatFactors(n.l).concat(flatFactors(n.r));
+    if (n.t === 'neg') return flatFactors(n.e);
+    return [n];
+  }
+  function isSimplified(ast) {
+    const seen = {};
+    for (const term of flatTerms(ast)) {
+      const fs = flatFactors(term); let nums = 0; const m = {};
+      for (const f of fs) {
+        if (f.t === 'num') nums++;
+        else if (f.t === 'var') m[f.name] = (m[f.name] || 0) + 1;
+        else if (f.t === 'pow' && f.b.t === 'var') m[f.b.name] = (m[f.b.name] || 0) + f.e;
+        else return false;
+      }
+      if (nums > 1) return false;
+      const k = mkey(m); if (seen[k]) return false; seen[k] = 1;
+    }
+    return true;
+  }
+
+  function parse(str) {
+    try {
+      const s = normalize(str);
+      if (!s) return { ok: false, empty: true, error: '呢格仲未填' };
+      const ast = parseTokens(tokenize(s));
+      const poly = evalAST(ast);
+      return { ok: true, ast, poly, simplified: isSimplified(ast) };
+    } catch (e) { return { ok: false, error: e.message }; }
+  }
+
+  /* ---------- AST → LaTeX ---------- */
+  const hasVar = n => {
+    switch (n.t) {
+      case 'var': return true; case 'num': return false;
+      case 'paren': case 'neg': return hasVar(n.e);
+      case 'pow': return hasVar(n.b);
+      default: return hasVar(n.l) || hasVar(n.r);
+    }
+  };
+  const firstLeaf = n => (n.t === 'mul' || n.t === 'add' || n.t === 'sub' || n.t === 'div') ? firstLeaf(n.l) : (n.t === 'neg' ? { t: 'neg' } : n);
+  function toTex(n) {
+    switch (n.t) {
+      case 'num': return n.raw || n.v;
+      case 'var': return n.name;
+      case 'paren': return '\\left(' + toTex(n.e) + '\\right)';
+      case 'neg': return '-' + toTex(n.e);
+      case 'add': return toTex(n.l) + '+' + toTex(n.r);
+      case 'sub': return toTex(n.l) + '-' + toTex(n.r);
+      case 'div': return toTex(n.l) + '\\div ' + toTex(n.r);
+      case 'pow': return (n.b.t === 'num' || n.b.t === 'var' || n.b.t === 'paren' ? toTex(n.b) : '\\left(' + toTex(n.b) + '\\right)') + '^{' + n.e + '}';
+      case 'mul': {
+        const fl = firstLeaf(n.r);
+        const bothNum = !hasVar(n.l) && !hasVar(n.r);
+        const sep = (bothNum || fl.t === 'num' || fl.t === 'neg') ? '\\times ' : '';
+        return toTex(n.l) + sep + toTex(n.r);
+      }
+    }
+    return '';
+  }
+  const texOf = str => { const r = parse(str); return r.ok ? toTex(r.ast) : ''; };
+
+  /* ---------- 代入 x 值（用作「方法二」） ---------- */
+  function substAST(n, env) {
+    const c = JSON.parse(JSON.stringify(n));
+    const mk = v => {
+      const abs = String(Math.abs(fnum(v)));
+      const node = { t: 'num', v: abs, raw: abs };
+      return fnum(v) < 0 ? { t: 'paren', e: { t: 'neg', e: node } } : node;
+    };
+    (function walk(o) {
+      for (const k of ['e', 'l', 'r', 'b']) {
+        const ch = o[k]; if (!ch) continue;
+        if (ch.t === 'var' && env[ch.name] !== undefined) o[k] = mk(env[ch.name]);
+        else walk(ch);
+      }
+    })(c);
+    return c;
+  }
+  function substitute(str, env) {
+    const r = parse(str); if (!r.ok) return null;
+    // 包一層，令根節點也可被替換
+    const holder = { t: 'paren', e: r.ast };
+    const sub = substAST(holder, env);
+    const inner = sub.e;
+    const poly = evalAST(inner);
+    return { tex: toTex(inner), value: constVal(poly) };
+  }
+
+  /* ---------- 錯誤診斷 ---------- */
+  const SUP = { 2: '²', 3: '³', 4: '⁴', 5: '⁵', 6: '⁶' };
+  const monoLabel = m => {
+    const vs = Object.keys(m).sort();
+    if (!vs.length) return '常數項';
+    return vs.map(v => v + (m[v] > 1 ? SUP[m[v]] : '')).join('') + ' 項';
+  };
+  function diagnose(S, E, o) {
+    o = o || {};
+    if (o.mid && peq(S, psub(E, o.mid))) return ['展開 (a ± b)² 唔係淨係 a² 加 b²，漏咗中間項 2ab 喎！'];
+    if (o.mid && peq(S, psub(E, pmul(o.mid, pconst(F(2)))))) {
+      return ['中間項嘅正負號好似搞錯咗，(a − b)² 嘅中間項係 −2ab，(a + b)² 嘅係 +2ab。'];
+    }
+    const keys = new Set(Object.keys(S).concat(Object.keys(E)));
+    const diffs = [];
+    keys.forEach(k => {
+      const s = S[k] ? S[k].c : F(0), e = E[k] ? E[k].c : F(0);
+      if (!feq(s, e)) diffs.push({ s, e, m: (E[k] || S[k]).m });
+    });
+    if (!diffs.length) return [];
+    if (diffs.every(d => !fz(d.e) && !fz(d.s) && feq(d.s, fneg(d.e)))) {
+      return ['符號好似有問題（' + diffs.map(d => monoLabel(d.m)).join('、') + '），睇下負號，特別係減號後面嘅括號同負數相乘。'];
+    }
+    const msgs = [];
+    const missing = diffs.filter(d => fz(d.s)), extra = diffs.filter(d => fz(d.e)), wrong = diffs.filter(d => !fz(d.s) && !fz(d.e));
+    if (missing.length) msgs.push('你嘅答案好似漏咗「' + missing.map(d => monoLabel(d.m)).join('」、「') + '」（可能係漏乘，或者合併同類項時合併錯）。');
+    if (extra.length) msgs.push('多咗「' + extra.map(d => monoLabel(d.m)).join('」、「') + '」，睇下有冇同類項未合併或者計錯。');
+    if (wrong.length) msgs.push('「' + wrong.map(d => monoLabel(d.m)).join('」、「') + '」嘅係數未啱，再計一計。');
+    return msgs.slice(0, 2);
+  }
+
+  g.Alg = { F, fnum, feq, parse, peq, psub, padd, pmul, pconst, constVal, diagnose, toTex, texOf, substitute, normalize };
+  if (typeof module !== 'undefined' && module.exports) module.exports = g.Alg;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 題庫：與《中學數學新思維（第二版）》2A 冊 第 3 章 課堂工作紙（第一套）逐題對應 */
+(function (g) {
+  'use strict';
+  const A = g.Alg;
+  const tx = s => A.texOf(s);
+  const $$ = s => '$' + tx(s) + '$';           // 把代數式字串變成行內 $...$
+  const pr = s => '\\left(' + tx(s) + '\\right)';
+
+  // 片段
+  const T = v => ({ t: 'tex', v });
+  const X = v => ({ t: 'txt', v });
+  const P = (id, ans, o) => Object.assign({ t: 'f', f: 'poly', id, ans }, o);
+  const N = (id, ans, o) => Object.assign({ t: 'f', f: 'num', id, ans: String(ans) }, o);
+  const OP = (id, ans) => ({ t: 'f', f: 'op', id, ans });
+  const SEL = (id, options, ans) => ({ t: 'f', f: 'sel', id, options, ans });
+  const TF = (id, ans, why) => ({ t: 'f', f: 'tf', id, ans, why });
+  const R = (stage, ...segs) => ({ stage, segs });
+  const H = (d, p) => ({ d, p });
+  const U = (id, label, prompt, rows, o) => Object.assign({ id, label, prompt, rows }, o);
+  const EQ = (L, R_) => tx(L) + '=' + tx(R_);
+
+  /* =============== 工作紙 3.0 =============== */
+  function eqUnit(id, label, eqStr, x, hints, sol, rows) {
+    return U(id, label, tx(eqStr.split('=')[0]) + '=' + tx(eqStr.split('=')[1]), rows || [R(1, T('x='), N('x', x))],
+      { hints, sol, v: { k: 'solve', eq: eqStr, a: x } });
+  }
+
+  const s30 = {
+    id: 's30', tab: '3.0 熱身', icon: '①', name: '課堂工作紙 3.0　熱身練習（第一套）',
+    goals: ['進行多項式的加法和減法。', '進行多項式的乘法。', '解一次方程。', '運用代入法。'],
+    key: [
+      { title: '多項式的加法和減法', blocks: [
+        { type: 'derive', head: '加法　例如：', lines: [['(4x+1)+(3x-2)', ''], ['=4x+1+3x-2', '撤去括號。'], ['=4x+3x+1-2', '把同類項放在一起。'], ['=7x-1', '合併同類項。']] },
+        { type: 'derive', head: '減法　例如：', lines: [['(5y+4)-(2y-1)', ''], ['=5y+4-2y+1', '撤去括號。'], ['=5y-2y+4+1', '把同類項放在一起。'], ['=3y+5', '合併同類項。']] }
+      ] },
+      { title: '多項式的乘法', blocks: [
+        { type: 'text', v: '(1) 單項式和二項式的乘法　例如：' },
+        { type: 'derive', head: '(i)', lines: [['2(x+1)', ''], ['=2x+2(1)', ''], ['=2x+2', '']] },
+        { type: 'derive', head: '(ii)', lines: [['(2x-3)(-3)', ''], ['=(2x)(-3)-3(-3)', ''], ['=-6x+9', '']] },
+        { type: 'formula', v: 'k(x+y)=kx+ky\\ \\text{或}\\ (x+y)k=xk+yk' },
+        { type: 'text', v: '(2) 兩個二項式的乘法　例如：' },
+        { type: 'derive', head: '', lines: [['(x+1)(x-2)', ''], ['=(x+1)(x)-(x+1)(2)', ''], ['=x^2+x-(2x+2)', ''], ['=x^2+x-2x-2', ''], ['=x^2-x-2', '']] },
+        { type: 'formula', v: '(p+q)(x+y)=(p+q)x+(p+q)y=px+qx+py+qy' }
+      ] },
+      { title: '解一次方程', blocks: [
+        { type: 'derive', head: '利用移項　例如：', lines: [['3x-8=4', ''], ['3x=4+8', '把「8」移至右方。'], ['3x=12', ''], ['x=\\dfrac{12}{3}', '把「3」移至右方。'], ['x=4', '']] },
+        { type: 'derive', head: '利用合併同類項　例如：', lines: [['5(x+3)=6+4x', ''], ['5x+15=6+4x', ''], ['5x-4x=6-15', '把同類項放在一起。'], ['x=-9', '']] }
+      ] },
+      { title: '代入法', blocks: [
+        { type: 'text', v: '為了求公式中某變量的值，我們把所有其他變量換成確實的數值。' },
+        { type: 'text', v: '例如：考慮公式 $a=1-2b$。' },
+        { type: 'derive', head: '(a) 當 b = 2 時，', lines: [['a=1-2(2)', ''], ['=1-4', ''], ['=-3', '']] },
+        { type: 'derive', head: '(b) 當 a = −5 時，', lines: [['-5=1-2b', ''], ['-5-1=-2b', ''], ['-6=-2b', ''], ['b=3', '']] }
+      ] }
+    ],
+    groups: [
+      { instr: '化簡下列各數式。(1 – 2)', qs: [
+        { no: 1, parts: [
+          U('s30-1a', '(a)', '(3x+5)+(2x-3)', [
+            R(1, X('撤去括號：'), T('(3x+5)+(2x-3)='), T('3x+5'), OP('o1', '+'), T('2x'), OP('o2', '-'), T('3')),
+            R(2, X('合併同類項：'), T('='), P('ans', '5x+2'))
+          ], { hints: [H('撤去括號：前面係「＋」，括號入面每項符號不變；前面係「－」，每項符號要反轉。', '$+(2x-3)$ 撤去括號後係 $+2x-3$，所以第一個圓圈填 ＋，第二個填 －。'),
+                      H('把同類項放在一起：$3x$ 同 $2x$ 係同類項，$5$ 同 $-3$ 都係同類項。', '$3x+2x+5-3=(3+2)x+(5-3)$')],
+            sol: ['$(3x+5)+(2x-3)$', '$=3x+5+2x-3$', '$=3x+2x+5-3$', '$=5x+2$'], v: { k: 'equiv', e: '(3x+5)+(2x-3)', a: '5x+2' } }),
+          U('s30-1b', '(b)', '(7x-9)+(4x+6)', [R(1, T('(7x-9)+(4x+6)='), P('ans', '11x-3'))],
+            { hints: [H('先撤去括號，再把同類項放在一起，最後合併。', '$7x+4x$ 同 $-9+6$ 分別合併。')],
+              sol: ['$(7x-9)+(4x+6)$', '$=7x-9+4x+6$', '$=7x+4x-9+6$', '$=11x-3$'], v: { k: 'equiv', e: '(7x-9)+(4x+6)', a: '11x-3' } })
+        ] },
+        { no: 2, parts: [
+          U('s30-2a', '(a)', '(6x+y)-(4x-2y)', [
+            R(1, X('撤去括號：'), T('(6x+y)-(4x-2y)='), T('6x+y'), OP('o1', '-'), T('4x'), OP('o2', '+'), T('2y')),
+            R(2, X('合併同類項：'), T('='), P('ans', '2x+3y'))
+          ], { hints: [H('減號後面嘅括號：撤去括號之後，括號入面每一項符號都要反轉。', '$-(4x-2y)$ 撤去括號後係 $-4x+2y$，所以第一個圓圈填 －，第二個填 ＋。'),
+                      H('把同類項放在一起：$x$ 項同 $y$ 項分開合併。', '$6x-4x+y+2y=2x+3y$ 嘅前兩步：先算 $6x-4x$，再算 $y+2y$。')],
+            sol: ['$(6x+y)-(4x-2y)$', '$=6x+y-4x+2y$', '$=6x-4x+y+2y$', '$=2x+3y$'], v: { k: 'equiv', e: '(6x+y)-(4x-2y)', a: '2x+3y' } }),
+          U('s30-2b', '(b)', '(2x-3y)-(5x+8y)', [R(1, T('(2x-3y)-(5x+8y)='), P('ans', '-3x-11y'))],
+            { hints: [H('減號後面嘅括號撤去之後，$5x$ 同 $8y$ 前面嘅符號都要反轉。', '$2x-3y-5x-8y$，之後合併 $2x-5x$ 同 $-3y-8y$。')],
+              sol: ['$(2x-3y)-(5x+8y)$', '$=2x-3y-5x-8y$', '$=2x-5x-3y-8y$', '$=-3x-11y$'], v: { k: 'equiv', e: '(2x-3y)-(5x+8y)', a: '-3x-11y' } })
+        ] }
+      ] },
+      { instr: '展開下列各數式。(3 – 4)', qs: [
+        { no: 3, parts: [
+          U('s30-3a', '(a)', '5(3x+7)', [
+            R(1, X('分配律：'), T('5(3x+7)='), T('('), N('k1', 5), T(')(3x)+('), N('k2', 5), T(')\\times('), N('k3', 7), T(')')),
+            R(2, T('='), P('ans', '15x+35'))
+          ], { hints: [H('用分配律：括號外面嘅 5 要乘括號入面每一項。', '$5(3x+7)=5\\times 3x+5\\times 7$'), H('$5\\times 3x=15x$，$5\\times 7=35$。', '$15x+35$（兩項相加）。')],
+            sol: ['$5(3x+7)$', '$=(5)(3x)+(5)\\times(7)$', '$=15x+35$'], v: { k: 'equiv', e: '5(3x+7)', a: '15x+35' } }),
+          U('s30-3b', '(b)', 'x(4x-9)', [R(1, T('x(4x-9)='), P('ans', '4x^2-9x'))],
+            { hints: [H('用分配律：$x$ 要乘括號入面每一項。', '$x(4x)-x(9)$，留意 $x\\times x=x^2$。')],
+              sol: ['$x(4x-9)$', '$=x(4x)-x(9)$', '$=4x^2-9x$'], v: { k: 'equiv', e: 'x(4x-9)', a: '4x^2-9x' } })
+        ] },
+        { no: 4, parts: [
+          U('s30-4a', '(a)', '(x+5)(4x-7)', [R(1, T('(x+5)(4x-7)='), P('ans', '4x^2+13x-35'))],
+            { hints: [H('兩個二項式相乘：第一個括號每項要乘第二個括號每項（共四項）。', '$(x+5)(4x)-(x+5)(7)=4x^2+20x-(7x+35)$'), H('留意 $-(7x+35)$ 撤去括號後，兩項都要變號。', '$4x^2+20x-7x-35$，再合併 $x$ 項。')],
+              sol: ['$(x+5)(4x-7)$', '$=(x+5)(4x)-(x+5)(7)$', '$=4x^2+20x-(7x+35)$', '$=4x^2+20x-7x-35$', '$=4x^2+13x-35$'], v: { k: 'equiv', e: '(x+5)(4x-7)', a: '4x^2+13x-35' } }),
+          U('s30-4b', '(b)', '(2x-1)(3x+8)', [R(1, T('(2x-1)(3x+8)='), P('ans', '6x^2+13x-8'))],
+            { hints: [H('兩個二項式相乘：四項逐項相乘，再合併同類項。', '$(2x-1)(3x)+(2x-1)(8)=6x^2-3x+16x-8$')],
+              sol: ['$(2x-1)(3x+8)$', '$=(2x-1)(3x)+(2x-1)(8)$', '$=6x^2-3x+(16x-8)$', '$=6x^2-3x+16x-8$', '$=6x^2+13x-8$'], v: { k: 'equiv', e: '(2x-1)(3x+8)', a: '6x^2+13x-8' } })
+        ] }
+      ] },
+      { instr: '解下列各方程。(5 – 6)', qs: [
+        { no: 5, parts: [
+          eqUnit('s30-5a', '(a)', '3x-5=10', 5,
+            [H('要把常數項「−5」移到右方，移項要變號。', '$3x-5=10$ → $3x=10+5$，圓圈填 ＋。'),
+             H('$10+5$ 等於幾多？', '$3x=15$。'), H('兩邊同除以 3。', '$x=\\dfrac{15}{3}$')],
+            ['$3x-5=10$', '$3x=10+5$', '$3x=15$', '$x=\\dfrac{15}{3}$', '$x=5$'],
+            [R(1, T('3x-5=10'), X('→'), T('3x=10'), OP('o', '+'), T('5')), R(2, T('3x='), N('k', 15)), R(3, T('x='), N('x', 5))]),
+          eqUnit('s30-5b', '(b)', '17-4x=5', 3,
+            [H('先把常數項 17 移到右方（變號），再除以 $x$ 前面嘅係數。', '$-4x=5-17=-12$，之後兩邊同除以 $-4$。')],
+            ['$17-4x=5$', '$-4x=5-17$', '$-4x=-12$', '$x=\\dfrac{-12}{-4}$', '$x=3$'])
+        ] },
+        { no: 6, parts: [
+          eqUnit('s30-6a', '(a)', '2x+8=4x', 4,
+            [H('把同類項放在一起：含 $x$ 嘅項放一邊，常數項放另一邊。', '$8=4x-2x$，即 $8=2x$。')],
+            ['$2x+8=4x$', '$8=4x-2x$', '$8=2x$', '$x=\\dfrac{8}{2}$', '$x=4$']),
+          eqUnit('s30-6b', '(b)', '5x-21=8x', -7,
+            [H('把同類項放在一起：含 $x$ 嘅項放右邊，會少啲負數煩惱。', '$-21=8x-5x$，即 $-21=3x$。')],
+            ['$5x-21=8x$', '$-21=8x-5x$', '$-21=3x$', '$x=\\dfrac{-21}{3}$', '$x=-7$'])
+        ] }
+      ] },
+      { instr: '', qs: [
+        { no: 7, stem: '考慮公式 $p=4q+5$。', parts: [
+          U('s30-7a', '(a)', 'p=4q+5', [
+            R(1, X('當 $q=3$ 時，'), T('p=4\\times('), N('q', 3), T(')+5')),
+            R(2, T('p='), N('p', 17))
+          ], { pr: '若 $q=3$，求 $p$ 的值。', hints: [H('代入法：把 $q$ 換成 3。', '$p=4\\times 3+5$')],
+            sol: ['當 $q=3$ 時，', '$p=4\\times 3+5$', '$=12+5$', '$=17$'], v: { k: 'subst', f: 'p=4q+5', given: { q: 3 }, solve: 'p', a: 17 } }),
+          U('s30-7b', '(b)', 'p=4q+5', [
+            R(1, X('當 $p=33$ 時，'), T('33=4q+5')), R(1, X('移項：'), T('4q='), N('k', 28)),
+            R(2, T('q='), N('q', 7))
+          ], { pr: '若 $p=33$，求 $q$ 的值。', hints: [H('代入法：把 $p$ 換成 33，然後解方程。', '$33=4q+5$ → $33-5=4q$。'), H('$4q=28$，兩邊同除以 4。', '$q=\\dfrac{28}{4}$')],
+            sol: ['當 $p=33$ 時，', '$33=4q+5$', '$33-5=4q$', '$28=4q$', '$q=7$'], v: { k: 'subst', f: 'p=4q+5', given: { p: 33 }, solve: 'q', a: 7 } })
+        ] },
+        { no: 8, stem: '考慮公式 $m=2(4n-3)$。', parts: [
+          U('s30-8a', '(a)', 'm=2(4n-3)', [R(1, X('當 $n=5$ 時，'), T('m='), N('m', 34))],
+            { pr: '若 $n=5$，求 $m$ 的值。', hints: [H('把 $n$ 換成 5，先計括號入面。', '$m=2\\times(4\\times 5-3)=2\\times 17$')],
+              sol: ['當 $n=5$ 時，', '$m=2(4\\times 5-3)$', '$=2\\times 17$', '$=34$'], v: { k: 'subst', f: 'm=2(4n-3)', given: { n: 5 }, solve: 'm', a: 34 } }),
+          U('s30-8b', '(b)', 'm=2(4n-3)', [R(1, X('當 $m=-22$ 時，'), T('n='), N('n', -2))],
+            { pr: '若 $m=-22$，求 $n$ 的值。', hints: [H('把 $m$ 換成 $-22$，然後解方程：先撤去括號。', '$-22=2(4n-3)=8n-6$'), H('$-22+6=8n$', '$-16=8n$，兩邊同除以 8。')],
+              sol: ['當 $m=-22$ 時，', '$-22=2(4n-3)$', '$-22=8n-6$', '$-22+6=8n$', '$-16=8n$', '$n=-2$'], v: { k: 'subst', f: 'm=2(4n-3)', given: { m: -22 }, solve: 'n', a: -2 } })
+        ] }
+      ] }
+    ]
+  };
+
+  /* =============== 工作紙 3.1A =============== */
+  function tf(id, label, L, R_, ans, hp, sol) {
+    return U(id, label, EQ(L, R_), [R(1, TF('tf', ans))], { kind: 'tf', hints: [H('分別化簡左方同右方，睇下係咪完全一樣。', hp)], sol, v: { k: 'tf', L, R: R_, a: ans } });
+  }
+  function proof(id, label, L, R_, Ls, Rs, ident, o) {
+    o = o || {};
+    const rows = [
+      R(1, X('左方'), T('=' + tx(L))), R(1, ...(o.lf || [T('='), P('l', Ls)])),
+      R(2, X('右方'), T('=' + tx(R_))), R(2, ...(o.rf || [T('='), P('r', Rs)])),
+      R(3, X('∵ 左方'), SEL('cmp', ['', '=', '≠'], ident ? 1 : 2), X('右方')),
+      R(3, X('∴'), T(tx(L) + '=' + tx(R_)), SEL('concl', ['', '是恆等式（≡）', '不是恆等式'], ident ? 1 : 2))
+    ];
+    const sol = ['左方 $=' + tx(L) + '$', '$=' + tx(Ls) + '$', '右方 $=' + tx(R_) + '$', '$=' + tx(Rs) + '$',
+      ident ? '∵ 左方 $=$ 右方' : '∵ 左方 $\\neq$ 右方',
+      ident ? '∴ $' + tx(L) + '\\equiv ' + tx(R_) + '$' : '∴ $' + tx(L) + '=' + tx(R_) + '$ 不是恆等式。'];
+    return U(id, label, EQ(L, R_), rows, {
+      kind: 'proof', m2: !ident ? { L, R: R_ } : null,
+      hints: [H('先化簡左方：撤去括號、合併同類項。', o.hl || ''), H('同樣方法化簡右方。', o.hr || ''),
+        H('比較兩邊化簡後嘅結果：完全一樣就係 ＝，唔一樣就係 ≠。', ident ? '兩邊都係 $' + tx(Ls) + '$，所以左方 = 右方，係恆等式。' : '左方 $=' + tx(Ls) + '$，右方 $=' + tx(Rs) + '$，兩邊唔同，所以唔係恆等式。')],
+      sol, v: { k: 'proof', L, R: R_, Ls, Rs, ident }
+    });
+  }
+  const s31a = {
+    id: 's31a', tab: '3.1A 恆等式', icon: '②', name: '課堂工作紙 3.1A（第一套）',
+    goals: ['理解恆等式的基本概念。'],
+    key: [
+      { title: '恆等式的基本概念', blocks: [
+        { type: 'text', v: '對於一個代數等式，若左右兩方的項經化簡後完全相同，則該等式便是恆等式。' },
+        { type: 'text', v: '變量取任何值都可滿足一個恆等式。' },
+        { type: 'text', v: '(a) 證明 $3(8x+2)=2(12x)+6$ 是恆等式。' },
+        { type: 'derive', head: '', lines: [['左方=3(8x+2)', ''], ['=24x+6', '相同'], ['右方=2(12x)+6', ''], ['=24x+6', '相同']] },
+        { type: 'text', v: '∵ 左方 = 右方　∴ $3(8x+2)\\equiv 2(12x)+6$' },
+        { type: 'text', v: '(b) 證明 $4(5x-3)=2(10x+6)$ 不是恆等式。' },
+        { type: 'derive', head: '方法一（利用概念）', lines: [['左方=4(5x-3)', ''], ['=20x-12', '不同'], ['右方=2(10x+6)', ''], ['=20x+12', '不同']] },
+        { type: 'text', v: '∵ 左方 ≠ 右方　∴ $4(5x-3)=2(10x+6)$ 不是恆等式。' },
+        { type: 'derive', head: '方法二（利用概念）把 x = 0 代入等式。', lines: [['左方=4[5(0)-3]', ''], ['=4(-3)', ''], ['=-12', ''], ['右方=2[10(0)+6]', ''], ['=2(6)', ''], ['=12', '']] },
+        { type: 'text', v: '∵ 左方 ≠ 右方　∴ $x=0$ 不滿足等式。　∴ $4(5x-3)=2(10x+6)$ 不是恆等式。' }
+      ] }
+    ],
+    groups: [
+      { instr: '判斷下列各等式是否恆等式。若是，揀「✓」，不是則揀「✗」。', qs: [
+        { no: 1, parts: [
+          tf('s31a-1a', '(a)', 'x+5', '5+x', true, '左方 $=x+5$，右方 $=5+x$。', ['左方 $=x+5$', '右方 $=5+x=x+5$', '左右兩方化簡後完全相同，所以是恆等式。']),
+          tf('s31a-1b', '(b)', '2x-7', '7-2x', false, '$2x-7$ 同 $7-2x$：$x$ 項嘅係數一樣嗎？', ['左方 $=2x-7$', '右方 $=7-2x=-2x+7$', '$x$ 項係數不同（$2$ 同 $-2$），所以不是恆等式。（例如 $x=0$：左方 $=-7$，右方 $=7$。）']),
+          tf('s31a-1c', '(c)', '6x+3x', '9x', true, '左方合併同類項：$6x+3x$ 等於幾多？', ['左方 $=6x+3x=9x$', '右方 $=9x$', '左右兩方完全相同，所以是恆等式。']),
+          tf('s31a-1d', '(d)', '4(x-1)', '4x-1', false, '左方乘開括號：$4(x-1)$，兩項都要乘 4。', ['左方 $=4(x-1)=4x-4$', '右方 $=4x-1$', '常數項不同（$-4$ 同 $-1$），所以不是恆等式。'])
+        ] }
+      ] },
+      { instr: '證明下列各等式是恆等式。(2 – 4)', qs: [
+        { no: 2, tag: '〔例 3.1〕', parts: [proof('s31a-2', '', '8x-5x', 'x+2x', '3x', '3x', true,
+          { lf: [T('='), T('('), N('l', 3), T(')x')], rf: [T('='), T('('), N('r', 3), T(')x')], hl: '$8x-5x=(8-5)x$', hr: '$x+2x=(1+2)x$' })] },
+        { no: 3, parts: [proof('s31a-3', '', '6x+15', '3(2x+5)', '6x+15', '6x+15', true, { hl: '左方已經係最簡，照抄就得。', hr: '$3(2x+5)=3(2x)+3(5)$' })] },
+        { no: 4, parts: [proof('s31a-4', '', '4(6x+1)', '3(8x-1)+7', '24x+4', '24x+4', true, { hl: '$4(6x+1)=4(6x)+4(1)$', hr: '$3(8x-1)+7=24x-3+7$' })] }
+      ] },
+      { instr: '證明下列各等式不是恆等式。(5 – 7)', qs: [
+        { no: 5, tag: '〔例 3.2〕', parts: [proof('s31a-5', '', '5(2x-3)', '10x-3', '10x-15', '10x-3', false, { hl: '$5(2x-3)=5(2x)-5(3)$', hr: '右方已經係最簡，照抄就得。' })] },
+        { no: 6, parts: [proof('s31a-6', '', '3(7x-8)', '7(3x-4)', '21x-24', '21x-28', false, { hl: '$3(7x-8)=3(7x)-3(8)$', hr: '$7(3x-4)=7(3x)-7(4)$' })] },
+        { no: 7, parts: [proof('s31a-7', '', '(x+5)(x-2)', 'x^2-3x-10', 'x^2+3x-10', 'x^2-3x-10', false, { hl: '$(x+5)(x-2)=(x+5)(x)-(x+5)(2)$', hr: '右方已經係最簡，照抄就得。' })] }
+      ] }
+    ]
+  };
+
+  /* =============== 工作紙 3.1B =============== */
+  function cst(id, label, prompt, sp) {
+    const rows = []; let st = 1;
+    if (sp.expand) { rows.push(R(1, X('先展開左方：'), T(sp.expand.lhs + '='), P('ex', sp.expand.ans, { simp: sp.expand.simp !== false }))); st = 2; }
+    const hints = []; if (sp.expand) hints.push(H('先把左方乘開、化簡，咁就容易比較。', sp.expand.hp || ''));
+    sp.cmps.forEach((c, i) => {
+      const s = st + i;
+      rows.push(R(s, X('比較左右兩方' + c.what + '，可得')));
+      rows.push(R(s, c.left.f === 'poly' ? P('c' + i, c.left.ans, { simp: false }) : N('c' + i, c.left.ans), T('=' + c.rhs)));
+      rows.push(R(s, T(c.var + '='), N('v' + i, c.ans)));
+      hints.push(H('恆等式左右兩方化簡後完全相同，所以' + c.what + '要相等。', c.hp));
+    });
+    return U(id, label, prompt, rows, { hints, sol: sp.sol, v: sp.v });
+  }
+  const s31b = {
+    id: 's31b', tab: '3.1B 求常數', icon: '③', name: '課堂工作紙 3.1B（第一套）',
+    goals: ['求恆等式中的未知常數。'],
+    key: [
+      { title: '求恆等式中的未知常數', blocks: [
+        { type: 'text', v: '利用以下事實求恆等式中的未知常數：' },
+        { type: 'text', v: '<em>恆等式左右兩方的項經化簡後完全相同。</em>' },
+        { type: 'text', v: '例如：考慮恆等式 $3x+2(x-4)\\equiv Ax+B$，其中 $A$ 和 $B$ 都是常數。' },
+        { type: 'derive', head: '比較左右兩方 x 的係數，可得', lines: [['3+2=A', '◀ 3x + 2(x − 4)'], ['A=5', '']] },
+        { type: 'derive', head: '比較左右兩方的常數項，可得', lines: [['2(-4)=B', '◀ 3x + 2(x − 4)'], ['B=-8', '']] }
+      ] }
+    ],
+    groups: [
+      { instr: '下列各恆等式中，求常數 $a$。', qs: [{ no: 1, parts: [
+        cst('s31b-1a', '(a)', '2x+3\\equiv 2x+a', { cmps: [{ what: '常數項', left: { f: 'num', ans: 3 }, rhs: 'a', var: 'a', ans: 3, hp: '左方常數項係 3，右方常數項係 $a$。' }],
+          sol: ['比較左右兩方的常數項，可得', '$3=a$', '$a=3$'], v: { k: 'const', lhs: '2x+3', rhs: '2x+a', un: { a: 3 } } }),
+        cst('s31b-1b', '(b)', '3x-5\\equiv 3x+a', { cmps: [{ what: '常數項', left: { f: 'num', ans: -5 }, rhs: 'a', var: 'a', ans: -5, hp: '$3x-5=3x+(-5)$，所以右方常數項 $a$ 對應 $-5$。' }],
+          sol: ['$3x-5=3x+(-5)$', '比較左右兩方的常數項，可得', '$-5=a$', '$a=-5$'], v: { k: 'const', lhs: '3x-5', rhs: '3x+a', un: { a: -5 } } })
+      ] }] },
+      { instr: '下列各恆等式中，求常數 $A$ 和 $B$。', qs: [{ no: 2, parts: [
+        cst('s31b-2a', '(a)', '6x+2\\equiv Ax+B', { cmps: [
+          { what: ' x 的係數', left: { f: 'num', ans: 6 }, rhs: 'A', var: 'A', ans: 6, hp: '左方 $x$ 嘅係數係 6。' },
+          { what: '常數項', left: { f: 'num', ans: 2 }, rhs: 'B', var: 'B', ans: 2, hp: '左方常數項係 2。' }],
+          sol: ['比較左右兩方 $x$ 的係數，可得 $6=A$，$A=6$', '比較左右兩方的常數項，可得 $2=B$，$B=2$'], v: { k: 'const', lhs: '6x+2', rhs: 'Ax+B', un: { A: 6, B: 2 } } }),
+        cst('s31b-2b', '(b)', '2x+9\\equiv Ax-B', { cmps: [
+          { what: ' x 的係數', left: { f: 'num', ans: 2 }, rhs: 'A', var: 'A', ans: 2, hp: '左方 $x$ 嘅係數係 2。' },
+          { what: '常數項', left: { f: 'num', ans: 9 }, rhs: '-B', var: 'B', ans: -9, hp: '右方常數項係 $-B$，所以 $9=-B$。' }],
+          sol: ['比較左右兩方 $x$ 的係數，可得 $2=A$，$A=2$', '比較左右兩方的常數項，可得 $9=-B$，$B=-9$'], v: { k: 'const', lhs: '2x+9', rhs: 'Ax-B', un: { A: 2, B: -9 } } }),
+        cst('s31b-2c', '(c)', '4x-8\\equiv Ax-B', { cmps: [
+          { what: ' x 的係數', left: { f: 'num', ans: 4 }, rhs: 'A', var: 'A', ans: 4, hp: '左方 $x$ 嘅係數係 4。' },
+          { what: '常數項', left: { f: 'num', ans: -8 }, rhs: '-B', var: 'B', ans: 8, hp: '$-8=-B$，兩邊同乘 $-1$。' }],
+          sol: ['比較左右兩方 $x$ 的係數，可得 $4=A$，$A=4$', '比較左右兩方的常數項，可得 $-8=-B$，$B=8$'], v: { k: 'const', lhs: '4x-8', rhs: 'Ax-B', un: { A: 4, B: 8 } } }),
+        cst('s31b-2d', '(d)', '7-5x\\equiv Ax-B', { cmps: [
+          { what: ' x 的係數', left: { f: 'num', ans: -5 }, rhs: 'A', var: 'A', ans: -5, hp: '左方 $x$ 項係 $-5x$，所以係數係 $-5$。' },
+          { what: '常數項', left: { f: 'num', ans: 7 }, rhs: '-B', var: 'B', ans: -7, hp: '$7=-B$，所以 $B=-7$。' }],
+          sol: ['比較左右兩方 $x$ 的係數，可得 $-5=A$，$A=-5$', '比較左右兩方的常數項，可得 $7=-B$，$B=-7$'], v: { k: 'const', lhs: '7-5x', rhs: 'Ax-B', un: { A: -5, B: -7 } } })
+      ] }] },
+      { instr: '', qs: [
+        { no: 3, stem: '考慮 $2(2x+7)\\equiv 4x+a$，其中 $a$ 是常數。求 $a$ 的值。', parts: [
+          U('s31b-3', '', '2(2x+7)\\equiv 4x+a', [
+            R(1, X('比較左右兩方的常數項，可得')), R(1, T('2('), N('c', 7), T(')=a')), R(1, T('a='), N('a', 14))
+          ], { hints: [H('左方 $2(2x+7)=4x+14$，常數項係 14。', '$2(7)=a$，$a=2\\times 7$。')],
+            sol: ['比較左右兩方的常數項，可得', '$2(7)=a$', '$a=14$'], v: { k: 'const', lhs: '2(2x+7)', rhs: '4x+a', un: { a: 14 } } })
+        ] },
+        { no: 4, stem: '考慮 $8x(4x-5)\\equiv Ax^2+Bx$，其中 $A$ 和 $B$ 都是常數。求 $A$ 和 $B$ 的值。', parts: [
+          cst('s31b-4', '', '8x(4x-5)\\equiv Ax^2+Bx', { expand: { lhs: '8x(4x-5)', ans: '32x^2-40x', hp: '$8x(4x)-8x(5)$' }, cmps: [
+            { what: ' x² 的係數', left: { f: 'num', ans: 32 }, rhs: 'A', var: 'A', ans: 32, hp: '展開後 $x^2$ 項係 $32x^2$。' },
+            { what: ' x 的係數', left: { f: 'num', ans: -40 }, rhs: 'B', var: 'B', ans: -40, hp: '展開後 $x$ 項係 $-40x$。' }],
+            sol: ['$8x(4x-5)=32x^2-40x$', '比較左右兩方 $x^2$ 的係數，可得 $32=A$，$A=32$', '比較左右兩方 $x$ 的係數，可得 $-40=B$，$B=-40$'], v: { k: 'const', lhs: '8x(4x-5)', rhs: 'Ax^2+Bx', un: { A: 32, B: -40 }, expand: { lhs: '8x(4x-5)', ans: '32x^2-40x' } } })
+        ] },
+        { no: 5, tag: '〔例 3.5(a)〕', stem: '考慮 $(x+4)(2x-5)\\equiv 2x^2+Ax-20$，其中 $A$ 是常數。求 $A$ 的值。', parts: [
+          cst('s31b-5', '', '(x+4)(2x-5)\\equiv 2x^2+Ax-20', { expand: { lhs: '(x+4)(2x-5)', ans: '2x^2+3x-20', hp: '$(x+4)(2x)-(x+4)(5)=2x^2+8x-5x-20$' }, cmps: [
+            { what: ' x 的係數', left: { f: 'num', ans: 3 }, rhs: 'A', var: 'A', ans: 3, hp: '展開後 $x$ 項係 $8x-5x$，即 $3x$。' }],
+            sol: ['$(x+4)(2x-5)=2x^2+8x-5x-20=2x^2+3x-20$', '比較左右兩方 $x$ 的係數，可得', '$3=A$', '$A=3$'], v: { k: 'const', lhs: '(x+4)(2x-5)', rhs: '2x^2+Ax-20', un: { A: 3 }, expand: { lhs: '(x+4)(2x-5)', ans: '2x^2+3x-20' } } })
+        ] },
+        { no: 6, tag: '〔例 3.5(b)〕', stem: '考慮 $(Ax-5)(4x+7)\\equiv 12x^2+x-B$，其中 $A$ 和 $B$ 都是常數。求 $A$ 和 $B$ 的值。', parts: [
+          cst('s31b-6', '', '(Ax-5)(4x+7)\\equiv 12x^2+x-B', { expand: { lhs: '(Ax-5)(4x+7)', ans: '4Ax^2+7Ax-20x-35', simp: false, hp: '$(Ax)(4x)+(Ax)(7)-5(4x)-5(7)$，含 $A$ 嘅項寫成 $4Ax^2$、$7Ax$。' }, cmps: [
+            { what: ' x² 的係數', left: { f: 'poly', ans: '4A' }, rhs: '12', var: 'A', ans: 3, hp: '左方 $x^2$ 項係 $4Ax^2$，右方係 $12x^2$，所以 $4A=12$。' },
+            { what: '常數項', left: { f: 'num', ans: -35 }, rhs: '-B', var: 'B', ans: 35, hp: '左方常數項 $-5\\times 7=-35$，右方係 $-B$。' }],
+            sol: ['$(Ax-5)(4x+7)=4Ax^2+7Ax-20x-35$', '比較左右兩方 $x^2$ 的係數，可得 $4A=12$，$A=3$', '比較左右兩方的常數項，可得 $-35=-B$，$B=35$'],
+            v: { k: 'const', lhs: '(Ax-5)(4x+7)', rhs: '12x^2+x-B', un: { A: 3, B: 35 }, expand: { lhs: '(Ax-5)(4x+7)', ans: '4Ax^2+7Ax-20x-35' } } })
+        ] }
+      ] }
+    ]
+  };
+
+  /* =============== 工作紙 3.2 / 3.3 =============== */
+  function sq(id, label, expr, a, b, form, ans, t1, t2, t3, o) {
+    o = o || {};
+    const minus = form === '-', sg = minus ? '-' : '+';
+    const midStr = (minus ? '-' : '') + '2*(' + a + ')*(' + b + ')';
+    const rows = [];
+    if (o.askForm) rows.push(R(1, X('用邊個恆等式？'), SEL('form', ['', '(a + b)² ≡ a² + 2ab + b²', '(a − b)² ≡ a² − 2ab + b²'], minus ? 2 : 1)));
+    rows.push(R(1, X('把'), T('a='), P('a', a, { simp: false }), X('和'), T('b='), P('b', b, { simp: false }), X('代入恆等式。')));
+    rows.push(R(2, T('a^2='), P('t1', t1, { swapWith: minus ? null : 't3' }), X('，'), T('2ab='), P('t2', t2), X('，'), T('b^2='), P('t3', t3, { swapWith: minus ? null : 't1' })));
+    rows.push(R(3, X('完整答案：'), T(tx(expr) + '='), P('ans', ans, { mid: midStr })));
+    const fm = minus ? '(a-b)^2\\equiv a^2-2ab+b^2' : '(a+b)^2\\equiv a^2+2ab+b^2';
+    return U(id, label, tx(expr), rows, {
+      kind: 'sq', sym: !minus, mid: midStr, tag: o.askForm ? '' : '用恆等式 $' + fm + '$',
+      hints: [
+        H('對照公式 $' + (minus ? '(a-b)^2' : '(a+b)^2') + '$：括號入面第一項係 $a$，第二項係 $b$（$b$ 前面嘅符號唔計入 $b$）。', '呢題：$a=' + tx(a) + '$，$b=' + tx(b) + '$。'),
+        H('$a^2$ 即 $a$ 乘 $a$；$2ab$ 即 $2\\times a\\times b$；$b^2$ 即 $b$ 乘 $b$。有係數嘅項要成項平方，例如 $(2x)^2=4x^2$。', '$a^2=' + pr(a) + '^2=' + tx(t1) + '$，$2ab=2\\times' + pr(a) + '\\times' + pr(b) + '=\\ ?$'),
+        H('照公式次序，用返你剛才三個答案砌埋一齊：$' + (minus ? 'a^2-2ab+b^2' : 'a^2+2ab+b^2') + '$。', '$' + tx(t1) + sg + tx(t2) + '+' + tx(t3) + '$ ——留意每項前面嘅符號，然後整理成最簡。')
+      ],
+      sol: ['把 $a=' + tx(a) + '$ 和 $b=' + tx(b) + '$ 代入恆等式 $' + fm + '$。', '$' + tx(expr) + '$',
+        '$=' + pr(a) + '^2' + sg + '2\\times' + pr(a) + '\\times' + pr(b) + '+' + pr(b) + '^2$', '$=' + tx(ans) + '$'],
+      v: { k: 'sq', expr, a, b, form, t1, t2, t3, ans }
+    });
+  }
+  function dsq(id, label, expr, a, b, ans, t1, t3) {
+    const rows = [
+      R(1, X('把'), T('a='), P('a', a, { simp: false }), X('和'), T('b='), P('b', b, { simp: false }), X('代入恆等式。')),
+      R(2, T('a^2='), P('t1', t1), X('，'), T('b^2='), P('t3', t3)),
+      R(3, X('完整答案：'), T(tx(expr) + '='), P('ans', ans))
+    ];
+    return U(id, label, tx(expr), rows, {
+      kind: 'dsq', tag: '用恆等式 $(a+b)(a-b)\\equiv a^2-b^2$',
+      hints: [
+        H('兩個括號入面，相同嗰項係 $a$，另一項（一個加、一個減）係 $b$。', '呢題：$a=' + tx(a) + '$，$b=' + tx(b) + '$。'),
+        H('$a^2$ 即 $a$ 乘 $a$；$b^2$ 即 $b$ 乘 $b$。有係數嘅項要成項平方，例如 $(3x)^2=9x^2$。', '$a^2=' + pr(a) + '^2=' + tx(t1) + '$，$b^2=' + pr(b) + '^2=\\ ?$'),
+        H('照公式：$a^2-b^2$，中間係減號。', '$' + tx(t1) + '-' + (/^[-]/.test(t3) ? '(' + tx(t3) + ')' : tx(t3)) + '$')
+      ],
+      sol: ['把 $a=' + tx(a) + '$ 和 $b=' + tx(b) + '$ 代入恆等式 $(a+b)(a-b)\\equiv a^2-b^2$。', '$' + tx(expr) + '$', '$=' + pr(a) + '^2-' + pr(b) + '^2$', '$=' + tx(ans) + '$'],
+      v: { k: 'dsq', expr, a, b, t1, t3, ans }
+    });
+  }
+  const P2 = (n, ex, a, b, ans, t1, t2, t3) => sq('s32-' + n[0], n[1], ex, a, b, '+', ans, t1, t2, t3);
+  const M2 = (n, ex, a, b, ans, t1, t2, t3) => sq('s32-' + n[0], n[1], ex, a, b, '-', ans, t1, t2, t3);
+  const q = (no, ...parts) => ({ no, parts });
+
+  const s32 = {
+    id: 's32', tab: '3.2 完全平方', icon: '④', name: '課堂工作紙 3.2（第一套）',
+    goals: ['理解完全平方的恆等式「$(a+b)^2\\equiv a^2+2ab+b^2$」。', '理解完全平方的恆等式「$(a-b)^2\\equiv a^2-2ab+b^2$」。'],
+    key: [
+      { title: '完全平方 (a + b)² 的恆等式', blocks: [
+        { type: 'text', v: '對於任何 $a$ 值和 $b$ 值，' },
+        { type: 'formula', v: '(a+b)^2\\equiv a^2+2ab+b^2' },
+        { type: 'derive', head: '例如：', lines: [['(x+3)^2', ''], ['=x^2+2(x)(3)+3^2', '把 a = x 和 b = 3 代入恆等式 (a + b)² ≡ a² + 2ab + b²。'], ['=x^2+6x+9', '']] }
+      ] }
+    ],
+    groups: [
+      { instr: '展開下列各數式。(1 – 5)', qs: [
+        q(1, P2(['1a', '(a)'], '(x+5)^2', 'x', '5', 'x^2+10x+25', 'x^2', '10x', '25'), P2(['1b', '(b)'], '(x+8)^2', 'x', '8', 'x^2+16x+64', 'x^2', '16x', '64')),
+        q(2, P2(['2a', '(a)'], '(6+x)^2', '6', 'x', '36+12x+x^2', '36', '12x', 'x^2'), P2(['2b', '(b)'], '(7+x)^2', '7', 'x', '49+14x+x^2', '49', '14x', 'x^2')),
+        q(3, P2(['3a', '(a)'], '(2x+4)^2', '2x', '4', '4x^2+16x+16', '4x^2', '16x', '16'), P2(['3b', '(b)'], '(5x+1)^2', '5x', '1', '25x^2+10x+1', '25x^2', '10x', '1')),
+        q(4, P2(['4a', '(a)'], '(9+4x)^2', '9', '4x', '81+72x+16x^2', '81', '72x', '16x^2'), P2(['4b', '(b)'], '(11+3x)^2', '11', '3x', '121+66x+9x^2', '121', '66x', '9x^2')),
+        q(5, P2(['5a', '(a)'], '(6x+10y)^2', '6x', '10y', '36x^2+120xy+100y^2', '36x^2', '120xy', '100y^2'), P2(['5b', '(b)'], '(9x+2y)^2', '9x', '2y', '81x^2+36xy+4y^2', '81x^2', '36xy', '4y^2'))
+      ] },
+      { instr: '展開下列各數式。(6 – 10)', key: { title: '完全平方 (a − b)² 的恆等式', blocks: [
+        { type: 'text', v: '對於任何 $a$ 值和 $b$ 值，' },
+        { type: 'formula', v: '(a-b)^2\\equiv a^2-2ab+b^2' },
+        { type: 'derive', head: '例如：', lines: [['(x-4)^2', ''], ['=x^2-2(x)(4)+4^2', '把 a = x 和 b = 4 代入恆等式 (a − b)² ≡ a² − 2ab + b²。'], ['=x^2-8x+16', '']] }
+      ] }, qs: [
+        q(6, M2(['6a', '(a)'], '(x-6)^2', 'x', '6', 'x^2-12x+36', 'x^2', '12x', '36'), M2(['6b', '(b)'], '(x-8)^2', 'x', '8', 'x^2-16x+64', 'x^2', '16x', '64')),
+        q(7, M2(['7a', '(a)'], '(2-x)^2', '2', 'x', '4-4x+x^2', '4', '4x', 'x^2'), M2(['7b', '(b)'], '(12-x)^2', '12', 'x', '144-24x+x^2', '144', '24x', 'x^2')),
+        q(8, M2(['8a', '(a)'], '(4x-5)^2', '4x', '5', '16x^2-40x+25', '16x^2', '40x', '25'), M2(['8b', '(b)'], '(6x-13)^2', '6x', '13', '36x^2-156x+169', '36x^2', '156x', '169')),
+        q(9, M2(['9a', '(a)'], '(8-7x)^2', '8', '7x', '64-112x+49x^2', '64', '112x', '49x^2'), M2(['9b', '(b)'], '(10-11x)^2', '10', '11x', '100-220x+121x^2', '100', '220x', '121x^2')),
+        q(10, M2(['10a', '(a)'], '(3x-4y)^2', '3x', '4y', '9x^2-24xy+16y^2', '9x^2', '24xy', '16y^2'), M2(['10b', '(b)'], '(9x-5y)^2', '9x', '5y', '81x^2-90xy+25y^2', '81x^2', '90xy', '25y^2'))
+      ] },
+      { instr: '綜合複習　展開下列各數式。(11 – 16)', qs: [
+        q(11, sq('s32-11', '', '(x+12)^2', 'x', '12', '+', 'x^2+24x+144', 'x^2', '24x', '144', { askForm: true })),
+        q(12, sq('s32-12', '', '(x-10)^2', 'x', '10', '-', 'x^2-20x+100', 'x^2', '20x', '100', { askForm: true })),
+        q(13, sq('s32-13', '', '(8-3x)^2', '8', '3x', '-', '64-48x+9x^2', '64', '48x', '9x^2', { askForm: true })),
+        q(14, sq('s32-14', '', '(2+15x)^2', '2', '15x', '+', '4+60x+225x^2', '4', '60x', '225x^2', { askForm: true })),
+        q(15, sq('s32-15', '', '(7x-6y)^2', '7x', '6y', '-', '49x^2-84xy+36y^2', '49x^2', '84xy', '36y^2', { askForm: true })),
+        q(16, sq('s32-16', '', '(5x+13y)^2', '5x', '13y', '+', '25x^2+130xy+169y^2', '25x^2', '130xy', '169y^2', { askForm: true }))
+      ] }
+    ]
+  };
+
+  const D = (n, label, ex, a, b, ans, t1, t3) => dsq('s33-' + n, label, ex, a, b, ans, t1, t3);
+  const s33 = {
+    id: 's33', tab: '3.3 平方差', icon: '⑤', name: '課堂工作紙 3.3（第一套）',
+    goals: ['理解平方差的恆等式「$(a+b)(a-b)\\equiv a^2-b^2$」。'],
+    key: [
+      { title: '平方差 (a + b)(a − b) 的恆等式', blocks: [
+        { type: 'text', v: '對於任何 $a$ 值和 $b$ 值，' },
+        { type: 'formula', v: '(a+b)(a-b)\\equiv a^2-b^2' },
+        { type: 'derive', head: '例如：', lines: [['(x+2)(x-2)', ''], ['=x^2-2^2', '把 a = x 和 b = 2 代入恆等式 (a + b)(a − b) ≡ a² − b²。'], ['=x^2-4', '']] }
+      ] }
+    ],
+    groups: [
+      { instr: '展開下列各數式。(1 – 5)', qs: [
+        q(1, D('1a', '(a)', '(x+4)(x-4)', 'x', '4', 'x^2-16', 'x^2', '16'), D('1b', '(b)', '(x+7)(x-7)', 'x', '7', 'x^2-49', 'x^2', '49')),
+        q(2, D('2a', '(a)', '(5+x)(5-x)', '5', 'x', '25-x^2', '25', 'x^2'), D('2b', '(b)', '(8+x)(8-x)', '8', 'x', '64-x^2', '64', 'x^2')),
+        q(3, D('3a', '(a)', '(3x+2)(3x-2)', '3x', '2', '9x^2-4', '9x^2', '4'), D('3b', '(b)', '(4x+7)(4x-7)', '4x', '7', '16x^2-49', '16x^2', '49')),
+        q(4, D('4a', '(a)', '(9+2x)(9-2x)', '9', '2x', '81-4x^2', '81', '4x^2'), D('4b', '(b)', '(6+5x)(6-5x)', '6', '5x', '36-25x^2', '36', '25x^2')),
+        q(5, D('5a', '(a)', '(7x+3y)(7x-3y)', '7x', '3y', '49x^2-9y^2', '49x^2', '9y^2'), D('5b', '(b)', '(8x+11y)(8x-11y)', '8x', '11y', '64x^2-121y^2', '64x^2', '121y^2'))
+      ] },
+      { instr: '展開下列各數式。(6 – 9)', note: '提示：$(a-b)(a+b)=(a+b)(a-b)$，次序倒轉都係用同一個恆等式。', qs: [
+        q(6, D('6', '', '(x-12)(x+12)', 'x', '12', 'x^2-144', 'x^2', '144')),
+        q(7, D('7', '', '(9-4x)(9+4x)', '9', '4x', '81-16x^2', '81', '16x^2')),
+        q(8, D('8', '', '(5x-y)(5x+y)', '5x', 'y', '25x^2-y^2', '25x^2', 'y^2')),
+        q(9, D('9', '', '(10y-7x)(10y+7x)', '10y', '7x', '100y^2-49x^2', '100y^2', '49x^2'))
+      ] }
+    ]
+  };
+
+  g.SHEETS = [s30, s31a, s31b, s32, s33];
+  g.ALL_UNITS = [];
+  g.SHEETS.forEach(sh => sh.groups.forEach(gr => gr.qs.forEach(qq => qq.parts.forEach(u => { u.sheet = sh.id; u.qno = qq.no; g.ALL_UNITS.push(u); }))));
+  if (typeof module !== 'undefined' && module.exports) module.exports = { SHEETS: g.SHEETS, ALL_UNITS: g.ALL_UNITS };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+/* 呂 Sir 的數學冒險（v3）：介面、關卡地圖、關卡演示、遊戲機制。Alg 與 SHEETS 完全沿用，不作改動。 */
+(function () {
+  'use strict';
+  const A = window.Alg, SHEETS = window.SHEETS, UNITS = window.ALL_UNITS;
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function tex(t, d) {
+    if (window.katex) { try { return katex.renderToString(t, { throwOnError: false, displayMode: !!d, strict: 'ignore' }); } catch (e) { /* fall through */ } }
+    return '<code>' + esc(t) + '</code>';
+  }
+  function rich(s) {
+    return String(s).split(/(\$[^$]+\$)/g).map(p => (p.length > 2 && p[0] === '$' && p[p.length - 1] === '$') ? tex(p.slice(1, -1)) : (p.indexOf('<em>') >= 0 ? p : esc(p))).join('');
+  }
+  const ico = (id, cls) => '<svg class="ico' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><use href="#' + id + '"/></svg>';
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const RM = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const BY_ID = {}; UNITS.forEach(u => { BY_ID[u.id] = u; });
+  const SHEET_BY_ID = {}; SHEETS.forEach(s => { SHEET_BY_ID[s.id] = s; });
+  const unitsOf = id => UNITS.filter(u => u.sheet === id);
+  const maxStage = u => Math.max.apply(null, u.rows.map(r => r.stage));
+  const fieldsOf = (u, upto) => { const out = []; u.rows.forEach(r => { if (!upto || r.stage <= upto) r.segs.forEach(s => { if (s.t === 'f') out.push(s); }); }); return out; };
+  const LV = {
+    s30: { n: 1, name: '熱身營地' }, s31a: { n: 2, name: '天秤神殿' }, s31b: { n: 3, name: '密碼鎖' },
+    s32: { n: 4, name: '方塊工場' }, s33: { n: 5, name: '切割實驗室' }
+  };
+
+  /* ---------- 儲存 ---------- */
+  const KEY = 'lusir-identities-v1';
+  let S = { u: {}, cel: {}, sound: false, cur: 's30', guide: true, h: {}, badges: {}, lit: {}, neg: {} };
+  try { const j = JSON.parse(localStorage.getItem(KEY) || 'null'); if (j) S = Object.assign(S, j); } catch (e) { /* ignore */ }
+  ['h', 'badges', 'lit', 'neg', 'u', 'cel'].forEach(k => { if (!S[k] || typeof S[k] !== 'object') S[k] = {}; });
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* ignore */ } };
+  const RT = {}; const rt = u => RT[u.id] || (RT[u.id] = { stage: 1, attempts: 0, hl: {}, sol: false, swap: false, wrong: false });
+  let IDX = 0, advTimer = null, combo = 0, curScene = null, mapEntered = false;
+
+  /* ---------- 聲音（預設靜音） ---------- */
+  let ac;
+  function tone(freqs) {
+    if (!S.sound) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const t = ac.currentTime;
+      freqs.forEach((f, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; g.gain.value = 0.04; o.connect(g); g.connect(ac.destination); o.start(t + i * 0.12); o.stop(t + i * 0.12 + 0.1); });
+    } catch (e) { /* ignore */ }
+  }
+
+  /* ---------- 呂 Sir：表情隨時變，對白只喺開始／答對／答錯（≤12 字），3 秒後消失 ---------- */
+  let gTimer = null, mTimer = null;
+  function mood(m, hold) {
+    const av = $('#guideAv'); if (!av) return;
+    av.dataset.mood = m; av.classList.remove('anim'); void av.offsetWidth; av.classList.add('anim');
+    clearTimeout(mTimer); if (!hold) mTimer = setTimeout(() => { av.dataset.mood = 'explain'; }, 3200);
+  }
+  const G = {
+    say(m, text) {
+      mood(m);
+      if (!S.guide) return;
+      const b = $('#gb'); if (!b) return;
+      b.textContent = text; b.hidden = false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+      clearTimeout(gTimer); gTimer = setTimeout(() => { b.hidden = true; }, 3000);
+    }
+  };
+  const PRAISE = ['啱喇！', '好嘢！', '正！', '叻呀！', '完全正確！'];
+  const GREAT = ['勁呀！連續答啱！', '冇得輸！', '好犀利！'];
+  const TRY = ['差少少～', '再試一次！', '近喇，加油！'];
+  const START = { s30: '熱身開始，加油！', s31a: '睇清楚左右兩方！', s31b: '比較係數就得！', s32: '記住中間項 2ab！', s33: '平方差，好易！' };
+  function applyGuide() { const av = $('#guideAv'); av.classList.toggle('off', !S.guide); av.setAttribute('aria-pressed', String(S.guide)); if (!S.guide) $('#gb').hidden = true; }
+  function burst() {
+    if (RM) return;
+    const g = $('#guide'); if (!g) return;
+    for (let i = 0; i < 6; i++) {
+      const s = document.createElement('span'); s.className = 'burst'; s.innerHTML = ico('i-star');
+      const ang = (-160 + i * 28) * Math.PI / 180, r = 46 + (i % 2) * 14;
+      s.style.setProperty('--dx', Math.round(Math.cos(ang) * r) + 'px'); s.style.setProperty('--dy', Math.round(Math.sin(ang) * r) + 'px');
+      g.appendChild(s); setTimeout(() => s.remove(), 650);
+    }
+  }
+
+  /* ---------- 連擊 ---------- */
+  function setCombo(n) {
+    const up = n > combo; combo = n;
+    const el = $('#combo'); el.hidden = combo < 2; $('#comboN').textContent = '×' + combo;
+    el.setAttribute('aria-label', '連擊 ' + combo);
+    if (up && combo >= 2) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+    $('#guideAv').classList.toggle('cool', combo >= 3);
+  }
+
+  /* ---------- 徽章 ---------- */
+  const BADGES = [
+    { id: 'first', name: '首戰告捷', how: '攞第一粒星', g: '1' },
+    { id: 'combo5', name: '連擊 5', how: '連續答啱 5 題', g: '🔥' },
+    { id: 'neg', name: '負號剋星', how: '5 條負號題一次過', g: '−' },
+    { id: 'nohint', name: '零提示通關', how: '一關全星冇用提示', g: '!' },
+    { id: 'square', name: '完美平方', how: '方塊工場全星', g: 'x²' },
+    { id: 'all', name: '全圖通關', how: '五關全部完成', g: '★' }
+  ];
+  function medalSVG(b, on) {
+    const glyph = b.g === '🔥' ? '<use href="#i-flame" x="20" y="22" width="24" height="24"/>' : '<text x="32" y="42" text-anchor="middle" font-size="' + (b.g.length > 1 ? 17 : 22) + '" font-weight="700" fill="currentColor">' + esc(b.g) + '</text>';
+    return '<svg class="medal' + (on ? ' on' : '') + '" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 2h10l4 14H24zM34 2h10l-4 14H30z" fill="' + (on ? '#F2B705' : '#fff') + '" stroke="#1B2033" stroke-width="2" stroke-linejoin="round"' + (on ? '' : ' stroke-dasharray="3 3"') + '/>' +
+      '<circle cx="32" cy="36" r="20" fill="' + (on ? '#fff' : '#f3f6fb') + '" stroke="#1B2033" stroke-width="2.4"' + (on ? '' : ' stroke-dasharray="4 4"') + '/><circle cx="32" cy="36" r="15" fill="none" stroke="#1B2033" stroke-width="1.2" opacity=".5"/>' +
+      (on ? glyph : '<use href="#i-lock" x="22" y="26" width="20" height="20" color="#4A5068"/>') + '</svg>';
+  }
+  function unlock(id) {
+    if (S.badges[id]) return;
+    S.badges[id] = Date.now(); save();
+    const b = BADGES.filter(x => x.id === id)[0];
+    toast(medalSVG(b, true) + '<span>解鎖徽章：<b>' + esc(b.name) + '</b></span>');
+    updateBadgeLabel();
+  }
+  function updateBadgeLabel() { $('#badgeLbl').textContent = '徽章 ' + Object.keys(S.badges).filter(k => BADGES.some(b => b.id === k)).length + '/' + BADGES.length; }
+  function checkBadges(u) {
+    const stars = UNITS.filter(x => S.u[x.id] === 'c').length;
+    if (stars >= 1) unlock('first');
+    if (combo >= 5) unlock('combo5');
+    if (Object.keys(S.neg).length >= 5) unlock('neg');
+    SHEETS.forEach(sh => { const us = unitsOf(sh.id); if (us.every(x => S.u[x.id] === 'c') && !us.some(x => S.h[x.id])) unlock('nohint'); });
+    if (unitsOf('s32').every(x => S.u[x.id] === 'c')) unlock('square');
+    if (SHEETS.every(sh => unitsOf(sh.id).every(x => S.u[x.id]))) unlock('all');
+  }
+  let tTimer = null;
+  function toast(html) {
+    const t = $('#toast'); t.innerHTML = html; t.hidden = false; t.classList.remove('in'); void t.offsetWidth; t.classList.add('in');
+    clearTimeout(tTimer); tTimer = setTimeout(() => { t.hidden = true; }, 2400);
+  }
+  function openBadges() {
+    closeMenu();
+    const ov = document.createElement('div'); ov.className = 'dlg'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', '徽章收藏');
+    ov.innerHTML = '<div class="dlgbox"><div class="dlgh"><h2>徽章收藏</h2><button type="button" class="ib dclose" aria-label="關閉">✕</button></div><ul class="bgrid">' +
+      BADGES.map(b => { const on = !!S.badges[b.id]; return '<li class="bcell' + (on ? ' on' : '') + '">' + medalSVG(b, on) + '<b>' + esc(b.name) + '</b><span>' + (on ? '已解鎖' : esc(b.how)) + '</span></li>'; }).join('') + '</ul></div>';
+    document.body.appendChild(ov);
+    const close = () => ov.remove();
+    $('.dclose', ov).addEventListener('click', close);
+    ov.addEventListener('click', e => { if (e.target === ov) close(); });
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    $('.dclose', ov).focus();
+  }
+
+  /* ---------- 進度 ---------- */
+  function progress(id) { const us = unitsOf(id); return { n: us.length, done: us.filter(u => S.u[u.id]).length, stars: us.filter(u => S.u[u.id] === 'c').length }; }
+  function updateDots() {
+    const us = unitsOf(S.cur);
+    $$('.dot').forEach((d, i) => {
+      const done = !!S.u[us[i].id], last = i === us.length - 1;
+      d.textContent = last ? (done ? '◆' : '◇') : (done ? '●' : '○');
+      d.classList.toggle('cur', i === IDX); d.classList.toggle('done', done);
+      if (i === IDX) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current');
+      d.setAttribute('aria-label', '第 ' + us[i].qno + ' 題' + (us[i].label ? ' ' + us[i].label : '') + (last ? '（挑戰題）' : '') + (done ? '（已完成）' : '（未做）') + (i === IDX ? '（目前）' : ''));
+    });
+  }
+  function updateProgress() {
+    const total = UNITS.filter(u => S.u[u.id] === 'c').length;
+    $('#starN').textContent = total;
+    const p = progress(S.cur), pt = $('#lvStars'); if (pt) pt.textContent = p.stars + ' / ' + p.n;
+    const pb = $('#lvBar'); if (pb) pb.style.width = (100 * p.done / p.n) + '%';
+    updateDots();
+  }
+  function badge(u) {
+    const card = $('#u-' + u.id); if (!card) return;
+    const st = S.u[u.id], b = $('[data-badge]', card);
+    b.innerHTML = st === 'c' ? ico('i-star') : st === 's' ? ico('i-book') : '';
+    b.setAttribute('aria-label', st === 'c' ? '已完成，得一粒星' : st === 's' ? '已睇解答' : '');
+    card.classList.toggle('done', !!st);
+  }
+
+  /* ---------- 關卡地圖 ---------- */
+  const NODES = [[88, 78], [270, 196], [92, 318], [268, 440], [96, 562]], FLAG = [276, 640];
+  const segPath = (a, b) => { const my = (a[1] + b[1]) / 2; return 'M' + a[0] + ' ' + a[1] + ' C' + a[0] + ' ' + my + ' ' + b[0] + ' ' + my + ' ' + b[0] + ' ' + b[1]; };
+  function renderMap() {
+    const pts = NODES.concat([FLAG]);
+    const segs = SHEETS.map((sh, i) => ({ d: segPath(pts[i], pts[i + 1]), done: progress(sh.id).done === progress(sh.id).n, id: sh.id }));
+    const total = UNITS.filter(u => S.u[u.id] === 'c').length;
+    let nextIdx = SHEETS.findIndex(sh => progress(sh.id).done < progress(sh.id).n);
+    let h = '<div class="mapin"><div class="maphead"><h1>呂 Sir 的數學冒險</h1><p>中二　第 3 章　恆等式</p><div class="mapstars">' + ico('i-star') + '<b>' + total + '</b><span>/ ' + UNITS.length + '</span></div></div>' +
+      '<div class="board"><svg class="trail" viewBox="0 0 360 680" preserveAspectRatio="none" aria-hidden="true">' +
+      segs.map(s => '<path class="tr-base" d="' + s.d + '"/>').join('') +
+      segs.map((s, i) => '<path class="tr-lit' + (s.done ? ' on' : '') + '" data-seg="' + i + '" d="' + s.d + '"/>').join('') +
+      '<g class="flag' + (segs.every(s => s.done) ? ' on' : '') + '" transform="translate(' + FLAG[0] + ' ' + FLAG[1] + ')"><path d="M0 0V-34" stroke="#1B2033" stroke-width="3"/><path d="M0-34h22l-6 7 6 7H0z" fill="#F2B705" stroke="#1B2033" stroke-width="2" stroke-linejoin="round"/><ellipse cx="0" cy="2" rx="12" ry="4" fill="#1B2033" opacity=".2"/></g></svg>';
+    SHEETS.forEach((sh, i) => {
+      const p = progress(sh.id), done = p.done === p.n, pct = p.done / p.n, side = NODES[i][0] < 180 ? 'r' : 'l';
+      const C = 2 * Math.PI * 40;
+      h += '<button type="button" class="node ' + side + (done ? ' done' : '') + (mapEntered ? '' : ' drop') + '" data-go="' + sh.id + '" style="left:' + (NODES[i][0] / 3.6) + '%;top:' + (NODES[i][1] / 6.8) + '%;--lv:var(--lv-' + sh.id + ');--d:' + (i * 70) + 'ms" aria-label="第 ' + LV[sh.id].n + ' 關 ' + LV[sh.id].name + '，' + p.stars + ' 粒星，完成 ' + p.done + ' / ' + p.n + '">' +
+        '<span class="med"><svg class="ring" viewBox="0 0 92 92" aria-hidden="true"><circle cx="46" cy="46" r="40" class="rbg"/><circle cx="46" cy="46" r="40" class="rfg" style="stroke-dasharray:' + (C * pct).toFixed(1) + ' ' + C.toFixed(1) + '"/></svg>' +
+        '<svg class="glyph" aria-hidden="true"><use href="#g-' + sh.id + '"/></svg><span class="num">' + LV[sh.id].n + '</span>' +
+        (done ? '<span class="seal" aria-hidden="true">通關</span>' : '') + (i === nextIdx ? '<span class="pawn" aria-hidden="true"></span>' : '') + '</span>' +
+        '<span class="nl"><b>' + LV[sh.id].name + '</b><span class="ns">' + ico('i-star') + p.stars + '/' + p.n + '</span></span></button>';
+    });
+    h += '</div></div>';
+    $('#mapView').innerHTML = h;
+    mapEntered = true;
+    // 新完成嘅關卡：路線點亮動畫
+    segs.forEach((s, i) => {
+      if (!s.done || S.lit[s.id]) return;
+      S.lit[s.id] = 1; save();
+      const p = $('.tr-lit[data-seg="' + i + '"]'); if (!p || RM || !p.getTotalLength) return;
+      const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+      void p.getBoundingClientRect(); p.style.transition = 'stroke-dashoffset 900ms cubic-bezier(.4,0,.2,1) 250ms'; p.style.strokeDashoffset = '0';
+      const nd = $$('.node')[i]; if (nd) { nd.classList.add('newdone'); }
+    });
+  }
+  function showMap() {
+    clearTimeout(advTimer); if (curScene) curScene.finish(true);
+    document.body.dataset.view = 'map';
+    $('#topTitle').textContent = '';
+    renderMap(); window.scrollTo(0, 0);
+    try { history.replaceState(null, '', '#map'); } catch (e) { /* ignore */ }
+  }
+
+  /* ---------- 重點框（摺疊） ---------- */
+  function keyBlock(b) {
+    if (b.type === 'text') return '<p class="kt">' + rich(b.v) + '</p>';
+    if (b.type === 'formula') return '<div class="kf">' + tex(b.v, true) + '</div>';
+    const rows = b.lines.map(l => {
+      let note = '';
+      if (l[1]) note = (l[1] === '相同' || l[1] === '不同') ? '<span class="dn">〔' + l[1] + '〕</span>' : '<span class="dn">◀ ' + esc(l[1]) + '</span>';
+      return '<div class="dl"><span class="dm">' + tex(l[0]) + '</span>' + note + '</div>';
+    }).join('');
+    return '<div class="dv">' + (b.head ? '<div class="dh">' + rich(b.head) + '</div>' : '') + rows + '</div>';
+  }
+  const keySection = s => '<div class="ksec"><h3>' + esc(s.title) + '</h3><div class="kbody">' + s.blocks.map(keyBlock).join('') + '</div></div>';
+  const CORE = {
+    s30: ['$k(x+y)=kx+ky$'],
+    s31a: ['左右兩方化簡後完全相同 ⇒ $\\equiv$'],
+    s31b: ['比較 $x$ 的係數，再比較常數項'],
+    s32: ['$(a+b)^2\\equiv a^2+2ab+b^2$', '$(a-b)^2\\equiv a^2-2ab+b^2$'],
+    s33: ['$(a+b)(a-b)\\equiv a^2-b^2$']
+  };
+
+  /* ---------- 精簡提示（每層一句，最多兩層） ---------- */
+  const T$ = s => '$' + A.texOf(s) + '$';
+  function hintsFor(u, stage) {
+    const v = u.v || {}, id = u.id;
+    switch (v.k) {
+      case 'sq':
+        if (stage === 1) return ['括號入面第一項係 a，第二項係 b', 'a = ' + T$(v.a) + '，b = ' + T$(v.b)];
+        if (stage === 2) return ['a²、2ab、b² 逐個計', 'a² = ' + T$(v.t1)];
+        return ['三項照次序砌埋，睇清楚符號', '$a^2' + (v.form === '-' ? '-' : '+') + '2ab+b^2$'];
+      case 'dsq':
+        if (stage === 1) return ['相同嗰項係 a，另一項係 b', 'a = ' + T$(v.a) + '，b = ' + T$(v.b)];
+        if (stage === 2) return ['a²、b² 逐個計', 'a² = ' + T$(v.t1)];
+        return ['公式係 a² − b²', '中間係減號'];
+      case 'tf': return ['左右兩方分別化簡', '睇 x 項同常數項係咪一樣'];
+      case 'proof':
+        if (stage === 1) return ['先化簡左方', '乘開括號，合併同類項'];
+        if (stage === 2) return ['同樣化簡右方', '乘開括號，合併同類項'];
+        return ['左右一樣就係 ＝', '唔一樣就係 ≠，唔係恆等式'];
+      case 'const':
+        if (v.expand && stage === 1) return ['先乘開左方', '逐項相乘，合併同類項'];
+        return ['對應項嘅係數要相等', '留意右方有冇負號'];
+      case 'solve': return ['移項要變號', '兩邊同除 x 嘅係數'];
+      case 'subst':
+        return /[ab]$/.test(id) && /7a|8a/.test(id) ? ['先代入，再計算', '括號入面先計'] : ['代入後解方程', '移項，再除以 x 嘅係數'];
+      case 'equiv':
+        if (/^s30-1/.test(id)) return ['撤去括號，再合併同類項', '括號前係＋，符號不變'];
+        if (/^s30-2/.test(id)) return ['撤去括號，再合併同類項', '減號後面每項要變號'];
+        if (/^s30-3/.test(id)) return ['括號外嘅要乘晒入面每項', 'k(x+y)=kx+ky'];
+        return ['四項逐項相乘，再合併', '先乘開，後合併同類項'];
+      default: return ['再睇清楚題目', '一步一步嚟'];
+    }
+  }
+
+  /* ---------- 多項式 → LaTeX（演示用） ---------- */
+  const one = p => { const k = Object.keys(p)[0]; return k === undefined ? null : { k, c: p[k].c, m: p[k].m }; };
+  const degOf = m => Object.keys(m).reduce((s, v) => s + (/[a-z]/.test(v) ? m[v] : 0), 0);
+  function monoTex(c, m, lead) {
+    const vars = Object.keys(m).filter(k => m[k] > 0).sort();
+    const neg = c.n < 0, n = Math.abs(c.n);
+    const coef = (n === c.d && vars.length) ? '' : (c.d === 1 ? String(n) : '\\tfrac{' + n + '}{' + c.d + '}');
+    return (neg ? '-' : (lead ? '' : '+')) + coef + vars.map(v => v + (m[v] > 1 ? '^{' + m[v] + '}' : '')).join('');
+  }
+  function polyTex(p) {
+    const ks = Object.keys(p).sort((a, b) => degOf(p[b].m) - degOf(p[a].m));
+    if (!ks.length) return '0';
+    return ks.map((k, i) => monoTex(p[k].c, p[k].m, i === 0)).join('');
+  }
+  const signed = t => monoTex(t.c, t.m, false);
+  function rawTerms(n) {
+    switch (n.t) {
+      case 'num': return [A.parse(n.v).poly];
+      case 'var': return [A.parse(n.name).poly];
+      case 'paren': return rawTerms(n.e);
+      case 'neg': return rawTerms(n.e).map(p => A.pmul(p, A.pconst(A.F(-1))));
+      case 'add': return rawTerms(n.l).concat(rawTerms(n.r));
+      case 'sub': return rawTerms(n.l).concat(rawTerms(n.r).map(p => A.pmul(p, A.pconst(A.F(-1)))));
+      case 'mul': { const L = rawTerms(n.l), R = rawTerms(n.r), o = []; L.forEach(a => R.forEach(b => o.push(A.pmul(a, b)))); return o; }
+      case 'pow': { let r = [A.pconst(A.F(1))]; const B = rawTerms(n.b); for (let i = 0; i < n.e; i++) { const o = []; r.forEach(a => B.forEach(b => o.push(A.pmul(a, b)))); r = o; } return r; }
+    }
+    throw new Error('raw');
+  }
+  const termsOf = str => rawTerms(A.parse(str).ast).filter(p => Object.keys(p).length).map(one);
+
+  /* ---------- 演示時間軸（可略過；減少動態效果時直接到位） ---------- */
+  function makeScene(onEnd) {
+    const sc = { items: [], ended: false, skipping: RM, t0: Date.now() };
+    const run = it => { if (it.done) return; it.done = true; try { it.fn(); } catch (e) { /* 演示出錯唔影響作答 */ } };
+    sc.at = (ms, fn) => { const it = { fn, done: false }; sc.items.push(it); if (sc.skipping || sc.ended) run(it); else it.t = setTimeout(() => run(it), Math.max(0, ms - (Date.now() - sc.t0))); };
+    sc.finish = silent => {
+      if (sc.ended) return; sc.skipping = true;
+      for (let i = 0; i < sc.items.length; i++) { clearTimeout(sc.items[i].t); run(sc.items[i]); }
+      sc.ended = true; if (curScene === sc) curScene = null; if (!silent && onEnd) onEnd();
+    };
+    return sc;
+  }
+  function flip(els, mutate, dur) {
+    const first = new Map(els.map(e => [e, e.getBoundingClientRect()]));
+    mutate();
+    if (RM) return;
+    els.forEach(e => {
+      if (!e.isConnected) return;
+      const a = first.get(e), b = e.getBoundingClientRect(), dx = a.left - b.left, dy = a.top - b.top;
+      if (!dx && !dy) return;
+      e.style.transition = 'none'; e.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; void e.offsetWidth;
+      e.style.transition = 'transform ' + dur + 'ms cubic-bezier(.2,.8,.2,1)'; e.style.transform = '';
+    });
+  }
+  function gather(sc, at, first, others, newTex) {
+    sc.at(at, () => {
+      others.forEach(o => {
+        const a = o.getBoundingClientRect(), b = first.getBoundingClientRect();
+        o.style.transition = 'transform 280ms ease-in, opacity 280ms'; o.style.transform = 'translate(' + (b.left - a.left) + 'px,' + (b.top - a.top) + 'px) scale(.7)'; o.style.opacity = '0';
+      });
+    });
+    sc.at(at + 300, () => {
+      others.forEach(o => o.remove());
+      if (newTex === null) { first.classList.add('gone'); return; }
+      first.dataset.t = newTex; first.innerHTML = tex(newTex); tidy(first.parentNode); first.classList.remove('pop'); void first.offsetWidth; first.classList.add('pop');
+    });
+  }
+  const lead = t => String(t).replace(/^\+/, '');
+  function tidy(box) { $$('.chip', box).forEach((c, i) => { const t = c.dataset.t; if (t !== undefined) c.innerHTML = tex(i === 0 ? lead(t) : t); }); }
+  const chip = (t, k, extra) => '<span class="chip' + (extra || '') + '" data-k="' + esc(k) + '" data-t="' + esc(t) + '">' + tex(t) + '</span>';
+  const stampHTML = t => '<div class="sc-final">' + tex(t) + '<span class="sc-ok" aria-hidden="true"><svg viewBox="0 0 24 24" class="ck"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>';
+
+  /* 1. 熱身營地：同類項卡片飛埋一齊 */
+  function sceneMerge(u, st, sc) {
+    const v = u.v, terms = termsOf(v.e), order = Object.keys(A.parse(v.a).poly);
+    st.innerHTML = '<div class="sc-src">' + tex(A.texOf(v.e)) + '</div><div class="chips">' + terms.map((t, i) => chip(signed(t), t.k, ' in')).join('') + '</div><div class="sc-out"></div>';
+    $$('.chip', st).forEach((c, i) => c.style.animationDelay = (i * 60) + 'ms'); tidy($('.chips', st));
+    const box = $('.chips', st), rank = k => { const i = order.indexOf(k); return i < 0 ? 99 : i; };
+    sc.at(450, () => {
+      const els = $$('.chip', box);
+      flip(els, () => { els.slice().sort((a, b) => rank(a.dataset.k) - rank(b.dataset.k)).forEach(e => box.appendChild(e)); tidy(box); }, 420);
+    });
+    const keys = []; terms.forEach(t => { if (keys.indexOf(t.k) < 0) keys.push(t.k); });
+    keys.forEach(k => {
+      const grp = terms.filter(t => t.k === k); if (grp.length < 2) return;
+      let sum = {}; grp.forEach(t => { const p = {}; p[t.k] = { c: t.c, m: t.m }; sum = A.padd(sum, p); });
+      const s1 = one(sum);
+      sc.at(950, () => {
+        const els = $$('.chip', box).filter(e => e.dataset.k === k);
+        gather(sc, 960, els[0], els.slice(1), s1 ? signed(s1) : null);
+      });
+    });
+    sc.at(1350, () => { $('.sc-out', st).innerHTML = stampHTML(A.texOf(v.e) + '=' + A.texOf(v.a)); });
+    sc.at(1700, () => sc.finish());
+  }
+
+  /* 1b. 熱身營地（方程／代入）：卡片過「＝」要變號，同類項合併 */
+  function sceneMove(u, st, sc) {
+    const v = u.v; let L, R, x, val;
+    if (v.k === 'solve') { [L, R] = v.eq.split('='); x = 'x'; val = v.a; }
+    else { [L, R] = v.f.split('='); const g = v.given; const sub = s => s.replace(/[A-Za-z]/g, ch => (g[ch] !== undefined ? '(' + g[ch] + ')' : ch)); L = sub(L); R = sub(R); x = v.solve; val = v.a; }
+    const tl = termsOf(L), tr = termsOf(R);
+    const hasV = t => Object.keys(t.m).length > 0;
+    st.innerHTML = '<div class="eqrow"><div class="side sl" data-side="L">' + tl.map(t => chip(signed(t), hasV(t) ? 'v' : 'c', ' in')).join('') + '</div><span class="eqs">=</span><div class="side sr" data-side="R">' + tr.map(t => chip(signed(t), hasV(t) ? 'v' : 'c', ' in')).join('') + '</div></div><div class="sc-out"></div>';
+    const data = new Map(); $$('.sl .chip', st).forEach((e, i) => data.set(e, tl[i])); $$('.sr .chip', st).forEach((e, i) => data.set(e, tr[i]));
+    const sl = $('.sl', st), sr = $('.sr', st); tidy(sl); tidy(sr);
+    sc.at(450, () => {
+      const els = $$('.chip', st);
+      flip(els, () => {
+        els.forEach(e => {
+          const t = data.get(e), inL = e.parentNode === sl;
+          if ((hasV(t) && !inL) || (!hasV(t) && inL)) {
+            const nt = { k: t.k, c: A.F(-t.c.n, t.c.d), m: t.m }; data.set(e, nt);
+            e.dataset.t = signed(nt); e.classList.add('flipsign');
+            (inL ? sr : sl).appendChild(e);
+          }
+        });
+        tidy(sl); tidy(sr);
+        if (!sr.children.length) sr.innerHTML = chip('0', 'c');
+      }, 460);
+    });
+    [sl, sr].forEach(side => sc.at(1000, () => {
+      const els = $$('.chip', side); if (els.length < 2) return;
+      let sum = {}; els.forEach(e => { const t = data.get(e); if (!t) return; const p = {}; p[t.k] = { c: t.c, m: t.m }; sum = A.padd(sum, p); });
+      const s1 = one(sum); gather(sc, 1010, els[0], els.slice(1), s1 ? monoTex(s1.c, s1.m, true) : '0');
+      if (s1) data.set(els[0], s1);
+    }));
+    sc.at(1450, () => {
+      $('.sc-out', st).innerHTML = stampHTML(x + '=' + val);
+    });
+    sc.at(1800, () => sc.finish());
+  }
+
+  /* 2. 天秤神殿：化簡後放上天秤，平衡 ≡，傾側 ≠ */
+  function scaleHTML(L, R) {
+    return '<div class="scale"><span class="s-post"></span><span class="s-base"></span><span class="beam"></span>' +
+      '<span class="pan pl"><span class="str"></span><span class="plate">' + tex(L) + '</span></span><span class="pan pr"><span class="str"></span><span class="plate">' + tex(R) + '</span></span><span class="sign"></span></div>';
+  }
+  /* 天秤角度：橫樑轉，兩個秤盤跟住樑尾移動但保持水平 */
+  function setTilt(scl, deg) {
+    const W = scl.clientWidth || 300, cx = W / 2, y0 = 30, Lh = W * 0.3, r = deg * Math.PI / 180;
+    scl.style.setProperty('--r', deg + 'deg');
+    const beam = $('.beam', scl); beam.style.width = (2 * Lh) + 'px'; beam.style.left = (cx - Lh) + 'px';
+    const pl = $('.pl', scl), pr = $('.pr', scl);
+    pl.style.left = (cx - Lh * Math.cos(r)) + 'px'; pl.style.top = (y0 - Lh * Math.sin(r)) + 'px';
+    pr.style.left = (cx + Lh * Math.cos(r)) + 'px'; pr.style.top = (y0 + Lh * Math.sin(r)) + 'px';
+  }
+  function tiltOf(Ls, Rs) {
+    for (const x of [2, 3, -1, 5]) {
+      const l = A.substitute(Ls, { x: A.F(x) }), r = A.substitute(Rs, { x: A.F(x) });
+      if (l && r && !A.feq(l.value, r.value)) return A.fnum(l.value) > A.fnum(r.value) ? -12 : 12;
+    }
+    return 12;
+  }
+  function settleScale(sc, st, Ls, Rs, ident, t0) {
+    const scl = $('.scale', st);
+    sc.at(t0, () => {
+      $$('.plate', scl).forEach((p, i) => { p.classList.add('swap'); });
+    });
+    sc.at(t0 + 200, () => {
+      const pl = $$('.plate', scl); pl[0].innerHTML = tex(Ls); pl[1].innerHTML = tex(Rs); pl.forEach(p => p.classList.remove('swap'));
+    });
+    sc.at(t0 + 500, () => {
+      setTilt(scl, ident ? 0 : tiltOf(Ls, Rs));
+      const s = $('.sign', scl); s.innerHTML = tex(ident ? '\\equiv' : '\\neq'); s.className = 'sign show ' + (ident ? 'eq' : 'ne');
+      scl.classList.toggle('level', ident); scl.classList.toggle('tilt', !ident);
+    });
+  }
+  function sceneScale(u, st, sc) {
+    const v = u.v;
+    const Ls = v.k === 'tf' ? polyTex(A.parse(v.L).poly) : A.texOf(v.Ls), Rs = v.k === 'tf' ? polyTex(A.parse(v.R).poly) : A.texOf(v.Rs);
+    const ident = v.k === 'tf' ? v.a : v.ident;
+    if (v.k !== 'tf') { st.innerHTML = scaleHTML(A.texOf(v.L), A.texOf(v.R)); setTilt($('.scale', st), 6); }
+    settleScale(sc, st, Ls, Rs, ident, 250);
+    sc.at(1500, () => sc.finish());
+  }
+
+  /* 3. 密碼鎖：連線對應係數，密碼輪轉到正確值 */
+  function sceneLock(u, st, sc) {
+    const v = u.v, un = Object.keys(v.un);
+    const split = poly => {
+      const g = {};
+      Object.keys(poly).forEach(k => {
+        const m = poly[k].m, xm = {}, um = {};
+        Object.keys(m).forEach(q => { (un.indexOf(q) >= 0 ? um : xm)[q] = m[q]; });
+        const xk = Object.keys(xm).sort().map(q => q + xm[q]).join('');
+        (g[xk] = g[xk] || { xm, list: [] }).list.push({ c: poly[k].c, m: um });
+      });
+      return g;
+    };
+    const Lg = split(A.parse(v.lhs).poly), Rg = split(A.parse(v.rhs).poly);
+    const cols = Object.keys(Object.assign({}, Lg, Rg)).sort((a, b) => degOf((Lg[b] || Rg[b]).xm) - degOf((Lg[a] || Rg[a]).xm));
+    const xTex = xm => Object.keys(xm).sort().map(q => q + (xm[q] > 1 ? '^{' + xm[q] + '}' : '')).join('');
+    const side = (g, k) => {
+      if (!g[k]) return { t: '0', u: false };
+      const xm = g[k].xm, list = g[k].list, hasU = list.some(t => Object.keys(t.m).length);
+      const xs = xTex(xm);
+      if (list.length === 1) return { t: monoTex(list[0].c, Object.assign({}, list[0].m, xm), true), u: hasU };
+      const inner = list.map((t, i) => monoTex(t.c, t.m, i === 0)).join('');
+      return { t: xs ? '(' + inner + ')' + xs : inner, u: hasU };
+    };
+    let h = '<div class="lock"><div class="lrow lt">' + cols.map(k => '<span class="lcell">' + tex(side(Lg, k).t) + '</span>').join('') + '</div><div class="lrow lw">' +
+      cols.map(k => '<span class="wire' + ((side(Lg, k).u || side(Rg, k).u) ? ' key' : '') + '"></span>').join('') + '</div><div class="lrow lb">' +
+      cols.map(k => '<span class="lcell">' + tex(side(Rg, k).t) + '</span>').join('') + '</div></div><div class="dials">';
+    un.forEach(q => {
+      const val = v.un[q], nums = []; for (let i = 7; i >= 0; i--) nums.push(val - i);
+      h += '<span class="dial"><span class="dl-l">' + tex(q + '=') + '</span><span class="win"><span class="strip" style="--n:7">' + nums.map(n => '<span>' + tex(String(n)) + '</span>').join('') + '</span></span></span>';
+    });
+    st.innerHTML = h + '</div>';
+    st.querySelector('.lock').style.setProperty('--cols', cols.length);
+    $$('.wire', st).forEach((w, i) => sc.at(200 + i * 220, () => w.classList.add('on')));
+    const t1 = 200 + cols.length * 220;
+    $$('.dial', st).forEach((d, i) => sc.at(t1 + i * 200, () => d.classList.add('roll')));
+    sc.at(t1 + un.length * 200 + 650, () => { $$('.dial', st).forEach(d => d.classList.add('open')); });
+    sc.at(t1 + un.length * 200 + 950, () => sc.finish());
+  }
+
+  /* 4. 方塊工場：面積模型，睇到中間項點解係 2ab */
+  function sceneArea(u, st, sc) {
+    const v = u.v, minus = v.form === '-';
+    const ab = polyTex(A.pmul(A.parse(v.a).poly, A.parse(v.b).poly));
+    const ta = A.texOf(v.a), tb = A.texOf(v.b), t1 = A.texOf(v.t1), t2 = A.texOf(v.t2), t3 = A.texOf(v.t3);
+    const edges = (x, y) => '<span></span><div class="etop"><span>' + tex(x) + '</span><span>' + tex(y) + '</span></div><div class="eleft"><span>' + tex(x) + '</span><span>' + tex(y) + '</span></div>';
+    if (!minus) {
+      const p = 60;
+      st.innerHTML = '<div class="area plus" style="--p:' + p + '%">' + edges(ta, tb) +
+        '<div class="sq"><span class="pc a2">' + tex(t1) + '</span><span class="pc ab1">' + tex(ab) + '</span><span class="pc ab2">' + tex(ab) + '</span><span class="pc b2">' + tex(t3) + '</span></div></div>' +
+        '<div class="sc-cap"></div><div class="sc-out"></div>';
+      ['a2', 'ab1', 'ab2', 'b2'].forEach((c, i) => sc.at(200 + i * 230, () => $('.' + c, st).classList.add('on')));
+      sc.at(1150, () => { $$('.ab1,.ab2', st).forEach(e => e.classList.add('pair')); $('.sc-cap', st).innerHTML = tex(ab + '+' + ab + '=2ab=' + t2); });
+    } else {
+      const q = 62;
+      st.innerHTML = '<div class="area minus" style="--p:' + q + '%">' + edges(A.texOf(v.a + '-' + v.b), tb) +
+        '<div class="sq"><span class="pc full on">' + tex(t1) + '</span><span class="pc sr">' + tex('-' + ab) + '</span><span class="pc sb">' + tex('-' + ab) + '</span><span class="pc cn">' + tex('+' + t3) + '</span><span class="pc in">' + tex('(' + ta + '-' + tb + ')^2') + '</span></div></div>' +
+        '<div class="sc-cap"></div><div class="sc-out"></div>';
+      sc.at(300, () => { $('.full', st).classList.add('dim'); $('.sr', st).classList.add('on'); });
+      sc.at(600, () => $('.sb', st).classList.add('on'));
+      sc.at(900, () => $('.cn', st).classList.add('on'));
+      sc.at(1150, () => { $('.in', st).classList.add('on'); $('.sc-cap', st).innerHTML = tex(t1 + '-' + ab + '-' + ab + '+' + t3); });
+    }
+    sc.at(1450, () => { $('.sc-out', st).innerHTML = stampHTML(A.texOf(v.expr) + '=' + A.texOf(v.ans)); });
+    sc.at(1800, () => sc.finish());
+  }
+
+  /* 5. 切割實驗室：a² 切走 b²，剪出嘅長條轉 90° 拼成 (a+b)(a−b) */
+  function sceneCut(u, st, sc) {
+    const v = u.v, b = 0.36, W = (st.clientWidth || 300) - 70, S = Math.round(Math.max(120, Math.min(170, W / (1 + b))));
+    const ta = A.texOf(v.a), tb = A.texOf(v.b);
+    const Sb = Math.round(S * b), Sa = S - Sb;
+    st.innerHTML = '<div class="cut" style="width:' + (S + Sb) + 'px;height:' + (S + 4) + 'px">' +
+      '<span class="pc p1" style="width:' + S + 'px;height:' + Sa + 'px">' + tex(A.texOf(v.t1)) + '</span>' +
+      '<span class="pc p2" style="top:' + Sa + 'px;width:' + Sa + 'px;height:' + Sb + 'px"></span>' +
+      '<span class="pc p3" style="left:' + Sa + 'px;top:' + Sa + 'px;width:' + Sb + 'px;height:' + Sb + 'px">' + tex(A.texOf(v.t3)) + '</span>' +
+      '<span class="frame" style="width:' + (S + Sb) + 'px;height:' + Sa + 'px"><span class="fe ft">' + tex(A.texOf(v.a + '+' + v.b)) + '</span><span class="fe fl">' + tex(A.texOf(v.a + '-' + v.b)) + '</span></span>' +
+      '</div><div class="sc-cap"></div><div class="sc-out"></div>';
+    sc.at(250, () => $('.p3', st).classList.add('cutting'));
+    sc.at(600, () => { $('.p3', st).classList.add('away'); $('.sc-cap', st).innerHTML = tex(A.texOf(v.t1) + '-' + A.texOf(v.t3)); });
+    sc.at(900, () => { const p2 = $('.p2', st); p2.style.transform = 'translate(' + (S * (0.5 + b)).toFixed(1) + 'px,' + (-S / 2).toFixed(1) + 'px) rotate(90deg)'; p2.classList.add('moved'); });
+    sc.at(1500, () => { $('.frame', st).classList.add('on'); $('.sc-out', st).innerHTML = stampHTML(A.texOf(v.expr) + '=' + A.texOf(v.ans)); });
+    sc.at(1900, () => sc.finish());
+  }
+
+  function playScene(u, card, onEnd) {
+    const box = $('.scene', card), st = $('.sc-stage', box);
+    let fn = null;
+    if (u.sheet === 's30') fn = u.v.k === 'equiv' ? sceneMerge : sceneMove;
+    else if (u.sheet === 's31a') fn = sceneScale;
+    else if (u.sheet === 's31b') fn = sceneLock;
+    else if (u.sheet === 's32') fn = sceneArea;
+    else if (u.sheet === 's33') fn = sceneCut;
+    if (!fn) { onEnd(); return; }
+    if (curScene) curScene.finish(true);
+    const sc = makeScene(() => { box.classList.add('ended'); onEnd(); });
+    curScene = sc;
+    box.hidden = false; box.classList.remove('ended');
+    try { fn(u, st, sc); } catch (e) { sc.finish(); return; }
+    if (!sc.ended && box.scrollIntoView && !RM) { try { box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) { /* ignore */ } }
+    const sk = $('.sc-skip', box); if (sk) sk.onclick = () => sc.finish();
+  }
+
+  /* ---------- 欄位 HTML ---------- */
+  function fieldHTML(f) {
+    if (f.f === 'poly') {
+      const size = Math.max((f.id === 'ans' || f.id === 'ex' || f.id === 'l' || f.id === 'r') ? 10 : 5, f.ans.length + 2);
+      return '<span class="fw"><input class="fld poly" data-id="' + f.id + '" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" size="' + size + '" aria-label="輸入答案"><span class="mark" aria-hidden="true"></span><span class="pv" aria-hidden="true"></span></span>';
+    }
+    if (f.f === 'num') return '<span class="fw"><input class="fld num" data-id="' + f.id + '" type="text" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" size="3" aria-label="輸入數值"><span class="mark" aria-hidden="true"></span></span>';
+    if (f.f === 'op') return '<span class="fw"><select class="fld op" data-id="' + f.id + '" aria-label="揀運算符號"><option value=""></option><option value="+">＋</option><option value="-">－</option></select><span class="mark" aria-hidden="true"></span></span>';
+    if (f.f === 'sel') return '<span class="fw"><select class="fld sel" data-id="' + f.id + '" aria-label="揀答案">' + f.options.map((o, i) => '<option value="' + (i ? i : '') + '">' + esc(o) + '</option>').join('') + '</select><span class="mark" aria-hidden="true"></span></span>';
+    if (f.f === 'tf') return '<span class="fw tfw"><span class="tfg" data-id="' + f.id + '" role="group" aria-label="是否恆等式"><button type="button" class="tfb" data-v="1" aria-pressed="false">✓ 是恆等式</button><button type="button" class="tfb" data-v="0" aria-pressed="false">✗ 不是</button></span><span class="mark" aria-hidden="true"></span><span class="po">☐ 是　☐ 不是</span></span>';
+    return '';
+  }
+  const segHTML = s => s.t === 'tex' ? '<span class="m">' + tex(s.v) + '</span>' : s.t === 'txt' ? '<span class="t">' + rich(s.v) + '</span>' : fieldHTML(s);
+  const sceneBox = live => '<div class="scene' + (live ? ' live' : '') + '" aria-hidden="true"' + (live ? '' : ' hidden') + '><div class="sc-stage"></div>' + (live ? '' : '<button type="button" class="ib sc-skip" aria-label="略過動畫">' + ico('i-skip') + '</button>') + '</div>';
+
+  function unitHTML(u, q, isLast) {
+    const showPrompt = u.pr || (!q.stem && u.kind !== 'proof');
+    const rows = u.rows.map(r => '<div class="row' + (r.stage > 1 ? ' stg-off' : '') + '" data-stage="' + r.stage + '">' + r.segs.map(segHTML).join('') + '</div>').join('');
+    const m2 = u.m2 ? '<details class="m2"><summary>方法二：代入 x 值</summary><div class="m2b"><span>x =</span> <input class="fld m2x" type="text" inputmode="text" size="3" autocomplete="off" aria-label="輸入 x 的值"> <button type="button" class="btn m2go">代入</button><div class="m2out" aria-live="polite"></div></div></details>' : '';
+    const live = u.v && u.v.k === 'tf';
+    return '<article class="unit' + (isLast ? ' chal' : '') + '" id="u-' + u.id + '" data-uid="' + u.id + '">' +
+      '<div class="uh">' + (isLast ? '<span class="chalband">' + ico('i-swords') + '<span>挑戰題</span></span>' : '') + (u.label ? '<span class="ul">' + esc(u.label) + '</span>' : '') + (showPrompt ? '<span class="up">' + (u.pr ? rich(u.pr) : tex(u.prompt)) + '</span>' : '') +
+      '<span class="ic"><span class="badge" data-badge></span><button type="button" class="ib act-hint" aria-label="提示" title="提示">' + ico('i-bulb') + '</button><button type="button" class="ib act-sol" aria-label="看解答" title="看解答" aria-disabled="true">' + ico('i-book') + '</button></span></div>' +
+      (live ? sceneBox(true) : '') +
+      '<div class="ub">' + rows + '</div>' + m2 + (live ? '' : sceneBox(false)) +
+      '<div class="fb" role="status" aria-live="polite"></div><div class="hintbox" hidden></div><div class="solbox" hidden></div>' +
+      '<button type="button" class="btn primary big act-check">檢查</button>' +
+      '<span class="stamp" aria-hidden="true"><svg viewBox="0 0 24 24" class="ck"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>' +
+      '<div class="ans-space" aria-hidden="true"></div></article>';
+  }
+
+  /* ---------- 工作紙頁面（關卡） ---------- */
+  function sheetHTML(sh) {
+    const us = unitsOf(sh.id), lv = LV[sh.id];
+    let h = '<header class="shead"><div class="print-id">姓名：<span class="ln"></span>（　）　班別：<span class="ln s"></span>　日期：<span class="ln s"></span></div>' +
+      '<div class="banner"><span class="bmed"><svg class="glyph" aria-hidden="true"><use href="#g-' + sh.id + '"/></svg></span><div class="btxt"><span class="blv">第 ' + lv.n + ' 關</span><h1>' + esc(lv.name) + '</h1><span class="bsub">' + esc(sh.name) + '</span></div>' +
+      '<div class="bstar">' + ico('i-star') + '<span id="lvStars"></span></div><div class="bbar"><i id="lvBar"></i></div></div>' +
+      '<details class="eg"><summary><span class="core">' + CORE[sh.id].map(c => '<span class="cf">' + rich(c) + '</span>').join('') + '</span><span class="egbtn">' + ico('i-book') + '睇例題</span></summary>' +
+      '<div class="egbody"><div class="goals"><strong>學習目標</strong><ul>' + sh.goals.map(g => '<li>' + rich(g) + '</li>').join('') + '</ul></div>' +
+      sh.key.concat(sh.groups.filter(g => g.key).map(g => g.key)).map(keySection).join('') + '</div></details>' +
+      '<nav class="dots" aria-label="題目進度">' + us.map((u, i) => '<button type="button" class="dot" data-i="' + i + '">○</button>').join('') + '</nav></header>';
+    let i = 0;
+    sh.groups.forEach(gr => {
+      gr.qs.forEach((q, qi) => {
+        const p0 = q.parts[0];
+        let stem = q.stem || '';
+        if (!stem && p0.kind === 'proof') stem = '證明 $' + p0.prompt + '$ ' + (p0.m2 ? '不是' : '是') + '恆等式。';
+        q.parts.forEach((u, pi) => {
+          h += '<section class="qwrap' + (qi === 0 && pi === 0 ? ' gfirst' : '') + (pi === 0 ? ' pfirst' : '') + '" data-i="' + i + '">' +
+            (gr.instr ? '<h2 class="instr">' + rich(gr.instr) + '</h2>' : '') + (gr.note ? '<p class="gnote">' + rich(gr.note) + '</p>' : '') +
+            '<div class="qh"><span class="qn">' + q.no + '.</span><span class="qs">' + (stem ? rich(stem) : '') + '</span>' + (q.tag ? '<span class="qtag">' + esc(q.tag) + '</span>' : '') + '</div>' +
+            unitHTML(u, q, i === us.length - 1) + '</section>';
+          i++;
+        });
+      });
+    });
+    h += '<div class="navrow"><button type="button" class="btn nav" id="prevQ">◀ 上一題</button><span id="posText" aria-live="polite"></span><button type="button" class="btn nav" id="nextQ">下一題 ▶</button></div>';
+    return h;
+  }
+  function initLiveScales() {
+    unitsOf(S.cur).forEach(u => {
+      if (!u.v || u.v.k !== 'tf') return;
+      const card = $('#u-' + u.id), st = $('.scene.live .sc-stage', card);
+      st.innerHTML = scaleHTML(A.texOf(u.v.L), A.texOf(u.v.R)); setTilt($('.scale', st), 0);
+      if (S.u[u.id]) { const sc = makeScene(); sc.skipping = true; sceneScale(u, st, sc); }
+    });
+  }
+
+  function showIdx(i, noScroll) {
+    const us = unitsOf(S.cur), prev = IDX; IDX = Math.max(0, Math.min(us.length - 1, i));
+    clearTimeout(advTimer); if (curScene) curScene.finish(true);
+    $$('.qwrap').forEach((w, k) => { w.classList.toggle('cur', k === IDX); w.classList.remove('in-r', 'in-l'); });
+    const cw = $('.qwrap.cur'); if (cw && prev !== IDX && !RM) cw.classList.add(IDX > prev ? 'in-r' : 'in-l');
+    $('#prevQ').disabled = IDX === 0; $('#nextQ').disabled = IDX === us.length - 1;
+    $('#posText').textContent = (IDX + 1) + ' / ' + us.length;
+    updateDots();
+    if (!noScroll && cw && cw.getBoundingClientRect) { const top = cw.getBoundingClientRect().top; if (top < 60 || top > window.innerHeight * 0.6) { try { window.scrollTo({ top: Math.max(0, window.scrollY + top - 70), behavior: RM ? 'auto' : 'smooth' }); } catch (e) { /* ignore */ } } }
+  }
+  function bumpEdge(dir) { const w = $('.qwrap.cur'); if (!w || RM) return; w.classList.remove('edge-l', 'edge-r'); void w.offsetWidth; w.classList.add(dir < 0 ? 'edge-l' : 'edge-r'); }
+
+  function renderSheet(id) {
+    S.cur = id; save();
+    document.body.dataset.sheet = id;
+    $('#main').innerHTML = sheetHTML(SHEET_BY_ID[id]);
+    UNITS.filter(u => u.sheet === id).forEach(u => { RT[u.id] = null; badge(u); });
+    initLiveScales();
+    const us = unitsOf(id); let first = us.findIndex(u => !S.u[u.id]); if (first < 0) first = 0;
+    IDX = first; showIdx(first, true); updateProgress();
+  }
+  function showSheet(id, noScroll) {
+    if (curScene) curScene.finish(true);
+    renderSheet(id);
+    document.body.dataset.view = 'level';
+    $('#topTitle').textContent = '第 ' + LV[id].n + ' 關　' + LV[id].name;
+    if (!noScroll) window.scrollTo(0, 0);
+    try { history.replaceState(null, '', '#' + id); } catch (e) { /* ignore */ }
+    G.say('explain', START[id]);
+  }
+
+  /* ---------- 檢查（回饋短句；詳細解釋放喺「點解？」） ---------- */
+  const polyCache = {};
+  const polyOf = s => polyCache[s] || (polyCache[s] = A.parse(s).poly);
+  function readField(card, f) {
+    if (f.f === 'tf') { const g = card.querySelector('[data-id="' + f.id + '"]'); const p = g.querySelector('[aria-pressed="true"]'); return p ? p.dataset.v : ''; }
+    const el = card.querySelector('[data-id="' + f.id + '"]'); return el ? el.value : '';
+  }
+  const fieldEl = (card, f) => card.querySelector('[data-id="' + f.id + '"]');
+  function shorten(m) {
+    if (/漏咗中間項/.test(m)) return '漏咗中間項 2ab';
+    if (/中間項嘅正負號/.test(m)) return '中間項正負號錯';
+    if (/符號好似/.test(m)) return '睇下負號';
+    if (/漏咗「/.test(m)) return '好似漏咗一項';
+    if (/多咗「/.test(m)) return '多咗一項';
+    return '有項係數未啱';
+  }
+  function checkField(u, f, val) {
+    const E = { ok: false, empty: true, msg: '仲有格未填' };
+    if (f.f === 'op') return val === '' ? E : { ok: val === f.ans, msg: '符號再諗諗', why: '括號前面係加定減？減號會令括號入面每項變號。' };
+    if (f.f === 'sel') {
+      if (val === '') return E;
+      const m = { cmp: '再比較左右兩方', concl: '睇返上一行結果', form: '睇清楚加定減' };
+      return { ok: Number(val) === f.ans, msg: m[f.id] || '再諗諗' };
+    }
+    if (f.f === 'tf') { if (val === '') return E; const ok = (val === '1') === f.ans; return { ok, msg: '再化簡左右兩方', why: '分別化簡左方同右方，睇下係咪完全一樣。' }; }
+    const r = A.parse(val);
+    if (!r.ok) return r.empty ? E : { ok: false, msg: '式子睇唔明', why: r.error };
+    if (f.f === 'num') {
+      const c = A.constVal(r.poly), e = A.constVal(A.parse(f.ans).poly);
+      if (!c) return { ok: false, msg: '要填一個數值', why: '呢格唔使有字母，填返一個數值。' };
+      if (A.feq(c, e)) return { ok: true };
+      if (A.feq(c, A.F(-e.n, e.d))) return { ok: false, msg: '睇下負號', why: '數值啱，不過正負號相反。' };
+      return { ok: false, msg: '再計一計' };
+    }
+    const Ex = polyOf(f.ans);
+    if (A.peq(r.poly, Ex)) {
+      if (f.simp !== false && !r.simplified) return { ok: false, msg: '未化簡完', why: '答案等價，但仲有括號，或者同類項未合併。' };
+      return { ok: true };
+    }
+    const d = A.diagnose(r.poly, Ex, { mid: f.mid ? A.parse(f.mid).poly : null });
+    return d[0] ? { ok: false, msg: shorten(d[0]), why: d[0] } : { ok: false, msg: '再檢查一下' };
+  }
+  function setMark(el, ok) {
+    if (!el) return;
+    el.classList.remove('ok', 'bad');
+    const mk = el.nextElementSibling && el.nextElementSibling.classList.contains('mark') ? el.nextElementSibling : null;
+    if (ok === null) { if (mk) mk.textContent = ''; return; }
+    el.classList.add(ok ? 'ok' : 'bad');
+    if (mk) mk.textContent = ok ? '✓' : '✗';
+  }
+  function fieldSummary(card, f) {
+    const v = readField(card, f);
+    if (f.f === 'op') return v === '+' ? '＋' : '－';
+    if (f.f === 'sel') return esc(f.options[Number(v)] || '');
+    if (f.f === 'tf') return v === '1' ? '是恆等式' : '不是恆等式';
+    const r = A.parse(v); return r.ok ? tex(A.toTex(r.ast)) : esc(v);
+  }
+  function collapseStage(u, card, stage) {
+    const rows = $$('.row[data-stage="' + stage + '"]', card); if (!rows.length) return;
+    const parts = rows.map(r => {
+      const idx = $$('.row', card).indexOf(r), spec = u.rows[idx];
+      return spec.segs.map(s => s.t === 'tex' ? tex(s.v) : s.t === 'txt' ? rich(s.v) : fieldSummary(card, s)).join(' ');
+    });
+    const line = document.createElement('div'); line.className = 'sumline'; line.innerHTML = '<span class="sk" aria-hidden="true">✓</span> ' + parts.join('　');
+    rows[0].parentNode.insertBefore(line, rows[0]);
+    rows.forEach(r => r.classList.add('row-past'));
+  }
+  function cardFx(card, cls) { if (RM) return; card.classList.remove('fx-ok', 'fx-bad'); void card.offsetWidth; card.classList.add(cls); }
+
+  function checkUnit(u, card) {
+    const r = rt(u); r.attempts++;
+    clearTimeout(advTimer);
+    const fs = fieldsOf(u, r.stage);
+    let abOK = false;
+    if (u.sym) {
+      const fa = fs.filter(f => f.id === 'a')[0], fb = fs.filter(f => f.id === 'b')[0];
+      if (fa && fb) {
+        const pa = A.parse(readField(card, fa)), pb = A.parse(readField(card, fb));
+        if (pa.ok && pb.ok) {
+          const Ea = polyOf(fa.ans), Eb = polyOf(fb.ans);
+          if (A.peq(pa.poly, Eb) && A.peq(pb.poly, Ea)) { abOK = true; r.swap = !A.peq(Ea, Eb); }
+          else if (A.peq(pa.poly, Ea) && A.peq(pb.poly, Eb)) { abOK = true; r.swap = false; }
+        }
+      }
+    }
+    const results = [];
+    fs.forEach(f => {
+      let spec = f;
+      if (f.swapWith && r.swap) spec = Object.assign({}, f, { ans: fieldsOf(u).filter(x => x.id === f.swapWith)[0].ans });
+      const res = (u.sym && abOK && (f.id === 'a' || f.id === 'b')) ? { ok: true } : checkField(u, spec, readField(card, f));
+      setMark(fieldEl(card, f), res.ok);
+      results.push(res);
+    });
+    const bad = results.filter(x => !x.ok), fb = $('.fb', card);
+    if (!bad.length) {
+      if (r.stage < maxStage(u)) {
+        collapseStage(u, card, r.stage);
+        r.stage++;
+        $$('.row[data-stage="' + r.stage + '"]', card).forEach(rw => rw.classList.remove('stg-off'));
+        fb.innerHTML = '<span class="fbi">✓</span> 呢步啱喇';
+        tone([660]);
+        const el = $('.row[data-stage="' + r.stage + '"] input.fld, .row[data-stage="' + r.stage + '"] select.fld', card);
+        if (el) { try { el.focus(); } catch (e) { /* ignore */ } }
+        return;
+      }
+      complete(u, card);
+      return;
+    }
+    const shorts = bad.filter(x => !x.empty && x.msg).map(x => x.msg).filter((m, i, a) => a.indexOf(m) === i).slice(0, 2);
+    const whys = bad.filter(x => !x.empty && x.why).map(x => x.why).filter((m, i, a) => a.indexOf(m) === i).slice(0, 2);
+    const text = shorts.length ? shorts.join('；') : '仲有格未填';
+    fb.innerHTML = '<span class="fbi">✗</span> ' + esc(text) + (whys.length ? ' <details class="why"><summary>點解？</summary><div>' + whys.map(esc).join('<br>') + '</div></details>' : '');
+    if (shorts.length) {
+      r.wrong = true; setCombo(0); cardFx(card, 'fx-bad');
+      G.say('wrong', shorts.some(m => /負號/.test(m)) ? '睇下負號喇～' : pick(TRY));
+      tone([220]);
+    } else mood('think');
+  }
+
+  function flyStar(from) {
+    const tgt = $('#starTotal'), done = () => { tgt.classList.remove('bump'); void tgt.offsetWidth; tgt.classList.add('bump'); };
+    if (RM || !from || !from.getBoundingClientRect) { done(); return; }
+    const a = from.getBoundingClientRect(), b = tgt.getBoundingClientRect();
+    const s = document.createElement('span'); s.className = 'flystar'; s.innerHTML = ico('i-star');
+    s.style.left = (a.left + a.width / 2 - 14) + 'px'; s.style.top = (a.top - 6) + 'px';
+    document.body.appendChild(s); void s.offsetWidth;
+    s.style.transform = 'translate(' + (b.left + b.width / 2 - a.left - a.width / 2) + 'px,' + (b.top + b.height / 2 - a.top - 8) + 'px) scale(.55)';
+    setTimeout(() => { s.remove(); done(); }, 560);
+  }
+
+  function complete(u, card) {
+    const r = rt(u), prev = S.u[u.id], fb = $('.fb', card);
+    const us = unitsOf(u.sheet), last = us.indexOf(u) === us.length - 1;
+    const active = document.activeElement; if (active && active.blur && card.contains(active)) active.blur();
+    if (r.sol) {
+      if (!prev) S.u[u.id] = 's';
+      fb.innerHTML = '<span class="fbi">✓</span> 啱，但睇過解答冇星';
+      G.say('explain', '啱喇！下題唔睇答案～');
+      setCombo(0);
+    } else {
+      S.u[u.id] = 'c';
+      fb.innerHTML = '<span class="fbi">✓</span> 正確！' + ico('i-star', 'inl') + '+1';
+      setCombo(combo + 1);
+      const negQ = fieldsOf(u).some(f => (f.f === 'poly' || f.f === 'num') && /-/.test(f.ans));
+      if (negQ && !r.wrong && !S.h[u.id]) S.neg[u.id] = 1;
+      G.say(combo >= 3 || last ? 'great' : 'correct', combo >= 3 ? pick(GREAT) : pick(PRAISE));
+      burst(); flyStar($('.act-check', card));
+      cardFx(card, 'fx-ok'); tone([660, 880]);
+    }
+    save(); badge(u); updateProgress();
+    if (!r.sol) checkBadges(u);
+    playScene(u, card, () => afterScene(u, card, last));
+  }
+  function afterScene(u, card, last) {
+    const p = progress(u.sheet);
+    if (p.done === p.n && !S.cel[u.sheet]) { S.cel[u.sheet] = 1; save(); celebrate(u.sheet); return; }
+    if (!last && S.cur === u.sheet && document.body.dataset.view === 'level') {
+      const fb = $('.fb', card);
+      if (!$('.undo', fb)) fb.insertAdjacentHTML('beforeend', ' <button type="button" class="undo">留低</button>');
+      const us = unitsOf(u.sheet);
+      advTimer = setTimeout(() => { if (S.cur === u.sheet && us[IDX] === u) showIdx(IDX + 1); }, 1000);
+    }
+  }
+
+  /* ---------- 提示 / 解答 ---------- */
+  function showHint(u, card) {
+    const r = rt(u), h = hintsFor(u, r.stage), box = $('.hintbox', card);
+    const lv = Math.min(2, (r.hl[r.stage] = (r.hl[r.stage] || 0) + 1));
+    box.innerHTML = '<div>' + ico('i-bulb', 'inl') + ' ' + rich(h[0]) + '</div>' + (lv >= 2 ? '<div>' + ico('i-bulb', 'inl') + ' ' + rich(h[1]) + '</div>' : '');
+    box.hidden = false;
+    if (!S.h[u.id]) { S.h[u.id] = 1; save(); }
+    mood('think');
+  }
+  function showSol(u, card) {
+    const r = rt(u);
+    if (r.attempts < 1) { $('.fb', card).innerHTML = '<span class="fbi">i</span> 先檢查一次，再睇解答'; return; }
+    r.sol = true;
+    const box = $('.solbox', card);
+    box.innerHTML = u.sol.map(l => '<div class="sl">' + rich(l) + '</div>').join('');
+    box.hidden = false;
+    if (!S.u[u.id]) { S.u[u.id] = 's'; save(); badge(u); updateProgress(); const p = progress(u.sheet); if (p.done === p.n && !S.cel[u.sheet]) { S.cel[u.sheet] = 1; save(); setTimeout(() => celebrate(u.sheet), 500); } }
+  }
+  function updateSolBtn(card, u) { $('.act-sol', card).setAttribute('aria-disabled', rt(u).attempts < 1 ? 'true' : 'false'); }
+
+  /* ---------- 方法二 ---------- */
+  const fracTex = f => f.d === 1 ? String(f.n) : (f.n < 0 ? '-' : '') + '\\dfrac{' + Math.abs(f.n) + '}{' + f.d + '}';
+  function runMethod2(u, card) {
+    const out = $('.m2out', card), val = $('.m2x', card).value;
+    const r = A.parse(val), c = r.ok ? A.constVal(r.poly) : null;
+    rt(u).attempts++;
+    if (!c) { out.innerHTML = '<div class="sl">請輸入一個數值</div>'; return; }
+    const L = A.substitute(u.m2.L, { x: c }), R_ = A.substitute(u.m2.R, { x: c }), xs = fracTex(c);
+    const html = '<div class="sl">' + tex('x=' + xs) + ' 代入：</div><div class="sl">左方 ' + tex('=' + L.tex + '=' + fracTex(L.value)) + '</div><div class="sl">右方 ' + tex('=' + R_.tex + '=' + fracTex(R_.value)) + '</div>';
+    if (!A.feq(L.value, R_.value)) {
+      out.innerHTML = html + '<div class="sl">左方 ≠ 右方 ✓ 不是恆等式</div>';
+      complete(u, card);
+    } else {
+      out.innerHTML = html + '<div class="sl">✗ 兩邊相等，試另一個 x 值</div>';
+      G.say('wrong', '試另一個 x 值！');
+    }
+  }
+
+  /* ---------- 全頁共用符號鍵盤 ---------- */
+  let kbTarget = null;
+  function kbShow(el) {
+    kbTarget = el; const kb = $('#kb'); kb.classList.add('on'); kb.setAttribute('aria-hidden', 'false'); document.body.classList.add('kb-open'); placeKb();
+    // 鍵盤唔可以遮住輸入格同「檢查」：有需要就向上捲
+    const card = el.closest('.unit'), btn = card && $('.act-check', card);
+    [btn, el].forEach(t => {
+      if (!t || !t.getBoundingClientRect) return;
+      const vv = window.visualViewport, vh = vv ? vv.height : window.innerHeight, limit = vh - (kb.offsetHeight || 60) - 10, r = t.getBoundingClientRect();
+      if (r.bottom > limit && r.top - (r.bottom - limit) > 60) window.scrollBy(0, r.bottom - limit);
+    });
+  }
+  function kbHide() { const kb = $('#kb'); kb.classList.remove('on'); kb.setAttribute('aria-hidden', 'true'); document.body.classList.remove('kb-open'); }
+  function placeKb() {
+    const vv = window.visualViewport, kb = $('#kb'); if (!kb) return;
+    kb.style.bottom = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) + 'px' : '0';
+  }
+  function insertSym(el, s) {
+    let a = el.selectionStart, b = el.selectionEnd; if (a == null) { a = b = el.value.length; }
+    let v = el.value;
+    if (s === '⌫') { if (a !== b) { v = v.slice(0, a) + v.slice(b); b = a; } else if (a > 0) { v = v.slice(0, a - 1) + v.slice(a); a--; b = a; } }
+    else { v = v.slice(0, a) + s + v.slice(b); a += s.length; b = a; }
+    el.value = v; el.dispatchEvent(new Event('input', { bubbles: true }));
+    try { el.focus(); el.setSelectionRange(a, a); } catch (e) { /* ignore */ }
+  }
+
+  /* ---------- 通關慶祝 ---------- */
+  function celebrate(id) {
+    const p = progress(id), lv = LV[id];
+    mood('cheer'); tone([523, 659, 784]);
+    const ov = document.createElement('div'); ov.className = 'cele'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', '通關');
+    ov.style.setProperty('--lv', 'var(--lv-' + id + ')');
+    let conf = ''; if (!RM) for (let i = 0; i < 16; i++) conf += '<span class="cs" style="left:' + (4 + i * 6) + '%;animation-delay:' + ((i % 5) * 0.12).toFixed(2) + 's">' + ico('i-star') + '</span>';
+    ov.innerHTML = conf + '<div class="cbox"><span class="cmed"><svg class="glyph" aria-hidden="true"><use href="#g-' + id + '"/></svg><span class="seal">通關</span></span><div class="ct">第 ' + lv.n + ' 關　' + esc(lv.name) + '</div><p class="cst">' + ico('i-star') + '<b>' + p.stars + '</b> / ' + p.n + '</p>' +
+      '<div class="cbtns"><button type="button" class="btn cstay">留喺度</button><button type="button" class="btn primary cgo">' + ico('i-map') + '返地圖</button></div></div>';
+    document.body.appendChild(ov);
+    const close = () => ov.remove();
+    $('.cstay', ov).addEventListener('click', close);
+    $('.cgo', ov).addEventListener('click', () => { close(); showMap(); });
+    ov.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    $('.cgo', ov).focus();
+  }
+
+  /* ---------- 事件 ---------- */
+  function closeMenu() { $('#menu').hidden = true; $('#menuBtn').setAttribute('aria-expanded', 'false'); }
+  document.addEventListener('click', e => {
+    const t = e.target;
+    if (!t.closest('#menu') && !t.closest('#menuBtn')) closeMenu();
+    const go = t.closest('[data-go]'); if (go) { showSheet(go.dataset.go); return; }
+    if (t.closest('#mapBtn')) { showMap(); return; }
+    if (t.closest('.dot')) { showIdx(Number(t.closest('.dot').dataset.i)); return; }
+    if (t.closest('#prevQ')) { if (IDX === 0) bumpEdge(-1); else showIdx(IDX - 1); return; }
+    if (t.closest('#nextQ')) { if (IDX === unitsOf(S.cur).length - 1) bumpEdge(1); else showIdx(IDX + 1); return; }
+    if (t.closest('.undo')) { clearTimeout(advTimer); t.closest('.undo').remove(); return; }
+    const card = t.closest('.unit');
+    if (card) {
+      const u = BY_ID[card.dataset.uid];
+      if (t.closest('.sc-skip')) return;
+      if (t.closest('.act-check')) { checkUnit(u, card); updateSolBtn(card, u); return; }
+      if (t.closest('.act-hint')) { showHint(u, card); return; }
+      if (t.closest('.act-sol')) { showSol(u, card); return; }
+      if (t.closest('.m2go')) { runMethod2(u, card); updateSolBtn(card, u); return; }
+      const tfb = t.closest('.tfb');
+      if (tfb) {
+        $$('.tfb', tfb.parentNode).forEach(b => b.setAttribute('aria-pressed', String(b === tfb))); setMark(tfb.parentNode, null);
+        const scl = $('.scene.live .scale', card);
+        if (scl && !S.u[u.id]) { setTilt(scl, tfb.dataset.v === '1' ? 0 : -10); scl.classList.remove('wob'); void scl.offsetWidth; scl.classList.add('wob'); }
+        return;
+      }
+    }
+    const kk = t.closest('.kk');
+    if (kk) { if (kbTarget && document.body.contains(kbTarget)) insertSym(kbTarget, kk.dataset.ins); return; }
+    if (t.closest('#menuBtn')) { const m = $('#menu'); m.hidden = !m.hidden; $('#menuBtn').setAttribute('aria-expanded', String(!m.hidden)); return; }
+    if (t.closest('#badgeBtn')) { openBadges(); return; }
+    if (t.closest('#printBtn')) { closeMenu(); window.print(); return; }
+    if (t.closest('#resetBtn')) { closeMenu(); if (confirm('確定要重設所有進度、星星同徽章嗎？')) { S.u = {}; S.cel = {}; S.h = {}; S.badges = {}; S.lit = {}; S.neg = {}; save(); setCombo(0); updateBadgeLabel(); if (document.body.dataset.view === 'map') { renderSheet(S.cur); renderMap(); } else renderSheet(S.cur); } return; }
+    if (t.closest('#soundBtn')) { S.sound = !S.sound; save(); $('#soundLbl').textContent = S.sound ? '聲音：開' : '聲音：關'; $('#soundBtn').setAttribute('aria-pressed', String(S.sound)); tone([660]); return; }
+    if (t.closest('#guideAv')) { S.guide = !S.guide; applyGuide(); save(); return; }
+  });
+  document.addEventListener('mousedown', e => { if (e.target.closest && e.target.closest('.kk')) e.preventDefault(); });
+  document.addEventListener('pointerdown', e => { if (e.target.closest && e.target.closest('.kk')) e.preventDefault(); });
+  document.addEventListener('focusin', e => { if (e.target.matches && e.target.matches('input.fld')) { kbShow(e.target); clearTimeout(advTimer); } });
+  document.addEventListener('focusout', () => { setTimeout(() => { const a = document.activeElement; if (!(a && a.matches && a.matches('input.fld'))) kbHide(); }, 120); });
+  document.addEventListener('input', e => {
+    const el = e.target; if (!el.matches || !el.matches('.fld')) return;
+    clearTimeout(advTimer);
+    if (!el.classList.contains('m2x')) setMark(el, null);
+    if (el.classList.contains('poly')) {
+      const pv = el.parentNode.querySelector('.pv'); if (!pv) return;
+      const r = A.parse(el.value); pv.innerHTML = (el.value.trim() && r.ok) ? tex(A.toTex(r.ast)) : '';
+    }
+  });
+  document.addEventListener('change', e => { if (e.target.matches && e.target.matches('select.fld')) setMark(e.target, null); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeMenu();
+    if (e.key === 'Enter' && e.target.matches && e.target.matches('input.fld')) {
+      e.preventDefault();
+      const card = e.target.closest('.unit'); if (!card) return;
+      const u = BY_ID[card.dataset.uid];
+      if (e.target.classList.contains('m2x')) runMethod2(u, card); else checkUnit(u, card);
+      updateSolBtn(card, u);
+    }
+  });
+  window.addEventListener('hashchange', () => { const id = location.hash.slice(1); if (id === 'map') showMap(); else if (SHEET_BY_ID[id] && (id !== S.cur || document.body.dataset.view !== 'level')) showSheet(id); });
+  if (window.visualViewport) { window.visualViewport.addEventListener('resize', placeKb); window.visualViewport.addEventListener('scroll', placeKb); }
+  let opened = [];
+  window.addEventListener('beforeprint', () => { opened = $$('#main details').filter(d => !d.open); opened.forEach(d => { d.open = true; }); });
+  window.addEventListener('afterprint', () => { opened.forEach(d => { d.open = false; }); opened = []; });
+
+  /* ---------- 啟動 ---------- */
+  function boot() {
+    $('#soundLbl').textContent = S.sound ? '聲音：開' : '聲音：關'; $('#soundBtn').setAttribute('aria-pressed', String(S.sound));
+    applyGuide(); updateBadgeLabel();
+    const h = location.hash.slice(1);
+    renderSheet(SHEET_BY_ID[h] ? h : (SHEET_BY_ID[S.cur] ? S.cur : 's30'));
+    if (SHEET_BY_ID[h]) showSheet(h, true); else showMap();
+    const im = new Image();
+    im.onload = () => { const svg = $('#lusir'); if (svg) { im.className = 'lusir-img'; im.alt = ''; svg.replaceWith(im); } };
+    im.src = 'assets/lusir.png';
+  }
+  window.__app = { S, RT, checkUnit, BY_ID, showSheet, showIdx, showMap, boot, hintsFor, G, getCombo: () => combo, playScene, termsOf, polyTex };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+
+</script>
+</body>
+</html>
