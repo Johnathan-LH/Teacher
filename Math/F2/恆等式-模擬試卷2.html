@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b3a4b">
+<title>2A 第3章 恆等式 模擬試卷 — 互動練習</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.21/katex.min.css">
+<style>
+:root {
+  --paper: #f3efe4;
+  --ink: #1d1a16;
+  --muted: #5e584e;
+  --navy: #1b3a4b;
+  --navy-2: #274e63;
+  --card: #fffdf8;
+  --line: #e3d9c6;
+  --stamp: #8f2d2d;
+  --ok: #1c6b45;
+  --ok-bg: #e7f5ee;
+  --bad: #8f2d2d;
+  --bad-bg: #fbeeed;
+  --gold: #8a6a2f;
+  --gold-bg: #f8f1de;
+  --chip: #efe6d4;
+  --shadow: 0 10px 30px rgba(27, 58, 75, 0.08);
+  --font: "Iowan Old Style", Palatino, "Palatino Linotype", "Songti TC", "PMingLiU", "Noto Serif TC", serif;
+  --ui: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
+  --kb-h: 0px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--ui);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 400px at 10% -10%, rgba(196, 161, 90, 0.18), transparent 50%),
+    var(--paper);
+  line-height: 1.55;
+  font-size: 17px;
+  padding-bottom: calc(var(--kb-h) + 28px + env(safe-area-inset-bottom));
+}
+button, [role="button"] { font-family: inherit; cursor: pointer; }
+button { touch-action: manipulation; }
+img { max-width: 100%; }
+.wrap { width: min(980px, calc(100% - 28px)); margin: 0 auto; }
+header.top {
+  background: var(--navy);
+  color: #f7f3ea;
+  padding: 22px 0 16px;
+}
+header.top h1 {
+  font-family: var(--font);
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  line-height: 1.35;
+  margin: 0 0 6px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+.sub { margin: 0; color: #e4dccb; font-size: 0.95rem; }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+.modes {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+.modes button, .ghost, .primary, .opt, .key, .qnav button, .self button, .calc-keys button {
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-size: 1rem;
+}
+.modes button {
+  background: transparent;
+  color: #f7f3ea;
+  padding: 0 14px;
+}
+.modes button[aria-pressed="true"] {
+  background: #f7f3ea;
+  color: var(--navy);
+  font-weight: 700;
+}
+.ghost {
+  background: transparent;
+  color: #f7f3ea;
+  border-color: rgba(247, 243, 234, 0.35);
+  padding: 0 12px;
+}
+.qnav-wrap { padding: 14px 0 4px; }
+.qnav {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 6px;
+}
+.qnav button {
+  background: var(--card);
+  color: var(--navy);
+  border: 1px solid var(--line);
+  font-weight: 700;
+  padding: 0;
+  position: relative;
+}
+.qnav button.done { background: var(--ok); color: white; border-color: var(--ok); }
+.qnav button.hint { background: var(--gold-bg); color: var(--gold); border-color: #e4d2a4; }
+.qnav button.done::after, .qnav button.hint::after {
+  content: "✓";
+  position: absolute;
+  top: 1px; right: 3px;
+  font-size: 10px;
+  line-height: 1;
+}
+.qnav button.hint::after { content: "💡"; font-size: 9px; }
+.qnav button:focus-visible, .key:focus-visible, .opt:focus-visible, .primary:focus-visible, .ghost:focus-visible {
+  outline: 3px solid #c4a15a;
+  outline-offset: 2px;
+}
+.legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 0.86rem; margin: 8px 0 0; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 4px; border: 1px solid var(--line); }
+.sw.todo { background: white; }
+.sw.done { background: var(--ok); border-color: var(--ok); }
+.sw.hint { background: var(--gold-bg); border-color: #e4d2a4; }
+.formulas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 14px 0;
+}
+.formulas div {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: var(--font);
+  font-size: 0.98rem;
+}
+.sec {
+  margin: 18px 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.sec h2 { font-family: var(--font); font-size: 1.25rem; margin: 0; color: var(--navy); }
+.sec span { color: var(--stamp); font-weight: 700; }
+.qcard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--navy);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 16px 16px 14px;
+  margin: 0 0 14px;
+}
+.qhead { display: flex; gap: 10px; align-items: flex-start; }
+.qno {
+  flex: none;
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: var(--navy);
+  color: #f7f3ea;
+  display: grid; place-items: center;
+  font-weight: 800;
+}
+.qhead h3 { margin: 0; font-size: 1.08rem; line-height: 1.45; font-weight: 650; flex: 1; }
+.marks {
+  flex: none;
+  color: var(--stamp);
+  border: 1.5px solid var(--stamp);
+  border-radius: 8px;
+  min-height: 44px;
+  display: grid; place-items: center;
+  padding: 0 10px;
+  font-weight: 800;
+}
+.stem { margin: 8px 0; overflow-x: auto; }
+.part { margin-top: 12px; padding-top: 8px; border-top: 1px dashed var(--line); }
+.part-h { display: flex; justify-content: space-between; font-weight: 700; color: var(--navy); }
+.step { margin-top: 10px; background: #fbf8f2; border-radius: 12px; padding: 10px; }
+.step.locked { opacity: 0.55; }
+.step-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.step-top h4 { margin: 0; font-size: 1rem; }
+.lead { margin: 6px 0; }
+.field { margin: 8px 0; }
+.flab { display: block; font-weight: 650; margin-bottom: 4px; }
+.ablank {
+  min-height: 52px;
+  border: 2px solid #d9d0bf;
+  background: white;
+  border-radius: 12px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  font-size: 1.15rem;
+}
+.ablank.hot { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(27, 58, 75, 0.15); }
+.ablank[data-status="ok"] { border-color: var(--ok); background: var(--ok-bg); }
+.ablank[data-status="bad"] { border-color: var(--bad); background: var(--bad-bg); }
+.ph { color: #8a8172; font-size: 0.95rem; }
+.cur {
+  display: inline-block;
+  width: 0;
+  border-right: 2px solid var(--navy);
+  margin-left: 1px;
+  animation: blink 1.05s step-end infinite;
+}
+@keyframes blink { 50% { border-color: transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  .cur { animation: none; }
+}
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt {
+  background: white;
+  border: 2px solid #d9d0bf;
+  padding: 8px 12px;
+  text-align: left;
+}
+.opt.picked { border-color: var(--navy); background: #eef4f7; font-weight: 700; }
+.opt.okpick { border-color: var(--ok); background: var(--ok-bg); }
+.opt.badpick { border-color: var(--bad); background: var(--bad-bg); }
+.primary {
+  background: var(--navy);
+  color: #f7f3ea;
+  border: none;
+  padding: 0 16px;
+  font-weight: 700;
+}
+.primary:disabled, .opt:disabled, .key:disabled { opacity: 0.45; cursor: not-allowed; }
+.hintbtn {
+  background: var(--gold-bg);
+  color: var(--gold);
+  border: 1px solid #e4d2a4;
+  min-height: 44px;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-weight: 700;
+}
+.rowbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.sir {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: var(--gold-bg);
+  border-radius: 14px;
+  padding: 10px;
+  margin-top: 8px;
+}
+.sir.ok { background: var(--ok-bg); }
+.sir.bad { background: var(--bad-bg); }
+.sir-img, .sir-fallback {
+  width: 48px; height: 48px; border-radius: 50%;
+  flex: none; object-fit: cover; background: var(--navy);
+}
+.sir-fallback { display: grid; place-items: center; font-size: 1.4rem; }
+.sir-txt { margin: 0; white-space: pre-wrap; }
+.sym { font-weight: 800; margin-right: 4px; }
+.note {
+  font-size: 0.92rem;
+  color: var(--stamp);
+  background: #fbeeed;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.solution {
+  margin-top: 12px;
+  border-top: 2px solid var(--navy);
+  padding-top: 8px;
+}
+.solution h4 { margin: 0 0 6px; font-family: var(--font); }
+.sline { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; margin: 2px 0; }
+.mk {
+  flex: none;
+  color: var(--stamp);
+  font-weight: 800;
+  border: 1.5px solid var(--stamp);
+  border-radius: 999px;
+  padding: 0 8px;
+  min-height: 28px;
+  display: inline-grid;
+  place-items: center;
+}
+.self {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.self button {
+  width: 44px;
+  background: var(--chip);
+  border: 1px solid var(--line);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.self b { min-width: 1.4em; text-align: center; font-size: 1.2rem; }
+#score {
+  position: sticky;
+  bottom: calc(var(--kb-h) + env(safe-area-inset-bottom));
+  z-index: 30;
+  background: var(--navy);
+  color: #f7f3ea;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  justify-content: center;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  font-weight: 650;
+}
+#score[hidden] { display: none; }
+#score b { font-size: 1.15rem; }
+#kb {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 50;
+  background: #f7f3ea;
+  border-top: 1px solid var(--line);
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 24px rgba(27, 58, 75, 0.12);
+  display: none;
+}
+#kb.show { display: block; }
+.kb-vars { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.kb-grid { display: grid; grid-template-columns: repeat(5, minmax(44px, 1fr)); gap: 6px; }
+.key {
+  background: white;
+  border: 1px solid #d9d0bf;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.key.go { background: var(--ok); color: white; border-color: var(--ok); grid-column: span 3; }
+.key.warn { background: #f3e4e4; }
+#calc-fab {
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--kb-h) + 16px + env(safe-area-inset-bottom));
+  z-index: 36;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold);
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: var(--shadow);
+}
+#calc {
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--kb-h) + 80px + env(safe-area-inset-bottom));
+  z-index: 34;
+  width: min(360px, calc(100vw - 20px));
+  background: #fffdf8;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+#calc[hidden] { display: none; }
+.calc-head {
+  background: var(--navy);
+  color: #f7f3ea;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 8px 8px 12px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.calc-head button {
+  min-width: 44px; min-height: 44px;
+  background: transparent; color: #f7f3ea; border: none; font-size: 1.1rem;
+}
+.calc-screen { padding: 8px 12px; background: #102833; color: #f4efe4; min-height: 72px; }
+.calc-expr { min-height: 1.3em; word-break: break-all; color: #d9e4ea; }
+.calc-res { font-size: 1.45rem; font-weight: 700; text-align: right; word-break: break-all; }
+.calc-keys { display: grid; grid-template-columns: repeat(4, minmax(44px, 1fr)); gap: 6px; padding: 8px; }
+.calc-keys button { background: white; border: 1px solid var(--line); font-weight: 700; }
+.calc-keys button.eq { background: var(--navy); color: white; }
+#modal {
+  position: fixed; inset: 0; z-index: 80;
+  background: rgba(29, 26, 22, 0.45);
+  display: grid; place-items: center;
+  padding: 16px;
+}
+#modal[hidden] { display: none; }
+.dialog {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px;
+  width: min(420px, 100%);
+}
+.dialog p { margin-top: 0; }
+.dialog .rowbtns { justify-content: flex-end; }
+.saved { color: #d9e4ea; font-size: 0.85rem; }
+@media (max-width: 720px) {
+  .formulas { grid-template-columns: 1fr; }
+  .wrap { width: min(980px, calc(100% - 16px)); }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>2A 第3章 恆等式 模擬試卷 — 互動練習</h1>
+    <p class="sub">不會做就用「分步提示」，一步一步填；會做就用「對答案」，再按評分準則自評。全卷 19 題，60 分。</p>
+    <div class="toolbar">
+      <div class="modes" role="group" aria-label="模式">
+        <button type="button" id="mode-steps" aria-pressed="true">分步提示</button>
+        <button type="button" id="mode-answers" aria-pressed="false">對答案</button>
+      </div>
+      <button type="button" class="ghost" id="reset">重設全部</button>
+      <span class="saved">進度保存在這部裝置</span>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="qnav-wrap">
+    <div class="qnav" id="qnav" aria-label="題目導航"></div>
+    <p class="legend"><span><i class="sw todo"></i>未做</span><span><i class="sw done"></i>已完成</span><span><i class="sw hint"></i>用過提示</span></p>
+  </div>
+  <div class="formulas" aria-label="恆等式">
+    <div>(▲+■)² = ▲² + 2▲■ + ■²</div>
+    <div>(▲−■)² = ▲² − 2▲■ + ■²</div>
+    <div>(▲+■)(▲−■) = ▲² − ■²</div>
+  </div>
+  <main id="main"></main>
+</div>
+<footer id="score" hidden></footer>
+<div id="kb" aria-label="數式鍵盤">
+  <div class="kb-vars" id="kb-vars"></div>
+  <div class="kb-grid">
+    <button type="button" class="key" data-k="7">7</button>
+    <button type="button" class="key" data-k="8">8</button>
+    <button type="button" class="key" data-k="9">9</button>
+    <button type="button" class="key" data-k="+">+</button>
+    <button type="button" class="key" data-k="(">(</button>
+    <button type="button" class="key" data-k="4">4</button>
+    <button type="button" class="key" data-k="5">5</button>
+    <button type="button" class="key" data-k="6">6</button>
+    <button type="button" class="key" data-k="-">−</button>
+    <button type="button" class="key" data-k=")">)</button>
+    <button type="button" class="key" data-k="1">1</button>
+    <button type="button" class="key" data-k="2">2</button>
+    <button type="button" class="key" data-k="3">3</button>
+    <button type="button" class="key" data-k="pow">x²</button>
+    <button type="button" class="key" data-k="^">^</button>
+    <button type="button" class="key" data-k="0">0</button>
+    <button type="button" class="key" data-k=".">.</button>
+    <button type="button" class="key" data-k="/">／</button>
+    <button type="button" class="key" data-k="bksp" aria-label="刪除">⌫</button>
+    <button type="button" class="key warn" data-k="clear">清除</button>
+    <button type="button" class="key" data-k="left" aria-label="游標向左">◀</button>
+    <button type="button" class="key" data-k="right" aria-label="游標向右">▶</button>
+    <button type="button" class="key go" data-k="ok">✓ 核對</button>
+  </div>
+</div>
+<button type="button" id="calc-fab" aria-label="計算機" aria-expanded="false">🧮</button>
+<div id="calc" hidden>
+  <div class="calc-head" id="calc-head">
+    <strong>計算機</strong>
+    <span>
+      <button type="button" id="calc-min" aria-label="最小化">—</button>
+      <button type="button" id="calc-close" aria-label="關閉">✕</button>
+    </span>
+  </div>
+  <div id="calc-body">
+    <div class="calc-screen">
+      <div class="calc-expr" id="calc-expr">0</div>
+      <div class="calc-res" id="calc-res"></div>
+    </div>
+    <div class="calc-keys" id="calc-keys">
+      <button type="button" data-c="(">(</button>
+      <button type="button" data-c=")">)</button>
+      <button type="button" data-c="pow">x²</button>
+      <button type="button" data-c="xy">xʸ</button>
+      <button type="button" data-c="sqrt">√</button>
+      <button type="button" data-c="sign">±</button>
+      <button type="button" data-c="bksp">⌫</button>
+      <button type="button" data-c="ac">AC</button>
+      <button type="button" data-c="7">7</button>
+      <button type="button" data-c="8">8</button>
+      <button type="button" data-c="9">9</button>
+      <button type="button" data-c="/">÷</button>
+      <button type="button" data-c="4">4</button>
+      <button type="button" data-c="5">5</button>
+      <button type="button" data-c="6">6</button>
+      <button type="button" data-c="*">×</button>
+      <button type="button" data-c="1">1</button>
+      <button type="button" data-c="2">2</button>
+      <button type="button" data-c="3">3</button>
+      <button type="button" data-c="-">−</button>
+      <button type="button" data-c="0">0</button>
+      <button type="button" data-c=".">.</button>
+      <button type="button" data-c="ans">Ans</button>
+      <button type="button" data-c="+">+</button>
+      <button type="button" class="eq" data-c="eq" style="grid-column: span 4">=</button>
+    </div>
+  </div>
+</div>
+<div id="modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <p id="modal-title">確定清走全部進度？此動作不能還原。</p>
+    <div class="rowbtns">
+      <button type="button" class="ghost" id="reset-no" style="color:#1b3a4b;border-color:#d9d0bf;background:#fff">取消</button>
+      <button type="button" class="primary" id="reset-yes">確定重設</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.21/katex.min.js"></script>
+<script>
+// Rational + polynomial engine (no eval). Coefficients are reduced integer fractions.
+
+function gcd(a, b) {
+  a = Math.abs(a);
+  b = Math.abs(b);
+  while (b) {
+    const t = b;
+    b = a % b;
+    a = t;
+  }
+  return a || 1;
+}
+
+function rat(n, d = 1) {
+  if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) throw new Error("格式不正確");
+  n = Math.trunc(n);
+  d = Math.trunc(d);
+  if (d < 0) {
+    n = -n;
+    d = -d;
+  }
+  const g = gcd(n, d);
+  return { n: n / g, d: d / g };
+}
+
+function rneg(a) {
+  return rat(-a.n, a.d);
+}
+function radd(a, b) {
+  return rat(a.n * b.d + b.n * a.d, a.d * b.d);
+}
+function rsub(a, b) {
+  return rat(a.n * b.d - b.n * a.d, a.d * b.d);
+}
+function rmul(a, b) {
+  return rat(a.n * b.n, a.d * b.d);
+}
+function rdiv(a, b) {
+  if (b.n === 0) throw new Error("不可以除以零");
+  return rat(a.n * b.d, a.d * b.n);
+}
+function req(a, b) {
+  return a.n === b.n && a.d === b.d;
+}
+function rpow(a, k) {
+  if (k === 0) return rat(1, 1);
+  let n = 1;
+  let d = 1;
+  let baseN = a.n;
+  let baseD = a.d;
+  let e = k;
+  while (e) {
+    if (e & 1) {
+      n *= baseN;
+      d *= baseD;
+    }
+    e >>= 1;
+    if (e) {
+      baseN *= baseN;
+      baseD *= baseD;
+    }
+  }
+  return rat(n, d);
+}
+
+function decToRat(str) {
+  const [ip, fp = ""] = str.split(".");
+  const d = 10 ** fp.length;
+  const ipn = ip === "" || ip === "+" || ip === "-" ? 0 : Number(ip);
+  const frac = fp === "" ? 0 : Number(fp);
+  const sign = ip.startsWith("-") ? -1 : 1;
+  const n = ipn * d + sign * frac;
+  return rat(n, d);
+}
+
+function monoKey(vars) {
+  return [...vars.entries()]
+    .filter(([, e]) => e !== 0)
+    .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+    .map(([v, e]) => v + "^" + e)
+    .join("*");
+}
+
+function polyConst(c) {
+  const m = new Map();
+  if (c.n !== 0) m.set("", c);
+  return m;
+}
+function polyVar(name) {
+  const m = new Map();
+  m.set(name + "^1", rat(1, 1));
+  return m;
+}
+function polyNeg(p) {
+  const m = new Map();
+  for (const [k, c] of p) {
+    const nc = rneg(c);
+    if (nc.n !== 0) m.set(k, nc);
+  }
+  return m;
+}
+function polyAdd(a, b) {
+  const m = new Map(a);
+  for (const [k, c] of b) {
+    const s = radd(m.get(k) || rat(0, 1), c);
+    if (s.n === 0) m.delete(k);
+    else m.set(k, s);
+  }
+  return m;
+}
+function polyScale(p, c) {
+  const m = new Map();
+  if (c.n === 0) return m;
+  for (const [k, pc] of p) {
+    const s = rmul(pc, c);
+    if (s.n !== 0) m.set(k, s);
+  }
+  return m;
+}
+function mulKeys(k1, k2) {
+  const m = new Map();
+  const add = (k) => {
+    if (!k) return;
+    for (const part of k.split("*")) {
+      const [v, e] = part.split("^");
+      m.set(v, (m.get(v) || 0) + Number(e));
+    }
+  };
+  add(k1);
+  add(k2);
+  return monoKey(m);
+}
+function polyMul(a, b) {
+  const m = new Map();
+  for (const [k1, c1] of a) {
+    for (const [k2, c2] of b) {
+      const k = mulKeys(k1, k2);
+      const s = radd(m.get(k) || rat(0, 1), rmul(c1, c2));
+      if (s.n === 0) m.delete(k);
+      else m.set(k, s);
+    }
+  }
+  return m;
+}
+function polyPow(p, n) {
+  if (!Number.isInteger(n) || n < 0 || n > 12) throw new Error("次方必須是 0 到 12 的整數");
+  let r = polyConst(rat(1, 1));
+  for (let i = 0; i < n; i++) r = polyMul(r, p);
+  return r;
+}
+function polyEq(a, b) {
+  if (a.size !== b.size) return false;
+  for (const [k, c] of a) {
+    const o = b.get(k);
+    if (!o || !req(c, o)) return false;
+  }
+  return true;
+}
+function polyVars(p) {
+  const s = new Set();
+  for (const k of p.keys()) {
+    if (!k) continue;
+    for (const part of k.split("*")) s.add(part.split("^")[0]);
+  }
+  return [...s];
+}
+
+const NORM_MINUS = /[\u2212\u2010\u2011\u2012\u2013\u2014]/g;
+
+function normalizeExpr(raw) {
+  return String(raw)
+    .replace(NORM_MINUS, "-")
+    .replace(/[×·⋅]/g, "*")
+    .replace(/²/g, "^2")
+    .replace(/³/g, "^3")
+    .replace(/⁴/g, "^4")
+    .replace(/\s+/g, "");
+}
+
+function parsePoly(raw) {
+  const s = normalizeExpr(raw);
+  if (!s) {
+    const err = new Error("請先輸入答案");
+    err.code = "empty";
+    throw err;
+  }
+  if (!/^[0-9A-Za-z+*^./()-]+$/.test(s)) {
+    const err = new Error("有不能用的符號");
+    err.code = "badchar";
+    throw err;
+  }
+  let i = 0;
+  const flags = { usedDecimal: false, hasParen: false, uncombined: false };
+  const n = s.length;
+  function peek() {
+    return s[i];
+  }
+  function eof() {
+    return i >= n;
+  }
+  function parseNumberToken() {
+    const start = i;
+    while (i < n && /[0-9]/.test(s[i])) i++;
+    if (s[i] === ".") {
+      flags.usedDecimal = true;
+      i++;
+      if (!/[0-9]/.test(s[i] || "")) throw new Error("小數點後面要有數字");
+      while (i < n && /[0-9]/.test(s[i])) i++;
+    }
+    if (i === start) throw new Error("這裡應該是數字");
+    return decToRat(s.slice(start, i));
+  }
+  function parseExponent() {
+    if (s[i] === "(") {
+      flags.hasParen = true;
+      i++;
+      if (s[i] === "+") i++;
+      if (!/[0-9]/.test(s[i] || "")) throw new Error("次方必須是正整數");
+      let num = "";
+      while (i < n && /[0-9]/.test(s[i])) num += s[i++];
+      if (s[i] !== ")") throw new Error("括號不完整");
+      i++;
+      return Number(num);
+    }
+    if (!/[0-9]/.test(s[i] || "")) throw new Error("次方必須是正整數");
+    let num = "";
+    while (i < n && /[0-9]/.test(s[i])) num += s[i++];
+    return Number(num);
+  }
+  function parseAtom() {
+    if (s[i] === "(") {
+      flags.hasParen = true;
+      i++;
+      const inner = parseSum();
+      if (s[i] !== ")") throw new Error("括號不完整");
+      i++;
+      return inner;
+    }
+    if (/[0-9.]/.test(s[i] || "")) {
+      return polyConst(parseNumberToken());
+    }
+    if (/[A-Za-z]/.test(s[i] || "")) {
+      const name = s[i++];
+      return polyVar(name);
+    }
+    throw new Error("格式不正確");
+  }
+  function parseFactor() {
+    const base = parseAtom();
+    if (s[i] === "^") {
+      i++;
+      const e = parseExponent();
+      return polyPow(base, e);
+    }
+    return base;
+  }
+  function parseDenom() {
+    if (s[i] === "(") {
+      flags.hasParen = true;
+      i++;
+      if (s[i] === "+") i++;
+      let sign = 1;
+      if (s[i] === "-") {
+        sign = -1;
+        i++;
+      }
+      if (!/[0-9.]/.test(s[i] || "")) throw new Error("不可以除以變數，／後面只可寫數字");
+      const num = parseNumberToken();
+      if (s[i] !== ")") throw new Error("括號不完整");
+      i++;
+      return sign < 0 ? rneg(num) : num;
+    }
+    if (!/[0-9.]/.test(s[i] || "")) throw new Error("不可以除以變數，／後面只可寫數字");
+    return parseNumberToken();
+  }
+  function startsFactor(ch) {
+    return !!ch && /[0-9.A-Za-z(]/.test(ch);
+  }
+  function parseTerm() {
+    let node = parseFactor();
+    while (!eof()) {
+      if (s[i] === "*") {
+        i++;
+        node = polyMul(node, parseFactor());
+      } else if (s[i] === "/") {
+        i++;
+        const d = parseDenom();
+        if (d.n === 0) throw new Error("不可以除以零");
+        node = polyScale(node, rdiv(rat(1, 1), d));
+      } else if (startsFactor(s[i])) {
+        node = polyMul(node, parseFactor());
+      } else break;
+    }
+    return node;
+  }
+  function parseSum() {
+    const terms = [];
+    let sign = 1;
+    if (s[i] === "+") i++;
+    else if (s[i] === "-") {
+      sign = -1;
+      i++;
+    }
+    if (eof() || s[i] === ")") throw new Error("格式不正確");
+    terms.push({ sign, poly: parseTerm() });
+    while (s[i] === "+" || s[i] === "-") {
+      const op = s[i++];
+      if (eof() || s[i] === ")" || s[i] === "+" || s[i] === "-") throw new Error("格式不正確");
+      terms.push({ sign: op === "+" ? 1 : -1, poly: parseTerm() });
+    }
+    const acc = new Map();
+    const seen = new Map();
+    for (const t of terms) {
+      for (const [k, c0] of t.poly) {
+        const c = t.sign < 0 ? rneg(c0) : c0;
+        if (c.n === 0) continue;
+        seen.set(k, (seen.get(k) || 0) + 1);
+        const s2 = radd(acc.get(k) || rat(0, 1), c);
+        if (s2.n === 0) acc.delete(k);
+        else acc.set(k, s2);
+      }
+    }
+    for (const v of seen.values()) if (v > 1) flags.uncombined = true;
+    return acc;
+  }
+  const poly = parseSum();
+  if (!eof()) throw new Error("格式不正確");
+  return { poly, flags };
+}
+
+function checkExpr(raw, answer, format, wrongList, vars) {
+  if (raw == null || normalizeExpr(raw) === "") {
+    return { ok: false, kind: "empty", msg: "請先輸入答案。" };
+  }
+  let student;
+  try {
+    student = parsePoly(raw);
+  } catch (e) {
+    return { ok: false, kind: "parse", msg: (e && e.message) || "格式不正確，請檢查符號。" };
+  }
+  let correct;
+  try {
+    correct = parsePoly(answer);
+  } catch (e) {
+    return { ok: false, kind: "parse", msg: "題目答案資料有問題" };
+  }
+  const allowed = new Set(vars || []);
+  for (const v of polyVars(student.poly)) {
+    if (!allowed.has(v)) {
+      const swap = v === v.toLowerCase() ? v.toUpperCase() : v.toLowerCase();
+      if (allowed.has(swap)) {
+        return { ok: false, kind: "case", msg: `大小寫有分別：這格要用 ${swap}，不是 ${v}。` };
+      }
+      if (allowed.size === 0) return { ok: false, kind: "case", msg: "這格只需要數字，不用字母。" };
+      return { ok: false, kind: "case", msg: `這格不用字母 ${v}。` };
+    }
+  }
+  const equal = polyEq(student.poly, correct.poly);
+  if (equal) {
+    if (format === "number") {
+      const nrm = normalizeExpr(raw);
+      if (/[A-Za-z^()]/.test(nrm)) {
+        return { ok: false, kind: "paren", msg: "數值正確，請寫成一個數字。" };
+      }
+    }
+    if (format === "expand") {
+      if (student.flags.hasParen) return { ok: false, kind: "paren", msg: "數值正確，但仍未展開。" };
+      if (student.flags.uncombined) return { ok: false, kind: "combine", msg: "還可以合併同類項。" };
+    }
+    let msg = "正確！";
+    if (student.flags.usedDecimal) msg += "建議寫成分數。";
+    return { ok: true, kind: "ok", msg };
+  }
+  if (Array.isArray(wrongList)) {
+    for (const w of wrongList) {
+      try {
+        const wp = parsePoly(w.expr);
+        if (polyEq(student.poly, wp.poly)) {
+          return { ok: false, kind: "specific", msg: w.msg };
+        }
+      } catch {
+        /* ignore bad distractor */
+      }
+    }
+  }
+  const generic =
+    format === "number"
+      ? "數字不對，再算一次。"
+      : format === "expand"
+        ? "和正確答案不相等，再檢查每一項的係數和符號。"
+        : "還未正確。項的次序可以不同，但係數要一樣。";
+  return { ok: false, kind: "wrong", msg: generic };
+}
+
+const CUR = "\\htmlClass{cur}{\\vphantom{0}}";
+
+function linearToLatex(raw, cursor) {
+  const s = normalizeExpr(raw);
+  const cpos = cursor == null ? -1 : Math.max(0, Math.min(cursor, s.length));
+  if (!s) return cpos === 0 ? CUR : "";
+  let i = 0;
+  function readDigits(allowDot) {
+    let out = "";
+    const re = allowDot ? /[0-9.]/ : /[0-9]/;
+    while (i < s.length && re.test(s[i])) {
+      if (i === cpos) out += CUR;
+      out += s[i++];
+    }
+    return out;
+  }
+  function readAtom() {
+    if (i >= s.length) return "";
+    if (s[i] === "(") {
+      let out = "";
+      if (i === cpos) out += CUR;
+      out += "(";
+      i++;
+      out += readSum();
+      if (i === cpos) out += CUR;
+      if (s[i] === ")") {
+        out += ")";
+        i++;
+      }
+      return out;
+    }
+    if (/[0-9.]/.test(s[i])) return readDigits(true);
+    if (/[A-Za-z]/.test(s[i])) {
+      let out = "";
+      if (i === cpos) out += CUR;
+      out += s[i++];
+      return out;
+    }
+    if (i === cpos) {
+      i++;
+      return CUR + s[i - 1];
+    }
+    return s[i++];
+  }
+  function readFactor() {
+    let base = readAtom();
+    if (s[i] === "^") {
+      let mark = "";
+      if (i === cpos) mark = CUR;
+      i++;
+      let exp = "";
+      if (s[i] === "(") {
+        if (i === cpos) exp += CUR;
+        i++;
+        while (i < s.length && s[i] !== ")") {
+          if (i === cpos) exp += CUR;
+          exp += s[i++];
+        }
+        if (i === cpos) exp += CUR;
+        if (s[i] === ")") i++;
+      } else {
+        exp = readDigits(false);
+      }
+      if (!exp) exp = "\\square";
+      return base + mark + "^{" + exp + "}";
+    }
+    return base;
+  }
+  function readDenom() {
+    if (s[i] === "(") return readAtom();
+    return readDigits(true);
+  }
+  function readTerm() {
+    let acc = readFactor();
+    while (i < s.length) {
+      if (s[i] === "*" || s[i] === "/") {
+        const op = s[i];
+        let mark = "";
+        if (i === cpos) mark = CUR;
+        i++;
+        if (op === "/") {
+          const den = readDenom() || "\\square";
+          acc = mark + "\\dfrac{" + acc + "}{" + den + "}";
+        } else {
+          acc = acc + mark + readFactor();
+        }
+      } else if (/[0-9.A-Za-z(]/.test(s[i] || "")) {
+        acc += readFactor();
+      } else break;
+    }
+    return acc;
+  }
+  function readSum() {
+    let out = "";
+    if (s[i] === "+" || s[i] === "-") {
+      if (i === cpos) out += CUR;
+      out += s[i++];
+    }
+    out += readTerm();
+    while (s[i] === "+" || s[i] === "-") {
+      if (i === cpos) out += CUR;
+      out += s[i++];
+      out += readTerm();
+    }
+    return out;
+  }
+  try {
+    const out = readSum();
+    const tail = i === cpos ? CUR : "";
+    if (i !== s.length) {
+      return fallback();
+    }
+    return out + tail;
+  } catch {
+    return fallback();
+  }
+  function fallback() {
+    let out = "";
+    for (let k = 0; k < s.length; k++) {
+      if (k === cpos) out += CUR;
+      const ch = s[k];
+      out += "\\%{}_&#".includes(ch) ? "\\" + ch : ch === "^" ? "\\^{}" : ch;
+    }
+    if (cpos === s.length) out += CUR;
+    return out;
+  }
+}
+
+function calcEval(input) {
+  const s = String(input)
+    .replace(NORM_MINUS, "-")
+    .replace(/×/g, "*")
+    .replace(/÷/g, "/")
+    .replace(/\s+/g, "");
+  if (!s) throw new Error("請輸入算式");
+  let i = 0;
+  function parseE() {
+    let v = parseT();
+    while (s[i] === "+" || s[i] === "-") {
+      const op = s[i++];
+      const r = parseT();
+      v = op === "+" ? v + r : v - r;
+    }
+    return v;
+  }
+  function parseT() {
+    let v = parseP();
+    while (s[i] === "*" || s[i] === "/") {
+      const op = s[i++];
+      const r = parseP();
+      if (op === "/" && r === 0) throw new Error("不可以除以零");
+      v = op === "*" ? v * r : v / r;
+    }
+    return v;
+  }
+  function parseP() {
+    const v = parseU();
+    if (s[i] === "^") {
+      i++;
+      const e = parseP();
+      return Math.pow(v, e);
+    }
+    return v;
+  }
+  function parseU() {
+    if (s[i] === "+") {
+      i++;
+      return parseU();
+    }
+    if (s[i] === "-") {
+      i++;
+      return -parseU();
+    }
+    if (s.startsWith("sqrt(", i)) {
+      i += 5;
+      const inner = parseE();
+      if (s[i] !== ")") throw new Error("括號不完整");
+      i++;
+      if (inner < 0) throw new Error("負數不可開平方");
+      return Math.sqrt(inner);
+    }
+    if (s[i] === "(") {
+      i++;
+      const v = parseE();
+      if (s[i] !== ")") throw new Error("括號不完整");
+      i++;
+      return v;
+    }
+    const m = /^(\d+(\.\d+)?)/.exec(s.slice(i));
+    if (!m) throw new Error("算式不正確");
+    i += m[0].length;
+    return Number(m[0]);
+  }
+  const v = parseE();
+  if (i !== s.length) throw new Error("算式不正確");
+  if (!Number.isFinite(v)) throw new Error("算式不正確");
+  return v;
+}
+
+function formatSig(n) {
+  if (!Number.isFinite(n)) return "錯誤";
+  if (Object.is(n, -0) || n === 0) return "0";
+  const abs = Math.abs(n);
+  const exp = Math.floor(Math.log10(abs));
+  const p = 10 - exp - 1;
+  const f = Math.pow(10, p);
+  const rounded = Math.round(n * f) / f;
+  let out = rounded.toPrecision(10);
+  if (/e/i.test(out)) {
+    if (Math.abs(exp) < 10) {
+      const fixed = Math.max(0, p);
+      out = rounded.toFixed(Math.min(fixed, 12));
+    } else {
+      return rounded.toExponential(9).replace(/\.?0+e/, "e").replace("e+", "×10^");
+    }
+  }
+  if (out.includes(".")) out = out.replace(/0+$/, "").replace(/\.$/, "");
+  return out;
+}
+
+/**
+ * QUESTIONS：換試卷時主要改這個陣列。介面只讀這些欄位。
+ *
+ * question: { id, section:"甲"|"乙"|"選", marks, stem, parts? | 選擇題欄位 }
+ * part: { id, label, marks, stem, needsPrev?, calcNote?, lab?, verify?, steps, solution }
+ * step: { id, lead, hints:[第一層, 第二層], blocks }
+ * expr: { id, kind:"expr", label, answer, format:"expand"|"equiv"|"number", vars, wrong:[{expr,msg}], final? }
+ * choice: { id, kind:"choice", label, final?, options:[{id, text?, tex?, ok?, why?}] }
+ * solution 每行是字串或 { t, m }，數學放在 $...$ 裡。
+ * 選擇題: { options:[{id, tex, ok?, why?}], hints, explain }
+ */
+const QUESTIONS = [
+  {
+    id: 1, section: "甲", marks: 4, stem: "展開下列各數式。",
+    parts: [
+      {
+        id: "a", label: "(a)", marks: 2, stem: "$(4x+3y)^2$",
+        steps: [
+          { id: "1a-s1", lead: "選用合適的恆等式，並寫出 ▲ 和 ■。",
+            hints: ["兩項中間是加號，用和的完全平方。", "$(▲+■)^2$，▲ $=4x$，■ $=3y$。"],
+            blocks: [
+              ch("1a-fml", "公式", "sum", { sub: "括號裡是加號，不是 (▲−■)²。", diff: "這題是完全平方，不是平方差。" }),
+              ex("1a-A", "▲ =", "4x", "equiv", ["x", "y"]),
+              ex("1a-B", "■ =", "3y", "equiv", ["x", "y"]),
+            ] },
+          { id: "1a-s2", lead: "算出 ▲²、2▲■ 和 ■²。",
+            hints: ["$(▲+■)^2=▲^2+2▲■+■^2$。", "$(4x)^2+2(4x)(3y)+(3y)^2$。"],
+            blocks: [
+              ex("1a-a2", "▲² =", "16x^2", "expand", ["x", "y"]),
+              ex("1a-2ab", "2▲■ =", "24xy", "expand", ["x", "y"], [{ expr: "12xy", msg: "中間項要乘 2。" }]),
+              ex("1a-b2", "■² =", "9y^2", "expand", ["x", "y"]),
+            ] },
+          { id: "1a-s3", lead: "把三項加起來，寫成展開後的多項式。",
+            hints: ["三項都要留下，中間是 2▲■。", "$16x^2+24xy+9y^2$。"],
+            blocks: [
+              ex("1a-ans", "$(4x+3y)^2=$", "16x^2+24xy+9y^2", "expand", ["x", "y"], [
+                { expr: "16x^2+9y^2", msg: "漏了中間項 2▲■。" },
+                { expr: "16x^2+12xy+9y^2", msg: "中間項要乘 2。" },
+                { expr: "4x^2+24xy+3y^2", msg: "係數也要平方：$(4x)^2=16x^2$。" },
+                { expr: "4x^2+12xy+3y^2", msg: "係數也要平方：$(4x)^2=16x^2$。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          "$(4x+3y)^2$",
+          { t: "$=(4x)^2+2(4x)(3y)+(3y)^2$", m: "M1" },
+          { t: "$=16x^2+24xy+9y^2$", m: "A1" },
+        ],
+      },
+      {
+        id: "b", label: "(b)", marks: 2, stem: "$(6-5x)^2$",
+        steps: [
+          { id: "1b-s1", lead: "選用合適的恆等式，並寫出 ▲ 和 ■。",
+            hints: ["這是兩項差的完全平方。", "$(▲-■)^2$，▲ $=6$，■ $=5x$。"],
+            blocks: [
+              ch("1b-fml", "公式", "sub", { sum: "中間是減號，用 (▲−■)²。", diff: "這題不是平方差。" }),
+              ex("1b-A", "▲ =", "6", "equiv", []),
+              ex("1b-B", "■ =", "5x", "equiv", ["x"]),
+            ] },
+          { id: "1b-s2", lead: "算出 ▲²、2▲■ 和 ■²。（2▲■ 先寫正數，減號留到最後答案。）",
+            hints: ["$(▲-■)^2=▲^2-2▲■+■^2$。", "$6^2-2(6)(5x)+(5x)^2$。"],
+            blocks: [
+              ex("1b-a2", "▲² =", "36", "expand", []),
+              ex("1b-2ab", "2▲■ =", "60x", "expand", ["x"], [{ expr: "30x", msg: "中間項要乘 2。" }]),
+              ex("1b-b2", "■² =", "25x^2", "expand", ["x"]),
+            ] },
+          { id: "1b-s3", lead: "寫成展開後的多項式。中間項是減號，■² 是正數。",
+            hints: ["完全平方有三項，不要寫成平方差。", "$36-60x+25x^2$。"],
+            blocks: [
+              ex("1b-ans", "$(6-5x)^2=$", "36-60x+25x^2", "expand", ["x"], [
+                { expr: "36-25x^2", msg: "(▲−■)² 不等於 ▲²−■²。" },
+                { expr: "36+60x+25x^2", msg: "中間項是減號。" },
+                { expr: "36-30x+25x^2", msg: "中間項要乘 2。" },
+                { expr: "36-60x-25x^2", msg: "$(5x)^2$ 是正數。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          "$(6-5x)^2$",
+          { t: "$=6^2-2(6)(5x)+(5x)^2$", m: "M1" },
+          { t: "$=36-60x+25x^2$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2, section: "甲", marks: 4, stem: "展開下列各數式。",
+    parts: [
+      {
+        id: "a", label: "(a)", marks: 2, stem: "$(-3x+7y)(-3x-7y)$",
+        steps: [
+          { id: "2a-s1", lead: "兩個括號裡，相同的項是 ▲，相反的項是 ■。",
+            hints: ["這是平方差。", "▲ 是兩個括號中相同的項 $-3x$，■ $=7y$。"],
+            blocks: [
+              ch("2a-fml", "公式", "diff", { sum: "這題是平方差，不是完全平方。", sub: "這題是平方差，不是完全平方。" }),
+              ex("2a-A", "▲ =", "-3x", "equiv", ["x"], [{ expr: "7y", msg: "▲ 是兩個括號中相同的項 $-3x$，■ 才是 $7y$。" }, { expr: "3x", msg: "相同的項包括負號：▲ $=-3x$。" }]),
+              ex("2a-B", "■ =", "7y", "equiv", ["y"]),
+            ] },
+          { id: "2a-s2", lead: "平方差只需要 ▲² 和 ■²。",
+            hints: ["$(▲+■)(▲-■)=▲^2-■^2$。", "$(-3x)^2-(7y)^2$。"],
+            blocks: [
+              ex("2a-a2", "▲² =", "9x^2", "expand", ["x"], [{ expr: "-9x^2", msg: "$(-3x)^2$ 是正數。" }]),
+              ex("2a-b2", "■² =", "49y^2", "expand", ["y"]),
+            ] },
+          { id: "2a-s3", lead: "寫成 ▲² − ■²。",
+            hints: ["平方差中間是減號。", "$9x^2-49y^2$。"],
+            blocks: [
+              ex("2a-ans", "答案 =", "9x^2-49y^2", "expand", ["x", "y"], [
+                { expr: "-9x^2-49y^2", msg: "$(-3x)^2$ 是正數。" },
+                { expr: "9x^2+49y^2", msg: "平方差中間是減號。" },
+                { expr: "49y^2-9x^2", msg: "▲ 是兩個括號中相同的項 $-3x$，■ 才是 $7y$。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          "$(-3x+7y)(-3x-7y)$",
+          { t: "$=(-3x)^2-(7y)^2$", m: "M1" },
+          { t: "$=9x^2-49y^2$", m: "A1" },
+        ],
+      },
+      {
+        id: "b", label: "(b)", marks: 2, stem: "$\\left(\\dfrac{x}{2}-4\\right)^2$",
+        steps: [
+          { id: "2b-s1", lead: "選用 (▲−■)²，寫出 ▲ 和 ■。",
+            hints: ["第一項減第二項。", "▲ $=x/2$，■ $=4$。"],
+            blocks: [
+              ch("2b-fml", "公式", "sub", { sum: "中間是減號。", diff: "這題是完全平方，不是平方差。" }),
+              ex("2b-A", "▲ =", "x/2", "equiv", ["x"]),
+              ex("2b-B", "■ =", "4", "equiv", []),
+            ] },
+          { id: "2b-s2", lead: "分數也要平方。2▲■ 先寫正數。",
+            hints: ["$(x/2)^2=x^2/4$。", "$2\\times(x/2)\\times 4=4x$，而 $4^2=16$。"],
+            blocks: [
+              ex("2b-a2", "▲² =", "x^2/4", "expand", ["x"], [{ expr: "x^2/2", msg: "$(x/2)^2=x^2/4$，分母也要平方。" }]),
+              ex("2b-2ab", "2▲■ =", "4x", "expand", ["x"], [{ expr: "8x", msg: "$2\\times(x/2)\\times 4=4x$。" }, { expr: "2x", msg: "中間項要乘 2。" }]),
+              ex("2b-b2", "■² =", "16", "number", []),
+            ] },
+          { id: "2b-s3", lead: "合併成展開式。",
+            hints: ["三項都要留下。", "$x^2/4-4x+16$。"],
+            blocks: [
+              ex("2b-ans", "答案 =", "x^2/4-4x+16", "expand", ["x"], [
+                { expr: "x^2/2-4x+16", msg: "$(x/2)^2=x^2/4$，分母也要平方。" },
+                { expr: "x^2/4-8x+16", msg: "$2\\times(x/2)\\times 4=4x$。" },
+                { expr: "x^2/4+16", msg: "漏了中間項。" },
+                { expr: "x^2/4-2x+16", msg: "中間項要乘 2。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          "$\\left(\\dfrac{x}{2}-4\\right)^2$",
+          { t: "$=\\left(\\dfrac{x}{2}\\right)^2-2\\left(\\dfrac{x}{2}\\right)(4)+4^2$", m: "M1" },
+          { t: "$=\\dfrac{x^2}{4}-4x+16$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 3, section: "甲", marks: 3,
+    stem: "證明 $(x+4)^2-(x-4)^2=16x$ 是恆等式。",
+    parts: [
+      {
+        id: "a", label: "", marks: 3, stem: "",
+        steps: [
+          { id: "3-s1", lead: "展開 $(x+4)^2$。",
+            hints: ["用 $(▲+■)^2$。", "$(x+4)^2=x^2+8x+16$。"],
+            blocks: [ex("3-s1b", "$(x+4)^2=$", "x^2+8x+16", "expand", ["x"])] },
+          { id: "3-s2", lead: "展開 $(x-4)^2$。",
+            hints: ["用 $(▲-■)^2$。", "$(x-4)^2=x^2-8x+16$。"],
+            blocks: [ex("3-s2b", "$(x-4)^2=$", "x^2-8x+16", "expand", ["x"])] },
+          { id: "3-s3", lead: "括號前是減號，括號內每一項都要變號。",
+            hints: ["減一個括號，裡面每項變號。", "$-(x^2-8x+16)=-x^2+8x-16$。"],
+            blocks: [ex("3-s3b", "$-(x^2-8x+16)=$", "-x^2+8x-16", "expand", ["x"], [
+              { expr: "-x^2-8x+16", msg: "括號前是減號，括號內每一項都要變號。" },
+              { expr: "-x^2-8x-16", msg: "括號前是減號，括號內每一項都要變號。" },
+            ])] },
+          { id: "3-s4", lead: "把左方化簡。",
+            hints: ["$x^2$ 和常數項會消去。", "左方 $=16x$。"],
+            blocks: [ex("3-s4", "左方化簡 =", "16x", "expand", ["x"], [], true)] },
+          { id: "3-s5", lead: "比較左方和右方，寫出結論。",
+            hints: ["右方是 $16x$。", "左方 = 右方，所以是恆等式。"],
+            blocks: [
+              chCustom("3-eq", "∵ 左方", [
+                { id: "eq", text: "=", ok: true },
+                { id: "ne", text: "≠", why: "化簡後兩邊都是 $16x$。" },
+              ], true, " 右方"),
+              chCustom("3-id", "∴ $(x+4)^2-(x-4)^2$", [
+                { id: "yes", text: "≡ 16x，是恆等式", ok: true },
+                { id: "no", text: "不是恆等式", why: "左方化簡後等於右方，所以是恆等式。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          "左方 $=(x+4)^2-(x-4)^2$",
+          { t: "$=(x^2+8x+16)-(x^2-8x+16)$", m: "M1" },
+          "$=x^2+8x+16-x^2+8x-16$",
+          "$=16x$",
+          { t: "右方 $=16x$", m: "A1" },
+          "∵ 左方 = 右方",
+          { t: "∴ $(x+4)^2-(x-4)^2\\equiv 16x$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 4, section: "甲", marks: 5, stem: "判斷下列各等式是否恆等式。",
+    parts: [
+      {
+        id: "a", label: "(a)", marks: 2, stem: "$(2x-1)(x+4)=2x^2+7x-4$",
+        steps: [
+          { id: "4a-s1", lead: "用分配律展開左方並化簡。",
+            hints: ["每項乘每項，不是完全平方。", "展開：$2x\\cdot x$、$2x\\cdot 4$、$(-1)\\cdot x$、$(-1)\\cdot 4$。"],
+            blocks: [ex("4a-lhs", "左方 =", "2x^2+7x-4", "expand", ["x"], [
+              { expr: "2x^2+9x-4", msg: "$(-1)\\times x=-x$，不是 $+x$。" },
+              { expr: "2x^2-4", msg: "漏了 $x$ 項。" },
+              { expr: "2x^2+8x-4", msg: "還有 $(-1)\\times x=-x$，要和 $8x$ 合併。" },
+            ], true)] },
+          { id: "4a-s2", lead: "右方是 $2x^2+7x-4$。比較後作結論。",
+            hints: ["看看兩邊的多項式是否相同。", "左方 = 右方，是恆等式。"],
+            blocks: [
+              chCustom("4a-eq", "左方", [
+                { id: "eq", text: "=", ok: true },
+                { id: "ne", text: "≠", why: "左方化簡後和右方相同。" },
+              ], true, " 右方"),
+              chCustom("4a-id", "結論", [
+                { id: "yes", text: "是恆等式", ok: true },
+                { id: "no", text: "不是恆等式", why: "兩邊相同，所以是恆等式。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          "左方 $=(2x-1)(x+4)$",
+          "$=2x^2+8x-x-4$",
+          { t: "$=2x^2+7x-4$", m: "M1" },
+          "右方 $=2x^2+7x-4$",
+          "∵ 左方 = 右方",
+          { t: "∴ 該等式是恆等式", m: "A1" },
+        ],
+      },
+      {
+        id: "b", label: "(b)", marks: 3, stem: "$(x-5)^2=(5-x)(5+x)$",
+        lab: true,
+        steps: [
+          { id: "4b-s1", lead: "展開左方。",
+            hints: ["用 $(▲-■)^2$。", "$(x-5)^2=x^2-10x+25$。"],
+            blocks: [ex("4b-lhs", "左方 =", "x^2-10x+25", "expand", ["x"], [], true)] },
+          { id: "4b-s2", lead: "展開右方。注意 $(5-x)(5+x)$ 的次序。",
+            hints: ["這是平方差，▲ $=5$，■ $=x$。", "$(5-x)(5+x)=25-x^2$。"],
+            blocks: [ex("4b-rhs", "右方 =", "25-x^2", "expand", ["x"], [
+              { expr: "x^2-25", msg: "$(5-x)(5+x)=5^2-x^2$，次序不可調換。" },
+            ], true)] },
+          { id: "4b-s3", lead: "兩邊不相同，所以不是恆等式。",
+            hints: ["左方有 $-10x$，右方沒有。", "左方 ≠ 右方。"],
+            blocks: [
+              chCustom("4b-eq", "左方", [
+                { id: "ne", text: "≠", ok: true },
+                { id: "eq", text: "=", why: "左方是 $x^2-10x+25$，右方是 $25-x^2$，並不相同。" },
+              ], true, " 右方"),
+              chCustom("4b-id", "結論", [
+                { id: "no", text: "不是恆等式", ok: true },
+                { id: "yes", text: "是恆等式", why: "只要有一個值令兩邊不同，就不是恆等式。" },
+              ], true),
+            ] },
+        ],
+        solution: [
+          { t: "左方 $=(x-5)^2=x^2-10x+25$", m: "M1" },
+          { t: "右方 $=(5-x)(5+x)=25-x^2$", m: "M1" },
+          "左方 ≠ 右方",
+          { t: "∴ 不是恆等式", m: "A1" },
+          "註：紙本只代入 $x=0$ 或 $x=5$ 便判斷為恆等式，不給 A1。",
+        ],
+      },
+    ],
+  },
+  {
+    id: 5, section: "甲", marks: 4,
+    stem: "考慮 $(3x-A)(x+4)\\equiv 3x^2+Bx-8$，其中 $A$ 和 $B$ 都是常數。求 $A$ 和 $B$ 的值。",
+    parts: [
+      {
+        id: "a", label: "", marks: 4, stem: "",
+        verify: "$(3x-2)(x+4)=3x^2+12x-2x-8=3x^2+10x-8$。✓",
+        steps: [
+          { id: "5-s1", lead: "展開左方，寫成 $3x^2+(\\quad)x+(\\quad)$。鍵盤有大寫 A。",
+            hints: ["$(3x-A)(x+4)=3x\\cdot x+3x\\cdot 4+(-A)\\cdot x+(-A)\\cdot 4$。", "$x$ 的係數是 $12-A$，常數項是 $-4A$。"],
+            blocks: [
+              ex("5-cx", "$x$ 的係數", "12-A", "equiv", ["A"]),
+              ex("5-k", "常數項", "-4A", "equiv", ["A"]),
+            ] },
+          { id: "5-s2", lead: "比較常數項：$-4A=-8$。",
+            hints: ["兩邊同時除以 $-4$。", "負數除負數得正數，$A=2$。"],
+            blocks: [ex("5-A", "$A=$", "2", "number", [], [{ expr: "-2", msg: "兩邊同時除以 $-4$，負負得正。" }], true)] },
+          { id: "5-s3", lead: "比較 $x$ 的係數：$12-A=B$。",
+            hints: ["把 $A=2$ 代入。", "$12-2=10$。"],
+            blocks: [ex("5-B", "$B=$", "10", "number", [], [{ expr: "14", msg: "$A$ 是 2，$12-2=10$，不是 $12+2$。" }], true)] },
+        ],
+        solution: [
+          "左方 $=(3x-A)(x+4)$",
+          { t: "$=3x^2+(12-A)x-4A$", m: "M1" },
+          { t: "比較常數項：$-4A=-8$", m: "M1" },
+          { t: "$A=2$", m: "A1" },
+          "比較 $x$ 的係數：$12-A=B$",
+          { t: "$B=12-2=10$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 6, section: "甲", marks: 4,
+    stem: "利用平方差或完全平方的恆等式，求下列各數式的值。",
+    parts: [
+      {
+        id: "a", label: "(a)", marks: 2, stem: "$76^2-24^2$", calcNote: true,
+        steps: [
+          { id: "6a-s1", lead: "這是 ▲² − ■²。選公式，並寫出 ▲、■。",
+            hints: ["平方差可以拆成兩數之和乘兩數之差。", "▲ $=76$，■ $=24$。"],
+            blocks: [
+              chCustom("6a-fml", "公式", [
+                { id: "diff", text: "▲²−■² = (▲+■)(▲−■)", ok: true },
+                { id: "sum", text: "(▲+■)²", why: "題目是兩平方之差，不是完全平方。" },
+                { id: "sub", text: "(▲−■)²", why: "題目是兩平方之差，不是完全平方。" },
+              ]),
+              ex("6a-A", "▲ =", "76", "number", []),
+              ex("6a-B", "■ =", "24", "number", []),
+            ] },
+          { id: "6a-s2", lead: "算出兩個括號。",
+            hints: ["先算 $76+24$ 和 $76-24$。", "$100\\times 52$。"],
+            blocks: [
+              ex("6a-sum", "$76+24=$", "100", "number", []),
+              ex("6a-dif", "$76-24=$", "52", "number", []),
+            ] },
+          { id: "6a-s3", lead: "算出數值。",
+            hints: ["$100\\times 52$。", "$5200$。"],
+            blocks: [ex("6a-ans", "答案 =", "5200", "number", [], [], true)] },
+        ],
+        solution: [
+          "$76^2-24^2$",
+          { t: "$=(76+24)(76-24)$", m: "M1" },
+          { t: "$=100\\times 52=5200$", m: "A1" },
+        ],
+      },
+      {
+        id: "b", label: "(b)", marks: 2, stem: "$98^2$", calcNote: true,
+        steps: [
+          { id: "6b-s1", lead: "把 98 寫成 100 減一個數，再用 (▲−■)²。",
+            hints: ["98 接近 100。", "$98=100-2$，用 $(▲-■)^2$。"],
+            blocks: [
+              ex("6b-k", "$98=100-$", "2", "number", []),
+              ch("6b-fml", "公式", "sub", { sum: "98 比 100 小，用 (▲−■)²。", diff: "這題是一個平方，不是平方差。" }),
+            ] },
+          { id: "6b-s2", lead: "▲ $=100$，■ $=2$。算出三項。",
+            hints: ["$(▲-■)^2=▲^2-2▲■+■^2$。", "$10000-400+4$。最後一項是加號。"],
+            blocks: [
+              ex("6b-a2", "$100^2=$", "10000", "number", []),
+              ex("6b-2ab", "$2(100)(2)=$", "400", "number", []),
+              ex("6b-b2", "$2^2=$", "4", "number", []),
+            ] },
+          { id: "6b-s3", lead: "計算 $10000-400+4$。",
+            hints: ["先減 400，再加 4。", "$9604$。"],
+            blocks: [ex("6b-ans", "$98^2=$", "9604", "number", [], [
+              { expr: "9996", msg: "(▲−■)² 不等於 ▲² − ■²。" },
+              { expr: "9596", msg: "最後一項 ■² 是加號：$10000-400+4$。" },
+            ], true)] },
+        ],
+        solution: [
+          "$98^2=(100-2)^2$",
+          { t: "$=100^2-2(100)(2)+2^2$", m: "M1" },
+          { t: "$=10000-400+4=9604$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 7, section: "乙", marks: 5, stem: "展開下列數式。",
+    parts: [
+      {
+        id: "a", label: "(a)", marks: 2, stem: "展開 $(2a-b)^2$。",
+        steps: [
+          { id: "7a-s1", lead: "選 (▲−■)²。這裡的字母是小寫 a、b。",
+            hints: ["兩項相減。", "▲ $=2a$，■ $=b$。"],
+            blocks: [
+              ch("7a-fml", "公式", "sub", { sum: "中間是減號。", diff: "這題是完全平方。" }),
+              ex("7a-A", "▲ =", "2a", "equiv", ["a"]),
+              ex("7a-B", "■ =", "b", "equiv", ["b"]),
+            ] },
+          { id: "7a-s2", lead: "算出三項。",
+            hints: ["$(2a)^2=4a^2$。", "$2(2a)(b)=4ab$，$b^2=b^2$。"],
+            blocks: [
+              ex("7a-a2", "▲² =", "4a^2", "expand", ["a"], [{ expr: "2a^2", msg: "$(2a)^2=4a^2$。" }]),
+              ex("7a-2ab", "2▲■ =", "4ab", "expand", ["a", "b"], [{ expr: "2ab", msg: "中間項要乘 2。" }]),
+              ex("7a-b2", "■² =", "b^2", "expand", ["b"]),
+            ] },
+          { id: "7a-s3", lead: "寫出展開式。",
+            hints: ["中間是減號。", "$4a^2-4ab+b^2$。"],
+            blocks: [ex("7a-ans", "$(2a-b)^2=$", "4a^2-4ab+b^2", "expand", ["a", "b"], [
+              { expr: "2a^2-4ab+b^2", msg: "$(2a)^2=4a^2$。" },
+              { expr: "4a^2-2ab+b^2", msg: "中間項要乘 2。" },
+            ], true)] },
+        ],
+        solution: [
+          "$(2a-b)^2$",
+          { t: "$=(2a)^2-2(2a)(b)+b^2$", m: "M1" },
+          { t: "$=4a^2-4ab+b^2$", m: "A1" },
+        ],
+      },
+      {
+        id: "b", label: "(b)", marks: 3, stem: "由此，展開 $(2a-b+3)^2$。", needsPrev: true,
+        verify: "當 $a=1$、$b=1$：原式 $=(2-1+3)^2=16$。答案 $=4-4+1+12-6+9=16$。✓",
+        steps: [
+          { id: "7b-s1", lead: "把 $(2a-b)$ 看成 ▲，把 3 看成 ■。",
+            hints: ["三項可先收成兩項。", "$[(2a-b)+3]^2$，▲ $=2a-b$，■ $=3$。"],
+            blocks: [
+              ex("7b-A", "▲ =", "2a-b", "equiv", ["a", "b"]),
+              ex("7b-B", "■ =", "3", "equiv", []),
+            ] },
+          { id: "7b-s2", lead: "套用 (▲+■)²。▲² 用 (a) 的結果。",
+            hints: ["$(▲+■)^2=▲^2+2▲■+■^2$。", "▲² $=4a^2-4ab+b^2$，$2(2a-b)(3)=12a-6b$，$3^2=9$。"],
+            blocks: [
+              ex("7b-a2", "$(2a-b)^2=$", "4a^2-4ab+b^2", "expand", ["a", "b"]),
+              ex("7b-2ab", "$2(2a-b)(3)=$", "12a-6b", "expand", ["a", "b"], [
+                { expr: "6a-3b", msg: "$2\\times 3=6$，但 $6(2a-b)=12a-6b$。" },
+                { expr: "12a-b", msg: "$6(2a-b)$ 的每一項都要乘 6。" },
+              ]),
+              ex("7b-b2", "$3^2=$", "9", "number", []),
+            ] },
+          { id: "7b-s3", lead: "把三部分加起來。",
+            hints: ["不要漏 $2▲■=6(2a-b)$。", "$4a^2-4ab+b^2+12a-6b+9$。"],
+            blocks: [ex("7b-ans", "$(2a-b+3)^2=$", "4a^2-4ab+b^2+12a-6b+9", "expand", ["a", "b"], [
+              { expr: "4a^2-4ab+b^2+9", msg: "漏了中間項 $2▲■=6(2a-b)$。" },
+              { expr: "4a^2-4ab+b^2+12a-b+9", msg: "$6(2a-b)$ 的每一項都要乘 6。" },
+            ], true)] },
+        ],
+        solution: [
+          "$(2a-b+3)^2=[(2a-b)+3]^2$",
+          { t: "$=(2a-b)^2+2(2a-b)(3)+3^2$", m: "M1" },
+          { t: "$=(4a^2-4ab+b^2)+(12a-6b)+9$", m: "M1" },
+          { t: "$=4a^2-4ab+b^2+12a-6b+9$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  {
+    id: 8, section: "乙", marks: 5, stem: "化簡下列數式，並由此求值。",
+    parts: [
+      {
+        id: "a", label: "(a)", marks: 3, stem: "化簡 $(x+1)(x-1)(x^2+1)$。",
+        steps: [
+          { id: "8a-s1", lead: "先算前兩個括號。",
+            hints: ["$(x+1)(x-1)$ 是平方差。", "$x^2-1$。"],
+            blocks: [ex("8a-s1b", "$(x+1)(x-1)=$", "x^2-1", "expand", ["x"])] },
+          { id: "8a-s2", lead: "再對 $(x^2-1)(x^2+1)$ 用平方差。▲ $=x^2$，■ $=1$。用 ^ 輸入 $x^4$。",
+            hints: ["平方差中間是減號。", "$(x^2)^2-1^2=x^4-1$。"],
+            blocks: [ex("8a-ans", "答案 =", "x^4-1", "expand", ["x"], [
+              { expr: "x^4+1", msg: "平方差中間是減號。" },
+            ], true)] },
+        ],
+        solution: [
+          "$(x+1)(x-1)(x^2+1)$",
+          { t: "$=(x^2-1)(x^2+1)$", m: "M1" },
+          { t: "$=(x^2)^2-1^2$", m: "M1" },
+          { t: "$=x^4-1$", m: "A1" },
+        ],
+      },
+      {
+        id: "b", label: "(b)", marks: 2, stem: "由此，求 $11\\times 9\\times 101$ 的值。", needsPrev: true, calcNote: true,
+        steps: [
+          { id: "8b-s1", lead: "$11=10+1$，$9=10-1$，$101=10^2+1$。所以 $x$ 是多少？",
+            hints: ["對照 (a) 的三個因式。", "$x=10$。"],
+            blocks: [ex("8b-x", "$x=$", "10", "number", [])] },
+          { id: "8b-s2", lead: "由 (a)，數值是 $10^4-1$。",
+            hints: ["$10^4=10000$。", "$9999$。"],
+            blocks: [ex("8b-ans", "$11\\times 9\\times 101=$", "9999", "number", [], [], true)] },
+        ],
+        solution: [
+          "$11\\times 9\\times 101=(10+1)(10-1)(10^2+1)$",
+          "令 $x=10$，由 (a)",
+          { t: "$=10^4-1$", m: "M1" },
+          { t: "$=9999$", m: "A1" },
+          "註：紙本若直接乘出 9999 而沒有利用 (a) 的結果，只給 A1。",
+        ],
+      },
+    ],
+  },
+  {
+    id: 9, section: "乙", marks: 6,
+    stem: "考慮 $A(x-3)^2+B(x-3)+C\\equiv 2x^2-7x+4$，其中 $A$、$B$ 和 $C$ 都是常數。求 $A$、$B$ 和 $C$ 的值。",
+    parts: [
+      {
+        id: "a", label: "", marks: 6, stem: "",
+        verify: "$2(x-3)^2+5(x-3)+1=2(x^2-6x+9)+5x-15+1=2x^2-12x+18+5x-15+1=2x^2-7x+4$。✓",
+        steps: [
+          { id: "9-s1", lead: "先展開 $(x-3)^2$。",
+            hints: ["用 $(▲-■)^2$。", "$x^2-6x+9$。"],
+            blocks: [ex("9-sq", "$(x-3)^2=$", "x^2-6x+9", "expand", ["x"])] },
+          { id: "9-s2", lead: "左方 $=Ax^2+(\\quad)x+(\\quad)$。兩個空格都接受任何等價寫法，例如 $B-6A$ 和 $-6A+B$。",
+            hints: ["$A(x^2-6x+9)+B(x-3)+C$。", "$x$ 的係數是 $-6A+B$，常數項是 $9A-3B+C$。"],
+            blocks: [
+              ex("9-cx", "$x$ 的係數", "-6A+B", "equiv", ["A", "B", "C"]),
+              ex("9-k", "常數項", "9A-3B+C", "equiv", ["A", "B", "C"]),
+            ] },
+          { id: "9-s3", lead: "比較 $x^2$ 的係數。",
+            hints: ["右方 $x^2$ 的係數是 2。", "$A=2$。"],
+            blocks: [ex("9-A", "$A=$", "2", "number", [], [], true)] },
+          { id: "9-s4", lead: "比較 $x$ 的係數：$-6A+B=-7$。",
+            hints: ["先代入 $A=2$：$-12+B=-7$。", "$B=-7+12=5$。"],
+            blocks: [ex("9-B", "$B=$", "5", "number", [], [{ expr: "-19", msg: "$B=-7+12=5$，不是 $-7-12$。" }], true)] },
+          { id: "9-s5", lead: "比較常數項：$9A-3B+C=4$。",
+            hints: ["$9\\times 2-3\\times 5+C=4$。", "$18-15+C=4$，所以 $C=1$。"],
+            blocks: [ex("9-C", "$C=$", "1", "number", [], [{ expr: "-29", msg: "$-3B=-3\\times 5=-15$，不是 $-3\\times 15$。" }], true)] },
+        ],
+        solution: [
+          { t: "$(x-3)^2=x^2-6x+9$", m: "M1" },
+          "左方 $=A(x^2-6x+9)+B(x-3)+C$",
+          "$=Ax^2+(-6A+B)x+(9A-3B+C)$",
+          { t: "比較 $x^2$ 的係數：$A=2$", m: "A1" },
+          "比較 $x$ 的係數：$-6(2)+B=-7$",
+          { t: "$-12+B=-7$", m: "M1" },
+          { t: "$B=5$", m: "A1" },
+          "比較常數項：$9(2)-3(5)+C=4$",
+          { t: "$18-15+C=4$", m: "M1" },
+          { t: "$C=1$", m: "A1" },
+        ],
+      },
+    ],
+  },
+  mc(10, "$(7x-2y)^2=$", "C",
+    ["▲ $=7x$，■ $=2y$。", "用 $(▲-■)^2=▲^2-2▲■+■^2$。"],
+    "▲ $=7x$，■ $=2y$。$(7x-2y)^2=49x^2-28xy+4y^2$。答案是 C。",
+    [
+      ["A", "49x^2-4y^2", "把 (▲−■)² 當作 ▲² − ■²。"],
+      ["B", "49x^2-14xy+4y^2", "中間項漏了乘 2。"],
+      ["C", "49x^2-28xy+4y^2", ""],
+      ["D", "7x^2-28xy+2y^2", "係數沒有平方。"],
+    ]),
+  mc(11, "$(-a-3b)^2=$", "A",
+    ["$-a-3b=-(a+3b)$，而 $(-▲)^2=▲^2$。", "$(-a-3b)^2=(a+3b)^2$。"],
+    "$(-a-3b)^2=[-(a+3b)]^2=(a+3b)^2=a^2+6ab+9b^2$。答案是 A。",
+    [
+      ["A", "a^2+6ab+9b^2", ""],
+      ["B", "a^2-6ab+9b^2", "$(-a-3b)^2=(a+3b)^2$，中間項是加號。"],
+      ["C", "-a^2-6ab-9b^2", "平方後不會是負數。"],
+      ["D", "a^2+9b^2", "漏了中間項。"],
+    ]),
+  mc(12, "$-3(2-x)^2=$", "D",
+    ["先展開 $(2-x)^2$，再整個乘以 $-3$。", "$(2-x)^2=4-4x+x^2$，然後乘 $-3$。"],
+    "$(2-x)^2=4-4x+x^2$。乘 $-3$：$-12+12x-3x^2=-3x^2+12x-12$。答案是 D。",
+    [
+      ["A", "-3x^2-12x-12", "中間項符號錯，$(-3)\\times(-4x)=+12x$。"],
+      ["B", "3x^2-12", "把 $(2-x)^2$ 當作 $4-x^2$。"],
+      ["C", "9x^2-36x+36", "把 $-3$ 也平方了。"],
+      ["D", "-3x^2+12x-12", ""],
+    ]),
+  mc(13, "$(5m+2n)(2n-5m)=$", "B",
+    ["先把第一個括號寫成 $(2n+5m)$。", "相同的項是 $2n$（▲），相反的項是 $5m$（■）。"],
+    "$(5m+2n)(2n-5m)=(2n+5m)(2n-5m)=4n^2-25m^2$。答案是 B。",
+    [
+      ["A", "25m^2-4n^2", "相同的項是 $2n$（▲），相反的項才是 $5m$（■）。"],
+      ["B", "4n^2-25m^2", ""],
+      ["C", "4n^2+25m^2", "平方差中間是減號。"],
+      ["D", "2n^2-5m^2", "係數沒有平方。"],
+    ]),
+  mc(14, "下列何者是恆等式？", "D",
+    ["逐個展開，看兩邊是否永遠相同。", "留意 $(-x-y)^2=[-(x+y)]^2$。"],
+    "$(-x-y)^2=[-(x+y)]^2=(x+y)^2$。答案是 D。",
+    [
+      ["A", "(x+5)^2=x^2+25", "漏了 $10x$。"],
+      ["B", "(2x+1)^2=2x^2+4x+1", "$(2x)^2=4x^2$，不是 $2x^2$。"],
+      ["C", "(3-x)(3+x)=x^2-9", "右方應為 $9-x^2$。"],
+      ["D", "(-x-y)^2=(x+y)^2", ""],
+    ]),
+  mc(15, "下列何者不是恆等式？", "A",
+    ["不是恆等式的那項，展開後會多出或漏掉一項。", "檢查 $(2x-3)^2$ 有沒有中間項。"],
+    "$(2x-3)^2=4x^2-12x+9$，不是 $4x^2-9$。答案是 A。",
+    [
+      ["A", "(2x-3)^2=4x^2-9", ""],
+      ["B", "(x+1)^2-1=x(x+2)", "左方 $=x^2+2x+1-1=x^2+2x$，右方 $=x(x+2)$。它是恆等式。"],
+      ["C", "x(x-4)+4=(x-2)^2", "左方 $=x^2-4x+4=(x-2)^2$。它是恆等式。"],
+      ["D", "(x+3)(x-3)+9=x^2", "左方 $=x^2-9+9=x^2$。它是恆等式。"],
+    ],
+    { calcNote: false, explainExtra: "" }),
+  mc(16, "$201\\times 199=$", "A",
+    ["寫成 $(200+1)(200-1)$。", "平方差：$200^2-1^2$。"],
+    "$(200+1)(200-1)=200^2-1^2=40000-1=39999$。答案是 A。",
+    [
+      ["A", "39\\,999", ""],
+      ["B", "40\\,000", "只算了 $200^2$。"],
+      ["C", "40\\,001", "$200^2-1^2$ 應減 1，而不是加 1。"],
+      ["D", "40\\,401", "那是 $201^2$。"],
+    ],
+    { calcNote: true }),
+  mc(17, "$3.02^2-2\\times 3.02\\times 0.02+0.02^2=$", "B",
+    ["這是 ▲² − 2▲■ + ■²。", "▲ $=3.02$，■ $=0.02$，所以是 $(3.02-0.02)^2$。"],
+    "$(3.02-0.02)^2=3^2=9$。答案是 B。",
+    [
+      ["A", "3", "$(3.02-0.02)^2=3^2=9$，忘記平方。"],
+      ["B", "9", ""],
+      ["C", "9.12", "只計算了 $3.02^2$ 的一部分。"],
+      ["D", "9.1204", "只計算了 $3.02^2$。"],
+    ],
+    { calcNote: true }),
+  mc(18, "設 $h$ 和 $k$ 均為常數。若 $(x+k)^2-4\\equiv x^2+8x+h$，則 $h=$", "B",
+    ["左方 $=x^2+2kx+k^2-4$，先比較 $x$ 的係數求 $k$。", "$2k=8$，所以 $k=4$，再算 $h=k^2-4$。"],
+    "比較 $x$ 的係數：$2k=8$，$k=4$。$h=k^2-4=16-4=12$。答案是 B。",
+    [
+      ["A", "4", "4 是 $k$ 的值，不是 $h$。"],
+      ["B", "12", ""],
+      ["C", "16", "忘記減 4。"],
+      ["D", "20", "應是 $k^2-4$，不是 $k^2+4$。"],
+    ]),
+  mc(19, "設 $p$ 和 $q$ 均為常數。若 $\\left(\\dfrac{x}{3}-p\\right)^2\\equiv \\dfrac{x^2}{9}-2x+q$，則 $q=$", "C",
+    ["左方 $=x^2/9-(2p/3)x+p^2$。比較 $x$ 的係數：$2p/3=2$。", "$2p/3=2$，得 $p=3$，所以 $q=p^2=9$。"],
+    "比較 $x$ 的係數：$2p/3=2$，$p=3$。$q=p^2=9$。答案是 C。",
+    [
+      ["A", "1", "解 $2p/3=2$ 時漏了分母 3，得 $p=1$。"],
+      ["B", "4", "再檢查 $2p/3=2$ 的解。"],
+      ["C", "9", ""],
+      ["D", "36", "誤得 $p=6$。"],
+    ]),
+];
+
+function ex(id, label, answer, format, vars, wrong, final) {
+  return { id, kind: "expr", label, answer, format, vars: vars || [], wrong: wrong || [], final: !!final };
+}
+function ch(id, label, okId, whyMap) {
+  const base = [
+    { id: "sum", text: "(▲+■)²" },
+    { id: "sub", text: "(▲−■)²" },
+    { id: "diff", text: "(▲+■)(▲−■)" },
+  ];
+  return {
+    id, kind: "choice", label,
+    options: base.map((o) => ({ ...o, ok: o.id === okId, why: whyMap[o.id] || "這個公式不適合這題。" })),
+  };
+}
+function chCustom(id, label, options, final, suffix) {
+  return { id, kind: "choice", label, suffix: suffix || "", final: !!final, options };
+}
+function mc(id, stem, answer, hints, explain, rows, extra) {
+  return {
+    id, section: "選", marks: 2, stem, hints, explain, answer,
+    calcNote: !!(extra && extra.calcNote),
+    options: rows.map(([oid, tex, why]) => ({ id: oid, tex, ok: oid === answer, why })),
+  };
+}
+
+const KEY = "hk-2a-ch3-identities-v1";
+const CELL = new Map();
+const STEP = new Map();
+let state = fresh();
+let activeId = null;
+const calc = { expr: "", result: "", ans: "", open: false, mini: false };
+
+function fresh() {
+  return { mode: "steps", cells: {}, hints: {}, help: {}, revealed: {}, self: {}, sol: {} };
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || typeof data !== "object") return null;
+    return {
+      mode: data.mode === "answers" ? "answers" : "steps",
+      cells: data.cells && typeof data.cells === "object" ? data.cells : {},
+      hints: data.hints || {},
+      help: data.help || {},
+      revealed: data.revealed || {},
+      self: data.self || {},
+      sol: data.sol || {},
+    };
+  } catch (e) {
+    return null;
+  }
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+}
+function ensure(id) {
+  if (!state.cells[id]) state.cells[id] = { value: "", cursor: 0, status: "", wrongs: 0, fb: "", stamp: null };
+  return state.cells[id];
+}
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function mix(s) {
+  const bits = String(s == null ? "" : s).split("$");
+  return bits.map((p, i) => (i % 2 ? `<span class="tex" data-tex="${esc(p)}"></span>` : esc(p))).join("");
+}
+function looseLatex(s) {
+  return String(s).replace(/\^(\{[^}]+\}|\d+)/g, (m, g) => (m.startsWith("^{") ? m : "^{" + g + "}"));
+}
+function dress(msg) {
+  if (!msg) return "還未正確，再試一次。";
+  if (/^(正確|數值正確|還可以|請先|請輸入|請只|大小寫|這格|參考)/.test(msg)) return msg;
+  if (msg.startsWith("差少少")) return msg;
+  return "差少少！" + msg;
+}
+function indexQuestions() {
+  let A = 0, B = 0, M = 0;
+  const seen = new Set();
+  for (const q of QUESTIONS) {
+    if (q.section === "甲") A += q.marks;
+    else if (q.section === "乙") B += q.marks;
+    else M += q.marks;
+    q.allIds = [];
+    q.finalIds = [];
+    if (q.options) {
+      q.allIds = ["mc-" + q.id];
+      q.finalIds = q.allIds.slice();
+      continue;
+    }
+    for (const part of q.parts) {
+      part.qid = q.id;
+      for (const step of part.steps) {
+        STEP.set(step.id, step);
+        step.qid = q.id;
+        step.part = part;
+        for (const block of step.blocks) {
+          if (seen.has(block.id)) throw new Error("重複題目格：" + block.id);
+          seen.add(block.id);
+          block.stepId = step.id;
+          block.qid = q.id;
+          CELL.set(block.id, block);
+          q.allIds.push(block.id);
+          if (block.final) q.finalIds.push(block.id);
+        }
+      }
+    }
+  }
+  CELL.set("lab-4", { id: "lab-4", kind: "expr", vars: [], lab: true, qid: 4, stepId: "4b-s3" });
+  if (A !== 24 || B !== 16 || M !== 20) throw new Error("分數合計不是 24+16+20");
+}
+function stepComplete(step) {
+  return step.blocks.every((b) => state.cells[b.id]?.status === "ok");
+}
+function partComplete(part) {
+  return part.steps.every(stepComplete);
+}
+function stepLocked(part, index) {
+  if (state.mode !== "steps") return false;
+  if (part.needsPrev) {
+    const q = QUESTIONS.find((x) => x.id === part.qid);
+    const i = q.parts.findIndex((p) => p.id === part.id);
+    const prev = q.parts[i - 1];
+    if (prev && !partComplete(prev)) return true;
+  }
+  if (index === 0) return false;
+  return !stepComplete(part.steps[index - 1]);
+}
+function qState(q) {
+  const ids = state.mode === "answers" || q.options ? q.finalIds : q.allIds;
+  if (ids.length && ids.every((id) => state.cells[id]?.status === "ok")) return "done";
+  if (state.help[q.id]) return "hint";
+  return "todo";
+}
+function sir(text, kind) {
+  const sym = kind === "ok" ? "✓ " : kind === "bad" ? "✗ " : "";
+  return `<div class="sir ${kind || ""}"><img class="sir-img" alt="" width="48" height="48"><p class="sir-txt">${sym}${mix(text)}</p></div>`;
+}
+function bindSir(root) {
+  root.querySelectorAll(".sir-img").forEach((img) => {
+    img.src = "lusir.png";
+    img.addEventListener("error", () => {
+      const sp = document.createElement("span");
+      sp.className = "sir-fallback";
+      sp.setAttribute("role", "img");
+      sp.setAttribute("aria-label", "呂Sir");
+      sp.textContent = "👨‍🏫";
+      img.replaceWith(sp);
+    });
+  });
+}
+function hydrate(root) {
+  root.querySelectorAll(".tex").forEach((el) => {
+    const t = el.getAttribute("data-tex") || "";
+    if (window.katex) {
+      try { katex.render(t, el, { throwOnError: false, strict: "ignore", trust: true }); return; } catch (e) {}
+    }
+    el.textContent = t;
+  });
+  bindSir(root);
+}
+function hintHTML(id, hints) {
+  const lv = state.hints[id] || 0;
+  if (!lv) return "";
+  let html = sir("提示：" + hints[0], "");
+  if (lv >= 2 && hints[1]) html += sir("再提示：" + hints[1], "");
+  return html;
+}
+function revealHTML(block) {
+  if (!state.revealed[block.id]) return "";
+  if (block.kind === "choice") {
+    const ok = block.options.find((o) => o.ok);
+    const label = ok ? (ok.text || ok.tex || ok.id) : "";
+    return sir("參考答案：" + label, "");
+  }
+  const latex = looseLatex(linearToLatex(block.answer, null).replace(/\\htmlClass\{cur\}\{\|\}/g, ""));
+  return `<div class="sir"><img class="sir-img" alt="" width="48" height="48"><div class="sir-txt">參考答案：<span class="tex" data-tex="${esc(latex)}"></span></div></div>`;
+}
+function fbHTML(block) {
+  const cell = state.cells[block.id];
+  if (!cell || !cell.fb) return "";
+  const kind = cell.status === "ok" ? "ok" : "bad";
+  let html = sir(cell.fb, kind);
+  if (block.kind !== "choice" && cell.wrongs >= 3 && cell.status !== "ok") {
+    html += `<button type="button" class="hintbtn" data-act="reveal" data-id="${block.id}">顯示答案</button>`;
+  }
+  if (block.kind === "choice" && cell.wrongs >= 3 && cell.status !== "ok") {
+    html += `<button type="button" class="hintbtn" data-act="reveal" data-id="${block.id}">顯示答案</button>`;
+  }
+  html += revealHTML(block);
+  return html;
+}
+function renderExpr(block, locked) {
+  const tab = locked ? -1 : 0;
+  return `<div class="field"><span class="flab">${mix(block.label)}</span>
+    <div class="ablank" id="cell-${block.id}" data-id="${block.id}" tabindex="${tab}" role="textbox" aria-label="${esc(block.label.replace(/\$/g, ""))}"><span class="pv"></span></div>
+    <div class="fb" id="fb-${block.id}">${locked ? "" : fbHTML(block)}</div></div>`;
+}
+function renderChoice(block, locked) {
+  const cell = state.cells[block.id];
+  const opts = block.options.map((o) => {
+    const picked = cell && cell.value === o.id;
+    const cls = picked ? (cell.status === "ok" ? "picked okpick" : cell.status === "bad" ? "picked badpick" : "picked") : "";
+    const inner = o.tex ? `<span class="tex" data-tex="${esc(looseLatex(o.tex))}"></span>` : esc(o.text || o.id);
+    return `<button type="button" class="opt ${cls}" data-choice="${block.id}" data-opt="${esc(o.id)}" ${locked ? "disabled" : ""}>${inner}</button>`;
+  }).join("");
+  return `<div class="field"><span class="flab">${mix(block.label)}</span><div class="opts">${opts}</div>${block.suffix ? `<span>${mix(block.suffix)}</span>` : ""}<div class="fb" id="fb-${block.id}">${locked ? "" : fbHTML(block)}</div></div>`;
+}
+function renderBlock(block, locked) {
+  return block.kind === "choice" ? renderChoice(block, locked) : renderExpr(block, locked);
+}
+function renderSolution(lines) {
+  const body = lines.map((line) => {
+    const t = typeof line === "string" ? line : line.t;
+    const m = typeof line === "string" ? "" : line.m;
+    return `<div class="sline"><div>${mix(t)}</div>${m ? `<span class="mk">${esc(m)}</span>` : ""}</div>`;
+  }).join("");
+  return `<div class="solution"><h4>紙本完整寫法</h4>${body}</div>`;
+}
+function selfHTML(q) {
+  const v = state.self[q.id];
+  return `<div class="self"><span>自評得分</span>
+    <button type="button" data-act="self" data-q="${q.id}" data-d="-1" aria-label="減 1 分">−</button>
+    <b>${v == null ? "—" : v}</b><span>/ ${q.marks}</span>
+    <button type="button" data-act="self" data-q="${q.id}" data-d="1" aria-label="加 1 分">+</button>
+    <span>對照 M1／A1 自己加減</span></div>`;
+}
+function renderPart(q, part) {
+  let html = `<div class="part" id="part-${q.id}${part.id}">`;
+  if (part.label) html += `<div class="part-h"><span>${esc(part.label)}　${mix(part.stem)}</span><span>${part.marks} 分</span></div>`;
+  else if (part.stem) html += `<div class="stem">${mix(part.stem)}</div>`;
+  if (part.calcNote) html += `<p class="note">考試要寫出利用恆等式的步驟，計算機只作驗算。</p>`;
+  if (state.mode === "steps") {
+    part.steps.forEach((step, i) => {
+      const locked = stepLocked(part, i);
+      html += `<section class="step${locked ? " locked" : ""}"><div class="step-top"><h4>步驟 ${i + 1}</h4>
+        <button type="button" class="hintbtn" data-act="hint" data-step="${step.id}" ${locked ? "disabled" : ""}>💡 提示</button></div>
+        <p class="lead">${mix(step.lead)}</p>`;
+      if (locked && part.needsPrev && i === 0) html += `<p>先完成 (a)，這部分用到它的結果。</p>`;
+      else if (locked) html += `<p>先完成上一步。</p>`;
+      html += step.blocks.map((b) => renderBlock(b, locked)).join("");
+      html += hintHTML(step.id, step.hints);
+      html += `<div class="rowbtns"><button type="button" class="primary" data-act="check-step" data-step="${step.id}" ${locked ? "disabled" : ""}>核對這一步</button></div></section>`;
+    });
+    if (partComplete(part)) html += renderSolution(part.solution);
+  } else {
+    const finals = part.steps.flatMap((s) => s.blocks.filter((b) => b.final));
+    html += finals.map((b) => renderBlock(b, false)).join("");
+    html += hintHTMLFromPart(part);
+    html += `<div class="rowbtns"><button type="button" class="primary" data-act="check-part" data-q="${q.id}" data-part="${part.id}">核對</button>
+      <button type="button" class="hintbtn" data-act="hint-part" data-q="${q.id}" data-part="${part.id}">💡 提示</button></div>`;
+    if (state.sol[q.id]) html += renderSolution(part.solution);
+  }
+  if (part.lab) html += renderLab();
+  if (part.verify) {
+    html += `<div class="rowbtns"><button type="button" class="hintbtn" data-act="verify" data-q="${q.id}" data-part="${part.id}">驗算</button></div>`;
+    if (state.revealed["ver-" + q.id + part.id]) html += sir(part.verify, "ok");
+  }
+  html += `</div>`;
+  return html;
+}
+function hintHTMLFromPart(part) {
+  return part.steps.map((step) => hintHTML(step.id, step.hints)).join("");
+}
+function renderLab() {
+  return `<div class="field"><span class="flab">代入法實驗室：輸入一個 x</span>
+    <div class="ablank" id="cell-lab-4" data-id="lab-4" tabindex="0" role="textbox" aria-label="代入的 x 值"><span class="pv"></span></div>
+    <div class="rowbtns"><button type="button" class="primary" data-act="lab">計算左方和右方</button></div>
+    <div id="lab-out"></div>
+    <p class="note">紙本只代入 x = 0 或 x = 5 便判斷為恆等式，不給 A1。</p></div>`;
+}
+function renderMcq(q) {
+  const id = "mc-" + q.id;
+  const cell = state.cells[id];
+  const opts = q.options.map((o) => {
+    const picked = cell && cell.value === o.id;
+    const cls = picked ? (cell.status === "ok" ? "picked okpick" : cell.status === "bad" ? "picked badpick" : "picked") : "";
+    return `<button type="button" class="opt ${cls}" data-mc="${q.id}" data-opt="${o.id}">${o.id}. <span class="tex" data-tex="${esc(looseLatex(o.tex))}"></span></button>`;
+  }).join("");
+  let fb = "";
+  if (cell && cell.fb) {
+    fb = sir(cell.fb, cell.status === "ok" ? "ok" : "bad");
+    if (cell.wrongs >= 3 && cell.status !== "ok") fb += `<button type="button" class="hintbtn" data-act="reveal-mc" data-q="${q.id}">顯示答案</button>`;
+    if (state.revealed[id]) fb += sir("答案是 " + q.answer + "。" + q.explain, "ok");
+  }
+  return `<article class="qcard" id="q-${q.id}"><div class="qhead"><div class="qno">${q.id}</div><h3>${mix(q.stem)}</h3><div class="marks">${q.marks} 分</div></div>
+    ${q.calcNote ? `<p class="note">考試要寫出利用恆等式的步驟，計算機只作驗算。</p>` : ""}
+    <div class="opts">${opts}</div>
+    <div class="rowbtns"><button type="button" class="primary" data-act="check-mc" data-q="${q.id}">核對</button>
+      <button type="button" class="hintbtn" data-act="hint-mc" data-q="${q.id}">💡 提示</button></div>
+    ${hintHTML(id, q.hints)}
+    <div class="fb">${fb}</div></article>`;
+}
+function renderQuestion(q) {
+  if (q.options) return renderMcq(q);
+  let html = `<article class="qcard" id="q-${q.id}"><div class="qhead"><div class="qno">${q.id}</div><h3>${mix(q.stem) || " "}</h3><div class="marks">${q.marks} 分</div></div>`;
+  html += q.parts.map((p) => renderPart(q, p)).join("");
+  if (state.mode === "answers") {
+    html += selfHTML(q);
+    html += `<div class="rowbtns"><button type="button" class="hintbtn" data-act="sol" data-q="${q.id}">${state.sol[q.id] ? "收起評分準則" : "看評分準則"}</button></div>`;
+  }
+  html += `</article>`;
+  return html;
+}
+function sectionBanner(sec) {
+  const map = { 甲: ["甲部", "24 分"], 乙: ["乙部", "16 分"], 選: ["多項選擇題", "20 分"] };
+  const [name, mk] = map[sec];
+  const extra = sec === "選" ? "每題 2 分。選錯會說明原因；選對會顯示完整解釋。" : "";
+  return `<div class="sec"><h2>${name}</h2><span>${mk}</span></div>${extra ? `<p>${extra}</p>` : ""}`;
+}
+function render() {
+  const y = window.scrollY;
+  const main = document.getElementById("main");
+  let html = "";
+  let last = "";
+  for (const q of QUESTIONS) {
+    if (q.section !== last) { html += sectionBanner(q.section); last = q.section; }
+    html += renderQuestion(q);
+  }
+  if (state.mode === "answers") {
+    html += `<p class="note">長題目請核對後，按評分準則用 + / − 自評。多項選擇題核對後自動計分。甲部 24 + 乙部 16 + 選擇題 20 = 60。</p>`;
+  }
+  main.innerHTML = html;
+  hydrate(main);
+  paintAll();
+  updateNav();
+  updateScore();
+  updateModeButtons();
+  updateKeyboard();
+  const lab = document.getElementById("lab-out");
+  if (lab && state.labNote) lab.innerHTML = state.labNote;
+  if (lab) bindSir(lab);
+  window.scrollTo(0, y);
+  if (activeId) {
+    const el = document.getElementById("cell-" + activeId);
+    if (el && el.tabIndex >= 0) el.focus({ preventScroll: true });
+  }
+}
+function paintAll() {
+  document.querySelectorAll(".ablank").forEach(paintBlank);
+}
+function paintBlank(el) {
+  const id = el.dataset.id;
+  const cell = state.cells[id] || { value: "", cursor: 0 };
+  const pv = el.querySelector(".pv");
+  const value = cell.value || "";
+  const cursor = cell.cursor ?? value.length;
+  el.dataset.status = cell.status || "";
+  el.classList.toggle("hot", id === activeId);
+  if (!value && id !== activeId) { pv.innerHTML = '<span class="ph">點此輸入</span>'; return; }
+  const latex = linearToLatex(value, id === activeId ? cursor : null);
+  if (window.katex) {
+    try { katex.render(latex || "\\,", pv, { throwOnError: false, trust: true, strict: "ignore" }); return; } catch (e) {}
+  }
+  pv.textContent = (id === activeId ? value.slice(0, cursor) + "|" + value.slice(cursor) : value) || "|";
+}
+function updateNav() {
+  const names = { todo: "未做", done: "已完成", hint: "用過提示" };
+  for (const q of QUESTIONS) {
+    const btn = document.getElementById("nav-" + q.id);
+    if (!btn) continue;
+    const st = qState(q);
+    btn.className = st === "todo" ? "" : st;
+    btn.textContent = String(q.id);
+    btn.setAttribute("aria-label", `第 ${q.id} 題 ${names[st]}`);
+  }
+}
+function updateScore() {
+  const el = document.getElementById("score");
+  if (state.mode !== "answers") { el.hidden = true; syncPad(); return; }
+  el.hidden = false;
+  let a = 0, b = 0, m = 0, unrated = 0;
+  for (const q of QUESTIONS) {
+    if (q.section === "選") { if (state.cells["mc-" + q.id]?.status === "ok") m += 2; }
+    else if (state.self[q.id] == null) unrated += 1;
+    else if (q.section === "甲") a += Number(state.self[q.id]) || 0;
+    else b += Number(state.self[q.id]) || 0;
+  }
+  el.innerHTML = `<span>甲部 <b>${a}</b>/24</span><span>乙部 <b>${b}</b>/16</span><span>多項選擇題 <b>${m}</b>/20</span><span>自評總分 <b>${a + b + m}</b>/60</span>${unrated ? `<span>還有 ${unrated} 題未自評</span>` : ""}`;
+  syncPad();
+}
+function updateModeButtons() {
+  document.getElementById("mode-steps").setAttribute("aria-pressed", state.mode === "steps" ? "true" : "false");
+  document.getElementById("mode-answers").setAttribute("aria-pressed", state.mode === "answers" ? "true" : "false");
+}
+function syncPad() {
+  const kb = document.getElementById("kb");
+  const h = kb.classList.contains("show") ? kb.offsetHeight : 0;
+  document.documentElement.style.setProperty("--kb-h", h + "px");
+  clampCalc();
+}
+function updateKeyboard() {
+  const kb = document.getElementById("kb");
+  const block = activeId ? CELL.get(activeId) : null;
+  const show = !!(block && block.kind === "expr");
+  kb.classList.toggle("show", show);
+  const vars = (block && block.vars) || [];
+  document.getElementById("kb-vars").innerHTML = vars.map((v) => `<button type="button" class="key var" data-k="${v}">${v}</button>`).join("");
+  document.getElementById("kb-vars").style.display = vars.length ? "flex" : "none";
+  syncPad();
+}
+function gradeBlock(block) {
+  if (block.kind === "choice") return gradeChoice(block);
+  return gradeExpr(block);
+}
+function gradeExpr(block) {
+  const cell = ensure(block.id);
+  const raw = cell.value || "";
+  if (cell.status === "ok" && cell.stamp === raw) return { ok: true, msg: cell.fb };
+  const res = checkExpr(raw, block.answer, block.format, block.wrong, block.vars);
+  if (res.kind === "empty") {
+    cell.status = "bad";
+    cell.fb = res.msg;
+    return res;
+  }
+  const same = cell.stamp === raw && cell.status === "bad";
+  cell.stamp = raw;
+  if (res.ok) {
+    cell.status = "ok";
+    cell.wrongs = 0;
+    cell.fb = res.msg;
+    return res;
+  }
+  cell.status = "bad";
+  cell.fb = dress(res.msg);
+  if (!same) {
+    cell.wrongs = (cell.wrongs || 0) + 1;
+    if (cell.wrongs === 2) autoHint(block);
+  }
+  return res;
+}
+function gradeChoice(block) {
+  const cell = ensure(block.id);
+  if (!cell.value) {
+    cell.status = "bad";
+    cell.fb = "請先選擇。";
+    return { ok: false };
+  }
+  if (cell.status === "ok" && cell.stamp === cell.value) return { ok: true };
+  const opt = block.options.find((o) => o.id === cell.value);
+  const ok = !!(opt && opt.ok);
+  const same = cell.stamp === cell.value && cell.status === "bad";
+  cell.stamp = cell.value;
+  if (ok) {
+    cell.status = "ok";
+    cell.wrongs = 0;
+    cell.fb = "正確！";
+    return { ok: true };
+  }
+  cell.status = "bad";
+  cell.fb = dress((opt && opt.why) || "這個選擇不對。");
+  if (!same) {
+    cell.wrongs = (cell.wrongs || 0) + 1;
+    if (cell.wrongs === 2) autoHint(block);
+  }
+  return { ok: false };
+}
+function autoHint(block) {
+  const step = STEP.get(block.stepId);
+  if (!step) return;
+  if ((state.hints[step.id] || 0) < 1) state.hints[step.id] = 1;
+  state.help[block.qid] = true;
+}
+function checkStep(stepId) {
+  const step = STEP.get(stepId);
+  if (!step) return;
+  const idx = step.part.steps.findIndex((s) => s.id === stepId);
+  if (stepLocked(step.part, idx)) return;
+  step.blocks.forEach(gradeBlock);
+  save();
+  render();
+}
+function checkPart(qid, pid) {
+  const q = QUESTIONS.find((x) => x.id === qid);
+  const part = q.parts.find((p) => p.id === pid);
+  part.steps.flatMap((s) => s.blocks).filter((b) => b.final).forEach(gradeBlock);
+  save();
+  render();
+}
+function insertText(str) {
+  if (!activeId) return;
+  const block = CELL.get(activeId);
+  if (!block || block.kind !== "expr") return;
+  const cell = ensure(activeId);
+  const add = normalizeExpr(str);
+  if (!add) return;
+  const v = cell.value || "";
+  let c = cell.cursor ?? v.length;
+  c = Math.max(0, Math.min(v.length, c));
+  cell.value = v.slice(0, c) + add + v.slice(c);
+  cell.cursor = c + add.length;
+  cell.status = cell.status === "ok" || cell.status === "bad" ? "draft" : cell.status;
+  cell.fb = "";
+  save();
+  const el = document.getElementById("cell-" + activeId);
+  if (el) paintBlank(el);
+  const fb = document.getElementById("fb-" + activeId);
+  if (fb) fb.innerHTML = "";
+}
+function moveCursor(d) {
+  const cell = ensure(activeId);
+  const v = cell.value || "";
+  const c = cell.cursor ?? v.length;
+  cell.cursor = Math.max(0, Math.min(v.length, c + d));
+  save();
+  const el = document.getElementById("cell-" + activeId);
+  if (el) paintBlank(el);
+}
+function backspace() {
+  const cell = ensure(activeId);
+  const v = cell.value || "";
+  const c = cell.cursor ?? v.length;
+  if (c <= 0) return;
+  cell.value = v.slice(0, c - 1) + v.slice(c);
+  cell.cursor = c - 1;
+  cell.status = "draft";
+  cell.fb = "";
+  save();
+  const el = document.getElementById("cell-" + activeId);
+  if (el) paintBlank(el);
+}
+function clearCell() {
+  const cell = ensure(activeId);
+  cell.value = "";
+  cell.cursor = 0;
+  cell.status = "draft";
+  cell.fb = "";
+  save();
+  const el = document.getElementById("cell-" + activeId);
+  if (el) paintBlank(el);
+}
+function checkActive() {
+  const block = CELL.get(activeId);
+  if (!block) return;
+  if (block.lab) { runLab(); return; }
+  gradeBlock(block);
+  save();
+  const step = STEP.get(block.stepId);
+  const was = block.id;
+  render();
+  if (step && state.cells[was]?.status === "ok") {
+    const blocks = step.blocks;
+    const i = blocks.findIndex((b) => b.id === was);
+    for (let k = i + 1; k < blocks.length; k++) {
+      if (blocks[k].kind === "expr" && state.cells[blocks[k].id]?.status !== "ok") {
+        activeId = blocks[k].id;
+        updateKeyboard();
+        const el = document.getElementById("cell-" + activeId);
+        if (el) { el.focus({ preventScroll: true }); paintBlank(el); }
+        break;
+      }
+    }
+  }
+}
+function onKey(k) {
+  if (!activeId) return;
+  if (k === "ok") checkActive();
+  else if (k === "left") moveCursor(-1);
+  else if (k === "right") moveCursor(1);
+  else if (k === "bksp") backspace();
+  else if (k === "clear") clearCell();
+  else if (k === "pow") insertText("^2");
+  else insertText(k);
+  const el = document.getElementById("cell-" + activeId);
+  if (el) el.focus({ preventScroll: true });
+}
+function choose(id, opt) {
+  const cell = ensure(id);
+  cell.value = opt;
+  cell.status = "draft";
+  cell.fb = "";
+  save();
+  render();
+}
+function gradeMc(qid) {
+  const q = QUESTIONS.find((x) => x.id === qid);
+  const id = "mc-" + q.id;
+  const cell = ensure(id);
+  if (!cell.value) {
+    cell.status = "bad";
+    cell.fb = "請先選擇答案。";
+    cell.wrongs = (cell.wrongs || 0) + 1;
+    save(); render(); return;
+  }
+  const opt = q.options.find((o) => o.id === cell.value);
+  const ok = !!(opt && opt.ok);
+  const same = cell.stamp === cell.value && cell.status === "bad";
+  cell.stamp = cell.value;
+  if (ok) {
+    cell.status = "ok";
+    cell.wrongs = 0;
+    cell.fb = q.explain;
+  } else {
+    cell.status = "bad";
+    cell.fb = dress((opt && opt.why) || "這個選項不對。");
+    if (!same) {
+      cell.wrongs = (cell.wrongs || 0) + 1;
+      if (cell.wrongs === 2) {
+        state.hints[id] = Math.max(state.hints[id] || 0, 1);
+        state.help[q.id] = true;
+      }
+    }
+  }
+  save();
+  render();
+}
+function runLab() {
+  const cell = ensure("lab-4");
+  const out = document.getElementById("lab-out");
+  let parsed;
+  try { parsed = parsePoly(cell.value || ""); }
+  catch (e) {
+    state.labNote = sir("請輸入一個 x 的數值。", "bad");
+    if (out) { out.innerHTML = state.labNote; bindSir(out); }
+    return;
+  }
+  if (polyVars(parsed.poly).length) {
+    state.labNote = sir("請只輸入數字，不要輸入字母。", "bad");
+    if (out) { out.innerHTML = state.labNote; bindSir(out); }
+    return;
+  }
+  const c = parsed.poly.get("") || { n: 0, d: 1 };
+  const x = c.n / c.d;
+  const lhs = (x - 5) * (x - 5);
+  const rhs = (5 - x) * (5 + x);
+  const special = c.n === 0 || c.n === 5 * c.d;
+  const equal = Math.abs(lhs - rhs) < 1e-8;
+  let msg;
+  if (special && equal) msg = "兩方剛好相等！但一個數值相等不能證明是恆等式，試另一個值。";
+  else if (!equal) msg = "找到反例！只要有一個值令左方 ≠ 右方，就證明它不是恆等式。";
+  else msg = "兩方相等。再試其他數，看看是不是每次都相等。";
+  state.labNote = `<p>左方 = ${esc(formatSig(lhs))}，右方 = ${esc(formatSig(rhs))}</p>` + sir(msg, equal ? "" : "ok");
+  if (out) { out.innerHTML = state.labNote; bindSir(out); }
+  save();
+}
+function bumpSelf(qid, d) {
+  const q = QUESTIONS.find((x) => x.id === qid);
+  let v = state.self[qid];
+  if (v == null) v = 0;
+  v = Math.max(0, Math.min(q.marks, v + d));
+  state.self[qid] = v;
+  save();
+  const b = document.querySelector(`#q-${qid} .self b`);
+  if (b) b.textContent = String(v);
+  updateScore();
+}
+function prettyCalc(e) {
+  return e.replace(/sqrt\(/g, "√(").replace(/\*/g, "×").replace(/\//g, "÷").replace(/-/g, "−");
+}
+function drawCalc() {
+  document.getElementById("calc-expr").textContent = calc.expr ? prettyCalc(calc.expr) : "0";
+  document.getElementById("calc-res").textContent = calc.result || "";
+  document.getElementById("calc").hidden = !calc.open;
+  document.getElementById("calc-body").hidden = !!calc.mini;
+  document.getElementById("calc-fab").setAttribute("aria-expanded", calc.open ? "true" : "false");
+  clampCalc();
+}
+function calcPress(k) {
+  if (k === "ac") { calc.expr = ""; calc.result = ""; }
+  else if (k === "bksp") calc.expr = calc.expr.slice(0, -1);
+  else if (k === "eq") {
+    try { calc.result = formatSig(calcEval(calc.expr)); calc.ans = calc.result; }
+    catch (e) { calc.result = e.message || "算式不正確"; }
+  } else if (k === "ans") {
+    if (!calc.ans) calc.result = "還沒有 Ans";
+    else calc.expr += calc.ans;
+  } else if (k === "sign") toggleSign();
+  else if (k === "pow") { if (/[0-9)]$/.test(calc.expr)) calc.expr += "^(2)"; }
+  else if (k === "xy") calc.expr += "^(";
+  else if (k === "sqrt") calc.expr += "sqrt(";
+  else calc.expr += k;
+  drawCalc();
+}
+function toggleSign() {
+  const e = calc.expr;
+  const m = e.match(/^(.*?)(-?)(\d+(?:\.\d+)?)$/);
+  if (!m) { calc.expr = e ? e + "*(-1)" : "-"; return; }
+  const head = m[1], sign = m[2], num = m[3];
+  if (!head || /[+\-*/^(]$/.test(head)) calc.expr = head + (sign === "-" ? "" : "-") + num;
+  else calc.expr = e + "*(-1)";
+}
+function clampCalc() {
+  const panel = document.getElementById("calc");
+  if (!panel || panel.hidden) return;
+  const kb = document.getElementById("kb");
+  const limit = kb.classList.contains("show") ? kb.getBoundingClientRect().top : window.innerHeight;
+  const r = panel.getBoundingClientRect();
+  if (r.bottom > limit - 8) {
+    panel.style.top = Math.max(8, limit - 8 - r.height) + "px";
+    panel.style.bottom = "auto";
+    panel.style.left = r.left + "px";
+    panel.style.right = "auto";
+  }
+}
+function wire() {
+  document.getElementById("qnav").innerHTML = QUESTIONS.map((q) => `<button type="button" id="nav-${q.id}" data-go="${q.id}">${q.id}</button>`).join("");
+  document.getElementById("qnav").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-go]");
+    if (!b) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document.getElementById("q-" + b.dataset.go)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  });
+  document.getElementById("mode-steps").addEventListener("click", () => { state.mode = "steps"; activeId = null; save(); render(); window.scrollTo(0, 0); });
+  document.getElementById("mode-answers").addEventListener("click", () => { state.mode = "answers"; activeId = null; save(); render(); window.scrollTo(0, 0); });
+  document.getElementById("reset").addEventListener("click", () => { document.getElementById("modal").hidden = false; });
+  document.getElementById("reset-no").addEventListener("click", () => { document.getElementById("modal").hidden = true; });
+  document.getElementById("reset-yes").addEventListener("click", () => {
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    state = fresh();
+    activeId = null;
+    document.getElementById("modal").hidden = true;
+    render();
+  });
+  const main = document.getElementById("main");
+  main.addEventListener("pointerdown", (e) => {
+    const blank = e.target.closest(".ablank");
+    if (!blank || blank.tabIndex < 0) return;
+    e.preventDefault();
+    const id = blank.dataset.id;
+    const cell = ensure(id);
+    const rect = blank.getBoundingClientRect();
+    const ratio = rect.width ? (e.clientX - rect.left) / rect.width : 1;
+    const len = (cell.value || "").length;
+    if (activeId !== id) cell.cursor = Math.max(0, Math.min(len, Math.round(ratio * len)));
+    activeId = id;
+    updateKeyboard();
+    paintAll();
+    blank.focus({ preventScroll: true });
+  });
+  main.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-act],[data-choice],[data-mc]");
+    if (!t) return;
+    if (t.dataset.choice) { choose(t.dataset.choice, t.dataset.opt); return; }
+    if (t.dataset.mc) { choose("mc-" + t.dataset.mc, t.dataset.opt); return; }
+    const act = t.dataset.act;
+    if (act === "check-step") checkStep(t.dataset.step);
+    else if (act === "check-part") checkPart(Number(t.dataset.q), t.dataset.part);
+    else if (act === "hint") {
+      const step = STEP.get(t.dataset.step);
+      state.hints[step.id] = Math.min(2, (state.hints[step.id] || 0) + 1);
+      state.help[step.qid] = true;
+      save(); render();
+    } else if (act === "hint-part") {
+      const q = QUESTIONS.find((x) => x.id === Number(t.dataset.q));
+      const part = q.parts.find((p) => p.id === t.dataset.part);
+      const step = part.steps.find((s) => (state.hints[s.id] || 0) < 2) || part.steps[part.steps.length - 1];
+      state.hints[step.id] = Math.min(2, (state.hints[step.id] || 0) + 1);
+      state.help[q.id] = true;
+      save(); render();
+    } else if (act === "hint-mc") {
+      const id = "mc-" + t.dataset.q;
+      state.hints[id] = Math.min(2, (state.hints[id] || 0) + 1);
+      state.help[Number(t.dataset.q)] = true;
+      save(); render();
+    } else if (act === "reveal") {
+      const block = CELL.get(t.dataset.id);
+      state.revealed[block.id] = true;
+      state.help[block.qid] = true;
+      save(); render();
+    } else if (act === "reveal-mc") {
+      const qid = Number(t.dataset.q);
+      state.revealed["mc-" + qid] = true;
+      state.help[qid] = true;
+      save(); render();
+    } else if (act === "sol") {
+      const qid = Number(t.dataset.q);
+      state.sol[qid] = !state.sol[qid];
+      if (state.sol[qid] && qState(QUESTIONS.find((q) => q.id === qid)) !== "done") state.help[qid] = true;
+      save(); render();
+    } else if (act === "self") bumpSelf(Number(t.dataset.q), Number(t.dataset.d));
+    else if (act === "verify") {
+      state.revealed["ver-" + t.dataset.q + t.dataset.part] = true;
+      save(); render();
+    } else if (act === "lab") runLab();
+    else if (act === "check-mc") gradeMc(Number(t.dataset.q));
+  });
+  document.getElementById("kb").addEventListener("pointerdown", (e) => {
+    const key = e.target.closest("[data-k]");
+    if (!key) return;
+    e.preventDefault();
+    onKey(key.dataset.k);
+  });
+  document.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".ablank") || e.target.closest("#kb") || e.target.closest("#calc") || e.target.closest("#calc-fab") || e.target.closest("#modal")) return;
+    if (activeId) { activeId = null; updateKeyboard(); paintAll(); }
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!activeId) return;
+    const ae = document.activeElement;
+    if (!ae || !ae.classList.contains("ablank")) return;
+    const key = e.key;
+    if (key === "ArrowLeft") { e.preventDefault(); moveCursor(-1); }
+    else if (key === "ArrowRight") { e.preventDefault(); moveCursor(1); }
+    else if (key === "Backspace") { e.preventDefault(); backspace(); }
+    else if (key === "Enter") { e.preventDefault(); checkActive(); }
+    else if (key === "Escape") { e.preventDefault(); activeId = null; updateKeyboard(); paintAll(); }
+    else if (key === " " ) { e.preventDefault(); }
+    else if (key.length === 1 && /[0-9A-Za-z+*^./()\-]/.test(key)) { e.preventDefault(); insertText(key); }
+  });
+  document.addEventListener("paste", (e) => {
+    if (!activeId || !document.activeElement?.classList.contains("ablank")) return;
+    e.preventDefault();
+    insertText((e.clipboardData || window.clipboardData).getData("text") || "");
+  });
+  document.getElementById("calc-fab").addEventListener("click", () => { calc.open = !calc.open; calc.mini = false; drawCalc(); });
+  document.getElementById("calc-close").addEventListener("click", () => { calc.open = false; drawCalc(); });
+  document.getElementById("calc-min").addEventListener("click", () => { calc.mini = !calc.mini; drawCalc(); });
+  document.getElementById("calc-keys").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-c]");
+    if (!b) return;
+    calcPress(b.dataset.c);
+  });
+  const head = document.getElementById("calc-head");
+  let drag = null;
+  head.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button")) return;
+    const rect = document.getElementById("calc").getBoundingClientRect();
+    drag = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+    head.setPointerCapture(e.pointerId);
+  });
+  head.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const panel = document.getElementById("calc");
+    let x = e.clientX - drag.dx;
+    let y = e.clientY - drag.dy;
+    x = Math.max(8, Math.min(window.innerWidth - 80, x));
+    y = Math.max(8, Math.min(window.innerHeight - 80, y));
+    panel.style.left = x + "px";
+    panel.style.top = y + "px";
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
+  });
+  head.addEventListener("pointerup", () => { drag = null; clampCalc(); });
+}
+function runSpec() {
+  const fails = [];
+  const t = (name, cond) => { if (!cond) fails.push(name); };
+  const w1 = [
+    { expr: "16x^2+9y^2", msg: "漏了中間項" },
+    { expr: "16x^2+12xy+9y^2", msg: "中間項要乘 2" },
+  ];
+  const A = "16x^2+24xy+9y^2";
+  let r = checkExpr("16x^2+24xy+9y^2", A, "expand", w1, ["x", "y"]);
+  t("1a ok", r.ok);
+  r = checkExpr("9y^2+24xy+16x^2", A, "expand", w1, ["x", "y"]);
+  t("1a order", r.ok);
+  r = checkExpr("(4x+3y)^2", A, "expand", w1, ["x", "y"]);
+  t("1a paren", !r.ok && r.msg.includes("仍未展開"));
+  r = checkExpr("16x^2+12xy+12xy+9y^2", A, "expand", w1, ["x", "y"]);
+  t("1a combine", !r.ok && r.msg.includes("合併同類項"));
+  r = checkExpr("16x^2+9y^2", A, "expand", w1, ["x", "y"]);
+  t("1a mid", !r.ok && r.msg.includes("漏了中間項"));
+  const B = "x^2/4-4x+16";
+  const w2 = [{ expr: "x^2/2-4x+16", msg: "分母也要平方" }];
+  t("2b a", checkExpr("x^2/4-4x+16", B, "expand", w2, ["x"]).ok);
+  t("2b b", checkExpr("1/4x^2-4x+16", B, "expand", w2, ["x"]).ok);
+  r = checkExpr("x^2/2-4x+16", B, "expand", w2, ["x"]);
+  t("2b c", !r.ok && r.msg.includes("分母"));
+  t("9 a", checkExpr("B-6A", "-6A+B", "equiv", [], ["A", "B", "C"]).ok);
+  t("9 b", checkExpr("-6A+B", "-6A+B", "equiv", [], ["A", "B", "C"]).ok);
+  r = checkExpr("12-a", "12-A", "equiv", [], ["A"]);
+  t("5 case", !r.ok && r.kind === "case");
+  t("calc a", formatSig(calcEval("3.02^(2)")) === "9.1204");
+  t("calc b", formatSig(calcEval("0.1+0.2")) === "0.3");
+  t("inputs", document.querySelectorAll("input, textarea").length === 0);
+  return fails;
+}
+function boot() {
+  const loaded = loadState();
+  if (loaded) state = loaded;
+  indexQuestions();
+  wire();
+  render();
+  drawCalc();
+  window.HK = { checkExpr, calcEval, formatSig, parsePoly, linearToLatex, QUESTIONS, runSpec, polyEq, polyVars };
+}
+boot();
+
+</script>
+</body>
+</html>

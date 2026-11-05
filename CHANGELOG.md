@@ -3,7 +3,7 @@
 最新的記錄放在最上方。格式及規則見 [AGENTS.md](AGENTS.md) 第 4 節。
 
 ## 2026-11-05
-- 上架（外部連結）：數學 中二「恆等式」— 恆等式互動練習 · Mock 2（https://cinder-shale-plum-aurora.grok.me/）。只在試算表「課件清單」加一行，連結為完整網址，倉庫內沒有對應檔案。
+- 上架：數學 中二「恆等式」— 2A 第3章 恆等式 模擬試卷 — 互動練習（Mock 2）（Math/F2/恆等式-模擬試卷2.html）。由 Grok 專案匯出（TanStack Start 專案，其實只是在 iframe 內顯示一個獨立的 HTML：`public/2a-ch3-identities.html`），倉庫只存放該 HTML，不放整個專案；頁面只用 localStorage，沒有後端。試算表原本指向 https://cinder-shale-plum-aurora.grok.me/，改為倉庫內路徑。
 
 ## 2026-11-01
 - 上架（已同步）：ICT 中一「micro:bit」— micro:bit 小實驗室，第 1–3 課合併：3D 實驗室、認識 micro:bit、智能夜燈、課室噪音警報燈條（ICT/F1/microbit 小實驗室.html）。與 Maryknoll-ICT-Courseware 內容一致。
