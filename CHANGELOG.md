@@ -2,6 +2,9 @@
 
 最新的記錄放在最上方。格式及規則見 [AGENTS.md](AGENTS.md) 第 4 節。
 
+## 2026-11-05
+- 上架（外部連結）：數學 中二「恆等式」— 恆等式互動練習 · Mock 2（https://cinder-shale-plum-aurora.grok.me/）。只在試算表「課件清單」加一行，連結為完整網址，倉庫內沒有對應檔案。
+
 ## 2026-11-01
 - 上架（已同步）：ICT 中一「micro:bit」— micro:bit 小實驗室，第 1–3 課合併：3D 實驗室、認識 micro:bit、智能夜燈、課室噪音警報燈條（ICT/F1/microbit 小實驗室.html）。與 Maryknoll-ICT-Courseware 內容一致。
 
