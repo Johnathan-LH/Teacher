@@ -2,6 +2,9 @@
 
 最新的記錄放在最上方。格式及規則見 [AGENTS.md](AGENTS.md) 第 4 節。
 
+## 2026-11-09
+- 上架：數學 中一「其他」（示範用，不屬於特定課題）— 中一數學探險島（Math/F1/中一數學探險島.html）。專為升中體驗活動／中學開放日設計的互動闖關遊戲；只用 localStorage，沒有後端。
+
 ## 2026-11-05
 - 上架：數學 中二「恆等式」— 2A 第3章 恆等式 模擬試卷 — 互動練習（Mock 2）（Math/F2/恆等式-模擬試卷2.html）。由 Grok 專案匯出（TanStack Start 專案，其實只是在 iframe 內顯示一個獨立的 HTML：`public/2a-ch3-identities.html`），倉庫只存放該 HTML，不放整個專案；頁面只用 localStorage，沒有後端。試算表原本指向 https://cinder-shale-plum-aurora.grok.me/，改為倉庫內路徑。
 

@@ -1,0 +1,3250 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>中一數學探險島</title>
+<!--
+  ================================================================
+  中一數學探險島（第一階段：框架 + 有向數島）
+  ----------------------------------------------------------------
+  檔案結構（請用「搜尋」找以下標記）：
+    [A] CSS 樣式
+    [B] 嚮導圖像 GUIDE（要換成自己的卡通圖片，只改這裏）
+    [C] CONFIG 設定物件（所有題目數值、發現卡文字）
+    [D] 工具函數（SVG、格式、動畫）
+    [E] 儲存（localStorage，全部 try/catch）
+    [F] 音效（Web Audio API 合成）
+    [G] 拖放（Pointer Events，滑鼠 + 手指 + 電子白板）
+    [H] 關卡 API（嚮導說話、三層提示、提問、記錄表、過關）
+    [I] 畫面：首頁地圖、島嶼、收藏冊、證書
+    [J] 有向數島 4 關（levelD1 至 levelD4）
+    [K1] 坐標島 4 關（levelC1 至 levelC4）
+    [K2] 面積體積島 4 關（levelA1 至 levelA4）
+    [L] 啟動
+  ================================================================
+-->
+<style>
+/* ======================== [A] CSS 樣式 ======================== */
+:root{
+  --sea:#bfe8ff; --sea2:#8fd3f7; --ink:#1d2b3a; --ink2:#46566a;
+  --card:#ffffff; --line:#c9d6e3;
+  --pri:#ff7a2f; --pri-d:#d65a12;
+  --ok:#1f9d55; --bad:#c2410c; --hl:#ffe066;
+  --pos:#e8590c; --neg:#1c7ed6;
+  --r:18px;
+  --font:"PingFang HK","PingFang TC","Microsoft JhengHei","微軟正黑體","Noto Sans TC","Heiti TC",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--sea);color:var(--ink);font-family:var(--font);font-size:clamp(17px,1.45vw,24px);
+  line-height:1.45;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+button{font-family:inherit;font-size:1em;min-height:48px;min-width:48px;border:3px solid var(--ink);
+  border-radius:14px;background:#fff;color:var(--ink);padding:.3em .9em;cursor:pointer;font-weight:700;
+  box-shadow:0 4px 0 var(--ink);transition:transform .08s,box-shadow .08s;touch-action:manipulation}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+button:disabled{opacity:.45;cursor:default;transform:none;box-shadow:0 4px 0 var(--ink)}
+button.pri{background:var(--pri);color:#fff;border-color:var(--pri-d);box-shadow:0 4px 0 var(--pri-d)}
+button.small{font-size:.85em;min-height:48px;padding:.2em .7em}
+button.on{background:var(--hl)}
+.screen{display:none;min-height:100%;flex-direction:column}
+.screen.show{display:flex}
+.topbar{display:flex;align-items:center;gap:.5em;flex-wrap:wrap;padding:.5em .8em;background:#fff;
+  border-bottom:4px solid var(--ink)}
+.topbar h1{font-size:1.35em;margin:0 auto 0 .2em;letter-spacing:.05em}
+.topbar h2{font-size:1.15em;margin:0 auto 0 .2em}
+.pill{display:inline-flex;align-items:center;gap:.25em;border:2px solid var(--ink);border-radius:99px;
+  padding:.05em .7em;background:#fff;font-weight:700}
+
+/* ---------- 首頁地圖 ---------- */
+#mapWrap{flex:1;display:flex;align-items:center;justify-content:center;padding:.5em}
+#mapSvg{width:100%;max-width:1200px;max-height:calc(100vh - 150px);height:auto}
+.island{cursor:pointer}
+.island:focus{outline:none}
+.island:focus .isl-shape{stroke-width:8}
+.map-guide{display:flex;align-items:center;gap:.6em;padding:0 1em .6em;max-width:1100px;margin:0 auto;width:100%}
+
+/* ---------- 嚮導 ---------- */
+.guide-avatar{width:clamp(64px,7vw,104px);height:clamp(64px,7vw,104px);flex:0 0 auto}
+.guide-avatar svg,.guide-avatar img{width:100%;height:100%;display:block;border-radius:50%}
+.bubble{position:relative;background:#fff;border:3px solid var(--ink);border-radius:var(--r);padding:.45em .8em;flex:1;min-height:2.6em}
+.bubble:before{content:"";position:absolute;left:-14px;top:22px;border:10px solid transparent;border-right-color:var(--ink)}
+.bubble .say{font-size:1.08em;font-weight:600}
+.bubble .say b{color:var(--pri-d)}
+.bubble.pop{animation:pop .35s}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.opts{display:flex;flex-wrap:wrap;gap:.5em;margin-top:.4em}
+.opts:empty{display:none}
+.opts button{font-size:1.05em;min-width:4em}
+.opts button.right{background:#d3f9d8;border-color:var(--ok);box-shadow:0 4px 0 var(--ok)}
+.opts button.right:after{content:" ✔"}
+.opts button.wrong{background:#eee;text-decoration:line-through}
+.opts button.wrong:after{content:" ✖"}
+.opts button.demo{outline:5px dashed var(--ink);outline-offset:3px;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+
+/* ---------- 島嶼畫面 ---------- */
+.lvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1em;padding:1em;max-width:1100px;margin:0 auto;width:100%}
+.lvcard{background:#fff;border:3px solid var(--ink);border-radius:var(--r);padding:1em;display:flex;flex-direction:column;gap:.4em;
+  box-shadow:0 6px 0 var(--ink);cursor:pointer;min-height:180px;text-align:left}
+.lvcard .no{font-size:.9em;font-weight:700;color:var(--ink2)}
+.lvcard .t{font-size:1.3em;font-weight:800}
+.lvcard .d{color:var(--ink2);font-size:.95em;flex:1}
+.lvcard .st{font-size:1.4em;letter-spacing:.1em}
+.lvcard.done{background:#fff9db}
+
+/* ---------- 關卡畫面 ---------- */
+.phases{display:flex;gap:.3em;flex-wrap:wrap}
+.phase{border:2px solid var(--ink);border-radius:99px;padding:0 .6em;font-size:.85em;font-weight:700;background:#fff;opacity:.45}
+.phase.cur{opacity:1;background:var(--hl);border-width:3px}
+.phase.cur:before{content:"▶ "}
+.lv-guide{display:flex;gap:.8em;align-items:flex-start;padding:.6em .8em .2em}
+.lv-body{flex:1;display:flex;gap:.8em;padding:.4em .8em .8em;align-items:stretch;min-height:0}
+.stage{flex:1 1 600px;background:#fff;border:3px solid var(--ink);border-radius:var(--r);display:flex;align-items:center;justify-content:center;
+  padding:.4em;min-width:0;position:relative;overflow:hidden}
+.stage svg.stage-svg{width:100%;height:auto;max-height:calc(100vh - 260px);display:block;touch-action:none}
+.side{flex:0 1 360px;display:flex;flex-direction:column;gap:.6em;min-width:0}
+.panel{background:#fff;border:3px solid var(--ink);border-radius:var(--r);padding:.5em .7em}
+.panel h3{margin:0 0 .3em;font-size:1em}
+.ctrls{display:flex;flex-wrap:wrap;gap:.5em}
+.ctrls button{flex:1 1 auto}
+@media (min-width:861px){.side{max-height:calc(100vh - 200px);overflow:auto;padding-bottom:6px}}
+@media (max-width:860px){.lv-body{flex-direction:column}.side{flex:0 0 auto}.stage svg.stage-svg{max-height:56vh}}
+
+/* 自動記錄表 */
+.rec{width:100%;border-collapse:collapse;font-size:.95em}
+.rec th,.rec td{border:2px solid var(--ink);padding:.15em .35em;text-align:center}
+.rec th{background:#eef4fa}
+.rec tr.new td{animation:newrow 1.6s}
+@keyframes newrow{0%{background:var(--hl)}100%{background:transparent}}
+.rec-wrap{max-height:38vh;overflow:auto}
+.rec td.chg{font-weight:900;text-decoration:underline;text-decoration-thickness:3px}
+
+/* 可拖放卡 */
+.cards{display:flex;flex-wrap:wrap;gap:.5em}
+.dcard{touch-action:none;cursor:grab;background:#fff;border:3px solid var(--ink);border-radius:12px;padding:.35em .7em;
+  font-weight:800;font-size:1.05em;min-height:52px;min-width:56px;display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 0 var(--ink);white-space:nowrap}
+.dcard.used{visibility:hidden}
+.dcard.src-drag{opacity:.3}
+.dcard.ghost{position:fixed;z-index:999;pointer-events:none;cursor:grabbing;transform:rotate(-3deg) scale(1.08);box-shadow:0 10px 18px rgba(0,0,0,.25)}
+.dcard.demo{outline:5px dashed var(--ink);outline-offset:3px;animation:pulse 1s infinite}
+.basket{border:4px dashed var(--ink);border-radius:var(--r);padding:.5em;min-height:120px;flex:1;background:#fbfdff}
+.basket.over{background:var(--hl)}
+.basket h4{margin:0 0 .3em;text-align:center}
+.basket .cards{justify-content:center}
+
+.hl{font-weight:900;text-decoration:underline;text-decoration-thickness:3px}
+input.big-range{width:100%;height:48px;accent-color:var(--pri);cursor:pointer;touch-action:none}
+input.big-range::-webkit-slider-thumb{width:36px;height:36px}
+/* 觀察提示框 */
+.note{background:#fff9db;border:3px dashed var(--ink);border-radius:14px;padding:.4em .7em;font-weight:700}
+.eq{font-size:1.15em;font-weight:800;letter-spacing:.02em}
+.checklist{list-style:none;margin:0;padding:0}
+.checklist li:before{content:"☐ ";font-size:1.1em}
+.checklist li.ok:before{content:"☑ "}
+.checklist li.ok{font-weight:800}
+
+/* ---------- 彈出視窗 ---------- */
+.modal{position:fixed;inset:0;background:rgba(20,30,45,.55);display:none;align-items:center;justify-content:center;z-index:500;padding:1em}
+.modal.show{display:flex}
+.mbox{background:#fff;border:4px solid var(--ink);border-radius:24px;padding:1.2em 1.4em;max-width:720px;width:100%;max-height:92vh;overflow:auto;
+  box-shadow:0 10px 0 var(--ink);animation:pop .4s}
+.mbox h2{margin:.1em 0 .4em}
+.mbtns{display:flex;gap:.6em;justify-content:flex-end;flex-wrap:wrap;margin-top:1em}
+
+/* 發現卡 */
+.dcardbig{border:4px solid var(--ink);border-radius:20px;overflow:hidden}
+.dcardbig .hd{background:repeating-linear-gradient(45deg,#ffe8a3 0 12px,#fff3c4 12px 24px);padding:.5em .9em;font-weight:900;
+  border-bottom:3px solid var(--ink);display:flex;justify-content:space-between;gap:.5em;flex-wrap:wrap}
+.dcardbig .bd{padding:.7em .9em}
+.dcardbig .lab{font-weight:900;margin-top:.3em}
+.dcardbig .lab:before{content:"◆ "}
+.dcardbig .named{background:#f1f8ff;border-left:8px solid var(--ink);padding:.4em .7em;margin-top:.2em;border-radius:6px}
+.dcardbig .named b,.dcardbig .found b{text-decoration:underline;text-decoration-thickness:2px}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1em;padding:1em;max-width:1200px;margin:0 auto;width:100%}
+.aslot{border:3px solid var(--ink);border-radius:16px;background:#fff;padding:.7em;min-height:140px;cursor:pointer;text-align:left;box-shadow:0 5px 0 var(--ink)}
+.aslot.locked{background:repeating-linear-gradient(-45deg,#eef2f6 0 10px,#fff 10px 20px);cursor:default;color:var(--ink2)}
+.aslot .t{font-weight:900;font-size:1.1em}
+
+/* 星星飛出 */
+.fx-star{position:fixed;font-size:64px;z-index:800;pointer-events:none;animation:starfly 1.2s forwards}
+@keyframes starfly{0%{transform:scale(.2) rotate(0);opacity:0}30%{transform:scale(1.4) rotate(40deg);opacity:1}100%{transform:scale(1) rotate(360deg) translateY(-60px);opacity:0}}
+
+/* ---------- 證書 ---------- */
+#certArea{display:flex;flex-direction:column;align-items:center;gap:1em;padding:1em}
+.cert{background:#fff;width:min(960px,100%);aspect-ratio:1.414;border:10px double #000;outline:3px solid #000;outline-offset:6px;padding:4% 6%;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;color:#000;position:relative;
+  font-size:clamp(12px,1.6vw,22px)}
+.cert .ct{font-size:2.6em;font-weight:900;letter-spacing:.25em;margin:0}
+.cert .cn{font-size:2.2em;font-weight:900;border-bottom:3px solid #000;min-width:50%;padding:0 .5em;min-height:1.4em}
+.cert .badges{display:flex;gap:2em;justify-content:center}
+.cert .badges svg{width:5.5em;height:5.5em}
+.cert .sig{display:flex;justify-content:space-between;width:100%;gap:2em}
+.cert .sig div{border-top:2px solid #000;padding-top:.2em;min-width:30%}
+.cert .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8em;font-weight:900;color:rgba(0,0,0,.08);transform:rotate(-20deg);pointer-events:none}
+.namein{font-size:1.3em;padding:.3em .6em;border:3px solid var(--ink);border-radius:12px;min-height:52px;width:min(420px,90vw);font-family:inherit}
+@media print{
+  @page{size:A4 landscape;margin:8mm}
+  body{background:#fff}
+  body *{visibility:hidden}
+  #certPrint,#certPrint *{visibility:visible}
+  #certPrint{position:fixed;left:0;top:0;width:100%;border-color:#000}
+  .cert{width:100%;font-size:15pt}
+}
+</style>
+</head>
+<body>
+
+<!-- =================== 畫面：首頁地圖 =================== -->
+<section id="scrMap" class="screen">
+  <div class="topbar">
+    <h1>中一數學探險島</h1>
+    <span class="pill" id="mapStars">★ 0 / 12</span>
+    <button class="small" id="btnAlbum">發現卡收藏冊</button>
+    <button class="small" id="btnCert">證書</button>
+    <button class="small" data-sound>音效：開</button>
+    <button class="small" id="btnReset">重設進度</button>
+  </div>
+  <div id="mapWrap"></div>
+  <div class="map-guide">
+    <div class="guide-avatar" data-guide></div>
+    <div class="bubble"><div class="say" id="mapSay"></div></div>
+  </div>
+</section>
+
+<!-- =================== 畫面：島嶼（四關） =================== -->
+<section id="scrIsland" class="screen">
+  <div class="topbar">
+    <button class="small" data-go="map">◀ 地圖</button>
+    <h2 id="islTitle"></h2>
+    <span class="pill" id="islStars"></span>
+    <button class="small" data-sound>音效：開</button>
+  </div>
+  <div class="lv-guide">
+    <div class="guide-avatar" data-guide></div>
+    <div class="bubble"><div class="say" id="islSay"></div></div>
+  </div>
+  <div class="lvgrid" id="islGrid"></div>
+</section>
+
+<!-- =================== 畫面：關卡 =================== -->
+<section id="scrLevel" class="screen">
+  <div class="topbar">
+    <button class="small" id="lvBack">◀ 返回</button>
+    <h2 id="lvTitle"></h2>
+    <div class="phases" id="lvPhases"></div>
+    <button class="small" data-sound>音效：開</button>
+  </div>
+  <div class="lv-guide">
+    <div class="guide-avatar" data-guide></div>
+    <div class="bubble" id="lvBubble"><div class="say" id="lvSay"></div><div class="opts" id="lvOpts"></div></div>
+  </div>
+  <div class="lv-body">
+    <div class="stage" id="lvStage"></div>
+    <div class="side" id="lvSide"></div>
+  </div>
+</section>
+
+<!-- =================== 畫面：發現卡收藏冊 =================== -->
+<section id="scrAlbum" class="screen">
+  <div class="topbar">
+    <button class="small" data-go="map">◀ 地圖</button>
+    <h2>發現卡收藏冊</h2>
+    <span class="pill" id="albCount"></span>
+  </div>
+  <div class="album" id="albGrid"></div>
+</section>
+
+<!-- =================== 畫面：證書 =================== -->
+<section id="scrCert" class="screen">
+  <div class="topbar">
+    <button class="small" data-go="map">◀ 地圖</button>
+    <h2>中一數學預習證書</h2>
+  </div>
+  <div id="certArea"></div>
+</section>
+
+<!-- 彈出視窗 -->
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
+
+<script>
+'use strict';
+/* =================================================================
+   [B] 嚮導圖像 GUIDE
+   -----------------------------------------------------------------
+   想換成自己的卡通圖片：把 GUIDE_IMAGE 設為圖片網址或 data URI，
+   例如 const GUIDE_IMAGE = 'lusir.png';（圖片與 html 放同一資料夾）
+   或   const GUIDE_IMAGE = 'data:image/png;base64,....';（完全離線）
+   留空 '' 就會用下面的 SVG 呂Sir。
+   ================================================================= */
+const GUIDE_IMAGE = '';
+const GUIDE_NAME = '呂Sir';
+const GUIDE_SVG = `
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="呂Sir">
+  <circle cx="60" cy="60" r="58" fill="#d8f0ff" stroke="#1d2b3a" stroke-width="3"/>
+  <path d="M18 112 Q22 84 60 82 Q98 84 102 112 Z" fill="#3b82c4" stroke="#1d2b3a" stroke-width="3"/>
+  <path d="M48 83 L60 98 L72 83 Z" fill="#fff" stroke="#1d2b3a" stroke-width="2.5"/>
+  <path d="M57 90 L63 90 L65 108 L60 113 L55 108 Z" fill="#e8590c" stroke="#1d2b3a" stroke-width="2"/>
+  <rect x="52" y="70" width="16" height="14" fill="#f6cfa8"/>
+  <ellipse cx="30" cy="52" rx="6" ry="9" fill="#f6cfa8" stroke="#1d2b3a" stroke-width="2.5"/>
+  <ellipse cx="90" cy="52" rx="6" ry="9" fill="#f6cfa8" stroke="#1d2b3a" stroke-width="2.5"/>
+  <ellipse cx="60" cy="50" rx="30" ry="32" fill="#f6cfa8" stroke="#1d2b3a" stroke-width="3"/>
+  <path d="M29 46 Q28 16 60 16 Q92 16 91 46 Q86 30 74 28 Q66 36 44 32 Q34 34 29 46 Z" fill="#1d2b3a"/>
+  <g fill="none" stroke="#1d2b3a" stroke-width="3">
+    <rect x="35" y="44" width="20" height="15" rx="6" fill="#fff" fill-opacity=".5"/>
+    <rect x="65" y="44" width="20" height="15" rx="6" fill="#fff" fill-opacity=".5"/>
+    <path d="M55 50 L65 50"/>
+  </g>
+  <circle cx="45" cy="52" r="3.2" fill="#1d2b3a"/><circle cx="75" cy="52" r="3.2" fill="#1d2b3a"/>
+  <path d="M46 67 Q60 78 74 67" fill="none" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="38" cy="65" rx="5" ry="3" fill="#ff9f9f" opacity=".6"/><ellipse cx="82" cy="65" rx="5" ry="3" fill="#ff9f9f" opacity=".6"/>
+</svg>`;
+
+/* =================================================================
+   [C] CONFIG 設定物件 —— 所有題目數值、發現卡文字都在這裏修改
+   ================================================================= */
+const CONFIG = {
+  storageKey: 'm1-math-explorer-v1',
+  islands: [
+    { id:'directed', name:'有向數島', badge:'正負勇士徽章', ready:true,  levels:['d1','d2','d3','d4'] },
+    { id:'coord',    name:'坐標島',   badge:'坐標領航員徽章', ready:true, levels:['c1','c2','c3','c4'] },
+    { id:'area',     name:'面積體積島', badge:'空間建築師徽章', ready:true, levels:['a1','a2','a3','a4'] }
+  ],
+  levels: {
+    /* ---------------- 有向數島 ---------------- */
+    d1: { title:'升降機大廈', desc:'把升降機送到地面以上和地庫的樓層。',
+      data:{
+        topFloor:5, bottomFloor:-3, liftStart:1,
+        passengers:[ {name:'陳婆婆',floor:3}, {name:'小明',floor:-2}, {name:'送貨員',floor:0}, {name:'保安叔叔',floor:-1} ],
+        predictTargets:[-3, 4, -1],               // 第二階段：只說有向數
+        sea:{ objects:[ {id:'kite',name:'風箏',h:30}, {id:'boat',name:'小船',h:0}, {id:'sub',name:'潛艇',h:-20} ],
+              extraCards:[-30, 20] }               // 干擾卡
+      },
+      card:{
+        found:'用「<b>+</b>」和「<b>−</b>」可以表示<b>相反</b>的位置或方向：地面以上用 +，地庫用 −；海平面以上用 +，海平面以下用 −。<b>0</b> 是兩者的分界。',
+        named:'像 +3、−2 這樣帶有正負號的數，叫做<b>有向數</b>。+3 是<b>正數</b>（+3 通常寫成 3），−2 是<b>負數</b>。0 既不是正數，也不是負數。'
+      }},
+    d2: { title:'溫度排隊', desc:'把城市溫度放到溫度計和數線上，找出相反數。',
+      data:{
+        cities:[ {name:'哈爾濱',t:-8}, {name:'首爾',t:-2}, {name:'北京',t:0}, {name:'東京',t:3} ],
+        compare:[ [-6,-1], [-4,-9] ],              // 預測：哪個較大？
+        oppCards:[4,-4,6,-6,-2],                   // 相反數配對卡
+        oppPredict:[2,-5]                          // 預測位置：−2 的伙伴、5 的相反數
+      },
+      card:{
+        found:'在溫度計上，愈上面的數愈大；在水平數線上，<b>愈右邊的數愈大</b>。負數離 0 愈遠，數值反而<b>愈小</b>，例如 −8 &lt; −2。在 0 兩邊、離 0 距離相同的兩個數，例如 4 和 −4，會一起發光。',
+        named:'這樣的直線叫做<b>數線</b>（溫度計是<b>鉛垂數線</b>）。任何負數 &lt; 0 &lt; 任何正數。有相同數值、但帶有不同正負號的兩個數，叫做一對<b>相反數</b>，例如 +4 和 −4。'
+      }},
+    d3: { title:'熱氣球加減', desc:'加入或拿走熱氣和沙包，看熱氣球升降。',
+      data:{
+        maxH:8,
+        start:{hot:4, sand:3},                     // 開始時：4 個熱氣、3 個沙包（高度 +1）
+        compareStart:1, compareN:2,                // 比較：由 +1 開始，拿走 2 個沙包 vs 加入 2 個熱氣
+        predictions:[                              // 預測題：start 為開始高度，act 為動作，n 為數量
+          {start:2,  act:'remSand', n:3},
+          {start:3,  act:'addSand', n:4},
+          {start:-1, act:'remSand', n:2}
+        ]
+      },
+      card:{
+        found:'「拿走 2 個沙包」和「加入 2 個熱氣」的結果<b>一樣</b>；「加入 2 個沙包」和「拿走 2 個熱氣」的結果也<b>一樣</b>。',
+        named:'在中一，熱氣是 +1，沙包是 −1。<b>減去一個負數，等於加上它的數值</b>：(+a) − (−b) = a + b（「− −」變成「+」）。<b>加上一個負數，等於減去它的數值</b>：(+a) + (−b) = a − b（「+ −」變成「−」）。'
+      }},
+    d4: { title:'乘法規律階梯', desc:'沿着規律走下階梯，預測負數的乘法。',
+      data:{
+        ladders:[ { a:3,  shown:[3,2,1,0], predict:[-1,-2,-3] },
+                  { a:-3, shown:[3,2,1,0], predict:[-1,-2,-3] } ],
+        sortCards:[ [4,2], [-5,-2], [3,-4], [-2,6], [-1,-7], [6,-1] ]
+      },
+      card:{
+        found:'沿着階梯往下走，3 × □ 的積<b>每次少 3</b>，走過 0 之後變成負數；(−3) × □ 的積<b>每次多 3</b>，走過 0 之後變成正數。',
+        named:'這就是<b>有向數的乘法</b>：兩個數的<b>正負號相同</b>，其<b>積是正數</b>，例如 (−3) × (−2) = +6；兩個數的<b>正負號不同</b>，其<b>積是負數</b>，例如 3 × (−2) = −6。'
+      }},
+    /* ---------------- 坐標島 ---------------- */
+    c1: { title:'尋寶遊戲', desc:'點方格的交點尋寶，找出兩個數的意思。',
+      data:{
+        treasures:[ [3,2], [-4,1], [-2,-3] ],      // 第一階段：猜寶藏（第 1 個最好 x、y 都是正數，第 2 個 x 是負數）
+        targets:[ [-3,4], [4,-2], [0,-3], [-5,0] ] // 第二階段：給坐標，點出位置
+      },
+      card:{
+        found:'在方格上，每個交點都可以用<b>兩個數</b>表示：<b>先左右，後上下</b>。第一個數表示向右（+）或向左（−）走幾格，第二個數表示向上（+）或向下（−）走幾格，都由中間的 O 點出發。',
+        named:'這樣的方格叫做<b>直角坐標平面</b>。橫的數線叫 <b>x 軸</b>，直的數線叫 <b>y 軸</b>，兩軸的交點 O 叫<b>原點</b>，坐標是 (0, 0)。點的位置寫成 <b>(x, y)</b>：x 是 <b>x 坐標</b>，y 是 <b>y 坐標</b>，次序不可以調轉。'
+      }},
+    c2: { title:'四間房', desc:'拖動點走遍四間房，發現正負號的規律。',
+      data:{
+        start:[2,3],
+        cards:[ [-4,2], [3,-1], [-2,-5], [5,4], [0,-2], [3,0] ]   // 預測：拖入象限 I 至 IV 或「軸上」
+      },
+      card:{
+        found:'x 軸和 y 軸把方格分成四間房，每間房的點都有自己的正負號：(+, +)、(−, +)、(−, −)、(+, −)。放在軸上的點會被「彈出」，不在任何一間房。',
+        named:'這四間房叫做<b>象限</b>，由右上方開始，逆時針方向是<b>象限 I、II、III、IV</b>。所有位於 <b>x 軸或 y 軸上的點</b>以及原點 (0, 0)，均<b>不屬於任何一個象限</b>。'
+      }},
+    c3: { title:'機械人搬家', desc:'移動機械人，看看坐標怎樣改變。',
+      data:{
+        start:[-2,-1],
+        batteries:[ [2,-1], [2,3], [-3,3] ],
+        challenges:[                                // 預測：只看指令，點出終點
+          { from:[3,1],  moves:[['左',4],['上',3]] },
+          { from:[-1,4], moves:[['右',5],['下',6]] },
+          { from:[4,-2], moves:[['下',2],['左',7]] }
+        ]
+      },
+      card:{
+        found:'機械人<b>向左或向右</b>走，只有第一個數（x 坐標）改變；<b>向上或向下</b>走，只有第二個數（y 坐標）改變。',
+        named:'把點向左、右、上或下移動，叫做<b>平移</b>，移動後得到的點叫<b>影像</b>。向右平移 a 單位：x 坐標加 a；向左平移：x 坐標減 a；向上平移 b 單位：y 坐標加 b；向下平移：y 坐標減 b。'
+      }},
+    c4: { title:'魔鏡與轉盤', desc:'用魔鏡和轉盤變出小屋的影像。',
+      data:{
+        shape:[ ['A',1,1], ['B',4,1], ['C',4,3], ['D',2,5], ['E',1,3] ],  // 第一象限的小屋
+        predict:[ { p:[2,4], t:'rx' }, { p:[-3,1], t:'ry' }, { p:[4,-2], t:'r180' } ]   // rx 沿 x 軸、ry 沿 y 軸、r180 旋轉 180°
+      },
+      card:{
+        found:'用魔鏡「沿 x 軸」照，y 坐標變成相反數；「沿 y 軸」照，x 坐標變成相反數；繞 O 轉半個圈，兩個坐標都變成相反數。附加挑戰：逆時針轉 90°，(x, y) 變成 (−y, x)。',
+        named:'這些叫做<b>反射</b>和<b>旋轉</b>。<b>沿 x 軸反射</b>：(x, y) → (x, −y)；<b>沿 y 軸反射</b>：(x, y) → (−x, y)；<b>繞原點旋轉 180°</b>：(x, y) → (−x, −y)；<b>繞原點逆時針旋轉 90°</b>：(x, y) → (−y, x)。所得的點叫<b>影像</b>。'
+      }},
+    /* ---------------- 面積體積島 ---------------- */
+    a1: { title:'推推平行四邊形', desc:'推斜長方形、剪拼三角形和梯形。',
+      data:{
+        maxPush:4,
+        shapes:[ {b:6,h:4}, {b:5,h:3} ],          // 推斜的長方形（底、高）
+        predict:{ b:7, h:3, s:2 },                 // 預測面積
+        triangle:{ b:6, h:4, top:2 },              // 三角形：底、高、頂點離左端的距離
+        trapezoid:{ top:3, bottom:5, h:4, left:1 } // 梯形：上底、下底、高、上底離左端的距離
+      },
+      card:{
+        found:'把長方形推斜成平行四邊形，只要<b>底和高不變</b>，剪下三角形移到另一邊，面積就<b>不變</b>。兩個相同的三角形、兩個相同的梯形，都可以拼成一個平行四邊形。',
+        named:'<b>平行四邊形的面積 = 底 × 高</b>；<b>三角形的面積 = 底 × 高 ÷ 2</b>；<b>梯形的面積 = (上底 + 下底) × 高 ÷ 2</b>。'
+      }},
+    a2: { title:'剪剪貼貼', desc:'用剪刀和「補一塊」求 L 形和凹形的面積。',
+      data:{
+        shapeL:{ poly:[[0,0],[6,0],[6,2],[3,2],[3,5],[0,5]],
+          cuts:[
+            { seg:[[3,0],[3,2]], pieces:[ {poly:[[0,0],[3,0],[3,5],[0,5]], w:3, h:5}, {poly:[[3,0],[6,0],[6,2],[3,2]], w:3, h:2} ] },
+            { seg:[[0,2],[3,2]], pieces:[ {poly:[[0,0],[6,0],[6,2],[0,2]], w:6, h:2}, {poly:[[0,2],[3,2],[3,5],[0,5]], w:3, h:3} ] },
+            { seg:[[0,4],[2,4]], bad:true }          // 不完整的一刀（不能分成兩塊）
+          ],
+          fill:{ rect:[3,2,3,3], big:[6,5] } },      // 補上的長方形 [x, y, 闊, 高]、大長方形 [闊, 高]
+        shapeU:{ poly:[[0,0],[7,0],[7,4],[5,4],[5,2],[2,2],[2,4],[0,4]],
+          fill:{ rect:[2,2,3,2], big:[7,4] },
+          pieces:[ {poly:[[0,0],[2,0],[2,4],[0,4]], w:2, h:4}, {poly:[[2,0],[5,0],[5,2],[2,2]], w:3, h:2}, {poly:[[5,0],[7,0],[7,4],[5,4]], w:2, h:4} ] }
+      },
+      card:{
+        found:'求不規則圖形的面積有兩條路：一是用剪刀<b>剪開</b>成幾個簡單圖形，再把面積<b>相加</b>；二是<b>補上</b>缺口變成大長方形，再<b>減去</b>補上的部分。兩條路得到相同的面積。',
+        named:'第一個方法叫做<b>分割法</b>：把多邊形分割成兩個或以上較小的簡單圖形，再把面積相加。第二個方法叫做<b>填補法</b>：加添簡單圖形組成一個較大的簡單圖形，再從它的面積減去加添部分的面積。'
+      }},
+    a3: { title:'疊疊樂角柱', desc:'疊方塊、切蛋糕，認識角柱和截面。',
+      data:{
+        solids:[ {k:'cube',name:'正方體',flat:true}, {k:'cylinder',name:'圓柱',flat:false}, {k:'prism',name:'三角柱',flat:true},
+                 {k:'sphere',name:'球體',flat:false}, {k:'pyramid',name:'四角錐',flat:true}, {k:'cone',name:'圓錐',flat:false} ],
+        bases:[ {name:'L 形', cells:[[0,0],[1,0],[2,0],[0,1]]},
+                {name:'長方形', cells:[[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]]},
+                {name:'T 形', cells:[[0,0],[1,0],[2,0],[1,1]]} ],
+        maxLayers:6,
+        stackTasks:[ {base:0, layers:4}, {base:1, layers:3} ],   // 玩：用哪個底疊到幾層
+        stackPredict:{ base:2, layers:5 },
+        cakeBase:[[0,0],[3,0],[3,1],[1,1],[1,2],[0,2]], cakeHeight:5, cakeTilt:-0.9
+      },
+      card:{
+        found:'第一個籃子的立體只有平的面，第二個籃子的有彎曲的面。把相同的層一層一層疊上去：<b>方塊總數 = 每層方塊數 × 層數</b>。平行於底切下去，截面<b>永遠和底一樣</b>；斜切，截面就不一樣了。',
+        named:'只被多邊形包圍的立體叫<b>多面體</b>，擁有曲面的叫<b>非多面體</b>。兩個<b>底</b>相同且平行、側面是平行四邊形的多面體叫<b>角柱</b>。平行於底切得的<b>截面</b>形狀和大小都和底相同，叫<b>均勻截面</b>。<b>角柱的體積 = 底面積 × 高</b>。'
+      }},
+    a4: { title:'拆盒子', desc:'拆開直立角柱，找出所有側面的總面積。',
+      data:{
+        prisms:[ { name:'直立三角柱', base:[[0,0],[4,0],[4,3]], h:3 },
+                 { name:'長方體', base:[[0,0],[4,0],[4,2],[0,2]], h:3 } ]
+      },
+      card:{
+        found:'把直立角柱拆開，所有側面會排成一個<b>大長方形</b>：長是繞底走一圈的長度，闊是角柱的高。再加上兩個底，就是整個盒子外面的面積。',
+        named:'在中一，<b>所有側面的總面積 = 底的周界 × 角柱的高</b>；<b>總表面面積 = 2 × 底面積 + 所有側面的總面積</b>。所有側面都是長方形的角柱叫<b>直立角柱</b>。'
+      }}
+  },
+  praise:['做得好！','你觀察得很仔細！','厲害！','對了！','好眼力！','你真是小數學家！']
+};
+
+/* =================================================================
+   [D] 工具函數
+   ================================================================= */
+const $ = s => document.querySelector(s);
+const SVGNS = 'http://www.w3.org/2000/svg';
+/** 建立 SVG 元素 */
+function S(tag, attrs = {}, parent) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) {
+    if (k === 'text') e.textContent = attrs[k];
+    else e.setAttribute(k, attrs[k]);
+  }
+  if (parent) parent.appendChild(e);
+  return e;
+}
+/** 建立 HTML 元素 */
+function H(tag, attrs = {}, parent) {
+  const e = document.createElement(tag);
+  for (const k in attrs) {
+    if (k === 'text') e.textContent = attrs[k];
+    else if (k === 'html') e.innerHTML = attrs[k];
+    else if (k === 'class') e.className = attrs[k];
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]);
+    else e.setAttribute(k, attrs[k]);
+  }
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const MINUS = '−';
+/** 有向數格式：+3、−2、0 */
+function fmt(n) { return n > 0 ? '+' + n : n < 0 ? MINUS + (-n) : '0'; }
+/** 一般格式：3、−2、0（數線刻度用） */
+function fmtU(n) { return n < 0 ? MINUS + (-n) : String(n); }
+/** 帶括號：(+3)、(−2) */
+function par(n) { return '(' + fmt(n) + ')'; }
+/** 樓層名稱：3/F、G/F、B2 */
+function floorName(f) { return f > 0 ? f + '/F' : f === 0 ? 'G/F' : 'B' + (-f); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+/** 螢幕座標 → SVG 座標 */
+function svgPoint(svg, cx, cy) {
+  const p = svg.createSVGPoint(); p.x = cx; p.y = cy;
+  const m = svg.getScreenCTM(); return m ? p.matrixTransform(m.inverse()) : { x: 0, y: 0 };
+}
+/** 點是否在元素的螢幕範圍內（pad 為額外範圍） */
+function hitEl(el, cx, cy, pad = 0) {
+  const r = el.getBoundingClientRect();
+  return cx >= r.left - pad && cx <= r.right + pad && cy >= r.top - pad && cy <= r.bottom + pad;
+}
+const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+/* =================================================================
+   [E] 儲存：所有讀寫都用 try/catch 包好；失敗時遊戲照常（只是不保存）
+   ================================================================= */
+const Store = {
+  data: { done:{}, sound:true, name:'' },
+  load() {
+    try {
+      const raw = window.localStorage.getItem(CONFIG.storageKey);
+      if (raw) { const d = JSON.parse(raw); if (d && typeof d === 'object') Object.assign(this.data, d); }
+      if (!this.data.done || typeof this.data.done !== 'object') this.data.done = {};
+    } catch (e) { /* 讀取失敗：用預設值 */ }
+  },
+  save() {
+    try { window.localStorage.setItem(CONFIG.storageKey, JSON.stringify(this.data)); } catch (e) { /* 忽略 */ }
+  },
+  reset() {
+    this.data = { done:{}, sound:this.data.sound, name:'' };
+    try { window.localStorage.removeItem(CONFIG.storageKey); } catch (e) { /* 忽略 */ }
+    this.save();
+  },
+  isDone(id) { return !!this.data.done[id]; },
+  setDone(id) { this.data.done[id] = true; this.save(); },
+  countDone() { return Object.keys(CONFIG.levels).filter(id => this.data.done[id]).length; },
+  islandDone(isl) { return isl.levels.every(id => this.data.done[id]); }
+};
+
+/* =================================================================
+   [F] 音效：Web Audio API 即時合成，不用音檔
+   ================================================================= */
+const Sfx = {
+  ctx: null,
+  ensure() {
+    if (!Store.data.sound) return null;
+    try {
+      if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; this.ctx = new AC(); }
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      return this.ctx;
+    } catch (e) { return null; }
+  },
+  tone(freq, dur = .12, type = 'sine', vol = .18, delay = 0) {
+    const c = this.ensure(); if (!c) return;
+    try {
+      const t = c.currentTime + delay, o = c.createOscillator(), g = c.createGain();
+      o.type = type; o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01);
+      g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .02);
+    } catch (e) {}
+  },
+  play(name) {
+    switch (name) {
+      case 'tap':   this.tone(660, .06, 'triangle', .12); break;
+      case 'move':  this.tone(440, .07, 'sine', .1); break;
+      case 'drop':  this.tone(520, .08, 'triangle', .14); break;
+      case 'good':  this.tone(660, .12, 'triangle'); this.tone(880, .12, 'triangle', .18, .1); this.tone(1175, .2, 'triangle', .18, .2); break;
+      case 'soft':  this.tone(330, .14, 'sine', .12); this.tone(294, .18, 'sine', .1, .12); break; // 溫和的「再想想」
+      case 'glow':  [523, 659, 784, 1046].forEach((f, i) => this.tone(f, .25, 'sine', .12, i * .07)); break;
+      case 'star':  [523, 659, 784, 1046, 1318].forEach((f, i) => this.tone(f, .3, 'triangle', .16, i * .1)); break;
+      case 'whoosh': { const c = this.ensure(); if (!c) return; try { const o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
+          o.type = 'sawtooth'; o.frequency.setValueAtTime(200, t); o.frequency.exponentialRampToValueAtTime(900, t + .3);
+          g.gain.setValueAtTime(.06, t); g.gain.exponentialRampToValueAtTime(.0001, t + .32); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + .35); } catch (e) {} break; }
+    }
+  }
+};
+
+/* =================================================================
+   [G] 拖放：Pointer Events（滑鼠、手指、觸控筆、電子白板都適用）
+   -----------------------------------------------------------------
+   makeDraggable(el, {
+     enabled: () => true/false,         // 可否拖動
+     onMove: (cx, cy) => {},            // 拖動中（螢幕座標），可用作預覽
+     onDrop: (cx, cy) => true/false     // 放下；回傳 true = 接受，false = 彈回原位
+     onEnd:  () => {}                   // 結束（清除預覽）
+   })
+   ================================================================= */
+function makeDraggable(el, opt) {
+  el.style.touchAction = 'none';
+  el.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button > 0) return;
+    if (opt.enabled && !opt.enabled()) return;
+    if (el.classList.contains('used')) return;
+    e.preventDefault();
+    Sfx.play('tap');
+    const r = el.getBoundingClientRect();
+    const ghost = el.cloneNode(true);
+    ghost.classList.add('ghost'); ghost.classList.remove('demo');
+    Object.assign(ghost.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', margin: 0 });
+    document.body.appendChild(ghost);
+    const dx = e.clientX - r.left, dy = e.clientY - r.top;
+    el.classList.add('src-drag');
+    try { el.setPointerCapture(e.pointerId); } catch (err) {}
+    const move = ev => {
+      ghost.style.left = (ev.clientX - dx) + 'px';
+      ghost.style.top = (ev.clientY - dy) + 'px';
+      if (opt.onMove) opt.onMove(ev.clientX, ev.clientY);
+    };
+    const finish = (ev, cancelled) => {
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', up);
+      el.removeEventListener('pointercancel', cancel);
+      el.classList.remove('src-drag');
+      let ok = false;
+      if (!cancelled) ok = !!opt.onDrop(ev.clientX, ev.clientY);
+      if (opt.onEnd) opt.onEnd();
+      if (ok) { ghost.remove(); return; }
+      // 彈回原位
+      ghost.style.transition = 'left .25s, top .25s';
+      ghost.style.left = r.left + 'px'; ghost.style.top = r.top + 'px';
+      setTimeout(() => ghost.remove(), 260);
+    };
+    const up = ev => finish(ev, false);
+    const cancel = ev => finish(ev, true);
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', up);
+    el.addEventListener('pointercancel', cancel);
+  });
+}
+/** 示範用：把一張卡「飛」到目標元素（第三次提示） */
+function flyCard(cardEl, targetEl, ms = 700) {
+  return new Promise(res => {
+    const a = cardEl.getBoundingClientRect(), b = targetEl.getBoundingClientRect();
+    const g = cardEl.cloneNode(true); g.classList.add('ghost'); g.classList.remove('demo');
+    Object.assign(g.style, { left: a.left + 'px', top: a.top + 'px', width: a.width + 'px', height: a.height + 'px', margin: 0, transition: `left ${ms}ms ease-in-out, top ${ms}ms ease-in-out` });
+    document.body.appendChild(g);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      g.style.left = (b.left + b.width / 2 - a.width / 2) + 'px';
+      g.style.top = (b.top + b.height / 2 - a.height / 2) + 'px';
+    }));
+    setTimeout(() => { g.remove(); res(); }, ms + 60);
+  });
+}
+/** 讓 SVG 內的標記可拖動或點擊數線放置；toValue(svgPt) 回傳數值；onSet(v) */
+function svgPicker(svg, hitRect, toValue, onSet, enabled) {
+  let dragging = false;
+  const handle = (ev) => { const p = svgPoint(svg, ev.clientX, ev.clientY); const v = toValue(p); if (v !== null && v !== undefined) onSet(v); };
+  hitRect.style.cursor = 'pointer';
+  hitRect.addEventListener('pointerdown', ev => {
+    if (enabled && !enabled()) return;
+    ev.preventDefault(); dragging = true;
+    try { hitRect.setPointerCapture(ev.pointerId); } catch (e) {}
+    handle(ev);
+  });
+  hitRect.addEventListener('pointermove', ev => { if (dragging) handle(ev); });
+  const stop = () => { dragging = false; };
+  hitRect.addEventListener('pointerup', stop);
+  hitRect.addEventListener('pointercancel', stop);
+}
+
+/* =================================================================
+   [H] 關卡 API —— 每關都經這個 api 物件與介面溝通
+   ================================================================= */
+const PHASES = { play:'玩', observe:'觀察', predict:'預測', verify:'驗證' };
+let CUR = null;  // 目前關卡的 api
+
+function makeApi(levelId) {
+  const token = { alive: true };
+  const stage = $('#lvStage'), side = $('#lvSide'), sayEl = $('#lvSay'), opts = $('#lvOpts'), bubble = $('#lvBubble');
+  stage.innerHTML = ''; side.innerHTML = ''; opts.innerHTML = '';
+  const valOf = (h, ctx) => typeof h === 'function' ? h(ctx) : (h || '');
+
+  const api = {
+    id: levelId, stage, side, token,
+    alive: () => token.alive,
+    /** 呂Sir 說話（可用 HTML，<b> 會突出） */
+    say(html) {
+      sayEl.innerHTML = html;
+      bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
+    },
+    /** 顯示目前步驟：play / observe / predict / verify */
+    phase(p) {
+      $('#lvPhases').querySelectorAll('.phase').forEach(x => x.classList.toggle('cur', x.dataset.p === p));
+    },
+    /** 只在關卡仍然開着時才 resolve 的 Promise（離開關卡後流程自動停止） */
+    p(fn) { return new Promise(res => fn(v => { if (token.alive) res(v); })); },
+    wait(ms) { return api.p(res => setTimeout(res, ms)); },
+    /** 動畫：fn(t) t 由 0 到 1 */
+    tween(ms, fn) {
+      return api.p(res => {
+        const t0 = performance.now();
+        const step = now => {
+          if (!token.alive) return;
+          const t = Math.min(1, (now - t0) / ms); fn(ease(t));
+          if (t < 1) requestAnimationFrame(step); else res();
+        };
+        requestAnimationFrame(step);
+      });
+    },
+    praise(extra = '') { Sfx.play('good'); api.say(pick(CONFIG.praise) + (extra ? ' ' + extra : '')); },
+    /**
+     * 三層提示：hints = [第一次（引導觀察）, 第二次（指出要看哪裏）]，demo = 第三次示範
+     * hints 可以是文字或 function(ctx)。回傳 { wrong(ctx), reset() }
+     */
+    hinter(hints, demo) {
+      let n = 0;
+      return {
+        wrong(ctx) {
+          n++; Sfx.play('soft');
+          if (n === 1) api.say('<span aria-hidden="true">？</span> 再仔細看看：' + valOf(hints[0], ctx));
+          else if (n === 2) api.say('<b>提示：</b>' + valOf(hints[1], ctx));
+          else { n = 0; api.say('不要緊！我示範一次給你看。' + valOf(hints[2], ctx)); if (demo) demo(ctx); }
+        },
+        reset() { n = 0; },
+        get count() { return n; }
+      };
+    },
+    /**
+     * 提問（揀選項）：回傳 Promise，答對才繼續
+     * explain：答對後補充的一句（會出現「繼續」按鈕）
+     */
+    ask(q, options, correct, hints = [], explain = '') {
+      return api.p(res => {
+        api.say(q); opts.innerHTML = '';
+        let n = 0;
+        const btns = options.map((o, i) => {
+          const b = H('button', { html: o }, opts);
+          b.addEventListener('click', () => {
+            if (b.disabled || !token.alive) return;
+            if (i === correct) {
+              btns.forEach(x => x.disabled = true); b.disabled = false; b.classList.remove('demo'); b.classList.add('right');
+              Sfx.play('good');
+              api.say(pick(CONFIG.praise) + (explain ? ' ' + explain : ''));
+              setTimeout(() => { if (token.alive) { opts.innerHTML = ''; res(i); } }, explain ? 2200 : 1100);
+            } else {
+              n++; b.classList.add('wrong'); b.disabled = true; Sfx.play('soft');
+              if (n === 1) api.say(q + '<br>再仔細看看：' + valOf(hints[0]));
+              else if (n === 2) api.say(q + '<br><b>提示：</b>' + valOf(hints[1]));
+              else { api.say('我示範一次：答案是「' + options[correct] + '」。' + explain + ' 按一下它繼續。'); btns[correct].classList.add('demo'); }
+            }
+          });
+          return b;
+        });
+      });
+    },
+    /** 在嚮導對話框下顯示一個按鈕，按下才繼續 */
+    next(label = '繼續 ▶') {
+      return api.p(res => {
+        opts.innerHTML = '';
+        const b = H('button', { class: 'pri', html: label }, opts);
+        b.addEventListener('click', () => { Sfx.play('tap'); opts.innerHTML = ''; res(); });
+      });
+    },
+    clearOpts() { opts.innerHTML = ''; },
+    /** 右邊加一個面板 */
+    panel(title, parent = side) {
+      const p = H('div', { class: 'panel' }, parent);
+      if (title) H('h3', { html: title }, p);
+      return p;
+    },
+    /** 自動記錄表：add(cells, chgIdx[]) 加一行；chgIdx 欄位會用粗體+底線突出 */
+    table(headers, parent) {
+      const wrap = H('div', { class: 'rec-wrap' }, parent);
+      const t = H('table', { class: 'rec' }, wrap);
+      const tr = H('tr', {}, H('thead', {}, t));
+      headers.forEach(h => H('th', { html: h }, tr));
+      const tb = H('tbody', {}, t);
+      return {
+        el: t, tbody: tb,
+        add(cells, chg = []) {
+          tb.querySelectorAll('tr.new').forEach(r => r.classList.remove('new'));
+          const r = H('tr', { class: 'new' }, tb);
+          cells.forEach((c, i) => H('td', { html: c, class: chg.includes(i) ? 'chg' : '' }, r));
+          wrap.scrollTop = wrap.scrollHeight;
+          return r;
+        },
+        clear() { tb.innerHTML = ''; }
+      };
+    },
+    button(label, fn, cls = '', parent) {
+      const b = H('button', { html: label, class: cls }, parent);
+      b.addEventListener('click', () => { if (!b.disabled && token.alive) { Sfx.play('tap'); fn(b); } });
+      return b;
+    },
+    /** 過關：保存星星 → 發現卡 → （如完成全島）徽章 */
+    complete() {
+      if (!token.alive) return;
+      const isl = islandOf(levelId);
+      const islWasDone = Store.islandDone(isl);
+      Store.setDone(levelId);
+      Sfx.play('star'); starFx();
+      setTimeout(() => {
+        if (!token.alive) return;
+        showDiscovery(levelId, true, () => {
+          if (!islWasDone && Store.islandDone(isl)) showBadge(isl, () => goIsland(isl.id));
+          else goIsland(isl.id);
+        });
+      }, 900);
+    }
+  };
+  return api;
+}
+
+function islandOf(levelId) { return CONFIG.islands.find(i => i.levels.includes(levelId)); }
+
+/** 開始一關 */
+function startLevel(id) {
+  if (CUR) CUR.token.alive = false;
+  const L = CONFIG.levels[id], isl = islandOf(id);
+  show('scrLevel');
+  $('#lvTitle').textContent = `${isl.name}・第 ${isl.levels.indexOf(id) + 1} 關：${L.title}`;
+  const ph = $('#lvPhases'); ph.innerHTML = '';
+  Object.entries(PHASES).forEach(([k, v]) => H('span', { class: 'phase', 'data-p': k, text: v }, ph));
+  $('#lvBack').onclick = () => { Sfx.play('tap'); if (CUR) CUR.token.alive = false; CUR = null; goIsland(isl.id); };
+  const api = makeApi(id); CUR = api;
+  const fn = LEVEL_FUNCS[id];
+  if (fn) fn(api, L.data);
+  else api.say('這一關正在建設中，很快開放！');
+}
+
+function starFx() {
+  for (let i = 0; i < 5; i++) {
+    const s = H('div', { class: 'fx-star', text: '★' }, document.body);
+    s.style.left = (20 + Math.random() * 60) + 'vw'; s.style.top = (25 + Math.random() * 40) + 'vh';
+    s.style.color = '#f5b301'; s.style.webkitTextStroke = '2px #1d2b3a'; s.style.animationDelay = (i * .12) + 's';
+    setTimeout(() => s.remove(), 1600);
+  }
+}
+
+/* =================================================================
+   [I] 畫面：彈出視窗、首頁地圖、島嶼、收藏冊、證書
+   ================================================================= */
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('show', s.id === id));
+  window.scrollTo(0, 0);
+}
+function openModal(html, buttons) {
+  const m = $('#modal'), b = $('#mbox');
+  b.innerHTML = html;
+  const row = H('div', { class: 'mbtns' }, b);
+  buttons.forEach(bt => {
+    const x = H('button', { html: bt.label, class: bt.cls || '' }, row);
+    x.addEventListener('click', () => { Sfx.play('tap'); m.classList.remove('show'); if (bt.fn) bt.fn(); });
+  });
+  m.classList.add('show');
+}
+function guideHtml() {
+  return GUIDE_IMAGE ? `<img src="${GUIDE_IMAGE}" alt="${GUIDE_NAME}">` : GUIDE_SVG;
+}
+function cardHtml(levelId) {
+  const L = CONFIG.levels[levelId], isl = islandOf(levelId), c = L.card;
+  const n = Object.keys(CONFIG.levels).indexOf(levelId) + 1;
+  return `<div class="dcardbig"><div class="hd"><span>發現卡 No.${n}</span><span>${isl.name}・${L.title}</span></div>
+    <div class="bd"><div class="lab">你剛才發現了……</div><div class="found">${c.found}</div>
+    <div class="lab">在中一，我們把它叫做……</div><div class="named">${c.named}</div></div></div>`;
+}
+function showDiscovery(levelId, fresh, after) {
+  openModal(`<h2>${fresh ? '★ 過關！你得到一張發現卡' : '發現卡'}</h2>${cardHtml(levelId)}`,
+    [{ label: fresh ? '收藏！' : '關閉', cls: 'pri', fn: after }]);
+}
+function showBadge(isl, after) {
+  Sfx.play('star'); starFx();
+  openModal(`<h2>你完成了整個${isl.name}！</h2>
+    <div style="display:flex;gap:1em;align-items:center;flex-wrap:wrap">
+      <div style="width:150px">${badgeSvg(isl.id)}</div>
+      <div><p style="font-size:1.3em;font-weight:900;margin:.2em 0">獲得「${isl.name}・${isl.badge}」</p>
+      <p>${GUIDE_NAME}：你真棒！去其他島繼續探險吧！</p></div></div>`,
+    [{ label: '好！', cls: 'pri', fn: after }]);
+}
+/** 徽章：黑白也能分辨（不同外形 + 花紋 + 符號） */
+function badgeSvg(islId, mono = false) {
+  const ink = '#000';
+  const fill = mono ? '#fff' : ({ directed: '#ffd8a8', coord: '#c5f6fa', area: '#d3f9d8' })[islId];
+  const pat = `<defs><pattern id="bp-${islId}${mono ? 'm' : ''}" width="8" height="8" patternUnits="userSpaceOnUse">
+      ${islId === 'directed' ? '<circle cx="4" cy="4" r="1.3" fill="#000"/>' : islId === 'coord' ? '<path d="M0 4H8M4 0V8" stroke="#000" stroke-width="1"/>' : '<path d="M0 8L8 0" stroke="#000" stroke-width="1.2"/>'}
+    </pattern></defs>`;
+  const pid = `url(#bp-${islId}${mono ? 'm' : ''})`;
+  let shape, sym;
+  if (islId === 'directed') {
+    shape = `<circle cx="60" cy="60" r="54" fill="${fill}" stroke="${ink}" stroke-width="5"/><circle cx="60" cy="60" r="54" fill="${pid}" opacity=".35"/><circle cx="60" cy="60" r="38" fill="#fff" stroke="${ink}" stroke-width="3"/>`;
+    sym = `<text x="60" y="76" text-anchor="middle" font-size="46" font-weight="900" fill="${ink}">±</text>`;
+  } else if (islId === 'coord') {
+    shape = `<path d="M60 6 L107 33 L107 87 L60 114 L13 87 L13 33 Z" fill="${fill}" stroke="${ink}" stroke-width="5"/><path d="M60 6 L107 33 L107 87 L60 114 L13 87 L13 33 Z" fill="${pid}" opacity=".35"/><circle cx="60" cy="60" r="36" fill="#fff" stroke="${ink}" stroke-width="3"/>`;
+    sym = `<path d="M34 60H86M60 34V86" stroke="${ink}" stroke-width="4"/><path d="M86 60l-7-5v10zM60 34l-5 7h10z" fill="${ink}"/><circle cx="74" cy="48" r="5" fill="${ink}"/>`;
+  } else {
+    shape = `<path d="M60 6 L108 22 Q108 86 60 114 Q12 86 12 22 Z" fill="${fill}" stroke="${ink}" stroke-width="5"/><path d="M60 6 L108 22 Q108 86 60 114 Q12 86 12 22 Z" fill="${pid}" opacity=".35"/><circle cx="60" cy="58" r="34" fill="#fff" stroke="${ink}" stroke-width="3"/>`;
+    sym = `<path d="M60 36 L80 47 L80 69 L60 80 L40 69 L40 47 Z M40 47 L60 58 L80 47 M60 58 V80" fill="none" stroke="${ink}" stroke-width="4" stroke-linejoin="round"/>`;
+  }
+  return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">${pat}${shape}${sym}</svg>`;
+}
+
+/* ---------------- 首頁地圖 ---------------- */
+function buildMap() {
+  const wrap = $('#mapWrap'); wrap.innerHTML = '';
+  const svg = S('svg', { id: 'mapSvg', viewBox: '0 0 1200 640', role: 'img', 'aria-label': '三個島嶼的地圖' }, wrap);
+  // 海浪
+  const waves = S('g', { stroke: '#7cc6ee', 'stroke-width': 4, fill: 'none', 'stroke-linecap': 'round' }, svg);
+  for (let i = 0; i < 26; i++) {
+    const x = (i * 211) % 1150 + 20, y = (i * 137) % 600 + 20;
+    S('path', { d: `M${x} ${y} q12 -10 24 0 q12 10 24 0` }, waves);
+  }
+  // 航線（虛線）
+  S('path', { d: 'M250 380 C 380 520, 470 180, 600 290 S 860 520, 970 400', fill: 'none', stroke: '#1d2b3a', 'stroke-width': 4, 'stroke-dasharray': '4 14', 'stroke-linecap': 'round' }, svg);
+  const spots = { directed: [240, 350, 1.0], coord: [600, 270, 0.95], area: [965, 370, 1.0] };
+  CONFIG.islands.forEach((isl, idx) => {
+    const [cx, cy, sc] = spots[isl.id];
+    const g = S('g', { class: 'island', transform: `translate(${cx} ${cy}) scale(${sc})`, tabindex: 0, role: 'button', 'aria-label': isl.name, 'data-island': isl.id }, svg);
+    // 島形
+    S('path', { class: 'isl-shape', d: 'M-170 20 C-180 -60 -90 -120 0 -115 C 100 -120 185 -60 175 15 C 170 90 90 120 0 118 C -100 122 -165 90 -170 20 Z', fill: '#f4d999', stroke: '#1d2b3a', 'stroke-width': 5 }, g);
+    S('path', { d: 'M-140 15 C-145 -45 -75 -95 0 -92 C 85 -95 150 -45 142 12 C 138 70 75 95 0 94 C -85 97 -136 70 -140 15 Z', fill: ['#8ce99a', '#99e9f2', '#b2f2bb'][idx], stroke: '#1d2b3a', 'stroke-width': 3 }, g);
+    // 圖示
+    const ic = S('g', { transform: 'translate(0 -18)' }, g);
+    if (isl.id === 'directed') {
+      S('rect', { x: -14, y: -62, width: 28, height: 90, rx: 14, fill: '#fff', stroke: '#1d2b3a', 'stroke-width': 4 }, ic);
+      S('circle', { cx: 0, cy: 36, r: 20, fill: '#ff6b6b', stroke: '#1d2b3a', 'stroke-width': 4 }, ic);
+      S('rect', { x: -5, y: -10, width: 10, height: 40, fill: '#ff6b6b' }, ic);
+      S('text', { x: -62, y: -10, 'font-size': 54, 'font-weight': 900, 'text-anchor': 'middle', fill: '#1d2b3a', text: '+' }, ic);
+      S('text', { x: 62, y: -10, 'font-size': 54, 'font-weight': 900, 'text-anchor': 'middle', fill: '#1d2b3a', text: MINUS }, ic);
+    } else if (isl.id === 'coord') {
+      for (let k = -3; k <= 3; k++) { S('path', { d: `M${k * 18} -60 V48`, stroke: '#1d2b3a', 'stroke-width': 1.5, opacity: .5 }, ic); S('path', { d: `M-60 ${k * 18 - 6} H60`, stroke: '#1d2b3a', 'stroke-width': 1.5, opacity: .5 }, ic); }
+      S('path', { d: 'M-66 -6 H66 M0 -66 V54', stroke: '#1d2b3a', 'stroke-width': 4 }, ic);
+      S('path', { d: 'M36 -42 V-80 L64 -70 L36 -60', fill: '#ff6b6b', stroke: '#1d2b3a', 'stroke-width': 3 }, ic);
+      S('circle', { cx: 36, cy: -42, r: 6, fill: '#1d2b3a' }, ic);
+    } else {
+      S('path', { d: 'M0 -70 L56 -42 L56 22 L0 50 L-56 22 L-56 -42 Z', fill: '#ffe066', stroke: '#1d2b3a', 'stroke-width': 4, 'stroke-linejoin': 'round' }, ic);
+      S('path', { d: 'M-56 -42 L0 -14 L56 -42 M0 -14 V50', fill: 'none', stroke: '#1d2b3a', 'stroke-width': 4 }, ic);
+      S('path', { d: 'M0 -14 L56 -42 L56 22 L0 50 Z', fill: '#fab005', opacity: .6 }, ic);
+    }
+    // 名牌
+    S('rect', { x: -110, y: 52, width: 220, height: 50, rx: 14, fill: '#fff', stroke: '#1d2b3a', 'stroke-width': 4 }, g);
+    S('text', { x: 0, y: 86, 'text-anchor': 'middle', 'font-size': 30, 'font-weight': 900, fill: '#1d2b3a', text: isl.name }, g);
+    // 星星
+    const n = isl.levels.filter(l => Store.isDone(l)).length;
+    S('text', { x: 0, y: 140, 'text-anchor': 'middle', 'font-size': 34, fill: '#1d2b3a', 'font-weight': 900, text: '★'.repeat(n) + '☆'.repeat(4 - n) }, g);
+    if (Store.islandDone(isl)) {
+      const bd = S('g', { transform: 'translate(118 -110) scale(.62)' }, g);
+      bd.innerHTML = badgeSvg(isl.id).replace(/^<svg[^>]*>|<\/svg>$/g, '');
+    }
+    if (!isl.ready) {
+      S('rect', { x: -95, y: -150, width: 190, height: 44, rx: 8, fill: '#fff3bf', stroke: '#1d2b3a', 'stroke-width': 3, 'stroke-dasharray': '10 5' }, g);
+      S('text', { x: 0, y: -119, 'text-anchor': 'middle', 'font-size': 24, 'font-weight': 800, fill: '#1d2b3a', text: '建設中・即將開放' }, g);
+    }
+    const go = () => { Sfx.play('tap'); goIsland(isl.id); };
+    g.addEventListener('click', go);
+    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') go(); });
+  });
+  // 小船
+  S('path', { d: 'M420 470 h80 l-14 22 h-52 z M455 470 V420 l30 30 h-30', fill: '#fff', stroke: '#1d2b3a', 'stroke-width': 4, 'stroke-linejoin': 'round' }, svg);
+  const done = Store.countDone();
+  $('#mapStars').textContent = `★ ${done} / 12`;
+  $('#mapSay').innerHTML = done === 0 ? `歡迎來到<b>中一數學探險島</b>！我是${GUIDE_NAME}。揀一個島開始探險吧！`
+    : done >= 12 ? '你完成了全部 12 關！按「證書」領取你的預習證書！' : `你已經得到 <b>${done}</b> 粒星星，繼續加油！隨時可按「證書」列印預習證書。`;
+}
+function goMap() { if (CUR) { CUR.token.alive = false; CUR = null; } buildMap(); show('scrMap'); }
+
+/* ---------------- 島嶼畫面 ---------------- */
+function goIsland(islId) {
+  if (CUR) { CUR.token.alive = false; CUR = null; }
+  const isl = CONFIG.islands.find(i => i.id === islId);
+  $('#islTitle').textContent = isl.name;
+  const n = isl.levels.filter(l => Store.isDone(l)).length;
+  $('#islStars').textContent = `★ ${n} / 4`;
+  const grid = $('#islGrid'); grid.innerHTML = '';
+  if (!isl.ready) {
+    $('#islSay').innerHTML = `${isl.name}正在建設中，很快開放！先去<b>有向數島</b>探險吧。`;
+  } else {
+    $('#islSay').innerHTML = n === 4 ? `你已完成${isl.name}！可以隨時重玩。` : '每一關都要<b>先玩、再觀察、再預測</b>。揀一關開始吧！';
+  }
+  isl.levels.forEach((id, i) => {
+    const L = CONFIG.levels[id], done = Store.isDone(id);
+    const c = H('button', { class: 'lvcard' + (done ? ' done' : '') }, grid);
+    c.innerHTML = `<span class="no">第 ${i + 1} 關</span><span class="t">${L.title}</span><span class="d">${L.desc || '建設中'}</span>
+      <span class="st" aria-label="${done ? '已過關' : '未過關'}">${done ? '★ 已過關' : '☆ 未過關'}</span>`;
+    if (!isl.ready) c.disabled = true;
+    c.addEventListener('click', () => { Sfx.play('tap'); startLevel(id); });
+  });
+  show('scrIsland');
+}
+
+/* ---------------- 發現卡收藏冊 ---------------- */
+function goAlbum() {
+  const g = $('#albGrid'); g.innerHTML = '';
+  let got = 0;
+  CONFIG.islands.forEach(isl => isl.levels.forEach((id, i) => {
+    const L = CONFIG.levels[id], done = Store.isDone(id) && L.card;
+    if (done) got++;
+    const s = H('button', { class: 'aslot' + (done ? '' : ' locked') }, g);
+    if (done) {
+      s.innerHTML = `<div class="t">◆ ${L.title}</div><div style="font-size:.9em;color:var(--ink2)">${isl.name}・第 ${i + 1} 關</div>
+        <div style="margin-top:.3em">${L.card.named.replace(/<[^>]+>/g, '').slice(0, 38)}……</div>`;
+      s.addEventListener('click', () => { Sfx.play('tap'); showDiscovery(id, false); });
+    } else {
+      s.disabled = true;
+      s.innerHTML = `<div class="t">？ 未解鎖</div><div style="font-size:.9em">${isl.name}・第 ${i + 1} 關</div><div>完成「${L.title}」便可得到這張卡。</div>`;
+    }
+  }));
+  $('#albCount').textContent = `已收藏 ${got} / 12`;
+  show('scrAlbum');
+}
+
+/* ---------------- 證書 ---------------- */
+/* 證書隨時可以列印：內容按已完成的關卡自動調整 */
+const ISLAND_TOPIC = { directed: '有向數', coord: '坐標', area: '面積與體積' };
+function goCert() {
+  const a = $('#certArea'); a.innerHTML = '';
+  const n = Store.countDone(), all = n >= 12;
+  const doneIsl = CONFIG.islands.filter(i => i.levels.some(id => Store.isDone(id)));
+  const fullIsl = CONFIG.islands.filter(i => Store.islandDone(i));
+  const doneTitles = Object.keys(CONFIG.levels).filter(id => Store.isDone(id)).map(id => CONFIG.levels[id].title);
+  const topics = doneIsl.map(i => `<b>${ISLAND_TOPIC[i.id]}</b>`);
+  const topicTxt = topics.length <= 1 ? topics.join('') : topics.slice(0, -1).join('、') + '和' + topics[topics.length - 1];
+  const body = all ? `已完成「中一數學探險島」全部 12 關，<br>預習了${topicTxt}，表現出色，特頒此證。`
+    : n > 0 ? `已在「中一數學探險島」完成 ${n} 關，<br>預習了${topicTxt}，表現出色，特頒此證。`
+    : '參加了「中一數學探險島」預習活動，<br>特頒此證，以資鼓勵。';
+  const levelsTxt = !all && n > 0 ? `<div style="font-size:1em;max-width:92%">完成關卡：${doneTitles.map(t => '★ ' + t).join('　')}</div>` : '';
+  const row = H('div', { class: 'ctrls', style: 'justify-content:center;align-items:center' }, a);
+  H('label', { for: 'certName', text: '你的名字：', style: 'font-weight:800' }, row);
+  const inp = H('input', { id: 'certName', class: 'namein', maxlength: 20, placeholder: '在這裏輸入名字' }, row);
+  inp.value = Store.data.name || '';
+  H('button', { class: 'pri', text: '列印證書', onclick: () => { Sfx.play('tap'); window.print(); } }, row);
+  const d = new Date();
+  const dateStr = `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日`;
+  const cert = H('div', { class: 'cert', id: 'certPrint' }, a);
+  cert.innerHTML = `
+    <p class="ct">中一數學預習證書</p>
+    <div style="font-size:1.3em">茲證明</div>
+    <div class="cn" id="certNameOut"></div>
+    <div style="font-size:1.25em;max-width:90%">${body}</div>
+    ${levelsTxt}
+    <div class="badges">${fullIsl.map(i => `<div>${badgeSvg(i.id, true)}<div style="font-weight:800">${i.name}</div></div>`).join('')}</div>
+    <div class="sig"><div>日期：${dateStr}</div><div>嚮導老師：${GUIDE_NAME}</div></div>`;
+  const upd = () => { $('#certNameOut').textContent = inp.value.trim(); Store.data.name = inp.value.trim(); Store.save(); };
+  inp.addEventListener('input', upd); upd();
+  show('scrCert');
+}
+
+/* ---------------- 音效開關 / 重設 ---------------- */
+function updSoundBtns() {
+  document.querySelectorAll('[data-sound]').forEach(b => { b.textContent = '音效：' + (Store.data.sound ? '開' : '關'); b.setAttribute('aria-pressed', Store.data.sound); });
+}
+
+/* =================================================================
+   [J] 有向數島 4 關
+   每一關是一個函數 levelXX(api, D)，D = CONFIG.levels.XX.data
+   ================================================================= */
+const LEVEL_FUNCS = {};
+const INK = '#1d2b3a';
+
+/* ---------- 共用：水平數線 ---------- */
+function hNumberLine(parent, { min, max, x0, x1, y, label = fmtU, fs = 22 }) {
+  const unit = (x1 - x0) / (max - min);
+  const xOf = v => x0 + (v - min) * unit;
+  const g = S('g', {}, parent);
+  S('line', { x1: x0 - 22, y1: y, x2: x1 + 22, y2: y, stroke: INK, 'stroke-width': 4 }, g);
+  S('path', { d: `M${x1 + 34} ${y} l-14 -8 v16 z M${x0 - 34} ${y} l14 -8 v16 z`, fill: INK }, g);
+  for (let v = min; v <= max; v++) {
+    S('line', { x1: xOf(v), y1: y - (v === 0 ? 14 : 9), x2: xOf(v), y2: y + (v === 0 ? 14 : 9), stroke: INK, 'stroke-width': v === 0 ? 4 : 2.5 }, g);
+    S('text', { x: xOf(v), y: y + 36, 'text-anchor': 'middle', 'font-size': fs, 'font-weight': v === 0 ? 900 : 600, fill: INK, text: label(v) }, g);
+  }
+  return { g, xOf, unit, vOf: x => Math.round((x - x0) / unit + min), min, max };
+}
+/* ---------- 共用：鉛垂數線 ---------- */
+function vNumberLine(parent, { min, max, x, y0, y1, label = fmtU, side = 'right', fs = 20, arrows = true }) {
+  const unit = (y1 - y0) / (max - min);
+  const yOf = v => y0 + (max - v) * unit;
+  const g = S('g', {}, parent);
+  if (arrows) {
+    S('line', { x1: x, y1: y0 - 20, x2: x, y2: y1 + 20, stroke: INK, 'stroke-width': 4 }, g);
+    S('path', { d: `M${x} ${y0 - 32} l-8 14 h16 z M${x} ${y1 + 32} l-8 -14 h16 z`, fill: INK }, g);
+  }
+  const labels = {};
+  for (let v = min; v <= max; v++) {
+    S('line', { x1: x - (v === 0 ? 14 : 8), y1: yOf(v), x2: x + (v === 0 ? 14 : 8), y2: yOf(v), stroke: INK, 'stroke-width': v === 0 ? 4 : 2.5 }, g);
+    labels[v] = S('text', { x: side === 'right' ? x + 20 : x - 20, y: yOf(v) + fs * .35, 'text-anchor': side === 'right' ? 'start' : 'end', 'font-size': fs, 'font-weight': v === 0 ? 900 : 600, fill: INK, text: label(v) }, g);
+  }
+  return { g, yOf, unit, vOf: y => Math.round(max - (y - y0) / unit), labels, min, max };
+}
+/* ---------- 共用：預測旗子（點擊或拖動放置，再按「確定」） ---------- */
+function makeFlag(parent, vertical) {
+  const g = S('g', { style: 'pointer-events:none', opacity: 0 }, parent);
+  if (vertical) {
+    S('path', { d: 'M0 0 h46', stroke: INK, 'stroke-width': 4 }, g);
+    S('path', { d: 'M46 0 v-30 l34 12 l-34 12', fill: '#ffe066', stroke: INK, 'stroke-width': 3 }, g);
+    S('text', { x: 58, y: -11, 'font-size': 18, 'font-weight': 900, 'text-anchor': 'middle', fill: INK, text: '?' }, g);
+  } else {
+    S('path', { d: 'M0 0 v-58', stroke: INK, 'stroke-width': 4 }, g);
+    S('path', { d: 'M0 -58 l30 10 l-30 10 z', fill: '#ffe066', stroke: INK, 'stroke-width': 3 }, g);
+    S('text', { x: 10, y: -42, 'font-size': 16, 'font-weight': 900, fill: INK, text: '?' }, g);
+  }
+  return {
+    g, value: null,
+    set(v, x, y) { this.value = v; g.setAttribute('transform', `translate(${x} ${y})`); g.setAttribute('opacity', 1); },
+    hide() { this.value = null; g.setAttribute('opacity', 0); }
+  };
+}
+
+/* =================================================================
+   第 1 關：升降機大廈
+   玩：送升降機接乘客 → 觀察：+、−、0 → 預測：只說有向數 → 驗證：顯示數字
+   延伸：海平面上的風箏、小船、海平面下的潛艇
+   ================================================================= */
+LEVEL_FUNCS.d1 = function (api, D) {
+  const top = D.topFloor, bot = D.bottomFloor, FH = 54, Y0 = 34, W = 560;
+  const Hh = Y0 + (top - bot + 1) * FH + 24;
+  const yTop = f => Y0 + (top - f) * FH, yMid = f => yTop(f) + FH / 2;
+  let svg, car, doorL, doorR, person, cur = D.liftStart, busy = false, onDoor = null, nl, disp, table, ctrlBtns = [];
+
+  function build() {
+    svg = S('svg', { viewBox: `0 0 ${W} ${Hh}`, class: 'stage-svg', role: 'img', 'aria-label': '升降機大廈' }, api.stage);
+    const gy = yTop(-1);
+    const defs = S('defs', {}, svg);
+    const pat = S('pattern', { id: 'soil', width: 14, height: 14, patternUnits: 'userSpaceOnUse' }, defs);
+    S('path', { d: 'M0 14 L14 0', stroke: '#8b6b4a', 'stroke-width': 2 }, pat);
+    S('rect', { x: 0, y: 0, width: W, height: gy, fill: '#e7f5ff' }, svg);
+    S('rect', { x: 0, y: gy, width: W, height: Hh - gy, fill: '#ead9c3' }, svg);
+    S('rect', { x: 0, y: gy, width: W, height: Hh - gy, fill: 'url(#soil)', opacity: .5 }, svg);
+    // 大廈
+    S('rect', { x: 118, y: yTop(top) - 10, width: 252, height: yTop(bot) + FH - yTop(top) + 10, fill: '#fff', stroke: INK, 'stroke-width': 4 }, svg);
+    S('rect', { x: 200, y: yTop(top) - 10, width: 90, height: yTop(bot) + FH - yTop(top) + 10, fill: '#dee2e6', stroke: INK, 'stroke-width': 2 }, svg);
+    for (let f = top; f >= bot; f--) {
+      S('line', { x1: 118, y1: yTop(f) + FH, x2: 370, y2: yTop(f) + FH, stroke: INK, 'stroke-width': 2 }, svg);
+      S('text', { x: 108, y: yMid(f) + 8, 'text-anchor': 'end', 'font-size': 22, 'font-weight': 800, fill: INK, text: floorName(f) }, svg);
+      if (f > 0) S('rect', { x: 135, y: yTop(f) + 12, width: 46, height: 26, fill: '#bde0fe', stroke: INK, 'stroke-width': 2 }, svg);
+    }
+    // 地面線
+    S('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: INK, 'stroke-width': 6 }, svg);
+    S('text', { x: 6, y: gy - 8, 'font-size': 18, 'font-weight': 800, fill: INK, text: '地面' }, svg);
+    S('text', { x: 6, y: gy + 24, 'font-size': 18, 'font-weight': 800, fill: INK, text: '地底' }, svg);
+    // 有向數（鉛垂數線）
+    S('text', { x: 470, y: 22, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 800, fill: INK, text: '有向數' }, svg);
+    nl = vNumberLine(svg, { min: bot, max: top, x: 430, y0: yMid(top), y1: yMid(bot), label: fmt, fs: 24 });
+    // 升降機
+    car = S('g', {}, svg);
+    S('rect', { x: 205, y: 0, width: 80, height: FH - 8, rx: 6, fill: '#ffd43b', stroke: INK, 'stroke-width': 3 }, car);
+    doorL = S('rect', { x: 209, y: 4, width: 36, height: FH - 16, fill: '#adb5bd', stroke: INK, 'stroke-width': 2 }, car);
+    doorR = S('rect', { x: 245, y: 4, width: 36, height: FH - 16, fill: '#adb5bd', stroke: INK, 'stroke-width': 2 }, car);
+    person = S('g', { opacity: 0 }, svg);
+    S('circle', { cx: 0, cy: -30, r: 8, fill: '#f6cfa8', stroke: INK, 'stroke-width': 2.5 }, person);
+    S('path', { d: 'M-9 -20 h18 v18 h-18 z', fill: '#ff8787', stroke: INK, 'stroke-width': 2.5 }, person);
+    S('path', { d: 'M-6 -2 v10 M6 -2 v10', stroke: INK, 'stroke-width': 3 }, person);
+    S('text', { x: 18, y: -26, 'font-size': 20, 'font-weight': 900, fill: INK, text: '!' }, person);
+    setCar(cur);
+  }
+  function setCar(f) { car.setAttribute('transform', `translate(0 ${yTop(f) + 4})`); }
+  function showPerson(f, on = true) { person.setAttribute('transform', `translate(328 ${yTop(f) + FH - 4})`); person.setAttribute('opacity', on ? 1 : 0); }
+  function updDisp(hideNum) {
+    disp.innerHTML = `<span style="font-size:1.6em">${floorName(cur)}</span>　＝　<span style="font-size:1.6em">${hideNum ? '？' : fmt(cur)}</span>`;
+  }
+  let hideNums = false;
+  function hideLabels(h) {
+    hideNums = h;
+    for (let f = bot; f <= top; f++) nl.labels[f].textContent = h ? '?' : fmt(f);
+    updDisp(h);
+  }
+  async function move(d) {
+    const nf = cur + d;
+    if (nf > top || nf < bot) { Sfx.play('soft'); api.say(d > 0 ? '已經到頂樓了！' : '已經到最低的地庫了！'); return; }
+    busy = true; Sfx.play('move');
+    const a = yTop(cur), b = yTop(nf);
+    await api.tween(320, t => car.setAttribute('transform', `translate(0 ${a + (b - a) * t + 4})`));
+    cur = nf; updDisp(hideNums); busy = false;
+  }
+  async function openDoor() {
+    busy = true; Sfx.play('tap');
+    await api.tween(260, t => { doorL.setAttribute('width', 36 - 30 * t); doorR.setAttribute('x', 245 + 30 * t); doorR.setAttribute('width', 36 - 30 * t); });
+    const f = cur;
+    await api.wait(250);
+    if (onDoor) onDoor(f);
+    await api.wait(400);
+    await api.tween(260, t => { doorL.setAttribute('width', 6 + 30 * t); doorR.setAttribute('x', 275 - 30 * t); doorR.setAttribute('width', 6 + 30 * t); });
+    busy = false;
+  }
+  /** 第三次提示：自動示範 */
+  async function autoGo(f) {
+    ctrlBtns.forEach(b => b.disabled = true);
+    await api.wait(700);
+    while (cur !== f) await move(f > cur ? 1 : -1);
+    await openDoor();
+    ctrlBtns.forEach(b => b.disabled = false);
+  }
+  /** 等候在正確樓層開門 */
+  function waitDoor(f, hinter) {
+    return api.p(res => { onDoor = (at) => { if (at === f) { onDoor = null; hinter.reset(); res(); } else hinter.wrong({ at }); }; });
+  }
+
+  async function run() {
+    build();
+    const pc = api.panel('升降機位置');
+    disp = H('div', { class: 'eq', style: 'text-align:center' }, pc);
+    const ctl = H('div', { class: 'ctrls' }, pc);
+    ctrlBtns = [
+      api.button('▲ 上', () => !busy && move(1), '', ctl),
+      api.button('▼ 下', () => !busy && move(-1), '', ctl),
+      api.button('開門', () => !busy && openDoor(), 'pri', ctl)
+    ];
+    table = api.table(['乘客', '樓層', '有向數'], api.panel('自動記錄表'));
+    updDisp(false);
+
+    /* --- 玩 --- */
+    api.phase('play');
+    for (const p of D.passengers) {
+      showPerson(p.floor, true);
+      api.say(`<b>${p.name}</b>在 <b>${floorName(p.floor)}</b> 等升降機。按「▲ 上」或「▼ 下」送升降機過去，再按「開門」！`);
+      const h = api.hinter([
+        `${p.name}站在哪一層？升降機要停在<b>同一層</b>才開門。`,
+        () => `${p.name}在 ${floorName(p.floor)}，升降機現在在 ${floorName(cur)}。要按「${p.floor > cur ? '▲ 上' : '▼ 下'}」。`
+      ], () => autoGo(p.floor));
+      await waitDoor(p.floor, h);
+      showPerson(p.floor, false);
+      table.add([p.name, floorName(p.floor), fmt(p.floor)]);
+      api.praise(`${floorName(p.floor)} 旁邊的有向數是 <b>${fmt(p.floor)}</b>。`);
+      await api.wait(1500);
+    }
+    /* --- 觀察 --- */
+    api.phase('observe');
+    ctrlBtns.forEach(b => b.disabled = true);
+    await api.ask('看看<b>記錄表</b>。<b>地面以上</b>的樓層（例如 3/F），有向數前面是什麼號？', ['+ 號', MINUS + ' 號', '沒有號'], 0,
+      ['找找 3/F 那一行。', '3/F 是「+3」，前面是什麼號？']);
+    await api.ask('<b>地庫</b>（B1、B2、B3）呢？', ['+ 號', MINUS + ' 號', '沒有號'], 1,
+      ['找找 B2 那一行。', 'B2 是「' + MINUS + '2」。']);
+    await api.ask('地面那一層 <b>G/F</b> 是什麼數？', ['+1', '0', MINUS + '1'], 1,
+      ['G/F 在地面以上的樓層和地庫的中間。', '看看記錄表中送貨員那一行。'], '0 是地面以上和地庫的<b>分界</b>。');
+    /* --- 預測 → 驗證 --- */
+    hideLabels(true);
+    api.phase('predict');
+    api.say('大廈旁邊的數字收起來了！現在乘客只用<b>有向數</b>說出樓層。你能送升降機到正確的樓層嗎？');
+    await api.next('開始 ▶');
+    ctrlBtns.forEach(b => b.disabled = false);
+    for (const t of D.predictTargets) {
+      api.phase('predict');
+      api.say(`叮！<b>${fmt(t)}</b> 樓有人按升降機。送升降機過去，再按「開門」。`);
+      const desc = t > 0 ? `地面以上第 ${t} 層` : t < 0 ? `地面以下第 ${-t} 層` : '地面那一層';
+      const h = api.hinter([
+        `「+」表示地面以上，「${MINUS}」表示地面以下（地庫）。這一層沒有人呀。`,
+        `${fmt(t)} 表示${desc}。`,
+        `${fmt(t)} 就是 ${floorName(t)}。`
+      ], () => autoGo(t));
+      await waitDoor(t, h);
+      api.phase('verify');
+      showPerson(t, true);
+      nl.labels[t].textContent = fmt(t);
+      nl.labels[t].setAttribute('font-size', 30);
+      table.add(['新乘客', floorName(t), fmt(t)]);
+      api.praise(`${fmt(t)} 樓就是 <b>${floorName(t)}</b>！`);
+      await api.wait(1600);
+      showPerson(t, false);
+      nl.labels[t].setAttribute('font-size', 24);
+    }
+    hideLabels(false);
+    api.say('全部送到了！我們去海邊看看，有向數還可以表示什麼。');
+    await api.next('去海邊 ▶');
+    await sea();
+    api.complete();
+  }
+
+  /* --- 延伸：海平面以上和以下 --- */
+  async function sea() {
+    api.phase('play');
+    api.stage.innerHTML = ''; api.side.innerHTML = '';
+    const W2 = 620, H2 = 560, SL = 280, k = 5.4, yH = h => SL - h * k;
+    const s = S('svg', { viewBox: `0 0 ${W2} ${H2}`, class: 'stage-svg', role: 'img', 'aria-label': '海平面' }, api.stage);
+    const defs = S('defs', {}, s);
+    const pat = S('pattern', { id: 'wave', width: 40, height: 20, patternUnits: 'userSpaceOnUse' }, defs);
+    S('path', { d: 'M0 10 q10 -8 20 0 t20 0', stroke: '#4dabf7', 'stroke-width': 2, fill: 'none' }, pat);
+    S('rect', { x: 0, y: 0, width: W2, height: SL, fill: '#e7f5ff' }, s);
+    S('rect', { x: 0, y: SL, width: W2, height: H2 - SL, fill: '#a5d8ff' }, s);
+    S('rect', { x: 0, y: SL, width: W2, height: H2 - SL, fill: 'url(#wave)' }, s);
+    S('line', { x1: 70, y1: SL, x2: W2, y2: SL, stroke: INK, 'stroke-width': 5 }, s);
+    S('text', { x: W2 - 8, y: SL - 10, 'text-anchor': 'end', 'font-size': 20, 'font-weight': 900, fill: INK, text: '海平面' }, s);
+    // 刻度
+    S('line', { x1: 70, y1: yH(45), x2: 70, y2: yH(-45), stroke: INK, 'stroke-width': 4 }, s);
+    for (let h = -40; h <= 40; h += 10) {
+      S('line', { x1: 62, y1: yH(h), x2: 78, y2: yH(h), stroke: INK, 'stroke-width': 3 }, s);
+      S('text', { x: 56, y: yH(h) + 7, 'text-anchor': 'end', 'font-size': 18, 'font-weight': 700, fill: INK, text: Math.abs(h) + ' m' }, s);
+    }
+    S('text', { x: 84, y: yH(43), 'font-size': 18, 'font-weight': 800, fill: INK, text: '↑ 海平面以上' }, s);
+    S('text', { x: 84, y: yH(-41), 'font-size': 18, 'font-weight': 800, fill: INK, text: '↓ 海平面以下' }, s);
+    // 物件
+    const objs = {};
+    const pos = { kite: [470, 30], boat: [300, 0], sub: [250, -20] };
+    D.sea.objects.forEach(o => {
+      const [x] = pos[o.id] || [300], y = yH(o.h);
+      S('line', { x1: 78, y1: y, x2: x - 40, y2: y, stroke: INK, 'stroke-width': 2, 'stroke-dasharray': '6 6' }, s);
+      const g = S('g', {}, s);
+      if (o.id === 'kite') {
+        S('path', { d: `M${x} ${y - 34} L${x + 26} ${y} L${x} ${y + 34} L${x - 26} ${y} Z`, fill: '#ff8787', stroke: INK, 'stroke-width': 3 }, g);
+        S('path', { d: `M${x} ${y + 34} Q${x - 70} ${y + 120} 318 ${SL - 46}`, stroke: INK, 'stroke-width': 1.5, fill: 'none' }, g);
+      } else if (o.id === 'boat') {
+        S('path', { d: `M${x - 50} ${y - 16} h100 l-18 18 h-64 z`, fill: '#fff', stroke: INK, 'stroke-width': 3 }, g);
+        S('path', { d: `M${x + 18} ${y - 16} V${y - 46}`, stroke: INK, 'stroke-width': 3 }, g);
+      } else if (o.id === 'sub') {
+        S('ellipse', { cx: x, cy: y, rx: 58, ry: 20, fill: '#ffd43b', stroke: INK, 'stroke-width': 3 }, g);
+        S('rect', { x: x - 14, y: y - 36, width: 28, height: 18, fill: '#ffd43b', stroke: INK, 'stroke-width': 3 }, g);
+        [-28, 0, 28].forEach(d => S('circle', { cx: x + d, cy: y, r: 6, fill: '#fff', stroke: INK, 'stroke-width': 2 }, g));
+      } else {
+        S('circle', { cx: x, cy: y, r: 16, fill: '#fff', stroke: INK, 'stroke-width': 3 }, g);
+      }
+      S('text', { x: x, y: o.id === 'boat' ? y - 54 : y - 42, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 800, fill: INK, text: o.name }, g);
+      const sx = o.id === 'kite' ? x + 36 : o.id === 'boat' ? x - 190 : x + 70, sy = o.id === 'boat' ? y - 70 : y - 22;
+      const slot = S('g', { 'data-slot': o.id }, s);
+      const r = S('rect', { x: sx, y: sy, width: 104, height: 44, rx: 10, fill: '#fff', stroke: INK, 'stroke-width': 3, 'stroke-dasharray': '8 5' }, slot);
+      const t = S('text', { x: sx + 52, y: sy + 30, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 900, fill: INK, text: '?' }, slot);
+      objs[o.id] = { o, slot, r, t, filled: false };
+    });
+    api.say('海平面就像大廈的地面。把正確的<b>有向數</b>卡拖到每件物件旁邊的「?」。');
+    const pc = api.panel('有向數卡（拖到「?」）');
+    const cards = H('div', { class: 'cards' }, pc);
+    H('div', { class: 'note', style: 'margin-top:.5em', html: '海平面以上 20 m 記作 <b>+20 m</b>' }, pc);
+    const vals = shuffle(D.sea.objects.map(o => o.h).concat(D.sea.extraCards));
+    let left = D.sea.objects.length;
+    return api.p(res => {
+      const fill = (ob, cardEl) => {
+        ob.filled = true; ob.t.textContent = (ob.o.h === 0 ? '0' : fmt(ob.o.h)) + ' m';
+        ob.r.setAttribute('stroke-dasharray', ''); ob.r.setAttribute('stroke-width', 4); ob.r.setAttribute('fill', '#fff9db');
+        cardEl.classList.add('used'); Sfx.play('drop');
+        left--;
+        if (left === 0) { api.praise('海平面以上用 +，海平面以下用 ' + MINUS + '，海平面是 0！'); setTimeout(res, 1800); }
+        else api.praise(`${ob.o.name}的位置是 <b>${ob.t.textContent}</b>。`);
+      };
+      const h = api.hinter([
+        ctx => `${ctx.ob.o.name}在海平面的<b>上面</b>還是<b>下面</b>？`,
+        ctx => ctx.ob.o.h === 0 ? `${ctx.ob.o.name}剛好在海平面上，即是 0 m。` :
+          `${ctx.ob.o.name}在海平面${ctx.ob.o.h > 0 ? '以上' : '以下'} ${Math.abs(ctx.ob.o.h)} m。海平面${ctx.ob.o.h > 0 ? '以上用「+」' : '以下用「' + MINUS + '」'}。`
+      ], async ctx => {
+        const right = [...cards.children].find(c => +c.dataset.v === ctx.ob.o.h && !c.classList.contains('used'));
+        if (!right) return;
+        right.classList.add('demo'); await api.wait(600); right.classList.remove('demo');
+        await flyCard(right, ctx.ob.r); fill(ctx.ob, right);
+      });
+      vals.forEach(v => {
+        const c = H('div', { class: 'dcard', 'data-v': v, text: (v === 0 ? '0' : fmt(v)) + ' m' }, cards);
+        makeDraggable(c, {
+          onDrop: (cx, cy) => {
+            const ob = Object.values(objs).find(q => !q.filled && hitEl(q.r, cx, cy, 24));
+            if (!ob) return false;
+            if (v === ob.o.h) { h.reset(); fill(ob, c); return true; }
+            h.wrong({ ob }); return false;
+          }
+        });
+      });
+    });
+  }
+  run();
+};
+
+/* =================================================================
+   第 2 關：溫度排隊
+   玩：溫度卡放上溫度計（鉛垂數線）→ 觀察 → 放上水平數線 → 預測大小 → 驗證
+   相反數配對：0 兩邊、距離相同的兩張卡一起發光
+   ================================================================= */
+LEVEL_FUNCS.d2 = function (api, D) {
+  const cityTxt = c => `${c.name} ${fmtU(c.t)}°C`;
+  const hints = (c, vert) => [
+    `${c.name}是 ${fmtU(c.t)}°C。找${vert ? '溫度計' : '數線'}上寫着 ${fmtU(c.t)} 的刻度。`,
+    c.t < 0 ? `負數在 0 的<b>${vert ? '下面' : '左邊'}</b>。由 0 向${vert ? '下' : '左'}數 ${-c.t} 格。` :
+      c.t === 0 ? '找中間的 0。' : `正數在 0 的<b>${vert ? '上面' : '右邊'}</b>。由 0 向${vert ? '上' : '右'}數 ${c.t} 格。`
+  ];
+
+  /** 通用：把卡拖到數線上；getVal(cx,cy) 回傳數值或 null；place(card, el) 放好後畫圖 */
+  function dragToLine({ items, cardsBox, label, getVal, preview, clearPreview, place, hintsOf, targetEl }) {
+    let left = items.length;
+    return api.p(res => {
+      items.forEach(it => {
+        const c = H('div', { class: 'dcard', html: label(it) }, cardsBox);
+        const hn = api.hinter(hintsOf(it), async () => {
+          c.classList.add('demo'); await api.wait(500); c.classList.remove('demo');
+          await flyCard(c, targetEl(it)); done();
+        });
+        const done = () => { c.classList.add('used'); Sfx.play('drop'); place(it); left--; if (left === 0) setTimeout(res, 900); };
+        makeDraggable(c, {
+          onMove: (cx, cy) => { const v = getVal(cx, cy); if (v === null) clearPreview(); else preview(v); },
+          onEnd: clearPreview,
+          onDrop: (cx, cy) => {
+            const v = getVal(cx, cy);
+            if (v === null) return false;
+            if (v === it.v) { hn.reset(); api.praise(); done(); return true; }
+            hn.wrong(); return false;
+          }
+        });
+      });
+    });
+  }
+
+  async function run() {
+    /* ---------- 1. 溫度計（鉛垂數線） ---------- */
+    api.phase('play');
+    let svg = S('svg', { viewBox: '0 0 560 640', class: 'stage-svg', role: 'img', 'aria-label': '溫度計' }, api.stage);
+    S('text', { x: 200, y: 26, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 900, fill: INK, text: '°C' }, svg);
+    S('rect', { x: 184, y: 36, width: 32, height: 540, rx: 16, fill: '#fff', stroke: INK, 'stroke-width': 4 }, svg);
+    S('circle', { cx: 200, cy: 594, r: 30, fill: '#ff6b6b', stroke: INK, 'stroke-width': 4 }, svg);
+    S('rect', { x: 193, y: 540, width: 14, height: 40, fill: '#ff6b6b' }, svg);
+    const vl = vNumberLine(svg, { min: -10, max: 10, x: 200, y0: 60, y1: 540, label: v => v % 2 === 0 ? fmtU(v) : '', side: 'left', fs: 20, arrows: false });
+    const pv = S('g', { opacity: 0 }, svg);
+    S('path', { d: 'M222 0 l26 -12 v24 z', fill: '#ffe066', stroke: INK, 'stroke-width': 2.5 }, pv);
+    const pvT = S('text', { x: 254, y: 8, 'font-size': 22, 'font-weight': 900, fill: INK }, pv);
+    const flags = S('g', {}, svg);
+    const panel = api.panel('城市溫度卡（拖到溫度計上）');
+    const box = H('div', { class: 'cards' }, panel);
+    const items = D.cities.map(c => ({ ...c, v: c.t }));
+    api.say('今天各城市的氣溫不同。把溫度卡<b>拖到溫度計</b>上正確的位置。');
+    const placedV = [];
+    await dragToLine({
+      items, cardsBox: box, label: cityTxt,
+      getVal: (cx, cy) => { const p = svgPoint(svg, cx, cy); if (p.x < 90 || p.x > 560 || p.y < 40 || p.y > 560) return null; const v = vl.vOf(p.y); return v < -10 || v > 10 ? null : v; },
+      preview: v => { pv.setAttribute('transform', `translate(0 ${vl.yOf(v)})`); pv.setAttribute('opacity', 1); pvT.textContent = fmtU(v) + '°C'; },
+      clearPreview: () => pv.setAttribute('opacity', 0),
+      place: it => {
+        const y = vl.yOf(it.v);
+        // 避免標籤重疊：向右錯開
+        const off = placedV.filter(v => Math.abs(v - it.v) < 2).length * 150; placedV.push(it.v);
+        S('line', { x1: 216, y1: y, x2: 290 + off, y2: y, stroke: INK, 'stroke-width': 3 }, flags);
+        S('circle', { cx: 216, cy: y, r: 6, fill: INK }, flags);
+        S('rect', { x: 290 + off, y: y - 18, width: 142, height: 36, rx: 8, fill: '#fff9db', stroke: INK, 'stroke-width': 2.5 }, flags);
+        S('text', { x: 361 + off, y: y + 8, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 800, fill: INK, text: cityTxt(it) }, flags);
+      },
+      hintsOf: it => hints(it, true),
+      targetEl: it => S('rect', { x: 200, y: vl.yOf(it.v) - 2, width: 4, height: 4, opacity: 0 }, svg)
+    });
+    api.phase('observe');
+    const coldest = D.cities.reduce((a, b) => b.t < a.t ? b : a);
+    await api.ask('哪個城市<b>最冷</b>？', D.cities.map(c => c.name), D.cities.indexOf(coldest),
+      ['看看哪張卡在溫度計<b>最下面</b>。', '溫度計愈下面，溫度愈低。'], `${coldest.name} ${fmtU(coldest.t)}°C 在最下面。`);
+    await api.ask('在溫度計上，愈<b>上面</b>的數……', ['愈大', '愈小'], 0, ['比較 ' + fmtU(3) + '°C 和 ' + fmtU(-8) + '°C，哪個較暖？', '暖的溫度數值較大，在上面。']);
+
+    /* ---------- 2. 水平數線 ---------- */
+    api.phase('play');
+    api.stage.innerHTML = ''; panel.remove();
+    svg = S('svg', { viewBox: '0 0 720 330', class: 'stage-svg', role: 'img', 'aria-label': '水平數線' }, api.stage);
+    let hl = hNumberLine(svg, { min: -10, max: 10, x0: 40, x1: 680, y: 220, fs: 20 });
+    const pv2 = S('g', { opacity: 0 }, svg);
+    S('path', { d: 'M0 -14 l-12 -24 h24 z', fill: '#ffe066', stroke: INK, 'stroke-width': 2.5 }, pv2);
+    const pv2T = S('text', { x: 0, y: -46, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 900, fill: INK }, pv2);
+    const marks = S('g', {}, svg);
+    const panel2 = api.panel('把同一組卡放到<b>水平數線</b>上');
+    const box2 = H('div', { class: 'cards' }, panel2);
+    api.say('溫度計「打橫」放，就變成<b>水平數線</b>。把卡拖到數線上。');
+    let row = 0;
+    await dragToLine({
+      items, cardsBox: box2, label: cityTxt,
+      getVal: (cx, cy) => { const p = svgPoint(svg, cx, cy); if (p.y < 40 || p.y > 300 || p.x < 20 || p.x > 700) return null; const v = hl.vOf(p.x); return v < -10 || v > 10 ? null : v; },
+      preview: v => { pv2.setAttribute('transform', `translate(${hl.xOf(v)} 220)`); pv2.setAttribute('opacity', 1); pv2T.textContent = fmtU(v); },
+      clearPreview: () => pv2.setAttribute('opacity', 0),
+      place: it => {
+        const x = hl.xOf(it.v), ly = 150 - (row++ % 2) * 52;
+        S('circle', { cx: x, cy: 220, r: 9, fill: INK }, marks);
+        S('line', { x1: x, y1: 211, x2: x, y2: ly + 14, stroke: INK, 'stroke-width': 2 }, marks);
+        S('rect', { x: x - 58, y: ly - 22, width: 116, height: 36, rx: 8, fill: '#fff9db', stroke: INK, 'stroke-width': 2.5 }, marks);
+        S('text', { x: x, y: ly + 4, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 800, fill: INK, text: cityTxt(it) }, marks);
+      },
+      hintsOf: it => hints(it, false),
+      targetEl: it => S('rect', { x: hl.xOf(it.v) - 2, y: 216, width: 4, height: 4, opacity: 0 }, svg)
+    });
+    api.phase('observe');
+    await api.ask('在水平數線上，愈<b>右邊</b>的數……', ['愈大', '愈小'], 0, ['溫度計愈上面愈大，打橫後「上面」變成哪一邊？', '最暖的東京在最右邊。']);
+    /* 預測：哪個較大？ */
+    for (const [a, b] of D.compare) {
+      api.phase('predict');
+      const big = Math.max(a, b), small = Math.min(a, b);
+      await api.ask(`預測一下：<b>${fmtU(a)}</b> 和 <b>${fmtU(b)}</b>，哪個<b>較大</b>？`, [fmtU(a), fmtU(b)], a > b ? 0 : 1,
+        [`想想溫度：${fmtU(a)}°C 和 ${fmtU(b)}°C，哪個較暖？`, '在數線上，較大的數在<b>較右邊</b>。']);
+      api.phase('verify');
+      const v = S('g', {}, svg);
+      const mk = (n, shape) => {
+        const x = hl.xOf(n);
+        if (shape === 'tri') S('path', { d: `M${x} 232 l-12 24 h24 z`, fill: '#74c0fc', stroke: INK, 'stroke-width': 2.5 }, v);
+        else S('rect', { x: x - 11, y: 234, width: 22, height: 22, fill: '#ffa8a8', stroke: INK, 'stroke-width': 2.5 }, v);
+      };
+      mk(a, 'tri'); mk(b, 'sq');
+      S('path', { d: `M${hl.xOf(small)} 290 H${hl.xOf(big) - 6}`, stroke: INK, 'stroke-width': 4 }, v);
+      S('path', { d: `M${hl.xOf(big)} 290 l-14 -8 v16 z`, fill: INK }, v);
+      S('text', { x: (hl.xOf(small) + hl.xOf(big)) / 2, y: 320, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: '向右 → 較大' }, v);
+      api.say(`看數線：${fmtU(big)} 在 ${fmtU(small)} 的<b>右邊</b>，所以 <b>${fmtU(big)} &gt; ${fmtU(small)}</b>。` +
+        (big < 0 ? `${fmtU(small)} 離 0 較遠，數值反而較小！` : ''));
+      await api.next();
+      v.remove();
+    }
+
+    /* ---------- 3. 相反數配對 ---------- */
+    api.phase('play');
+    api.stage.innerHTML = ''; panel2.remove();
+    svg = S('svg', { viewBox: '0 0 720 340', class: 'stage-svg', role: 'img', 'aria-label': '相反數配對' }, api.stage);
+    hl = hNumberLine(svg, { min: -8, max: 8, x0: 40, x1: 680, y: 250, fs: 22 });
+    const pv3 = S('g', { opacity: 0 }, svg);
+    S('path', { d: 'M0 -14 l-12 -24 h24 z', fill: '#ffe066', stroke: INK, 'stroke-width': 2.5 }, pv3);
+    const brackets = S('g', {}, svg), boxes = S('g', {}, svg);
+    const placed = {}; let pairs = 0;
+    const drawBox = (v) => {
+      const x = hl.xOf(v);
+      const g = S('g', {}, boxes);
+      S('circle', { cx: x, cy: 250, r: 8, fill: INK }, g);
+      const r = S('rect', { x: x - 24, y: 196, width: 48, height: 36, rx: 8, fill: '#fff', stroke: INK, 'stroke-width': 2.5 }, g);
+      S('text', { x, y: 222, 'text-anchor': 'middle', 'font-size': 22, 'font-weight': 900, fill: INK, text: fmtU(v) }, g);
+      placed[v] = { g, r };
+    };
+    /** 兩數離 0 一樣遠 → 一起發光 + 括號 + ★ */
+    const glow = async (v) => {
+      const a = Math.abs(v), lvl = pairs++;
+      const yb = 176 - lvl * 40;
+      [a, -a].forEach(n => {
+        placed[n].r.setAttribute('stroke-width', 5); placed[n].r.setAttribute('fill', '#ffe066');
+        S('text', { x: hl.xOf(n), y: 190, 'text-anchor': 'middle', 'font-size': 18, fill: INK, text: '★' }, placed[n].g);
+      });
+      const x0 = hl.xOf(0);
+      [[-a, 1], [a, -1]].forEach(([n]) => {
+        const x = hl.xOf(n);
+        S('path', { d: `M${x} ${yb + 10} V${yb} H${x0} V${yb + 10}`, fill: 'none', stroke: INK, 'stroke-width': 3 }, brackets);
+        S('text', { x: (x + x0) / 2, y: yb - 6, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 800, fill: INK, text: `${a} 格` }, brackets);
+      });
+      S('text', { x: x0, y: yb - 6, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 900, fill: INK, text: '⇔' }, brackets);
+      Sfx.play('glow');
+      api.say(`<b>${fmtU(-a)}</b> 和 <b>${fmtU(a)}</b> 在 0 的兩邊，離 0 都是 ${a} 格，它們一起發光了！★`);
+    };
+    const panel3 = api.panel('數字卡（拖到數線上）');
+    const box3 = H('div', { class: 'cards' }, panel3);
+    api.say('把數字卡拖到數線上，看看會發生什麼事！');
+    await dragToLine({
+      items: D.oppCards.map(v => ({ v, t: v, name: '' })), cardsBox: box3, label: it => fmtU(it.v),
+      getVal: (cx, cy) => { const p = svgPoint(svg, cx, cy); if (p.y < 40 || p.y > 320 || p.x < 20 || p.x > 700) return null; const v = hl.vOf(p.x); return v < -8 || v > 8 ? null : v; },
+      preview: v => { pv3.setAttribute('transform', `translate(${hl.xOf(v)} 250)`); pv3.setAttribute('opacity', 1); },
+      clearPreview: () => pv3.setAttribute('opacity', 0),
+      place: it => { drawBox(it.v); if (it.v !== 0 && placed[-it.v]) glow(it.v); },
+      hintsOf: it => [`找數線上寫着 ${fmtU(it.v)} 的刻度。`, it.v < 0 ? `負數在 0 的左邊，由 0 向左數 ${-it.v} 格。` : `正數在 0 的右邊，由 0 向右數 ${it.v} 格。`],
+      targetEl: it => S('rect', { x: hl.xOf(it.v) - 2, y: 246, width: 4, height: 4, opacity: 0 }, svg)
+    });
+    /* 預測伙伴的位置 */
+    const flag = makeFlag(svg, false);
+    const hit = S('rect', { x: 10, y: 60, width: 700, height: 270, fill: 'transparent' }, svg);
+    let picking = false;
+    svgPicker(svg, hit, p => { const v = hl.vOf(p.x); return Math.max(-8, Math.min(8, v)); }, v => { flag.set(v, hl.xOf(v), 250); Sfx.play('move'); }, () => picking);
+    for (const w of D.oppPredict) {
+      const s0 = -w;
+      api.phase('predict');
+      if (!placed[s0]) drawBox(s0);
+      api.say(`<b>${fmtU(s0)}</b> 還沒有伙伴。它的伙伴應該在哪裏？在數線上<b>點一下</b>（可拖動旗子），再按「確定」。`);
+      picking = true; flag.hide();
+      const hn = api.hinter([`伙伴要在 0 的<b>另一邊</b>。`, `${fmtU(s0)} 離 0 有 ${Math.abs(s0)} 格。伙伴在 0 的另一邊，也離 0 ${Math.abs(s0)} 格。`]);
+      await api.p(res => {
+        const ask = () => {
+          api.clearOpts();
+          const b = api.button('確定 ✔', () => {
+            if (flag.value === null) { api.say('先在數線上點一下，放好旗子。'); return; }
+            if (flag.value === w) { res(); return; }
+            if (hn.count >= 2) { hn.wrong(); flag.set(w, hl.xOf(w), 250); setTimeout(res, 1400); return; }
+            hn.wrong();
+          }, 'pri', $('#lvOpts'));
+        };
+        ask();
+      });
+      picking = false; api.clearOpts();
+      api.phase('verify');
+      // 驗證動畫：由 s0 經 0 跳到 w
+      const dot = S('circle', { r: 10, fill: '#ffe066', stroke: INK, 'stroke-width': 3 }, svg);
+      const xa = hl.xOf(s0), xb = hl.xOf(w);
+      await api.tween(1000, t => { dot.setAttribute('cx', xa + (xb - xa) * t); dot.setAttribute('cy', 250 - Math.sin(Math.PI * t) * 120); });
+      dot.remove(); flag.hide();
+      drawBox(w); await glow(w);
+      await api.wait(1800);
+    }
+    api.say('你找到了所有伙伴！');
+    await api.wait(900);
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   第 3 關：熱氣球加減
+   熱氣 = +1（令熱氣球上升），沙包 = −1（令熱氣球下降）
+   玩 → 觀察 → 比較「拿走沙包」與「加入熱氣」→ 預測 → 驗證
+   ================================================================= */
+LEVEL_FUNCS.d3 = function (api, D) {
+  const MAXH = D.maxH, MAXB = 12;
+  const VW = 640, VH = 760, X = 110, Y0 = 180, Y1 = 660;
+  let svg, vl, bal, hotG, sandG, ptr, ptrT, flag;
+  let hot = D.start.hot, sand = D.start.sand, n = 1, busy = false;
+  let actBtns = {}, countBtns = [], table, info, required = null, onAct = null, tried = new Set();
+  const h = () => hot - sand;
+  const ACT = {
+    addHot:  { label: k => `加入 ${k} 個熱氣`, op: '+', b: k => k,  dh: k => k,  dhot: k => k,  dsand: () => 0 },
+    addSand: { label: k => `加入 ${k} 個沙包`, op: '+', b: k => -k, dh: k => -k, dhot: () => 0, dsand: k => k },
+    remHot:  { label: k => `拿走 ${k} 個熱氣`, op: MINUS, b: k => k,  dh: k => -k, dhot: k => -k, dsand: () => 0 },
+    remSand: { label: k => `拿走 ${k} 個沙包`, op: MINUS, b: k => -k, dh: k => k,  dhot: () => 0, dsand: k => -k }
+  };
+  const expr = (h0, act, k) => `${par(h0)} ${ACT[act].op} ${par(ACT[act].b(k))}`;
+
+  function build() {
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '熱氣球' }, api.stage);
+    S('rect', { x: 0, y: 0, width: VW, height: VH, fill: '#e7f5ff' }, svg);
+    [[420, 120], [560, 300], [300, 520]].forEach(([x, y]) => S('path', { d: `M${x} ${y} q20 -26 46 -6 q26 -16 40 8 q24 4 10 24 h-90 q-24 -8 -6 -26z`, fill: '#fff', stroke: '#a5d8ff', 'stroke-width': 3 }, svg));
+    S('text', { x: X, y: 30, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 800, fill: INK, text: '高度' }, svg);
+    vl = vNumberLine(svg, { min: -MAXH, max: MAXH, x: X, y0: Y0, y1: Y1, label: fmt, side: 'left', fs: 20 });
+    ptr = S('line', { x1: X + 10, x2: 320, stroke: INK, 'stroke-width': 3, 'stroke-dasharray': '8 6' }, svg);
+    bal = S('g', {}, svg);
+    S('path', { d: 'M310 -100 L340 -10 M410 -100 L380 -10', stroke: INK, 'stroke-width': 3 }, bal);
+    S('circle', { cx: 360, cy: -150, r: 70, fill: '#ffc9c9', stroke: INK, 'stroke-width': 4 }, bal);
+    S('path', { d: 'M360 -220 Q330 -150 360 -80 M360 -220 Q390 -150 360 -80', fill: 'none', stroke: INK, 'stroke-width': 2, opacity: .5 }, bal);
+    S('rect', { x: 330, y: -14, width: 60, height: 28, rx: 4, fill: '#d9a066', stroke: INK, 'stroke-width': 3 }, bal);
+    hotG = S('g', {}, bal); sandG = S('g', {}, bal);
+    ptrT = S('text', { x: 400, y: 8, 'font-size': 24, 'font-weight': 900, fill: INK }, bal);
+    flag = makeFlag(svg, true);
+    drawBlocks(); place(h());
+  }
+  /** 畫熱氣（方形 ▲+1）和沙包（圓角袋 ▼−1）；形狀和符號都不同，不只靠顏色 */
+  function drawBlocks() {
+    hotG.innerHTML = ''; sandG.innerHTML = '';
+    for (let i = 0; i < hot; i++) {
+      const x = 322 + (i % 4) * 20, y = -192 + Math.floor(i / 4) * 22;
+      S('rect', { x, y, width: 18, height: 18, fill: '#ff922b', stroke: INK, 'stroke-width': 2 }, hotG);
+      S('text', { x: x + 9, y: y + 15, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 900, fill: INK, text: '+' }, hotG);
+    }
+    for (let i = 0; i < sand; i++) {
+      const x = 322 + (i % 4) * 20, y = 20 + Math.floor(i / 4) * 24;
+      S('path', { d: `M${x + 9} ${y} v4`, stroke: INK, 'stroke-width': 2 }, sandG);
+      S('rect', { x, y: y + 4, width: 18, height: 18, rx: 7, fill: '#a9805c', stroke: INK, 'stroke-width': 2 }, sandG);
+      S('text', { x: x + 9, y: y + 19, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 900, fill: '#fff', text: MINUS }, sandG);
+    }
+  }
+  function place(hh) {
+    const y = vl.yOf(hh);
+    bal.setAttribute('transform', `translate(0 ${y})`);
+    ptr.setAttribute('y1', y); ptr.setAttribute('y2', y);
+    ptrT.textContent = '';
+    updInfo();
+  }
+  function updInfo() {
+    if (info) info.innerHTML = `熱氣（▲ +1）：<b>${hot}</b> 個　沙包（▼ ${MINUS}1）：<b>${sand}</b> 個<br><span class="eq">高度：${fmt(h())}</span>`;
+  }
+  async function animateTo(h0, h1) {
+    const a = vl.yOf(h0), b = vl.yOf(h1);
+    Sfx.play('whoosh');
+    await api.tween(700, t => { const y = a + (b - a) * t; bal.setAttribute('transform', `translate(0 ${y})`); ptr.setAttribute('y1', y); ptr.setAttribute('y2', y); });
+  }
+  /** 執行動作：更新方塊 → 熱氣球升降 → 寫入記錄表 */
+  async function doAct(act, k) {
+    const A = ACT[act], h0 = h();
+    const nh = hot + A.dhot(k), ns = sand + A.dsand(k);
+    if (nh < 0) { Sfx.play('soft'); api.say('籃裏沒有那麼多熱氣可以拿走呀！'); return false; }
+    if (ns < 0) { Sfx.play('soft'); api.say('沒有那麼多沙包可以拿走呀！'); return false; }
+    if (nh > MAXB || ns > MAXB) { Sfx.play('soft'); api.say('放不下那麼多了！試試拿走一些。'); return false; }
+    if (Math.abs(nh - ns) > MAXH) { Sfx.play('soft'); api.say('太' + (nh - ns > 0 ? '高' : '低') + '了，數線不夠長！試試別的動作。'); return false; }
+    busy = true; setBtns();
+    hot = nh; sand = ns; drawBlocks(); Sfx.play(A.dh(k) > 0 ? 'tap' : 'drop');
+    await animateTo(h0, h());
+    updInfo();
+    table.add([fmt(h0), A.label(k), expr(h0, act, k), fmt(h())], [3]);
+    busy = false; setBtns();
+    return true;
+  }
+  function setBtns(off) {
+    Object.values(actBtns).forEach(b => b.disabled = !!off || busy || actLock);
+    countBtns.forEach(b => b.disabled = !!off || busy || actLock);
+  }
+  let actLock = false;
+  /** 依指定數量重新組合熱氣和沙包（不寫入記錄表） */
+  async function resetTo(target, need = {}) {
+    let s = Math.max(2, need.sand || 0), ho = target + s;
+    if (ho < (need.hot || 0)) { const d = need.hot - ho; ho += d; s += d; }
+    if (ho < 0) { s -= ho; ho = 0; }
+    const h0 = h(); hot = ho; sand = s; drawBlocks();
+    await animateTo(h0, h()); updInfo();
+  }
+
+  async function run() {
+    build();
+    const pc = api.panel('熱氣球');
+    info = H('div', {}, pc);
+    const cnt = H('div', { class: 'ctrls', style: 'align-items:center;margin:.3em 0' }, pc);
+    H('span', { text: '數量：', style: 'font-weight:800' }, cnt);
+    countBtns = [1, 2, 3, 4].map(k => {
+      const b = api.button(String(k), () => { n = k; countBtns.forEach((x, i) => x.classList.toggle('on', i === k - 1)); }, k === 1 ? 'on' : '', cnt);
+      return b;
+    });
+    const ctl = H('div', { class: 'ctrls' }, pc);
+    const lab = { addHot: '加入熱氣 ▲', addSand: '加入沙包 ▼', remHot: '拿走熱氣', remSand: '拿走沙包' };
+    Object.keys(ACT).forEach(a => {
+      actBtns[a] = api.button(lab[a], async () => {
+        if (busy) return;
+        if (required && (required.act !== a || required.n !== n)) { onAct && onAct(false, a); return; }
+        const ok = await doAct(a, n);
+        if (ok) { tried.add(a); onAct && onAct(true, a); }
+      }, '', ctl);
+    });
+    const rp = api.panel('自動記錄表');
+    table = api.table(['原高度', '動作', '數式', '新高度'], rp);
+    updInfo();
+
+    /* --- 玩：四個按鈕都試一次 --- */
+    api.phase('play');
+    api.say('<b>熱氣</b>（▲ 方塊，+1）令熱氣球上升，<b>沙包</b>（▼ 圓袋，' + MINUS + '1）令它下降。四個按鈕都試一次吧！');
+    const ckPanel = api.panel('試一試', pc);
+    const ck = H('ul', { class: 'checklist' }, ckPanel);
+    const li = {}; Object.keys(ACT).forEach(a => li[a] = H('li', { text: lab[a] }, ck));
+    await api.p(res => {
+      onAct = (ok, a) => { if (ok) { li[a].classList.add('ok'); if (tried.size === 4) { onAct = null; setTimeout(res, 600); } } };
+    });
+    ckPanel.remove();
+    /* --- 觀察 --- */
+    api.phase('observe');
+    actLock = true; setBtns();
+    await api.ask('看看記錄表。<b>加入</b>沙包，熱氣球會……', ['上升', '下降'], 1, ['找記錄表中「加入…沙包」那一行，新高度變大還是變小？', '沙包很重，是 ' + MINUS + '1。']);
+    await api.ask('<b>拿走</b>沙包，熱氣球會……', ['上升', '下降'], 0, ['找記錄表中「拿走…沙包」那一行。', '少了重的沙包，熱氣球變輕了。']);
+
+    /* --- 比較：拿走沙包 vs 加入熱氣 --- */
+    const S0 = D.compareStart, K = D.compareN;
+    const note = api.panel('比較');
+    note.style.display = 'none';
+    const pairsOf = [['remSand', 'addHot'], ['addSand', 'remHot']];
+    for (let pi = 0; pi < pairsOf.length; pi++) {
+      const results = [];
+      for (const act of pairsOf[pi]) {
+        api.phase('play');
+        await resetTo(S0, { sand: K + 1, hot: K + 1 });
+        required = { act, n: K };
+        actLock = false; setBtns();
+        api.say(`熱氣球回到 <b>${fmt(S0)}</b>。這次請你<b>${ACT[act].label(K)}</b>。（先揀「數量：${K}」）`);
+        const hn = api.hinter([
+          `先揀「數量：${K}」，再按「${lab[act]}」。`,
+          `要按的是「${lab[act]}」，數量是 ${K}。`
+        ], async () => { n = K; countBtns.forEach((x, i) => x.classList.toggle('on', i === K - 1)); actBtns[act].classList.add('on'); await api.wait(600); actBtns[act].classList.remove('on'); actBtns[act].click(); });
+        await api.p(res => { onAct = (ok) => { if (ok) { onAct = null; res(); } else hn.wrong(); }; });
+        required = null; actLock = true; setBtns();
+        results.push({ act, end: h() });
+        await api.wait(900);
+      }
+      api.phase('observe');
+      const [r1, r2] = results;
+      await api.ask(`比較記錄表最後兩行：「${ACT[r1.act].label(K)}」和「${ACT[r2.act].label(K)}」的新高度……`,
+        ['結果一樣', '第一個較高', '第二個較高'], 0, ['看看記錄表最後兩行的「新高度」。', `兩次的新高度都是 ${fmt(r1.end)}。`]);
+      note.style.display = '';
+      H('div', { class: 'note', style: 'margin-bottom:.4em', html:
+        `<div class="eq">${expr(S0, r1.act, K)} = ${fmt(r1.end)}</div><div style="text-align:center">⇕ 一樣</div><div class="eq">${expr(S0, r2.act, K)} = ${fmt(r2.end)}</div>
+         <div>${pi === 0 ? '拿走沙包 ＝ 加入熱氣' : '加入沙包 ＝ 拿走熱氣'}</div>` }, note);
+      api.say(pi === 0 ? `「拿走 ${K} 個沙包」和「加入 ${K} 個熱氣」效果一樣！看看「比較」框裏的數式。` : `「加入 ${K} 個沙包」和「拿走 ${K} 個熱氣」也一樣！`);
+      await api.next();
+    }
+
+    /* --- 預測 → 驗證 --- */
+    const hit = S('rect', { x: 0, y: Y0 - 30, width: 300, height: Y1 - Y0 + 60, fill: 'transparent' }, svg);
+    let picking = false;
+    svgPicker(svg, hit, p => Math.max(-MAXH, Math.min(MAXH, vl.vOf(p.y))), v => { flag.set(v, X + 10, vl.yOf(v)); Sfx.play('move'); }, () => picking);
+    for (const pr of D.predictions) {
+      api.phase('predict');
+      const need = pr.act === 'remSand' ? { sand: pr.n } : pr.act === 'remHot' ? { hot: pr.n } : {};
+      await resetTo(pr.start, need);
+      const ans = pr.start + ACT[pr.act].dh(pr.n);
+      flag.hide(); picking = true;
+      api.say(`熱氣球在 <b>${fmt(pr.start)}</b>。如果<b>${ACT[pr.act].label(pr.n)}</b>，即是 <span class="eq">${expr(pr.start, pr.act, pr.n)}</span>，熱氣球會停在哪裏？在<b>數線上點一下</b>放旗子，再按「確定」。`);
+      const up = ACT[pr.act].dh(1) > 0;
+      const hn = api.hinter([
+        `想想：${pr.act === 'remSand' ? '拿走沙包' : pr.act === 'addSand' ? '加入沙包' : pr.act === 'remHot' ? '拿走熱氣' : '加入熱氣'}，熱氣球會上升還是下降？`,
+        pr.act === 'remSand' ? `拿走 ${pr.n} 個沙包，和加入 ${pr.n} 個熱氣一樣：由 ${fmt(pr.start)} 向<b>上</b>數 ${pr.n} 格。` :
+          pr.act === 'addSand' ? `加入 ${pr.n} 個沙包，和拿走 ${pr.n} 個熱氣一樣：由 ${fmt(pr.start)} 向<b>下</b>數 ${pr.n} 格。` :
+          `由 ${fmt(pr.start)} 向${up ? '上' : '下'}數 ${pr.n} 格。`
+      ]);
+      await api.p(res => {
+        api.button('確定 ✔', () => {
+          if (flag.value === null) { api.say('先在數線上點一下，放好旗子。'); return; }
+          if (flag.value === ans) { res(); return; }
+          if (hn.count >= 2) { hn.wrong(); flag.set(ans, X + 10, vl.yOf(ans)); setTimeout(res, 1500); return; }
+          hn.wrong();
+        }, 'pri', $('#lvOpts'));
+      });
+      picking = false; api.clearOpts();
+      api.phase('verify');
+      api.say('看看熱氣球會不會飛到你的旗子那裏……');
+      await api.wait(500);
+      await doAct(pr.act, pr.n);
+      api.praise(`<span class="eq">${expr(pr.start, pr.act, pr.n)} = ${fmt(ans)}</span>`);
+      await api.wait(2200);
+    }
+    flag.hide();
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   第 4 關：乘法規律階梯
+   3 × 3、3 × 2…… 看出「每次少 3」→ 預測 3 × (−1)……
+   (−3) × 3…… 看出「每次多 3」→ 預測 (−3) × (−1)……
+   最後：把算式卡分到「積是正數」或「積是負數」籃子
+   ================================================================= */
+LEVEL_FUNCS.d4 = function (api, D) {
+  const VW = 780, VH = 400, LY = 230;
+  let svg, hl, jumps, dots, pat, flag;
+  const nm = n => n < 0 ? `(${fmtU(n)})` : String(n);
+
+  /** 畫一個跳躍弧形箭頭 */
+  function arc(g, xa, xb, y, up = true, label = '') {
+    const hgt = Math.min(70, Math.abs(xb - xa) * .55 + 18) * (up ? -1 : 1);
+    S('path', { d: `M${xa} ${y} Q${(xa + xb) / 2} ${y + hgt * 2} ${xb} ${y}`, fill: 'none', stroke: INK, 'stroke-width': 3.5 }, g);
+    const dir = xb > xa ? -1 : 1;
+    S('path', { d: `M${xb} ${y} l${dir * 12} ${up ? -10 : 10} l${dir * 2} ${up ? 6 : -6} z`, fill: INK, stroke: INK, 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+    if (label) S('text', { x: (xa + xb) / 2, y: y + hgt + (up ? -6 : 22), 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 800, fill: INK, text: label }, g);
+  }
+  function build() {
+    api.stage.innerHTML = '';
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '數線上的跳躍' }, api.stage);
+    hl = hNumberLine(svg, { min: -10, max: 10, x0: 40, x1: 740, y: LY, fs: 20 });
+    pat = S('g', {}, svg); jumps = S('g', {}, svg); dots = S('g', {}, svg);
+    flag = makeFlag(svg, false);
+  }
+  function dot(v, label, strong) {
+    const x = hl.xOf(v);
+    S('circle', { cx: x, cy: LY, r: strong ? 10 : 7, fill: strong ? '#ffe066' : '#fff', stroke: INK, 'stroke-width': 3 }, dots);
+    if (label) S('text', { x, y: LY - 18, 'text-anchor': 'middle', 'font-size': 13, 'font-weight': 800, fill: INK, text: label }, dots);
+  }
+  /** a × k：k 次跳躍，每次 a */
+  async function showJumps(a, k) {
+    jumps.innerHTML = '';
+    if (k === 0) { S('text', { x: hl.xOf(0), y: LY - 30, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 800, fill: INK, text: '跳 0 次，留在 0' }, jumps); return; }
+    for (let i = 0; i < k; i++) {
+      arc(jumps, hl.xOf(a * i), hl.xOf(a * (i + 1)), LY, true, i === 0 ? `每次 ${fmtU(a)}` : '');
+      Sfx.play('move');
+      await api.wait(380);
+    }
+  }
+
+  async function ladder(L, idx) {
+    const A = nm(L.a), step = Math.abs(L.a), down = L.a > 0;
+    build();
+    const rp = api.panel(`階梯 ${idx + 1}：${A} × □`);
+    const t = api.table(['算式', '積', '變化'], rp);
+    api.phase('play');
+    api.say(`這是 <b>${A} × □</b> 的階梯。按「下一級 ▶」，看看積在數線上跳到哪裏。`);
+    let prev = null; const rows = [];
+    for (const k of L.shown) {
+      await api.next('下一級 ▶');
+      const prod = L.a * k;
+      await showJumps(L.a, k);
+      dot(prod, `${A}×${k}`, true);
+      rows.push(t.add([`${A} × ${k}`, fmtU(prod), '']));
+      api.say(k === 0 ? `${A} × 0 = <b>0</b>` : `${A} × ${k}：跳 ${k} 次，每次 ${fmtU(L.a)}，到達 <b>${fmtU(prod)}</b>。`);
+      prev = prod;
+    }
+    await api.wait(800);
+    jumps.innerHTML = '';
+    api.phase('observe');
+    await api.ask('看看記錄表的「積」：每往下一級，積怎樣變？', ['每次少 3', '每次多 3', '每次少 1'], down ? 0 : 1,
+      [`比較 ${fmtU(L.a * L.shown[0])} 和 ${fmtU(L.a * L.shown[1])}。`, `由 ${fmtU(L.a * L.shown[0])} 到 ${fmtU(L.a * L.shown[1])}，在數線上向${down ? '左' : '右'}走了幾格？`]);
+    // 補上「變化」欄 + 數線下方的規律箭頭
+    rows.forEach((r, i) => { if (i > 0) { r.cells[2].textContent = down ? '少 3' : '多 3'; r.cells[2].classList.add('chg'); } });
+    for (let i = 1; i < L.shown.length; i++) arc(pat, hl.xOf(L.a * L.shown[i - 1]), hl.xOf(L.a * L.shown[i]), LY + 50, false, down ? '少 3' : '多 3');
+    api.say(`對！每往下一級，積${down ? '少' : '多'} 3。那麼過了 0 之後呢？`);
+    await api.next('繼續往下 ▶');
+    /* 預測 */
+    let picking = false;
+    const hit = S('rect', { x: 0, y: 40, width: VW, height: VH - 40, fill: 'transparent' }, svg);
+    svgPicker(svg, hit, p => Math.max(-10, Math.min(10, hl.vOf(p.x))), v => { flag.set(v, hl.xOf(v), LY); Sfx.play('move'); }, () => picking);
+    for (const k of L.predict) {
+      api.phase('predict');
+      const ans = L.a * k;
+      flag.hide(); picking = true;
+      api.say(`下一級是 <b>${A} × ${nm(k)}</b>。照着規律，積在哪裏？在數線上<b>點一下</b>（可拖動旗子），再按「確定」。`);
+      const hn = api.hinter([
+        `看看記錄表：每往下一級，積${down ? '少' : '多'} 3。`,
+        `上一級的積是 ${fmtU(prev)}。在數線上由 ${fmtU(prev)} 向<b>${down ? '左' : '右'}</b>數 3 格。`
+      ]);
+      await api.p(res => {
+        api.button('確定 ✔', () => {
+          if (flag.value === null) { api.say('先在數線上點一下，放好旗子。'); return; }
+          if (flag.value === ans) { res(); return; }
+          if (hn.count >= 2) { hn.wrong(); flag.set(ans, hl.xOf(ans), LY); setTimeout(res, 1500); return; }
+          hn.wrong();
+        }, 'pri', $('#lvOpts'));
+      });
+      picking = false; api.clearOpts();
+      api.phase('verify');
+      arc(pat, hl.xOf(prev), hl.xOf(ans), LY + 50, false, down ? '少 3' : '多 3');
+      Sfx.play('move');
+      await api.wait(400);
+      flag.hide();
+      dot(ans, `${A}×${nm(k)}`, true);
+      t.add([`${A} × ${nm(k)}`, fmtU(ans), down ? '少 3' : '多 3'], [1]);
+      api.praise(`${A} × ${nm(k)} = <b>${fmtU(ans)}</b>`);
+      prev = ans;
+      await api.wait(1700);
+    }
+    api.phase('observe');
+    await api.ask(`看看記錄表最後三行：${A} 乘以<b>負數</b>，積是……`, ['正數', '負數', '0'], down ? 1 : 0,
+      ['看看最後三行的「積」有沒有「' + MINUS + '」號。', `例如 ${A} × (${MINUS}1) = ${fmtU(-L.a)}。`]);
+    rp.querySelector('.rec-wrap').style.maxHeight = '22vh';
+  }
+
+  async function sortStage() {
+    api.phase('predict');
+    api.stage.innerHTML = '';
+    const wrap = H('div', { style: 'width:100%;display:flex;flex-direction:column;gap:.8em;padding:.4em' }, api.stage);
+    const deck = H('div', { class: 'cards', style: 'justify-content:center;min-height:60px' }, wrap);
+    const row = H('div', { style: 'display:flex;gap:.8em;flex-wrap:wrap' }, wrap);
+    const bPos = H('div', { class: 'basket', 'data-sign': '+' }, row);
+    H('h4', { html: '<span style="font-size:1.6em">⊕</span><br>積是正數' }, bPos);
+    const inPos = H('div', { class: 'cards' }, bPos);
+    const bNeg = H('div', { class: 'basket', 'data-sign': '-', style: 'border-style:dotted' }, row);
+    H('h4', { html: '<span style="font-size:1.6em">⊖</span><br>積是負數' }, bNeg);
+    const inNeg = H('div', { class: 'cards' }, bNeg);
+    api.say('最後挑戰！<b>不用計算</b>，只看正負號：把每張算式卡拖到正確的籃子。');
+    let left = D.sortCards.length;
+    await api.p(res => {
+      D.sortCards.forEach(([a, b]) => {
+        const pos = a * b > 0;
+        const txt = `${par(a)} × ${par(b)}`;
+        const c = H('div', { class: 'dcard', text: txt }, deck);
+        const put = () => {
+          c.classList.add('used');
+          H('div', { class: 'dcard', text: `${txt} = ${fmt(a * b)}`, style: 'cursor:default;font-size:.9em' }, pos ? inPos : inNeg);
+          Sfx.play('drop'); left--;
+          if (left === 0) setTimeout(res, 1200);
+        };
+        const hn = api.hinter([
+          '看看兩個數的正負號，是<b>相同</b>還是<b>不同</b>？',
+          `${txt}：兩個數的正負號${(a > 0) === (b > 0) ? '相同' : '不同'}。回看階梯：3 × (${MINUS}2) 是負數，(${MINUS}3) × (${MINUS}2) 是正數。`
+        ], async () => { c.classList.add('demo'); await api.wait(500); c.classList.remove('demo'); await flyCard(c, pos ? bPos : bNeg); put(); });
+        makeDraggable(c, {
+          onMove: (cx, cy) => { bPos.classList.toggle('over', hitEl(bPos, cx, cy)); bNeg.classList.toggle('over', hitEl(bNeg, cx, cy)); },
+          onEnd: () => { bPos.classList.remove('over'); bNeg.classList.remove('over'); },
+          onDrop: (cx, cy) => {
+            const tgt = hitEl(bPos, cx, cy) ? '+' : hitEl(bNeg, cx, cy) ? '-' : null;
+            if (!tgt) return false;
+            if ((tgt === '+') === pos) { hn.reset(); api.praise(); put(); return true; }
+            hn.wrong(); return false;
+          }
+        });
+      });
+    });
+    api.phase('verify');
+    api.say('看看兩個籃子：正負號<b>相同</b>的都在「積是正數」；正負號<b>不同</b>的都在「積是負數」！');
+    await api.next('完成 ★');
+  }
+
+  async function run() {
+    for (let i = 0; i < D.ladders.length; i++) {
+      await ladder(D.ladders[i], i);
+      if (i < D.ladders.length - 1) {
+        api.say('換一條階梯：這次是 <b>(' + MINUS + '3) × □</b>。');
+        await api.next('下一條階梯 ▶');
+      }
+    }
+    await sortStage();
+    api.complete();
+  }
+  run();
+};
+
+
+/* =================================================================
+   [K1] 坐標島 4 關
+   ================================================================= */
+/** 坐標寫法：(3, −2) */
+function co(x, y) { return `(${fmtU(x)}, ${fmtU(y)})`; }
+/** 坐標寫法，把有改變的數字用粗體 + 底線突出（chx / chy 為 true 時） */
+function coHL(x, y, chx, chy) {
+  const w = (v, c) => c ? `<span class="hl">${fmtU(v)}</span>` : fmtU(v);
+  return `(${w(x, chx)}, ${w(y, chy)})`;
+}
+const sgn = v => v > 0 ? '+' : v < 0 ? MINUS : '0';
+const sgnWord = v => v > 0 ? '正數' : v < 0 ? '負數' : '0';
+
+/* ---------- 共用：直角坐標平面 ---------- */
+function coordPlane(svg, { R, u, cx, cy, fs = 18, parent }) {
+  const X = x => cx + x * u, Y = y => cy - y * u;
+  const g = S('g', {}, parent || svg);
+  for (let i = -R; i <= R; i++) {
+    S('line', { x1: X(i), y1: Y(R), x2: X(i), y2: Y(-R), stroke: '#b9c7d6', 'stroke-width': 1.5 }, g);
+    S('line', { x1: X(-R), y1: Y(i), x2: X(R), y2: Y(i), stroke: '#b9c7d6', 'stroke-width': 1.5 }, g);
+  }
+  S('line', { x1: X(-R) - 14, y1: Y(0), x2: X(R) + 16, y2: Y(0), stroke: INK, 'stroke-width': 3.5 }, g);
+  S('path', { d: `M${X(R) + 28} ${Y(0)} l-14 -7 v14 z`, fill: INK }, g);
+  S('line', { x1: X(0), y1: Y(-R) + 14, x2: X(0), y2: Y(R) - 16, stroke: INK, 'stroke-width': 3.5 }, g);
+  S('path', { d: `M${X(0)} ${Y(R) - 28} l-7 14 h14 z`, fill: INK }, g);
+  S('text', { x: X(R) + 22, y: Y(0) + 26, 'font-size': fs + 6, 'font-style': 'italic', 'font-weight': 800, fill: INK, text: 'x' }, g);
+  S('text', { x: X(0) + 12, y: Y(R) - 14, 'font-size': fs + 6, 'font-style': 'italic', 'font-weight': 800, fill: INK, text: 'y' }, g);
+  for (let i = -R; i <= R; i++) {
+    if (i === 0) continue;
+    S('text', { x: X(i), y: Y(0) + fs + 4, 'text-anchor': 'middle', 'font-size': fs, 'font-weight': 600, fill: INK, text: fmtU(i) }, g);
+    S('text', { x: X(0) - 7, y: Y(i) + fs * .35, 'text-anchor': 'end', 'font-size': fs, 'font-weight': 600, fill: INK, text: fmtU(i) }, g);
+  }
+  S('text', { x: X(0) - 7, y: Y(0) + fs + 4, 'text-anchor': 'end', 'font-size': fs, 'font-weight': 800, 'font-style': 'italic', fill: INK, text: 'O' }, g);
+  return {
+    X, Y, R, u, g,
+    /** 螢幕座標 → 最近的交點 {x, y, d(離交點距離，單位格), ok(在範圍內)} */
+    snap(clx, cly) {
+      const p = svgPoint(svg, clx, cly);
+      const fx = (p.x - cx) / u, fy = (cy - p.y) / u, x = Math.round(fx), y = Math.round(fy);
+      return { x, y, d: Math.hypot(fx - x, fy - y), ok: Math.abs(x) <= R && Math.abs(y) <= R };
+    }
+  };
+}
+/** 在 SVG 上加一層透明的點擊區 */
+function tapLayer(svg, w, h, fn) {
+  const r = S('rect', { x: 0, y: 0, width: w, height: h, fill: 'transparent', style: 'cursor:pointer' }, svg);
+  r.addEventListener('pointerdown', e => { e.preventDefault(); fn(e); });
+  return r;
+}
+/** 預測後按「確定」：答對 resolve(true)；第三次錯會示範並 resolve(false) */
+function confirmLoop(api, hn, getVal, ans, showAns, emptyMsg = '先在圖上點一下，放好你的預測。') {
+  const same = (a, b) => Array.isArray(a) ? a.every((v, i) => v === b[i]) : a === b;
+  return api.p(res => {
+    api.clearOpts();
+    api.button('確定 ✔', () => {
+      const v = getVal();
+      if (v === null || v === undefined) { api.say(emptyMsg); return; }
+      if (same(v, ans)) { api.clearOpts(); res(true); return; }
+      if (hn.count >= 2) { hn.wrong(); showAns(); api.clearOpts(); setTimeout(() => res(false), 1600); return; }
+      hn.wrong();
+    }, 'pri', $('#lvOpts'));
+  });
+}
+/** 小寶箱 / 標記 */
+function drawChest(g, x, y, label) {
+  const c = S('g', { transform: `translate(${x} ${y})` }, g);
+  S('rect', { x: -16, y: -12, width: 32, height: 22, rx: 3, fill: '#ffd43b', stroke: INK, 'stroke-width': 3 }, c);
+  S('path', { d: 'M-16 -12 q16 -14 32 0', fill: '#fab005', stroke: INK, 'stroke-width': 3 }, c);
+  S('rect', { x: -4, y: -6, width: 8, height: 8, fill: INK }, c);
+  if (label) {
+    S('rect', { x: -38, y: -48, width: 76, height: 26, rx: 6, fill: '#fff', stroke: INK, 'stroke-width': 2 }, c);
+    S('text', { x: 0, y: -29, 'text-anchor': 'middle', 'font-size': 17, 'font-weight': 900, fill: INK, text: label }, c);
+  }
+  return c;
+}
+
+/* =================================================================
+   坐標島 第 1 關：尋寶遊戲
+   玩：點交點猜寶藏，回饋「再向右／左／上／下」→ 觀察兩個數的意思
+   → 預測：給坐標，點出寶藏（要點在交點上）→ 驗證：由 O 走過去
+   ================================================================= */
+LEVEL_FUNCS.c1 = function (api, D) {
+  const R = 5, u = 46, C = 285, VW = 570;
+  let svg, cp, marks, found, walkG, tapFn = null;
+  function build() {
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VW}`, class: 'stage-svg', role: 'img', 'aria-label': '尋寶方格' }, api.stage);
+    S('rect', { x: 0, y: 0, width: VW, height: VW, fill: '#fffdf3' }, svg);
+    cp = coordPlane(svg, { R, u, cx: C, cy: C });
+    walkG = S('g', {}, svg); marks = S('g', {}, svg); found = S('g', {}, svg);
+    tapLayer(svg, VW, VW, e => { if (tapFn) tapFn(cp.snap(e.clientX, e.clientY)); });
+  }
+  function guessMark(x, y) {
+    const g = S('g', { transform: `translate(${cp.X(x)} ${cp.Y(y)})` }, marks);
+    S('path', { d: 'M-9 -9 L9 9 M9 -9 L-9 9', stroke: INK, 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+    S('text', { x: 12, y: -10, 'font-size': 15, 'font-weight': 800, fill: INK, text: co(x, y) }, g);
+  }
+  /** 驗證動畫：由原點先左右、後上下走到 (x, y) */
+  async function walk(x, y) {
+    walkG.innerHTML = '';
+    const p = S('path', { d: `M${cp.X(0)} ${cp.Y(0)}`, fill: 'none', stroke: '#e8590c', 'stroke-width': 5, 'stroke-dasharray': '10 6' }, walkG);
+    const dot = S('circle', { r: 11, fill: '#ffe066', stroke: INK, 'stroke-width': 3, cx: cp.X(0), cy: cp.Y(0) }, walkG);
+    await api.tween(Math.max(300, Math.abs(x) * 220), t => { const cx = cp.X(x * t); dot.setAttribute('cx', cx); p.setAttribute('d', `M${cp.X(0)} ${cp.Y(0)} H${cx}`); });
+    if (x !== 0) S('text', { x: cp.X(x / 2), y: cp.Y(0) + (y >= 0 ? 44 : -30), 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: `向${x > 0 ? '右' : '左'} ${Math.abs(x)} 格` }, walkG);
+    await api.tween(Math.max(300, Math.abs(y) * 220), t => { const cy = cp.Y(y * t); dot.setAttribute('cy', cy); p.setAttribute('d', `M${cp.X(0)} ${cp.Y(0)} H${cp.X(x)} V${cy}`); });
+    if (y !== 0) S('text', { x: cp.X(x) + (x >= 0 ? 12 : -12), y: cp.Y(y / 2) + 6, 'text-anchor': x >= 0 ? 'start' : 'end', 'font-size': 18, 'font-weight': 900, fill: INK, text: `向${y > 0 ? '上' : '下'} ${Math.abs(y)} 格` }, walkG);
+    Sfx.play('drop');
+  }
+
+  async function run() {
+    build();
+    const table = api.table(['你點的位置', '回饋'], api.panel('自動記錄表'));
+    /* --- 玩：猜寶藏 --- */
+    api.phase('play');
+    for (let ti = 0; ti < D.treasures.length; ti++) {
+      const [tx, ty] = D.treasures[ti];
+      api.say(ti === 0 ? '寶藏藏在方格紙上某個<b>線與線的交點</b>。點一下交點去找！我會告訴你方向。' : `再找第 ${ti + 1} 個寶藏！`);
+      let tries = 0;
+      await api.p(res => {
+        tapFn = s => {
+          if (!s.ok) return;
+          tries++;
+          if (s.x === tx && s.y === ty) {
+            tapFn = null; marks.innerHTML = '';
+            drawChest(found, cp.X(tx), cp.Y(ty), co(tx, ty));
+            table.add([co(tx, ty), '<b>找到了！★</b>']);
+            api.praise(`寶藏在 <b>${co(tx, ty)}</b>！`);
+            setTimeout(res, 1500); return;
+          }
+          const d = [];
+          if (s.x < tx) d.push('再向右'); if (s.x > tx) d.push('再向左');
+          if (s.y < ty) d.push('再向上'); if (s.y > ty) d.push('再向下');
+          guessMark(s.x, s.y); Sfx.play('tap');
+          table.add([co(s.x, s.y), d.join('、')]);
+          api.say(`你點了 <b>${co(s.x, s.y)}</b>。寶藏要<b>${d.join('、')}</b>。` + (tries >= 4 ? '<br>小技巧：先把左右找對，再找上下。' : ''));
+        };
+      });
+    }
+    /* --- 觀察 --- */
+    api.phase('observe');
+    const [ax, ay] = D.treasures[0], [bx, by] = D.treasures[1];
+    const lr = v => `向${v > 0 ? '右' : '左'} ${Math.abs(v)} 格`, ud = v => `向${v > 0 ? '上' : '下'} ${Math.abs(v)} 格`;
+    await api.ask(`第一個寶藏在 <b>${co(ax, ay)}</b>。由中間的 <b>O</b> 點出發，第一個數 <b>${fmtU(ax)}</b> 表示……`, [lr(ax), ud(ax)], 0,
+      ['看看寶箱在 O 的右邊還是上面。', `沿着橫線數一數：寶箱在 O 的${ax > 0 ? '右' : '左'}邊幾格？`]);
+    await api.ask(`第二個數 <b>${fmtU(ay)}</b> 呢？`, [lr(ay), ud(ay)], 1, ['第一個數已經是左右了。', `寶箱在橫線的${ay > 0 ? '上面' : '下面'}幾格？`]);
+    await walk(ax, ay);
+    await api.ask(`第二個寶藏在 <b>${co(bx, by)}</b>。第一個數 <b>${fmtU(bx)}</b> 表示……`, [lr(bx), ud(bx)], 0,
+      ['第一個數是左右還是上下？', `${MINUS} 號表示相反方向：不是向右，而是……`]);
+    await walk(bx, by);
+    api.say('原來：<b>第一個數管左右，第二個數管上下</b>！「' + MINUS + '」表示向左或向下。');
+    await api.next();
+    walkG.innerHTML = '';
+    /* --- 預測 → 驗證：給坐標，點出位置 --- */
+    for (const [tx, ty] of D.targets) {
+      api.phase('predict');
+      api.say(`藏寶圖寫着 <b class="eq">${co(tx, ty)}</b>。在方格上點出寶藏的位置！（要點在<b>交點</b>上）`);
+      const hn = api.hinter([
+        ctx => ctx && ctx.swap ? '小心<b>次序</b>！第一個數是左右，第二個數是上下。' : '先看第一個數：向左還是向右？再看第二個數：向上還是向下？',
+        `由 O 出發：${tx === 0 ? '不用左右走' : lr(tx)}，再${ty === 0 ? '不用上下走' : ud(ty)}。`
+      ], async () => { tapFn = null; await walk(tx, ty); doneFn(); });
+      let doneFn;
+      await api.p(res => {
+        doneFn = res;
+        tapFn = s => {
+          if (!s.ok) return;
+          if (s.d > 0.3) { Sfx.play('soft'); api.say('要點在<b>線與線的交點</b>上，不是格子裏面哦！'); return; }
+          if (s.x === tx && s.y === ty) { tapFn = null; res(); return; }
+          guessMark(s.x, s.y);
+          hn.wrong({ swap: s.x === ty && s.y === tx });
+        };
+      });
+      tapFn = null; marks.innerHTML = '';
+      api.phase('verify');
+      await walk(tx, ty);
+      drawChest(found, cp.X(tx), cp.Y(ty), co(tx, ty));
+      table.add([co(tx, ty), '<b>找到了！★</b>']);
+      api.praise(`由 O 出發，先左右，後上下，就到 <b>${co(tx, ty)}</b>。`);
+      await api.wait(1800);
+      walkG.innerHTML = '';
+    }
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   坐標島 第 2 關：四間房（象限）
+   玩：拖動點走遍四間房和軸上 → 觀察正負號 → 預測：點卡拖入籃子 → 驗證
+   ================================================================= */
+LEVEL_FUNCS.c2 = function (api, D) {
+  const R = 5, u = 46, C = 285, VW = 570;
+  const ROMAN = ['', 'I', 'II', 'III', 'IV'];
+  const SIGN = ['', '(+, +)', `(${MINUS}, +)`, `(${MINUS}, ${MINUS})`, `(+, ${MINUS})`];
+  const quad = (x, y) => x > 0 && y > 0 ? 1 : x < 0 && y > 0 ? 2 : x < 0 && y < 0 ? 3 : x > 0 && y < 0 ? 4 : 0;
+  let svg, cp, rooms = {}, P, PT, pts, showSigns = true;
+
+  function build() {
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VW}`, class: 'stage-svg', role: 'img', 'aria-label': '四個象限' }, api.stage);
+    const defs = S('defs', {}, svg);
+    const pats = [null,
+      '<circle cx="5" cy="5" r="1.6" fill="#1d2b3a"/>',
+      '<path d="M0 10 L10 0" stroke="#1d2b3a" stroke-width="1.3"/>',
+      '<path d="M0 5 H10" stroke="#1d2b3a" stroke-width="1.3"/>',
+      '<path d="M0 5 H10 M5 0 V10" stroke="#1d2b3a" stroke-width="1"/>'];
+    for (let q = 1; q <= 4; q++) { const p = S('pattern', { id: 'qp' + q, width: 10, height: 10, patternUnits: 'userSpaceOnUse' }, defs); p.innerHTML = pats[q]; }
+    const fills = ['', '#ffe8cc', '#d0ebff', '#d3f9d8', '#f3d9fa'];
+    const X = x => C + x * u, Y = y => C - y * u;
+    const box = { 1: [X(0), Y(R), R * u], 2: [X(-R), Y(R), R * u], 3: [X(-R), Y(0), R * u], 4: [X(0), Y(0), R * u] };
+    for (let q = 1; q <= 4; q++) {
+      const [x, y, s] = box[q];
+      const g = S('g', {}, svg);
+      const bg = S('rect', { x, y, width: s, height: s, fill: fills[q], opacity: .45 }, g);
+      const pt = S('rect', { x, y, width: s, height: s, fill: `url(#qp${q})`, opacity: .12 }, g);
+      const fr = S('rect', { x: x + 3, y: y + 3, width: s - 6, height: s - 6, fill: 'none', stroke: INK, 'stroke-width': 0 }, g);
+      const tx = q === 1 || q === 4 ? x + s - 10 : x + 10, anc = q === 1 || q === 4 ? 'end' : 'start';
+      const ty = q <= 2 ? y + 28 : y + s - 14;
+      S('text', { x: tx, y: ty, 'text-anchor': anc, 'font-size': 22, 'font-weight': 900, fill: INK, text: '象限 ' + ROMAN[q] }, g);
+      const sg = S('text', { x: x + s / 2, y: y + s * (q <= 2 ? .72 : .4) + 12, 'text-anchor': 'middle', 'font-size': 34, 'font-weight': 900, fill: INK, opacity: .9, text: '?' }, g);
+      rooms[q] = { bg, pt, fr, sg, seen: false };
+    }
+    cp = coordPlane(svg, { R, u, cx: C, cy: C });
+    pts = S('g', {}, svg);
+    P = S('g', { opacity: 0 }, svg);
+    S('circle', { r: 13, fill: '#ff6b6b', stroke: INK, 'stroke-width': 3 }, P);
+    S('text', { x: 0, y: 6, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 900, fill: '#fff', text: 'P' }, P);
+    PT = S('text', { 'font-size': 20, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 5, 'paint-order': 'stroke' }, svg);
+  }
+  function light(q) {
+    for (let k = 1; k <= 4; k++) {
+      const on = k === q;
+      rooms[k].bg.setAttribute('opacity', on ? .95 : .45);
+      rooms[k].pt.setAttribute('opacity', on ? .35 : .12);
+      rooms[k].fr.setAttribute('stroke-width', on ? 6 : 0);
+    }
+    if (q && showSigns) { rooms[q].sg.textContent = SIGN[q]; rooms[q].seen = true; }
+  }
+  function placeP(x, y) {
+    P.setAttribute('transform', `translate(${cp.X(x)} ${cp.Y(y)})`); P.setAttribute('opacity', 1);
+    PT.setAttribute('x', cp.X(x) + 16); PT.setAttribute('y', cp.Y(y) - 14); PT.textContent = 'P' + co(x, y);
+    light(quad(x, y));
+  }
+
+  async function run() {
+    build();
+    /* --- 玩：拖動 P 走遍四間房 --- */
+    api.phase('play');
+    const ck = H('ul', { class: 'checklist' }, api.panel('走一走'));
+    const li = {}; [1, 2, 3, 4, 0].forEach(q => li[q] = H('li', { text: q ? '象限 ' + ROMAN[q] : '放在軸上' }, ck));
+    const table = api.table(['P 的位置', '房間', '正負號'], api.panel('自動記錄表'));
+    let px = D.start[0], py = D.start[1], last = null, dragging = false, moveOn = true;
+    placeP(px, py);
+    api.say('方格被 x 軸和 y 軸分成<b>四間房</b>。按住紅點 <b>P</b> 拖到不同的房間，也試試放在<b>軸上</b>！');
+    const visited = new Set();
+    let onCommit = null;
+    const commit = async () => {
+      const k = px + ',' + py; if (k === last) return; last = k;
+      const q = quad(px, py);
+      table.add([co(px, py), q ? '象限 ' + ROMAN[q] : '軸上', q ? `(${sgn(px)}, ${sgn(py)})` : '有一個是 0']);
+      if (!q) {
+        Sfx.play('soft');
+        api.say('彈！P 在<b>軸上</b>，不在任何一間房裏面！');
+        await api.tween(500, t => P.setAttribute('transform', `translate(${cp.X(px)} ${cp.Y(py) - Math.sin(Math.PI * t * 2) * 18}) scale(${1 + .3 * Math.sin(Math.PI * t)})`));
+        placeP(px, py);
+      } else { Sfx.play('glow'); api.say(`P 在<b>象限 ${ROMAN[q]}</b>，x 坐標是${sgnWord(px)}，y 坐標是${sgnWord(py)}。`); }
+      visited.add(q); li[q].classList.add('ok');
+      if (onCommit) onCommit();
+    };
+    const hit = tapLayer(svg, VW, VW, e => {
+      if (!moveOn) return;
+      dragging = true; try { hit.setPointerCapture(e.pointerId); } catch (err) {}
+      mv(e);
+    });
+    const mv = e => { const s = cp.snap(e.clientX, e.clientY); if (!s.ok) return; if (s.x !== px || s.y !== py) { px = s.x; py = s.y; placeP(px, py); Sfx.play('move'); } };
+    hit.addEventListener('pointermove', e => { if (dragging) mv(e); });
+    const up = () => { if (dragging) { dragging = false; commit(); } };
+    hit.addEventListener('pointerup', up); hit.addEventListener('pointercancel', up);
+    await api.p(res => { onCommit = () => { if (visited.size >= 5) { onCommit = null; setTimeout(res, 1200); } }; });
+    moveOn = false;
+    /* --- 觀察 --- */
+    api.phase('observe');
+    await api.ask('看看記錄表。<b>象限 II</b> 裏的點，坐標的正負號是……', SIGN.slice(1), 1,
+      ['找記錄表中「象限 II」那一行。', '象限 II 在 O 的左上方：向左是 ' + MINUS + '，向上是 +。']);
+    await api.ask('<b>象限 IV</b> 呢？', SIGN.slice(1), 3, ['找記錄表中「象限 IV」那一行。', '象限 IV 在 O 的右下方。']);
+    await api.ask(`點 <b>${co(0, 3)}</b> 在哪一間房？`, ['象限 I', '象限 II', '不屬於任何象限'], 2,
+      ['x 坐標是 0，即是不用左右走……', '它剛好在 y 軸上，被「彈出」了。']);
+    /* --- 預測：點卡入籃 --- */
+    api.phase('predict');
+    P.setAttribute('opacity', 0); PT.textContent = ''; light(0);
+    showSigns = false; for (let q = 1; q <= 4; q++) rooms[q].sg.textContent = '?';
+    api.side.innerHTML = '';
+    const deckP = api.panel('點卡（拖到籃子）');
+    const deck = H('div', { class: 'cards' }, deckP);
+    const bp = api.panel('籃子');
+    const grid = H('div', { style: 'display:grid;grid-template-columns:1fr 1fr;gap:.4em' }, bp);
+    const baskets = {};
+    [2, 1, 3, 4, 0].forEach(q => {
+      const b = H('div', { class: 'basket', style: `min-height:84px;padding:.3em;${q === 0 ? 'grid-column:1 / span 2;border-style:dotted' : ''}` }, grid);
+      H('h4', { html: q ? '象限 ' + ROMAN[q] : '軸上（不屬於任何象限）' }, b);
+      baskets[q] = { b, box: H('div', { class: 'cards', style: 'font-size:.8em' }, b) };
+    });
+    api.say('不用看方格，只看坐標的<b>正負號</b>：把每張點卡拖到正確的籃子！');
+    let left = D.cards.length;
+    await api.p(res => {
+      D.cards.forEach(([x, y], i) => {
+        const q = quad(x, y), name = String.fromCharCode(65 + i);
+        const c = H('div', { class: 'dcard', text: `${name}${co(x, y)}` }, deck);
+        const put = () => {
+          c.classList.add('used'); Sfx.play('drop');
+          H('div', { class: 'dcard', text: `${name}${co(x, y)}`, style: 'cursor:default;min-height:40px' }, baskets[q].box);
+          // 驗證：點出現在方格上
+          const g = S('g', {}, pts);
+          S('circle', { cx: cp.X(x), cy: cp.Y(y), r: 9, fill: INK }, g);
+          S('text', { x: cp.X(x) + 12, y: cp.Y(y) - 10, 'font-size': 18, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 4, 'paint-order': 'stroke', text: `${name}${co(x, y)}` }, g);
+          light(q);
+          left--; if (left === 0) setTimeout(res, 1300);
+        };
+        const hn = api.hinter([
+          '看看 x 坐標和 y 坐標：是正數、負數，還是 0？',
+          `${co(x, y)}：x 坐標是${sgnWord(x)}，y 坐標是${sgnWord(y)}。回看記錄表的正負號。`
+        ], async () => { c.classList.add('demo'); await api.wait(500); c.classList.remove('demo'); await flyCard(c, baskets[q].b); put(); });
+        makeDraggable(c, {
+          onMove: (cx, cy) => Object.values(baskets).forEach(k => k.b.classList.toggle('over', hitEl(k.b, cx, cy))),
+          onEnd: () => Object.values(baskets).forEach(k => k.b.classList.remove('over')),
+          onDrop: (cx, cy) => {
+            const tq = Object.keys(baskets).find(k => hitEl(baskets[k].b, cx, cy));
+            if (tq === undefined) return false;
+            if (+tq === q) { hn.reset(); api.praise(q ? `${name} 在象限 ${ROMAN[q]}。` : `${name} 在軸上。`); put(); return true; }
+            hn.wrong(); return false;
+          }
+        });
+      });
+    });
+    api.phase('verify');
+    showSigns = true; for (let q = 1; q <= 4; q++) rooms[q].sg.textContent = SIGN[q];
+    light(0);
+    api.say('看看方格：每一點都落在你揀的房間，軸上的點不在任何房間裏！');
+    await api.next('完成 ★');
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   坐標島 第 3 關：機械人搬家（平移）
+   玩：方向按鈕移動，收集電池 → 觀察哪個坐標改變 → 預測終點 → 驗證
+   ================================================================= */
+LEVEL_FUNCS.c3 = function (api, D) {
+  const R = 5, u = 46, C = 285, VW = 570;
+  const DIR = { 左: [-1, 0], 右: [1, 0], 上: [0, 1], 下: [0, -1] };
+  let svg, cp, robot, bats, mk, rx = D.start[0], ry = D.start[1], busy = false, table, btns = [], onMove = null;
+
+  function build() {
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VW}`, class: 'stage-svg', role: 'img', 'aria-label': '機械人方格' }, api.stage);
+    S('rect', { x: 0, y: 0, width: VW, height: VW, fill: '#f8f9fa' }, svg);
+    cp = coordPlane(svg, { R, u, cx: C, cy: C });
+    bats = S('g', {}, svg); mk = S('g', {}, svg);
+    robot = S('g', {}, svg);
+    S('path', { d: 'M0 -26 V-34', stroke: INK, 'stroke-width': 3 }, robot);
+    S('circle', { cx: 0, cy: -36, r: 4, fill: '#ff6b6b', stroke: INK, 'stroke-width': 2 }, robot);
+    S('rect', { x: -18, y: -26, width: 36, height: 30, rx: 8, fill: '#74c0fc', stroke: INK, 'stroke-width': 3 }, robot);
+    S('circle', { cx: -7, cy: -12, r: 4, fill: INK }, robot); S('circle', { cx: 7, cy: -12, r: 4, fill: INK }, robot);
+    S('circle', { cx: 0, cy: 0, r: 6, fill: '#ffe066', stroke: INK, 'stroke-width': 2.5 }, robot);
+    setRobot(rx, ry);
+  }
+  function setRobot(x, y) { robot.setAttribute('transform', `translate(${cp.X(x)} ${cp.Y(y)})`); }
+  function drawBat(x, y) {
+    const g = S('g', { transform: `translate(${cp.X(x)} ${cp.Y(y)})` }, bats);
+    S('rect', { x: -10, y: -16, width: 20, height: 30, rx: 3, fill: '#8ce99a', stroke: INK, 'stroke-width': 2.5 }, g);
+    S('rect', { x: -4, y: -20, width: 8, height: 4, fill: INK }, g);
+    S('path', { d: 'M2 -10 L-4 0 H2 L-2 9', fill: 'none', stroke: INK, 'stroke-width': 2.5 }, g);
+    return g;
+  }
+  async function step(dx, dy) {
+    const x0 = rx, y0 = ry;
+    if (Math.abs(rx + dx) > R || Math.abs(ry + dy) > R) { Sfx.play('soft'); api.say('到邊界了，不能再走！'); return false; }
+    busy = true; Sfx.play('move');
+    await api.tween(230, t => setRobot(x0 + dx * t, y0 + dy * t));
+    rx += dx; ry += dy; busy = false;
+    return true;
+  }
+  const dispEl = {};
+  function upd() { dispEl.el.innerHTML = `機械人在 <span class="eq">${co(rx, ry)}</span>`; }
+
+  async function run() {
+    build();
+    const pc = api.panel('控制台');
+    dispEl.el = H('div', { style: 'text-align:center;margin-bottom:.3em' }, pc);
+    const ctl = H('div', { style: 'display:grid;grid-template-columns:repeat(3,1fr);gap:.4em' }, pc);
+    const mkBtn = (lab, d, area) => { const b = api.button(lab, async () => {
+      if (busy) return; const x0 = rx, y0 = ry;
+      if (await step(...DIR[d])) { upd(); table.add([`向${d}平移 1 格`, co(x0, y0), coHL(rx, ry, rx !== x0, ry !== y0)]); if (onMove) onMove(); }
+    }, '', ctl); b.style.gridArea = area; btns.push(b); return b; };
+    ctl.style.gridTemplateAreas = '". u ." "l . r" ". d ."';
+    mkBtn('▲ 上', '上', 'u'); mkBtn('◀ 左', '左', 'l'); mkBtn('右 ▶', '右', 'r'); mkBtn('▼ 下', '下', 'd');
+    table = api.table(['動作', '原來的位置', '新的位置'], api.panel('自動記錄表'));
+    upd();
+    /* --- 玩：收集電池 --- */
+    api.phase('play');
+    for (const [bx, by] of D.batteries) {
+      const g = drawBat(bx, by);
+      api.say(`機械人沒電了！用按鈕把它移到電池 <b>${co(bx, by)}</b> 那裏。看看記錄表怎樣變。`);
+      await api.p(res => { onMove = () => { if (rx === bx && ry === by) { onMove = null; res(); } }; });
+      g.remove(); Sfx.play('good'); api.praise('充電完成！');
+      await api.wait(1000);
+    }
+    btns.forEach(b => b.disabled = true);
+    /* --- 觀察 --- */
+    api.phase('observe');
+    await api.ask('看看記錄表的粗體數字。<b>向左或向右</b>移動時，哪個坐標改變了？', ['x 坐標（第一個數）', 'y 坐標（第二個數）', '兩個都變'], 0,
+      ['找「向左」或「向右」那幾行，看看粗體字在第幾個數。', '向右走 1 格，第一個數加 1，第二個數不變。']);
+    await api.ask('<b>向上或向下</b>移動時呢？', ['x 坐標（第一個數）', 'y 坐標（第二個數）', '兩個都變'], 1,
+      ['找「向上」或「向下」那幾行。', '向上走 1 格，第二個數加 1。']);
+    /* --- 預測 → 驗證 --- */
+    let pick = null, picking = false;
+    const ghost = S('g', { opacity: 0 }, mk);
+    S('circle', { r: 20, fill: 'none', stroke: INK, 'stroke-width': 3, 'stroke-dasharray': '6 4' }, ghost);
+    S('text', { y: 7, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 900, fill: INK, text: '?' }, ghost);
+    tapLayer(svg, VW, VW, e => {
+      if (!picking) return; const s = cp.snap(e.clientX, e.clientY); if (!s.ok) return;
+      pick = [s.x, s.y]; ghost.setAttribute('transform', `translate(${cp.X(s.x)} ${cp.Y(s.y)})`); ghost.setAttribute('opacity', 1); Sfx.play('tap');
+    });
+    for (const ch of D.challenges) {
+      api.phase('predict');
+      // 機械人先去起點
+      const [fx, fy] = ch.from;
+      await api.tween(500, t => setRobot(rx + (fx - rx) * t, ry + (fy - ry) * t)); rx = fx; ry = fy; upd();
+      const words = ch.moves.map(([d, n]) => `向${d} ${n}`).join('、');
+      let ex = rx, ey = ry; ch.moves.forEach(([d, n]) => { ex += DIR[d][0] * n; ey += DIR[d][1] * n; });
+      pick = null; ghost.setAttribute('opacity', 0); picking = true;
+      api.say(`機械人在 <b>${co(rx, ry)}</b>。指令：<b>${words}</b>。先在方格上<b>點出</b>它會停在哪裏，再按「確定」。`);
+      const hn = api.hinter([
+        '向左右平移只改變 x 坐標；向上下平移只改變 y 坐標。',
+        `由 ${co(rx, ry)} 開始，${ch.moves.map(([d, n]) => `${d === '左' || d === '右' ? 'x' : 'y'} 坐標${d === '右' || d === '上' ? '加' : '減'} ${n}`).join('，')}。`
+      ]);
+      await confirmLoop(api, hn, () => pick, [ex, ey], () => { pick = [ex, ey]; ghost.setAttribute('transform', `translate(${cp.X(ex)} ${cp.Y(ey)})`); ghost.setAttribute('opacity', 1); });
+      picking = false;
+      api.phase('verify');
+      api.say('看看機械人會不會走到你的預測……');
+      const x0 = rx, y0 = ry;
+      for (const [d, n] of ch.moves) for (let i = 0; i < n; i++) await step(...DIR[d]);
+      upd();
+      table.add([words, co(x0, y0), coHL(rx, ry, rx !== x0, ry !== y0)]);
+      ghost.setAttribute('opacity', 0);
+      api.praise(`機械人由 ${co(x0, y0)} 平移到 <b>${co(rx, ry)}</b>。`);
+      await api.wait(1800);
+    }
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   坐標島 第 4 關：魔鏡與轉盤（反射與旋轉）
+   ================================================================= */
+LEVEL_FUNCS.c4 = function (api, D) {
+  const R = 6, u = 38, C = 270, VW = 540;
+  const TF = {
+    ry:  { name: '沿 y 軸反射', f: (x, y) => [-x, y], anim: (x, y, t) => [x * (1 - 2 * t), y] },
+    rx:  { name: '沿 x 軸反射', f: (x, y) => [x, -y], anim: (x, y, t) => [x, y * (1 - 2 * t)] },
+    r180:{ name: '繞原點旋轉 180°', f: (x, y) => [-x, -y], anim: (x, y, t) => rot(x, y, Math.PI * t) },
+    r90: { name: '繞原點逆時針旋轉 90°', f: (x, y) => [-y, x], anim: (x, y, t) => rot(x, y, Math.PI / 2 * t) }
+  };
+  function rot(x, y, a) { return [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)]; }
+  let svg, cp, img, extra, btns = {}, table, tPanel, busy = false;
+  const pts = D.shape; // [['A',1,1], ...]
+
+  function poly(g, P, style) {
+    S('polygon', { points: P.map(([x, y]) => `${cp.X(x)},${cp.Y(y)}`).join(' '), ...style }, g);
+  }
+  function build() {
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VW}`, class: 'stage-svg', role: 'img', 'aria-label': '反射與旋轉' }, api.stage);
+    const defs = S('defs', {}, svg);
+    const p = S('pattern', { id: 'imgHatch', width: 8, height: 8, patternUnits: 'userSpaceOnUse' }, defs);
+    S('path', { d: 'M0 8 L8 0', stroke: '#1c7ed6', 'stroke-width': 2 }, p);
+    S('rect', { x: 0, y: 0, width: VW, height: VW, fill: '#fff' }, svg);
+    cp = coordPlane(svg, { R, u, cx: C, cy: C, fs: 15 });
+    const org = S('g', {}, svg);
+    poly(org, pts.map(q => [q[1], q[2]]), { fill: '#ffd8a8', stroke: INK, 'stroke-width': 3.5 });
+    pts.forEach(([n, x, y]) => {
+      S('circle', { cx: cp.X(x), cy: cp.Y(y), r: 5, fill: INK }, org);
+      S('text', { x: cp.X(x) + 7, y: cp.Y(y) - 7, 'font-size': 17, 'font-weight': 900, fill: INK, text: n }, org);
+    });
+    img = S('g', {}, svg); extra = S('g', {}, svg);
+  }
+  /** 動畫：圖案變成影像（虛線 + 斜線花紋，與原圖分辨不只靠顏色） */
+  async function play(key) {
+    busy = true; setBtns(); img.innerHTML = '';
+    const g = S('g', {}, img);
+    const pg = S('polygon', { fill: 'url(#imgHatch)', stroke: '#1c7ed6', 'stroke-width': 3.5, 'stroke-dasharray': '9 5' }, g);
+    Sfx.play('whoosh');
+    await api.tween(1300, t => {
+      pg.setAttribute('points', pts.map(([, x, y]) => { const [a, b] = TF[key].anim(x, y, t); return `${cp.X(a)},${cp.Y(b)}`; }).join(' '));
+    });
+    pts.forEach(([n, x, y]) => {
+      const [a, b] = TF[key].f(x, y);
+      S('circle', { cx: cp.X(a), cy: cp.Y(b), r: 5, fill: '#1c7ed6', stroke: INK, 'stroke-width': 1.5 }, g);
+      S('text', { x: cp.X(a) + 7, y: cp.Y(b) - 7, 'font-size': 17, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 4, 'paint-order': 'stroke', text: n + "'" }, g);
+    });
+    // 記錄表
+    tPanel.innerHTML = ''; H('h3', { html: `記錄表：<b>${TF[key].name}</b>` }, tPanel);
+    table = api.table(['點', '原來的坐標', '影像的坐標'], tPanel);
+    pts.forEach(([n, x, y]) => { const [a, b] = TF[key].f(x, y); table.add([`${n} → ${n}'`, co(x, y), coHL(a, b, a !== x, b !== y)]); });
+    busy = false; setBtns();
+  }
+  let allowed = [];
+  function setBtns() { Object.entries(btns).forEach(([k, b]) => b.disabled = busy || !allowed.includes(k)); }
+
+  async function run() {
+    build();
+    const pc = api.panel('魔鏡與轉盤');
+    const ctl = H('div', { class: 'ctrls' }, pc);
+    let onPress = null;
+    ['ry', 'rx', 'r180', 'r90'].forEach(k => {
+      btns[k] = api.button(TF[k].name, async () => { if (busy) return; await play(k); if (onPress) onPress(k); }, '', ctl);
+    });
+    btns.r90.style.display = 'none';
+    tPanel = api.panel('記錄表');
+    H('div', { class: 'note', text: '按上面的按鈕，記錄表會並排列出原來的點和影像的坐標。' }, tPanel);
+    const steps = [['ry', 0], ['rx', 1], ['r180', 2]];
+    const OPT = ['x 坐標', 'y 坐標', 'x 坐標和 y 坐標都是'];
+    /* --- 玩 → 觀察（每種變換一次） --- */
+    for (const [k, ans] of steps) {
+      api.phase('play');
+      allowed = [k]; setBtns();
+      api.say(`按「<b>${TF[k].name}</b>」，看看小屋的<b>影像</b>在哪裏。`);
+      await api.p(res => { onPress = kk => { if (kk === k) { onPress = null; res(); } }; });
+      allowed = []; setBtns();
+      api.phase('observe');
+      await api.ask(`比較記錄表兩欄（有變的數字用粗體和底線）。${TF[k].name}後，哪個坐標變成了<b>相反數</b>？`, OPT, ans,
+        ['看看哪一欄有粗體和底線的數字。', `例如 ${pts[1][0]}${co(pts[1][1], pts[1][2])} → ${pts[1][0]}'${co(...TF[k].f(pts[1][1], pts[1][2]))}，哪個數的正負號變了？`]);
+    }
+    img.innerHTML = '';
+    /* --- 預測 → 驗證 --- */
+    let pick = null, picking = false;
+    const ghost = S('g', { opacity: 0 }, extra);
+    S('circle', { r: 13, fill: 'none', stroke: INK, 'stroke-width': 3, 'stroke-dasharray': '5 4' }, ghost);
+    S('text', { y: 6, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 900, fill: INK, text: '?' }, ghost);
+    tapLayer(svg, VW, VW, e => {
+      if (!picking) return; const s = cp.snap(e.clientX, e.clientY); if (!s.ok) return;
+      pick = [s.x, s.y]; ghost.setAttribute('transform', `translate(${cp.X(s.x)} ${cp.Y(s.y)})`); ghost.setAttribute('opacity', 1); Sfx.play('tap');
+    });
+    for (const pr of D.predict) {
+      api.phase('predict');
+      const [x, y] = pr.p, [ax, ay] = TF[pr.t].f(x, y);
+      const pg = S('g', {}, extra);
+      S('circle', { cx: cp.X(x), cy: cp.Y(y), r: 8, fill: '#e8590c', stroke: INK, 'stroke-width': 2.5 }, pg);
+      S('text', { x: cp.X(x) + 10, y: cp.Y(y) - 10, 'font-size': 18, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 4, 'paint-order': 'stroke', text: 'P' + co(x, y) }, pg);
+      pick = null; ghost.setAttribute('opacity', 0); picking = true;
+      api.say(`點 <b>P${co(x, y)}</b> ${TF[pr.t].name}。它的影像 P' 在哪裏？在方格上<b>點一下</b>，再按「確定」。`);
+      const which = pr.t === 'ry' ? 'x 坐標變成相反數，y 坐標不變' : pr.t === 'rx' ? 'x 坐標不變，y 坐標變成相反數' : 'x 坐標和 y 坐標都變成相反數';
+      const hn = api.hinter([`回看記錄表：${TF[pr.t].name}，哪個坐標會變成相反數？`, `${TF[pr.t].name}：${which}。`]);
+      await confirmLoop(api, hn, () => pick, [ax, ay], () => { pick = [ax, ay]; ghost.setAttribute('transform', `translate(${cp.X(ax)} ${cp.Y(ay)})`); ghost.setAttribute('opacity', 1); });
+      picking = false;
+      api.phase('verify');
+      const dot = S('circle', { r: 8, fill: '#1c7ed6', stroke: INK, 'stroke-width': 2.5 }, pg);
+      Sfx.play('whoosh');
+      await api.tween(1100, t => { const [a, b] = TF[pr.t].anim(x, y, t); dot.setAttribute('cx', cp.X(a)); dot.setAttribute('cy', cp.Y(b)); });
+      S('text', { x: cp.X(ax) + 10, y: cp.Y(ay) - 10, 'font-size': 18, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 4, 'paint-order': 'stroke', text: "P'" + co(ax, ay) }, pg);
+      ghost.setAttribute('opacity', 0);
+      api.praise(`P${co(x, y)} 的影像是 <b>P'${co(ax, ay)}</b>。`);
+      await api.wait(2000);
+      pg.remove();
+    }
+    /* --- 附加挑戰：逆時針旋轉 90° --- */
+    api.phase('play');
+    btns.r90.style.display = ''; allowed = ['r90']; setBtns();
+    api.say('<b>附加挑戰</b>：按「繞原點逆時針旋轉 90°」，看看影像。');
+    await api.p(res => { onPress = kk => { if (kk === 'r90') { onPress = null; res(); } }; });
+    allowed = []; setBtns();
+    api.phase('observe');
+    await api.ask('看看記錄表。(x, y) 繞原點逆時針旋轉 90° 後，影像的坐標是……', [`(${MINUS}y, x)`, `(y, ${MINUS}x)`, `(${MINUS}x, ${MINUS}y)`], 0,
+      [`看看 ${pts[1][0]}${co(pts[1][1], pts[1][2])} → ${pts[1][0]}'${co(...TF.r90.f(pts[1][1], pts[1][2]))}：兩個數的位置有沒有對調？`, `x 坐標和 y 坐標對調了，而且新的 x 坐標加上了「${MINUS}」號。`],
+      '兩個數對調位置，第一個數再變成相反數。');
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   [K2] 面積體積島 4 關
+   ================================================================= */
+/** 方格紙（y 向上）：P(x, y) → 螢幕座標 */
+function areaGrid(parent, { cols, rows, u, ox, oy }) {
+  const g = S('g', {}, parent);
+  for (let i = 0; i <= cols; i++) S('line', { x1: ox + i * u, y1: oy, x2: ox + i * u, y2: oy - rows * u, stroke: '#ced8e2', 'stroke-width': 1.3 }, g);
+  for (let j = 0; j <= rows; j++) S('line', { x1: ox, y1: oy - j * u, x2: ox + cols * u, y2: oy - j * u, stroke: '#ced8e2', 'stroke-width': 1.3 }, g);
+  const P = (x, y) => [ox + x * u, oy - y * u];
+  return { g, P, pts: arr => arr.map(([x, y]) => P(x, y).join(',')).join(' '), u };
+}
+/** 共用花紋：dots / lines / cross（黑白列印、色弱也能分辨） */
+function addPatterns(svg) {
+  const defs = S('defs', {}, svg);
+  const mk = (id, inner) => { const p = S('pattern', { id, width: 10, height: 10, patternUnits: 'userSpaceOnUse' }, defs); p.innerHTML = inner; };
+  mk('pDots', '<circle cx="5" cy="5" r="1.7" fill="#1d2b3a"/>');
+  mk('pLines', '<path d="M0 10 L10 0" stroke="#1d2b3a" stroke-width="1.4"/>');
+  mk('pCross', '<path d="M0 5 H10 M5 0 V10" stroke="#1d2b3a" stroke-width="1.2"/>');
+  mk('pBack', '<path d="M0 0 L10 10" stroke="#1d2b3a" stroke-width="1.4"/>');
+}
+const rot180 = ([x, y], [cx, cy], t) => {
+  const a = Math.PI * t, dx = x - cx, dy = y - cy;
+  return [cx + dx * Math.cos(a) - dy * Math.sin(a), cy + dx * Math.sin(a) + dy * Math.cos(a)];
+};
+
+/* =================================================================
+   面積體積島 第 1 關：推推平行四邊形
+   推斜長方形（底、高不變）→ 剪下三角形移到右邊數格
+   → 兩個相同三角形、兩個相同梯形拼成平行四邊形
+   ================================================================= */
+LEVEL_FUNCS.a1 = function (api, D) {
+  const u = 32, VW = 640, VH = 290, OX = 16, OY = 262;
+  let svg, G, layer;
+  function newStage() {
+    api.stage.innerHTML = '';
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '方格紙' }, api.stage);
+    addPatterns(svg);
+    S('rect', { x: 0, y: 0, width: VW, height: VH, fill: '#fff' }, svg);
+    G = areaGrid(svg, { cols: 19, rows: 7, u, ox: OX, oy: OY });
+    layer = S('g', {}, svg);
+  }
+  /** 畫平行四邊形（底 b、高 h、推斜 s），回傳可移動的三角形 */
+  function drawPara(b, h, s, x0 = 1, y0 = 1) {
+    layer.innerHTML = '';
+    const body = S('polygon', { points: G.pts([[x0 + s, y0], [x0 + b, y0], [x0 + b + s, y0 + h], [x0 + s, y0 + h]]), fill: '#ffd8a8', stroke: 'none' }, layer);
+    const tri = S('polygon', { points: G.pts([[x0, y0], [x0 + s, y0], [x0 + s, y0 + h]]), fill: '#ffd8a8', stroke: 'none' }, layer);
+    const triP = S('polygon', { points: G.pts([[x0, y0], [x0 + s, y0], [x0 + s, y0 + h]]), fill: 'url(#pLines)', opacity: s ? .5 : 0 }, layer);
+    S('polygon', { points: G.pts([[x0, y0], [x0 + b, y0], [x0 + b + s, y0 + h], [x0 + s, y0 + h]]), fill: 'none', stroke: INK, 'stroke-width': 4, 'stroke-linejoin': 'round', class: 'outline' }, layer);
+    const [hx, hy1] = G.P(x0 + s, y0 + h), [, hy0] = G.P(x0 + s, y0);
+    if (s) S('line', { x1: hx, y1: hy1, x2: hx, y2: hy0, stroke: INK, 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, layer);
+    S('text', { x: hx + (s ? 6 : -8), y: (hy0 + hy1) / 2 + 6, 'text-anchor': s ? 'start' : 'end', 'font-size': 18, 'font-weight': 900, fill: INK, text: `高 ${h}` }, layer);
+    const [bx0, by] = G.P(x0, y0), [bx1] = G.P(x0 + b, y0);
+    S('text', { x: (bx0 + bx1) / 2, y: by + 22, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: `底 ${b}` }, layer);
+    return { body, tri: [tri, triP] };
+  }
+  /** 剪下左邊三角形移到右邊，再逐格數 */
+  async function cutCount(b, h, s, x0 = 1, y0 = 1) {
+    const { tri } = drawPara(b, h, s, x0, y0);
+    if (s) {
+      Sfx.play('whoosh');
+      await api.tween(900, t => tri.forEach(e => e.setAttribute('transform', `translate(${b * u * t} 0)`)));
+    }
+    const nums = S('g', {}, layer);
+    let k = 0;
+    for (let j = 0; j < h; j++) for (let i = 0; i < b; i++) {
+      k++;
+      const [x, y] = G.P(x0 + s + i + .5, y0 + j + .5);
+      S('text', { x, y: y + 6, 'text-anchor': 'middle', 'font-size': 15, 'font-weight': 800, fill: INK, text: k }, nums);
+      if (k % 2) Sfx.tone(500 + k * 12, .04, 'triangle', .06);
+      await api.wait(Math.max(25, 600 / (b * h)));
+    }
+    return b * h;
+  }
+
+  runAll();
+
+  async function runAll() {
+    newStage();
+    api.phase('play');
+    const pc = api.panel('推推看');
+    const lab = H('div', { style: 'font-weight:800' }, pc);
+    const slider = H('input', { type: 'range', min: 0, max: D.maxPush, step: 1, value: 0, class: 'big-range', 'aria-label': '推斜' }, pc);
+    const ctl = H('div', { class: 'ctrls' }, pc);
+    const table = api.table(['底', '高', '推斜', '面積（格）'], api.panel('自動記錄表'));
+    let cur = D.shapes[0], busy = false, onCount = null;
+    const redraw = () => { lab.textContent = `推斜：${slider.value} 格`; drawPara(cur.b, cur.h, +slider.value); };
+    slider.addEventListener('input', () => { if (!busy) { Sfx.play('move'); redraw(); } });
+    const countBtn = api.button('剪拼數一數', async () => {
+      if (busy) return; busy = true; countBtn.disabled = slider.disabled = true;
+      const s = +slider.value, a = await cutCount(cur.b, cur.h, s);
+      table.add([cur.b, cur.h, s, a], [3]);
+      api.say(`推斜 ${s} 格：剪拼後變成 ${cur.b} × ${cur.h} 的長方形，面積 <b>${a} 格</b>。`);
+      await api.wait(1300);
+      busy = false; countBtn.disabled = slider.disabled = false;
+      if (onCount) onCount(s);
+    }, 'pri', ctl);
+    for (let si = 0; si < D.shapes.length; si++) {
+      cur = D.shapes[si]; slider.value = 0; redraw();
+      const need = si === 0 ? 3 : 2, seen = new Set();
+      api.say(si === 0
+        ? `拖動滑桿把長方形<b>推斜</b>（底和高不變），再按「剪拼數一數」。試 <b>${need}</b> 個不同的推斜度！`
+        : `換一個：底 ${cur.b}、高 ${cur.h}。再試 <b>${need}</b> 個不同的推斜度。`);
+      await api.p(res => { onCount = s => { seen.add(s); if (seen.size >= need) { onCount = null; res(); } else api.say(`再推到<b>另一個</b>位置試試！（已試 ${seen.size} / ${need}）`); }; });
+    }
+    countBtn.disabled = slider.disabled = true;
+    api.phase('observe');
+    await api.ask('看看記錄表：推斜以後，面積有沒有改變？', ['沒有改變', '變大了', '變小了'], 0, ['比較底和高相同的幾行。', '推斜 0 格和推斜 2 格，面積都是多少？']);
+    const s0 = D.shapes[0];
+    await api.ask('面積和<b>底</b>、<b>高</b>有什麼關係？', ['底 × 高', '底 + 高', '底 × 高 ÷ 2'], 0,
+      [`看看第一行：底 ${s0.b}、高 ${s0.h}，面積 ${s0.b * s0.h}。`, `${s0.b} 和 ${s0.h} 怎樣得到 ${s0.b * s0.h}？`]);
+    /* 預測 → 驗證 */
+    api.phase('predict');
+    const pr = D.predict;
+    cur = pr; drawPara(pr.b, pr.h, pr.s);
+    const A = pr.b * pr.h;
+    const opts = [A, pr.b + pr.h, (pr.b + pr.s) * pr.h].sort((a, b) => a - b);
+    await api.ask(`預測一下：這個平行四邊形（底 ${pr.b}、高 ${pr.h}）的面積是多少格？`, opts.map(v => v + ' 格'), opts.indexOf(A),
+      ['推斜不會改變面積，用剛才發現的關係。', `底 × 高 = ${pr.b} × ${pr.h}。`]);
+    api.phase('verify');
+    api.say('剪拼數一數，驗證一下！');
+    await cutCount(pr.b, pr.h, pr.s);
+    table.add([pr.b, pr.h, pr.s, A], [3]);
+    api.praise(`真的是 <b>${A} 格</b>！`);
+    await api.next();
+
+    /* ---------- 2. 兩個相同三角形 → 平行四邊形 ---------- */
+    async function joinTwo(poly, center, offset, kind, info) {
+      api.phase('play');
+      layer.innerHTML = '';
+      const p1 = S('polygon', { points: G.pts(poly), fill: '#ffd8a8', stroke: INK, 'stroke-width': 4, 'stroke-linejoin': 'round' }, layer);
+      const p2 = S('polygon', { fill: '#a5d8ff', stroke: INK, 'stroke-width': 4, 'stroke-dasharray': '10 5', 'stroke-linejoin': 'round' }, layer);
+      const p2p = S('polygon', { fill: 'url(#pDots)', opacity: .45 }, layer);
+      const setP2 = t => { const pts = poly.map(q => { const r = rot180(q, center, t); return [r[0] + offset * (1 - t), r[1]]; }); p2.setAttribute('points', G.pts(pts)); p2p.setAttribute('points', G.pts(pts)); };
+      setP2(0);
+      info(layer);
+      api.say(`這裏有兩個<b>一模一樣</b>的${kind}。按「拼起來」，把右邊那個轉半個圈，拼到左邊那個旁邊。`);
+      await api.next('拼起來 ↻');
+      Sfx.play('whoosh');
+      await api.tween(1600, setP2);
+      Sfx.play('glow');
+    }
+    // 三角形
+    api.side.innerHTML = '';
+    const nb = api.panel('發現');
+    const T = D.triangle, tb = T.b, th = T.h;
+    const triPoly = [[1, 1], [1 + tb, 1], [1 + T.top, 1 + th]];
+    await joinTwo(triPoly, [(1 + tb + 1 + T.top) / 2, 1 + th / 2], 9, '三角形', g => {
+      const [x0, y] = G.P(1, 1), [x1] = G.P(1 + tb, 1);
+      S('text', { x: (x0 + x1) / 2, y: y + 22, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: `底 ${tb}` }, g);
+      const [hx, hy1] = G.P(1 + T.top, 1 + th), [, hy0] = G.P(1 + T.top, 1);
+      S('line', { x1: hx, y1: hy1, x2: hx, y2: hy0, stroke: INK, 'stroke-width': 2.5, 'stroke-dasharray': '7 5' }, g);
+      S('text', { x: hx + 6, y: (hy0 + hy1) / 2, 'font-size': 18, 'font-weight': 900, fill: INK, text: `高 ${th}` }, g);
+    });
+    api.phase('observe');
+    await api.ask('兩個三角形拼成了什麼？', ['平行四邊形', '正方形', '梯形'], 0, ['看看拼好的圖形：對邊是不是平行？', '它像第一部分被推斜的長方形。']);
+    await api.ask('<b>一個</b>三角形的面積，是這個平行四邊形的……', ['一半', '一樣', '兩倍'], 0, ['平行四邊形是由幾個三角形拼成的？', '兩個一樣的三角形拼成一個平行四邊形。']);
+    H('div', { class: 'note', html: `平行四邊形：${tb} × ${th} = ${tb * th} 格<br>一個三角形：${tb} × ${th} ÷ 2 = <b>${tb * th / 2} 格</b>` }, nb);
+    await api.next();
+    // 梯形
+    const Z = D.trapezoid;
+    const trap = [[1, 1], [1 + Z.bottom, 1], [1 + Z.left + Z.top, 1 + Z.h], [1 + Z.left, 1 + Z.h]];
+    await joinTwo(trap, [(1 + Z.bottom + 1 + Z.left + Z.top) / 2, 1 + Z.h / 2], 9, '梯形', g => {
+      const [x0, y] = G.P(1, 1), [x1] = G.P(1 + Z.bottom, 1);
+      S('text', { x: (x0 + x1) / 2, y: y + 22, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: `下底 ${Z.bottom}` }, g);
+      const [t0, ty] = G.P(1 + Z.left, 1 + Z.h), [t1] = G.P(1 + Z.left + Z.top, 1 + Z.h);
+      S('text', { x: (t0 + t1) / 2, y: ty - 8, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: `上底 ${Z.top}` }, g);
+      S('text', { x: x0 - 4, y: (y + ty) / 2, 'text-anchor': 'start', 'font-size': 18, 'font-weight': 900, fill: INK, text: `高 ${Z.h}` }, g);
+    });
+    api.phase('observe');
+    await api.ask('拼成的平行四邊形，底有多長？', [`上底 + 下底（${Z.top} + ${Z.bottom}）`, `下底（${Z.bottom}）`, `上底 × 下底（${Z.top} × ${Z.bottom}）`], 0,
+      ['看看拼好的圖形最下面那條邊：由哪兩段組成？', `左邊一段是第一個梯形的下底 ${Z.bottom}，右邊一段是第二個梯形的上底 ${Z.top}。`]);
+    await api.ask('那麼<b>一個</b>梯形的面積 = ……', ['(上底 + 下底) × 高 ÷ 2', '(上底 + 下底) × 高', '上底 × 下底 ÷ 2'], 0,
+      ['平行四邊形面積 = 底 × 高，底是「上底 + 下底」。', '兩個梯形才拼成平行四邊形，一個梯形要 ÷ 2。']);
+    H('div', { class: 'note', style: 'margin-top:.4em', html: `一個梯形：(${Z.top} + ${Z.bottom}) × ${Z.h} ÷ 2 = <b>${(Z.top + Z.bottom) * Z.h / 2} 格</b>` }, nb);
+    await api.next('完成 ★');
+    api.complete();
+  }
+};
+
+/* =================================================================
+   面積體積島 第 2 關：剪剪貼貼（分割法、填補法）
+   ================================================================= */
+LEVEL_FUNCS.a2 = function (api, D) {
+  const u = 46, VW = 600, VH = 400, OX = 40, OY = 360, SX = 2, SY = 1; // 圖形放在格 (2,1)
+  let svg, G, layer, table;
+  const sh = arr => arr.map(([x, y]) => [x + SX, y + SY]);
+  function newStage() {
+    api.stage.innerHTML = '';
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '多邊形' }, api.stage);
+    addPatterns(svg);
+    S('rect', { x: 0, y: 0, width: VW, height: VH, fill: '#fff' }, svg);
+    G = areaGrid(svg, { cols: 11, rows: 7, u, ox: OX, oy: OY });
+    layer = S('g', {}, svg);
+  }
+  function drawShape(poly) {
+    layer.innerHTML = '';
+    S('polygon', { points: G.pts(sh(poly)), fill: '#ffe8cc', stroke: INK, 'stroke-width': 4, 'stroke-linejoin': 'round' }, layer);
+  }
+  const PATS = ['pDots', 'pLines', 'pCross'], FILLS = ['#ffd8a8', '#a5d8ff', '#b2f2bb'];
+  /** 分割：各塊分開一點，標示「闊 × 高 = 面積」 */
+  async function split(poly, pieces) {
+    layer.innerHTML = '';
+    const cxA = poly.reduce((s, p) => s + p[0], 0) / poly.length, cyA = poly.reduce((s, p) => s + p[1], 0) / poly.length;
+    const gs = pieces.map((pc, i) => {
+      const g = S('g', {}, layer);
+      S('polygon', { points: G.pts(sh(pc.poly)), fill: FILLS[i % 3], stroke: INK, 'stroke-width': 3.5 }, g);
+      S('polygon', { points: G.pts(sh(pc.poly)), fill: `url(#${PATS[i % 3]})`, opacity: .35 }, g);
+      const mx = pc.poly.reduce((s, p) => s + p[0], 0) / pc.poly.length, my = pc.poly.reduce((s, p) => s + p[1], 0) / pc.poly.length;
+      const [tx, ty] = G.P(mx + SX, my + SY);
+      S('rect', { x: tx - 52, y: ty - 18, width: 104, height: 32, rx: 8, fill: '#fff', stroke: INK, 'stroke-width': 2 }, g);
+      S('text', { x: tx, y: ty + 5, 'text-anchor': 'middle', 'font-size': 17, 'font-weight': 900, fill: INK, text: `${pc.w} × ${pc.h} = ${pc.w * pc.h}` }, g);
+      const dx = mx - cxA, dy = my - cyA, L = Math.hypot(dx, dy) || 1;
+      return { g, dx: dx / L * .35 * u, dy: -dy / L * .35 * u };
+    });
+    Sfx.play('whoosh');
+    await api.tween(600, t => gs.forEach(o => o.g.setAttribute('transform', `translate(${o.dx * t} ${o.dy * t})`)));
+    return pieces.reduce((s, p) => s + p.w * p.h, 0);
+  }
+  /** 填補：補上缺口，顯示大長方形減去補上部分 */
+  function drawFill(poly, F, big) {
+    const [fx, fy, fw, fh] = F;
+    const r = sh([[fx, fy], [fx + fw, fy], [fx + fw, fy + fh], [fx, fy + fh]]);
+    S('polygon', { points: G.pts(r), fill: '#e9ecef', stroke: INK, 'stroke-width': 3, 'stroke-dasharray': '8 5' }, layer);
+    S('polygon', { points: G.pts(r), fill: 'url(#pCross)', opacity: .4 }, layer);
+    const [cx, cy] = G.P(fx + fw / 2 + SX, fy + fh / 2 + SY);
+    S('text', { x: cx, y: cy + 6, 'text-anchor': 'middle', 'font-size': 16, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 4, 'paint-order': 'stroke', text: `補上 ${fw} × ${fh} = ${fw * fh}` }, layer);
+    const [bw, bh] = big;
+    S('polygon', { points: G.pts(sh([[0, 0], [bw, 0], [bw, bh], [0, bh]])), fill: 'none', stroke: INK, 'stroke-width': 6 }, layer);
+    const [lx, ly] = G.P(SX + bw / 2, SY);
+    S('text', { x: lx, y: ly + 26, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, text: `大長方形 ${bw} × ${bh} = ${bw * bh}` }, layer);
+  }
+  function banner(txt) {
+    const g = S('g', {}, layer);
+    S('rect', { x: 140, y: 6, width: 320, height: 40, rx: 12, fill: '#fff9db', stroke: INK, 'stroke-width': 3 }, g);
+    S('text', { x: 300, y: 33, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 900, fill: INK, text: txt }, g);
+  }
+  /** 「補一塊」卡：拖到缺口 */
+  function fillCard(F, label) {
+    return api.p(res => {
+      const pc = api.panel('工具：補一塊');
+      const c = H('div', { class: 'dcard', html: `<svg width="${F[2] * 14}" height="${F[3] * 14}" style="margin-right:.4em"><rect x="1" y="1" width="${F[2] * 14 - 2}" height="${F[3] * 14 - 2}" fill="#e9ecef" stroke="#1d2b3a" stroke-width="2" stroke-dasharray="4 3"/></svg>${label}` }, pc);
+      const zone = S('rect', { x: 0, y: 0, width: 0, height: 0, fill: 'transparent' }, layer);
+      const [zx, zy] = G.P(F[0] + SX, F[1] + F[3] + SY);
+      zone.setAttribute('x', zx); zone.setAttribute('y', zy); zone.setAttribute('width', F[2] * u); zone.setAttribute('height', F[3] * u);
+      const hn = api.hinter(['把它放在圖形<b>缺了的位置</b>，令圖形變成一個大長方形。', '缺口在圖形上面凹了進去的地方。'],
+        async () => { c.classList.add('demo'); await api.wait(500); c.classList.remove('demo'); await flyCard(c, zone); c.classList.add('used'); res(); });
+      makeDraggable(c, {
+        onDrop: (cx, cy) => {
+          if (hitEl(zone, cx, cy, 20)) { hn.reset(); c.classList.add('used'); Sfx.play('drop'); res(); return true; }
+          hn.wrong(); return false;
+        }
+      });
+    });
+  }
+
+  async function run() {
+    newStage();
+    const L = D.shapeL;
+    drawShape(L.poly);
+    table = api.table(['方法', '算式', '面積'], api.panel('自動記錄表'));
+    /* --- 玩：分割法（剪刀） --- */
+    api.phase('play');
+    api.say('這個 L 形有多大？用<b>剪刀</b>沿虛線剪一刀，把它分成簡單的圖形。點一下虛線！');
+    const goodDone = new Set();
+    while (goodDone.size < L.cuts.filter(c => !c.bad).length) {
+      drawShape(L.poly);
+      const cutG = S('g', {}, layer);
+      const hn = api.hinter(['這一刀要把圖形<b>分成兩塊</b>才行。', '試試由一條邊一直剪到另一條邊的虛線。']);
+      const chosen = await api.p(res => {
+        L.cuts.forEach((c, i) => {
+          if (goodDone.has(i)) return;
+          const [[a, b], [cc, d]] = sh(c.seg);
+          const [x1, y1] = G.P(a, b), [x2, y2] = G.P(cc, d);
+          const g = S('g', { style: 'cursor:pointer' }, cutG);
+          S('line', { x1, y1, x2, y2, stroke: '#e8590c', 'stroke-width': 5, 'stroke-dasharray': '10 7' }, g);
+          S('text', { x: x1 + (x1 === x2 ? -24 : -4), y: y1 + (x1 === x2 ? -6 : -10), 'font-size': 24, fill: INK, text: '✂' }, g);
+          const hitL = S('line', { x1, y1, x2, y2, stroke: 'transparent', 'stroke-width': 34 }, g);
+          hitL.addEventListener('pointerdown', e => {
+            e.preventDefault();
+            if (c.bad) { hn.wrong(); return; }
+            res(i);
+          });
+        });
+      });
+      cutG.remove();
+      const c = L.cuts[chosen];
+      const a = await split(L.poly, c.pieces);
+      table.add(['分割法', c.pieces.map(p => p.w * p.h).join(' + '), a], [2]);
+      api.praise(`分成 ${c.pieces.map(p => `${p.w} × ${p.h}`).join(' 和 ')}，面積 = ${c.pieces.map(p => p.w * p.h).join(' + ')} = <b>${a} 格</b>。`);
+      goodDone.add(chosen);
+      await api.wait(1500);
+      if (goodDone.size < L.cuts.filter(c => !c.bad).length) { api.say('還有另一種剪法嗎？再試另一刀！'); await api.next('還原 ↺'); }
+    }
+    /* --- 玩：填補法 --- */
+    drawShape(L.poly);
+    api.say('換個方法：用「<b>補一塊</b>」把缺口補上，變成一個大長方形！把卡拖到缺口。');
+    await fillCard(L.fill.rect, `補一塊（${L.fill.rect[2]} × ${L.fill.rect[3]}）`);
+    drawShape(L.poly); drawFill(L.poly, L.fill.rect, L.fill.big);
+    const big = L.fill.big[0] * L.fill.big[1], add = L.fill.rect[2] * L.fill.rect[3];
+    table.add(['填補法', `${big} ${MINUS} ${add}`, big - add], [2]);
+    api.say(`大長方形 ${big} 格，減去補上的 ${add} 格，L 形是 <b>${big - add} 格</b>。`);
+    await api.wait(1500);
+    api.phase('observe');
+    await api.ask('看看記錄表：「剪開」和「補上」兩個方法得到的面積……', ['一樣', '不一樣'], 0, ['比較記錄表「面積」那一欄。', `每一行的面積都是 ${big - add}。`]);
+    banner('兩條路都到達同一終點！');
+    Sfx.play('glow');
+    await api.next();
+    /* --- 預測 → 驗證：凹形 --- */
+    const U = D.shapeU;
+    api.side.innerHTML = '';
+    table = api.table(['方法', '算式', '面積'], api.panel('自動記錄表'));
+    drawShape(U.poly);
+    api.phase('predict');
+    api.say('新挑戰：這個<b>凹形</b>。先用「補一塊」把缺口補上。');
+    await fillCard(U.fill.rect, `補一塊（${U.fill.rect[2]} × ${U.fill.rect[3]}）`);
+    drawShape(U.poly); drawFill(U.poly, U.fill.rect, U.fill.big);
+    const B2 = U.fill.big[0] * U.fill.big[1], A2 = U.fill.rect[2] * U.fill.rect[3], ans = B2 - A2;
+    table.add(['填補法', `${B2} ${MINUS} ${A2}`, ans], [2]);
+    const opts = [ans, B2, B2 + A2].sort((a, b) => a - b);
+    await api.ask('預測：凹形的面積是多少格？', opts.map(v => v + ' 格'), opts.indexOf(ans),
+      ['大長方形裏，有一部分是補上去的，不屬於凹形。', `大長方形 ${B2} 格，要減去補上的 ${A2} 格。`]);
+    api.phase('verify');
+    api.say('用<b>剪刀</b>（分割法）驗證一下……');
+    await api.wait(700);
+    drawShape(U.poly);
+    const a = await split(U.poly, U.pieces);
+    table.add(['分割法', U.pieces.map(p => p.w * p.h).join(' + '), a], [2]);
+    banner('兩條路都到達同一終點！');
+    api.praise(`分割法：${U.pieces.map(p => p.w * p.h).join(' + ')} = <b>${a} 格</b>，和填補法一樣！`);
+    await api.next('完成 ★');
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   面積體積島 第 3 關：疊疊樂角柱
+   熱身：多面體 / 非多面體分類 → 揀底疊方塊（等距投影）→ 觀察 → 預測
+   → 切蛋糕：平行於底切（均勻截面）、斜切
+   ================================================================= */
+/** 立體小圖示（分類卡用） */
+function solidIcon(kind) {
+  const st = 'stroke="#1d2b3a" stroke-width="3" stroke-linejoin="round"';
+  const m = {
+    cube: `<path d="M10 22 L34 10 L58 22 L58 50 L34 62 L10 50 Z" fill="#ffe066" ${st}/><path d="M10 22 L34 34 L58 22 M34 34 V62" fill="none" ${st}/>`,
+    prism: `<path d="M8 50 L22 22 L36 50 Z" fill="#ffd8a8" ${st}/><path d="M22 22 L52 12 L66 40 L36 50 M66 40 L36 50" fill="#ffe8cc" ${st}/>`,
+    pyramid: `<path d="M8 50 L38 60 L64 46 L36 8 Z" fill="#d3f9d8" ${st}/><path d="M38 60 L36 8" fill="none" ${st}/>`,
+    cylinder: `<path d="M12 16 V52 A24 9 0 0 0 60 52 V16" fill="#a5d8ff" ${st}/><ellipse cx="36" cy="16" rx="24" ry="9" fill="#d0ebff" ${st}/>`,
+    cone: `<path d="M12 50 L36 6 L60 50" fill="#ffc9c9" ${st}/><ellipse cx="36" cy="50" rx="24" ry="9" fill="#ffc9c9" ${st}/>`,
+    sphere: `<circle cx="36" cy="34" r="26" fill="#eebefa" ${st}/><path d="M10 34 A26 9 0 0 0 62 34" fill="none" stroke="#1d2b3a" stroke-width="2" stroke-dasharray="4 3"/>`
+  };
+  return `<svg viewBox="0 0 72 68" width="60" height="56" aria-hidden="true">${m[kind]}</svg>`;
+}
+LEVEL_FUNCS.a3 = function (api, D) {
+  const A = 34, VW = 600, VH = 470, OXI = 300, OYI = 360;
+  const iso = (x, y, z, ox = OXI, oy = OYI, a = A) => [ox + (x - y) * a * .866, oy + (x + y) * a * .5 - z * a];
+  const ptsI = (arr, ...o) => arr.map(p => iso(...p, ...o).join(',')).join(' ');
+  let svg, cubes;
+
+  function drawStack(cells, layers, dropTop = 0) {
+    cubes.innerHTML = '';
+    const list = [];
+    for (let z = 0; z < layers; z++) cells.forEach(([x, y]) => list.push([x, y, z]));
+    list.sort((p, q) => p[2] - q[2] || (p[0] + p[1]) - (q[0] + q[1]));
+    list.forEach(([x, y, z]) => {
+      const g = S('g', {}, cubes);
+      if (z === layers - 1 && dropTop) g.setAttribute('transform', `translate(0 ${-dropTop})`), g.setAttribute('data-top', 1);
+      S('polygon', { points: ptsI([[x, y + 1, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]]), fill: '#fab005', stroke: INK, 'stroke-width': 2 }, g);
+      S('polygon', { points: ptsI([[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]]), fill: '#e67700', stroke: INK, 'stroke-width': 2 }, g);
+      S('polygon', { points: ptsI([[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]]), fill: '#ffe066', stroke: INK, 'stroke-width': 2 }, g);
+    });
+  }
+  async function dropAnim() {
+    const tops = [...cubes.querySelectorAll('[data-top]')];
+    await api.tween(300, t => tops.forEach(g => g.setAttribute('transform', `translate(0 ${-60 * (1 - t)})`)));
+    Sfx.play('drop');
+  }
+  function baseMini(cells) {
+    const mx = Math.max(...cells.map(c => c[0])) + 1, my = Math.max(...cells.map(c => c[1])) + 1, s = 12;
+    return `<svg width="${mx * s + 2}" height="${my * s + 2}" style="vertical-align:middle;margin-right:.3em" aria-hidden="true">${cells.map(([x, y]) => `<rect x="${x * s + 1}" y="${(my - 1 - y) * s + 1}" width="${s}" height="${s}" fill="#ffe066" stroke="#1d2b3a" stroke-width="1.5"/>`).join('')}</svg>`;
+  }
+
+  async function warmup() {
+    api.phase('play');
+    api.stage.innerHTML = '';
+    const wrap = H('div', { style: 'width:100%;display:flex;flex-direction:column;gap:.8em;padding:.4em' }, api.stage);
+    const deck = H('div', { class: 'cards', style: 'justify-content:center;min-height:80px' }, wrap);
+    const row = H('div', { style: 'display:flex;gap:.8em;flex-wrap:wrap' }, wrap);
+    const bF = H('div', { class: 'basket' }, row); H('h4', { html: '▢ 每個面都是<b>平的多邊形</b>' }, bF);
+    const inF = H('div', { class: 'cards' }, bF);
+    const bC = H('div', { class: 'basket', style: 'border-style:dotted' }, row); H('h4', { html: '◯ 有<b>彎曲的面</b>' }, bC);
+    const inC = H('div', { class: 'cards' }, bC);
+    api.say('熱身！摸一摸這些立體：每個面都是平的嗎？把它們拖到正確的籃子。');
+    let left = D.solids.length;
+    await api.p(res => {
+      D.solids.forEach(s => {
+        const c = H('div', { class: 'dcard', html: solidIcon(s.k) + s.name, style: 'flex-direction:column;font-size:.9em' }, deck);
+        const tgt = s.flat ? bF : bC;
+        const put = () => { c.classList.add('used'); H('div', { class: 'dcard', html: solidIcon(s.k) + s.name, style: 'flex-direction:column;font-size:.8em;cursor:default' }, s.flat ? inF : inC); Sfx.play('drop'); left--; if (!left) setTimeout(res, 900); };
+        const hn = api.hinter(['看看它有沒有圓圓的、彎曲的面。', `${s.name}${s.flat ? '的每個面都是平的多邊形' : '有一個彎曲的面'}。`],
+          async () => { c.classList.add('demo'); await api.wait(500); c.classList.remove('demo'); await flyCard(c, tgt); put(); });
+        makeDraggable(c, {
+          onMove: (x, y) => { bF.classList.toggle('over', hitEl(bF, x, y)); bC.classList.toggle('over', hitEl(bC, x, y)); },
+          onEnd: () => { bF.classList.remove('over'); bC.classList.remove('over'); },
+          onDrop: (x, y) => {
+            const t = hitEl(bF, x, y) ? bF : hitEl(bC, x, y) ? bC : null;
+            if (!t) return false;
+            if (t === tgt) { hn.reset(); api.praise(); put(); return true; }
+            hn.wrong(); return false;
+          }
+        });
+      });
+    });
+    api.say('分好了！記住這兩個籃子，過關後的發現卡會告訴你它們的名稱。');
+    await api.next('開始疊方塊 ▶');
+  }
+
+  async function stack() {
+    api.phase('play');
+    api.stage.innerHTML = '';
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '疊方塊' }, api.stage);
+    S('rect', { x: 0, y: 0, width: VW, height: VH, fill: '#f8f9fa' }, svg);
+    cubes = S('g', {}, svg);
+    const pc = api.panel('揀一個底');
+    const bRow = H('div', { class: 'ctrls' }, pc);
+    const cnt = H('div', { class: 'eq', style: 'text-align:center;margin:.3em 0' }, pc);
+    const ctl = H('div', { class: 'ctrls' }, pc);
+    const table = api.table(['底', '每層方塊數', '層數', '總數'], api.panel('自動記錄表'));
+    let base = D.bases[0], layers = 1, busy = false, onAdd = null, locked = false;
+    const upd = () => { cnt.innerHTML = `${base.name}底：每層 ${base.cells.length} 個 × ${layers} 層<br>方塊總數：<b>${base.cells.length * layers}</b> 個`; };
+    const baseBtns = D.bases.map(b => {
+      const x = api.button(baseMini(b.cells) + b.name, () => { if (busy || locked) return; base = b; layers = 1; drawStack(b.cells, 1); upd(); baseBtns.forEach(y => y.classList.toggle('on', y === x)); if (onAdd) onAdd('base'); }, '', bRow);
+      return x;
+    });
+    baseBtns[0].classList.add('on');
+    const addBtn = api.button('加一層 ▲', async () => {
+      if (busy || locked) return;
+      if (layers >= D.maxLayers) { Sfx.play('soft'); api.say('太高了！'); return; }
+      busy = true; layers++; drawStack(base.cells, layers, 60); await dropAnim(); upd();
+      table.add([base.name, base.cells.length, layers, base.cells.length * layers], [3]);
+      busy = false; if (onAdd) onAdd('add');
+    }, 'pri', ctl);
+    const remBtn = api.button('拿走一層 ▼', () => { if (busy || locked || layers <= 1) return; layers--; drawStack(base.cells, layers); upd(); }, '', ctl);
+    drawStack(base.cells, 1); upd();
+    for (const task of D.stackTasks) {
+      const b = D.bases[task.base];
+      api.say(`揀「<b>${b.name}</b>」底，按「加一層」一直疊到 <b>${task.layers} 層</b>。看看記錄表！`);
+      await api.p(res => { onAdd = () => { if (base === b && layers >= task.layers) { onAdd = null; setTimeout(res, 700); } }; });
+    }
+    locked = true; [...baseBtns, addBtn, remBtn].forEach(x => x.disabled = true);
+    api.phase('observe');
+    await api.ask('看看記錄表：方塊總數 = ……', ['每層方塊數 × 層數', '每層方塊數 + 層數', '層數 × 層數'], 0,
+      ['看看任何一行的三個數。', `例如每層 ${D.bases[0].cells.length} 個、${D.stackTasks[0].layers} 層，總數是 ${D.bases[0].cells.length * D.stackTasks[0].layers}。`]);
+    api.phase('predict');
+    const pr = D.stackPredict, pb = D.bases[pr.base], ans = pb.cells.length * pr.layers;
+    base = pb; layers = 1; drawStack(pb.cells, 1); upd(); baseBtns.forEach(y => y.classList.toggle('on', y.textContent.includes(pb.name)));
+    const opts = [ans, pb.cells.length + pr.layers, ans - pb.cells.length].sort((a, b) => a - b);
+    await api.ask(`預測：用「${pb.name}」底（每層 ${pb.cells.length} 個）疊 <b>${pr.layers} 層</b>，總共有多少個方塊？`, opts.map(v => v + ' 個'), opts.indexOf(ans),
+      ['用剛才發現的關係：每層方塊數 × 層數。', `${pb.cells.length} × ${pr.layers} = ？`]);
+    api.phase('verify');
+    for (let k = 2; k <= pr.layers; k++) { layers = k; drawStack(pb.cells, k, 60); await dropAnim(); upd(); await api.wait(200); }
+    table.add([pb.name, pb.cells.length, pr.layers, ans], [3]);
+    api.praise(`真的是 <b>${ans} 個</b>！`);
+    await api.next('去切蛋糕 ▶');
+  }
+
+  /** 切蛋糕：L 形角柱（連續立體），平面 z = h + k(x − cx) */
+  async function cake() {
+    api.phase('play');
+    api.stage.innerHTML = ''; api.side.innerHTML = '';
+    const base = D.cakeBase, Hh = D.cakeHeight, a = 46, ox = 250, oy = 380;
+    const I = (x, y, z) => iso(x, y, z, ox, oy, a);
+    const P = arr => arr.map(p => I(...p).join(',')).join(' ');
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '切蛋糕' }, api.stage);
+    S('rect', { x: 0, y: 0, width: VW, height: VH, fill: '#f8f9fa' }, svg);
+    const solid = S('g', {}, svg), planeG = S('g', {}, svg);
+    // 角柱：底 → 側面（由後至前）→ 頂
+    S('polygon', { points: P(base.map(([x, y]) => [x, y, 0])), fill: '#ffd8a8', stroke: INK, 'stroke-width': 2 }, solid);
+    const sides = base.map((p, i) => [p, base[(i + 1) % base.length]]).sort((s1, s2) => (s1[0][0] + s1[0][1] + s1[1][0] + s1[1][1]) - (s2[0][0] + s2[0][1] + s2[1][0] + s2[1][1]));
+    sides.forEach(([p, q]) => S('polygon', { points: P([[...p, 0], [...q, 0], [...q, Hh], [...p, Hh]]), fill: '#ffe8cc', 'fill-opacity': .75, stroke: INK, 'stroke-width': 2 }, solid));
+    S('polygon', { points: P(base.map(([x, y]) => [x, y, Hh])), fill: '#ffd8a8', stroke: INK, 'stroke-width': 2.5 }, solid);
+    // 截面面板
+    const pc = api.panel('截面（切開後的新面）');
+    const sv = S('svg', { viewBox: '0 0 260 150', style: 'width:100%;height:auto' }, pc);
+    const secG = S('g', {}, sv);
+    const lab = H('div', { style: 'font-weight:800;margin-top:.3em' }, pc);
+    const ctl = H('div', { class: 'ctrls' }, pc);
+    const slider = H('input', { type: 'range', min: 0, max: 100, value: 30, class: 'big-range', 'aria-label': '切的位置' }, pc);
+    let k = 0, moves = 0, onChange = null;
+    const xs = base.map(p => p[0]), xc = (Math.min(...xs) + Math.max(...xs)) / 2, span = (Math.max(...xs) - Math.min(...xs)) / 2;
+    const draw = () => {
+      const lo = .4 + Math.abs(k) * span, hi = Hh - .4 - Math.abs(k) * span;
+      const h = lo + (hi - lo) * slider.value / 100;
+      const zf = (x) => h + k * (x - xc);
+      planeG.innerHTML = '';
+      const ex = [[-1, -1], [Math.max(...xs) + 1, -1], [Math.max(...xs) + 1, Math.max(...base.map(p => p[1])) + 1], [-1, Math.max(...base.map(p => p[1])) + 1]];
+      S('polygon', { points: P(ex.map(([x, y]) => [x, y, zf(x)])), fill: '#74c0fc', 'fill-opacity': .3, stroke: '#1c7ed6', 'stroke-width': 2.5, 'stroke-dasharray': '8 5' }, planeG);
+      S('polygon', { points: P(base.map(([x, y]) => [x, y, zf(x)])), fill: '#ffe066', stroke: INK, 'stroke-width': 4 }, planeG);
+      S('text', { x: I(ex[1][0], ex[1][1], zf(ex[1][0]))[0] + 6, y: I(ex[1][0], ex[1][1], zf(ex[1][0]))[1], 'font-size': 18, 'font-weight': 900, fill: '#1c7ed6', text: '刀' }, planeG);
+      // 2D 截面真實形狀（斜切時 x 方向拉長）與底（虛線）比較
+      secG.innerHTML = '';
+      const sc = 26, st = Math.sqrt(1 + k * k), my = Math.max(...base.map(p => p[1]));
+      const draw2 = (ox2, f, style, title) => {
+        S('polygon', { points: base.map(([x, y]) => `${ox2 + (x - Math.min(...xs)) * sc * f},${20 + (my - y) * sc}`).join(' '), ...style }, secG);
+        S('text', { x: ox2, y: 140, 'font-size': 16, 'font-weight': 900, fill: INK, text: title }, secG);
+      };
+      draw2(10, 1, { fill: '#ffd8a8', stroke: INK, 'stroke-width': 2.5, 'stroke-dasharray': '6 4' }, '底');
+      draw2(110, st, { fill: '#ffe066', stroke: INK, 'stroke-width': 3.5 }, '截面');
+      lab.innerHTML = k === 0 ? '平行於底切：截面和底<b>形狀和大小都一樣</b>' : '斜切：截面<b>被拉長了</b>，和底不一樣';
+    };
+    const pBtn = api.button('平行於底切', () => { k = 0; pBtn.classList.add('on'); sBtn.classList.remove('on'); draw(); if (onChange) onChange('k'); }, 'on', ctl);
+    const sBtn = api.button('斜切', () => { k = D.cakeTilt; sBtn.classList.add('on'); pBtn.classList.remove('on'); draw(); if (onChange) onChange('k'); }, '', ctl);
+    sBtn.disabled = true;
+    slider.addEventListener('input', () => { draw(); moves++; if (moves % 4 === 0) Sfx.play('move'); if (onChange) onChange('s'); });
+    draw();
+    api.say('切蛋糕！拖動下面的滑桿，<b>平行於底</b>切下去，看看右邊的截面。上上下下多試幾次！');
+    await api.p(res => { onChange = () => { if (moves >= 12) { onChange = null; res(); } }; });
+    api.phase('observe');
+    await api.ask('平行於底切，無論切在哪裏，截面……', ['形狀和大小永遠和底一樣', '愈高愈大', '每次都不同'], 0,
+      ['比較右邊的「底」和「截面」。', '再拖動滑桿，截面有沒有改變？']);
+    api.phase('play');
+    sBtn.disabled = false;
+    api.say('現在按「<b>斜切</b>」，再拖動滑桿。截面變成怎樣？');
+    let sl = 0;
+    await api.p(res => { onChange = (w) => { if (k !== 0 && w === 's') sl++; if (k !== 0 && sl >= 6) { onChange = null; res(); } }; });
+    api.phase('observe');
+    await api.ask('斜切時，截面和底……', ['不一樣（被拉長了）', '一模一樣'], 0, ['比較右邊的「底」和「截面」的闊度。', '截面比底闊了。']);
+    await api.next('完成 ★');
+  }
+
+  async function run() {
+    await warmup();
+    api.side.innerHTML = '';
+    await stack();
+    await cake();
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   面積體積島 第 4 關：拆盒子（直立角柱的展開）
+   ================================================================= */
+LEVEL_FUNCS.a4 = function (api, D) {
+  const VW = 640, VH = 380, a = 34, OXI = 190, OYI = 210, NX = 230, NY = 240, U = 30;
+  const iso = (x, y, z) => [OXI + (x - y) * a * .866, OYI + (x + y) * a * .5 - z * a];
+  let svg, table;
+
+  /** 建立一個角柱的所有面：每個面有 3D 角點和展開圖角點 */
+  function makeFaces(pr) {
+    const B = pr.base, PH = pr.h, n = B.length, faces = [];
+    let cum = 0;
+    const PATS = ['pDots', 'pLines', 'pCross', 'pBack'], FILLS = ['#ffd8a8', '#a5d8ff', '#b2f2bb', '#eebefa'];
+    for (let i = 0; i < n; i++) {
+      const p = B[i], q = B[(i + 1) % n], L = Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) * 100) / 100;
+      faces.push({ kind: 'side', L, fill: FILLS[i % 4], pat: PATS[i % 4],
+        d3: [[...p, 0], [...q, 0], [...q, PH], [...p, PH]].map(v => iso(...v)),
+        d2: [[cum, 0], [cum + L, 0], [cum + L, PH], [cum, PH]].map(([x, y]) => [NX + x * U, NY - y * U]),
+        depth: p[0] + p[1] + q[0] + q[1] });
+      cum += L;
+    }
+    faces.sort((f, g) => f.depth - g.depth);
+    const bot = { kind: 'base', d3: B.map(([x, y]) => iso(x, y, 0)), d2: B.map(([x, y]) => [NX + x * U, NY + y * U]), fill: '#fff3bf', pat: 'pDots' };
+    const top = { kind: 'base', d3: B.map(([x, y]) => iso(x, y, PH)), d2: B.map(([x, y]) => [NX + x * U, NY - (PH + y) * U]), fill: '#fff3bf', pat: 'pDots' };
+    return { faces, bot, top, per: cum };
+  }
+  function drawFaces(F, t, baseOp) {
+    svg.querySelector('#faces')?.remove();
+    const g = S('g', { id: 'faces' }, svg);
+    const lerp = f => f.d3.map((p, i) => [p[0] + (f.d2[i][0] - p[0]) * t, p[1] + (f.d2[i][1] - p[1]) * t]);
+    const one = (f, op = 1) => {
+      const pts = lerp(f).map(p => p.join(',')).join(' ');
+      S('polygon', { points: pts, fill: f.fill, stroke: INK, 'stroke-width': 3, opacity: op, 'stroke-dasharray': f.kind === 'base' && op < 1 ? '6 4' : '' }, g);
+      S('polygon', { points: pts, fill: `url(#${f.pat})`, opacity: .3 * op }, g);
+    };
+    one(F.bot, baseOp); F.faces.forEach(f => one(f)); one(F.top, baseOp);
+    return g;
+  }
+  async function unfold(F, baseOp) {
+    Sfx.play('whoosh');
+    await api.tween(1800, t => drawFaces(F, t, baseOp * (1 - t * .0)));
+  }
+  function edgeLabels(F, pr) {
+    const g = S('g', {}, svg);
+    let cum = 0;
+    F.faces.slice().sort((f, h) => f.d2[0][0] - h.d2[0][0]).forEach(f => {
+      const L = f.L;
+      S('text', { x: NX + (cum + L / 2) * U, y: NY - pr.h * U / 2 + 6, 'text-anchor': 'middle', 'font-size': 18, 'font-weight': 900, fill: INK, stroke: '#fff', 'stroke-width': 4, 'paint-order': 'stroke', text: `${L} × ${pr.h}` }, g);
+      cum += L;
+    });
+    return g;
+  }
+
+  async function prismRound(pr, idx) {
+    api.stage.innerHTML = '';
+    svg = S('svg', { viewBox: `0 0 ${VW} ${VH}`, class: 'stage-svg', role: 'img', 'aria-label': '拆盒子' }, api.stage);
+    addPatterns(svg);
+    S('rect', { x: 0, y: 0, width: VW, height: VH, fill: '#fff' }, svg);
+    const F = makeFaces(pr);
+    drawFaces(F, 0, 1);
+    return F;
+  }
+
+  async function run() {
+    /* ---------- 1. 直立三角柱：拆開 + 拖標籤 ---------- */
+    api.phase('play');
+    const p1 = D.prisms[0];
+    let F = await prismRound(p1, 0);
+    table = api.table(['側面', '闊 × 高', '面積'], api.panel('自動記錄表'));
+    api.say(`這是一個<b>${p1.name}</b>（高 ${p1.h}）。按「拆開」，看看它的所有側面！`);
+    await api.next('拆開 ✂');
+    await unfold(F, 0);
+    const lbl = edgeLabels(F, p1);
+    let total = 0;
+    F.faces.slice().sort((f, h) => f.d2[0][0] - h.d2[0][0]).forEach((f, i) => { total += f.L * p1.h; table.add([`側面 ${i + 1}`, `${f.L} × ${p1.h}`, f.L * p1.h]); });
+    table.add(['<b>全部</b>', '', `<b>${total}</b>`], [2]);
+    /* 拖標籤到大長方形的邊 */
+    api.phase('observe');
+    api.say('所有側面排成了一個<b>大長方形</b>！把標籤拖到大長方形<b>正確的邊</b>上。');
+    const zB = S('rect', { x: NX - 6, y: NY - 18, width: F.per * U + 12, height: 36, fill: 'transparent' }, svg);
+    const zH = S('rect', { x: NX - 22, y: NY - p1.h * U - 6, width: 44, height: p1.h * U + 12, fill: 'transparent' }, svg);
+    const lp = api.panel('標籤');
+    const deck = H('div', { class: 'cards' }, lp);
+    let need = 2;
+    await api.p(res => {
+      [['底的周界', zB], ['角柱的高', zH], ['底面積', null]].forEach(([t, zone]) => {
+        const c = H('div', { class: 'dcard', text: t }, deck);
+        const put = () => {
+          c.classList.add('used'); Sfx.play('drop');
+          if (zone === zB) {
+            S('path', { d: `M${NX} ${NY + 22} H${NX + F.per * U}`, stroke: INK, 'stroke-width': 3 }, svg);
+            S('path', { d: `M${NX} ${NY + 22} l10 -6 v12 z M${NX + F.per * U} ${NY + 22} l-10 -6 v12 z`, fill: INK }, svg);
+            S('text', { x: NX + F.per * U / 2, y: NY + 48, 'text-anchor': 'middle', 'font-size': 19, 'font-weight': 900, fill: INK, text: `底的周界 = ${F.faces.map(f => f.L).sort((x, y) => y - x).join(' + ')} = ${F.per}` }, svg);
+          } else {
+            S('text', { x: NX - 12, y: NY - p1.h * U / 2, 'text-anchor': 'end', 'font-size': 19, 'font-weight': 900, fill: INK, text: `高 = ${p1.h}` }, svg);
+            S('path', { d: `M${NX - 6} ${NY} V${NY - p1.h * U}`, stroke: INK, 'stroke-width': 3 }, svg);
+          }
+          need--; if (!need) setTimeout(res, 900);
+        };
+        const hn = api.hinter([
+          t === '底面積' ? '「底面積」是一個面的大小，不是一條邊的長度哦。' : '大長方形的長邊是由哪些邊接起來的？短邊又是什麼？',
+          t === '底的周界' ? '長邊 = 所有側面的闊接起來 = 繞底走一圈的長度。' : t === '角柱的高' ? '短邊就是每個側面的高，即是角柱的高。' : '這張標籤不用放在邊上。'
+        ], zone ? async () => { c.classList.add('demo'); await api.wait(500); c.classList.remove('demo'); await flyCard(c, zone); put(); } : null);
+        makeDraggable(c, {
+          onDrop: (x, y) => {
+            const at = hitEl(zB, x, y, 10) ? zB : hitEl(zH, x, y, 10) ? zH : null;
+            if (!at) return false;
+            if (at === zone) { hn.reset(); api.praise(); put(); return true; }
+            hn.wrong(); return false;
+          }
+        });
+      });
+    });
+    lp.remove();
+    await api.ask(`記錄表中所有側面的總面積是 ${total}。${total} = ……`, [`底的周界 × 高（${F.per} × ${p1.h}）`, `底面積 × 高`, `底的周界 + 高（${F.per} + ${p1.h}）`], 0,
+      ['大長方形的面積 = 長 × 闊。', `大長方形的長是底的周界 ${F.per}，闊是高 ${p1.h}。`]);
+    await api.next('下一個盒子 ▶');
+
+    /* ---------- 2. 長方體：先預測，再拆開驗證，再加兩個底 ---------- */
+    const p2 = D.prisms[1];
+    api.side.innerHTML = '';
+    table = api.table(['側面', '闊 × 高', '面積'], api.panel('自動記錄表'));
+    F = await prismRound(p2, 1);
+    api.phase('predict');
+    const dims = p2.base;
+    const per = F.per;
+    const opts = [per, per / 2, per - dims[1][0] + 0].filter((v, i, s) => s.indexOf(v) === i).sort((x, y) => x - y);
+    const lens = F.faces.map(f => f.L).sort((x, y) => y - x);
+    api.say(`這是一個<b>${p2.name}</b>（底 ${lens[0]} × ${lens[lens.length - 1]}，高 ${p2.h}）。`);
+    await api.ask(`拆開前先預測：所有側面拼成的大長方形，長（底的周界）是多少？`, opts.map(String), opts.indexOf(per),
+      ['底的周界 = 繞底走一圈的長度。', `底的四條邊是 ${lens.join('、')}。`]);
+    api.phase('verify');
+    await unfold(F, .35);
+    edgeLabels(F, p2);
+    let t2 = 0;
+    F.faces.slice().sort((f, h) => f.d2[0][0] - h.d2[0][0]).forEach((f, i) => { t2 += f.L * p2.h; table.add([`側面 ${i + 1}`, `${f.L} × ${p2.h}`, f.L * p2.h]); });
+    table.add(['<b>全部</b>', `${per} × ${p2.h}`, `<b>${t2}</b>`], [2]);
+    api.praise(`長真的是 <b>${per}</b>！所有側面的總面積 = ${per} × ${p2.h} = <b>${t2}</b>。`);
+    await api.next();
+    api.phase('observe');
+    await api.ask('要計算整個盒子的<b>總表面面積</b>，還要加上什麼？', ['兩個底', '一個底', '不用加'], 0,
+      ['看看展開圖上，淡淡的虛線面還未計算。', '盒子有上下兩個底。']);
+    drawFaces(F, 1, 1);
+    edgeLabels(F, p2);
+    const bA = lens[0] * lens[lens.length - 1];
+    table.add(['兩個底', `2 × ${bA}`, 2 * bA], [2]);
+    table.add(['<b>總表面面積</b>', `${2 * bA} + ${t2}`, `<b>${2 * bA + t2}</b>`], [2]);
+    Sfx.play('glow');
+    api.say(`總表面面積 = 2 × 底面積 + 所有側面的總面積 = 2 × ${bA} + ${t2} = <b>${2 * bA + t2}</b>`);
+    await api.next('完成 ★');
+    api.complete();
+  }
+  run();
+};
+
+/* =================================================================
+   [L] 啟動
+   ================================================================= */
+function init() {
+  Store.load();
+  document.querySelectorAll('[data-guide]').forEach(el => el.innerHTML = guideHtml());
+  document.querySelectorAll('[data-go="map"]').forEach(b => b.addEventListener('click', () => { Sfx.play('tap'); goMap(); }));
+  document.querySelectorAll('[data-sound]').forEach(b => b.addEventListener('click', () => {
+    Store.data.sound = !Store.data.sound; Store.save(); updSoundBtns(); Sfx.play('tap');
+  }));
+  $('#btnAlbum').addEventListener('click', () => { Sfx.play('tap'); goAlbum(); });
+  $('#btnCert').addEventListener('click', () => { Sfx.play('tap'); goCert(false); });
+  $('#btnReset').addEventListener('click', () => {
+    Sfx.play('tap');
+    openModal('<h2>重設進度？</h2><p>所有星星、徽章和發現卡都會清除，要重新開始。</p>', [
+      { label: '取消' },
+      { label: '確定重設', cls: 'pri', fn: () => { Store.reset(); goMap(); } }
+    ]);
+  });
+  // 防止 iPad 雙擊放大和長按選取
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
+  document.addEventListener('contextmenu', e => { if (e.target.closest('.dcard,svg')) e.preventDefault(); });
+  updSoundBtns();
+  goMap();
+}
+init();
+</script>
+</body>
+</html>
