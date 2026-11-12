@@ -45,6 +45,8 @@ h1{font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.15;margin:10px 0
 .eye{transform-origin:center;transform-box:fill-box;animation:blink 4s infinite}
 @media (prefers-reduced-motion:reduce){.bot,.eye{animation:none}}
 
+.demo-btn{position:absolute;z-index:2;top:14px;right:16px;background:var(--sun);color:var(--ink);font-weight:800;font-size:14px;padding:7px 14px;border-radius:99px;text-decoration:none;box-shadow:0 3px 0 #e0b21c}
+.demo-btn:hover{transform:translateY(-1px)}
 /* ---------- 科目 ---------- */
 .subjects{display:flex;flex-wrap:wrap;gap:14px;margin:26px 0 18px}
 .subj{display:flex;align-items:center;gap:12px;padding:10px 22px 10px 10px;border:3px solid var(--line);border-radius:22px;
@@ -114,6 +116,7 @@ main{display:flex;flex-direction:column;gap:30px}
 
 <div class="wrap" id="app">
   <section class="hero">
+    <a class="demo-btn" href="info-day.html" target="_blank" rel="noopener">🎪 資訊日 Demo（臨時）</a>
     <span class="floaty" style="left:4%;top:8%;font-size:34px;color:var(--grape)">π</span>
     <span class="floaty" style="left:40%;top:6%;font-size:28px;color:var(--sky)">&lt;/&gt;</span>
     <span class="floaty" style="left:58%;bottom:8%;font-size:30px;color:var(--pink)">√x</span>

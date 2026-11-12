@@ -6,6 +6,11 @@
 - 上架：數學 中一「其他」（示範用，不屬於特定課題）— 中一數學探險島（Math/F1/中一數學探險島.html）。專為升中體驗活動／中學開放日設計的互動闖關遊戲；只用 localStorage，沒有後端。
 - 修改：數學 中一「其他」— 中一數學探險島（Math/F1/中一數學探險島.html）以新版本取代：新增列印證書（可填姓名及日期）及新的介面區塊。
 
+## 2026-11-12
+- 上架：數學 中一「代數式」— 認識同類項 · 互動小遊戲（Math/F1/認識同類項.html）。三關：找朋友、分類籃子、合併；只用 localStorage（最佳分數）。
+- 新增：資訊日 Demo 頁面（info-day.html，臨時）。內有 6 個數學小遊戲（認識同類項為本倉庫檔案；有向數、有理數與無理數、軌跡、判別式為 Canva 網站，複數為 Gemini 分享連結）、「AI 上堂課件」（連到本倉庫現有數學課件）及「Miss Tang 學數學」（Microsoft Copilot 助教連結）。此頁不在試算表內。
+- 修改：index.html 目錄頁頂部加入臨時按鈕「🎪 資訊日 Demo（臨時）」，在新分頁開啟 info-day.html。資訊日結束後可刪除該按鈕及 info-day.html。
+
 ## 2026-11-05
 - 上架：數學 中二「恆等式」— 2A 第3章 恆等式 模擬試卷 — 互動練習（Mock 2）（Math/F2/恆等式-模擬試卷2.html）。由 Grok 專案匯出（TanStack Start 專案，其實只是在 iframe 內顯示一個獨立的 HTML：`public/2a-ch3-identities.html`），倉庫只存放該 HTML，不放整個專案；頁面只用 localStorage，沒有後端。試算表原本指向 https://cinder-shale-plum-aurora.grok.me/，改為倉庫內路徑。
 

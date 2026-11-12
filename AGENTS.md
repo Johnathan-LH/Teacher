@@ -39,6 +39,7 @@ Google Sites 頁面
 Math/F1/ … Math/F6/   數學 中一至中六
 ICT/F1/  … ICT/F6/    ICT 中一至中六
 index.html            課件目錄頁（勿刪）
+info-day.html         資訊日 Demo 頁（臨時；由 index.html 的臨時按鈕開啟，不在試算表內，活動後可刪）
 AGENTS.md             本說明
 CLAUDE.md             指向本說明
 CHANGELOG.md          更新記錄

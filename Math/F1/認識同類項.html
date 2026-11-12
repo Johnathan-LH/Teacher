@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>認識同類項</title>
+<style>
+:root{--bg:#f3f8ff;--ink:#27335a;--muted:#6b7599;--card:#fff;--line:#e3eaf7;--sun:#ffd23f;--sky:#4cc9f0;--grape:#7b6cf6;--mint:#3ddc97;--pink:#ff7aa2;--orange:#ff9f43;--bad:#ff5a5f;
+--font:"Noto Sans HK","Noto Sans TC","PingFang HK","Microsoft JhengHei",sans-serif;--math:"Times New Roman",Times,serif}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;
+ background-image:radial-gradient(#d6e6fb 1.4px,transparent 1.4px);background-size:24px 24px;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:860px;margin:0 auto;padding:18px 16px 40px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.logo{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.logo i{font-style:normal;background:var(--grape);color:#fff;border-radius:12px;padding:2px 10px;font-family:var(--math)}
+.score{background:#fff;border-radius:99px;padding:6px 14px;font-weight:800;box-shadow:0 3px 0 var(--line)}
+.steps{display:flex;gap:8px;margin-bottom:16px}
+.step{flex:1;text-align:center;font-size:14px;font-weight:800;padding:7px 4px;border-radius:99px;background:#fff;color:var(--muted);box-shadow:0 3px 0 var(--line)}
+.step.on{background:var(--sun);color:var(--ink);box-shadow:0 3px 0 #e0b21c}
+.step.done{background:var(--mint);color:#fff;box-shadow:0 3px 0 #27b377}
+.card{background:var(--card);border-radius:28px;padding:22px;box-shadow:0 7px 0 var(--line)}
+h1{font-size:30px;font-weight:900;margin-bottom:10px}
+h2{font-size:22px;font-weight:900;margin-bottom:8px}
+p{line-height:1.7;font-size:17px;margin-bottom:10px}
+.m{font-family:var(--math);font-weight:700;font-size:1.15em}
+.btn{border:0;border-radius:99px;padding:12px 26px;font:800 18px var(--font);background:var(--grape);color:#fff;cursor:pointer;box-shadow:0 5px 0 #5a4cd0}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #5a4cd0}
+.btn.alt{background:var(--sun);color:var(--ink);box-shadow:0 5px 0 #e0b21c}
+.btn:disabled{opacity:.45;cursor:default}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.demo{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-family:var(--math);font-size:30px;font-weight:700;margin:12px 0;justify-content:center}
+.demo b{padding:4px 12px;border-radius:14px}
+.t-a{background:#d8f3ff}.t-b{background:#ffe3ec}.t-c{background:#fff2c2}
+.target{display:inline-block;font-family:var(--math);font-weight:700;font-size:40px;background:var(--sun);border-radius:20px;padding:4px 22px;margin:0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.chip{font-family:var(--math);font-weight:700;font-size:28px;min-width:72px;padding:10px 16px;border-radius:18px;background:#fff;
+ border:3px solid var(--ink);cursor:pointer;box-shadow:0 4px 0 var(--ink);color:var(--ink);transition:transform .1s}
+.chip:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.chip.sel{background:var(--sky);transform:translateY(-3px)}
+.chip.ok{background:var(--mint);border-color:#1c9a63;box-shadow:0 4px 0 #1c9a63;color:#fff}
+.chip.no{background:#ffd9d9;border-color:var(--bad);box-shadow:0 4px 0 var(--bad)}
+.chip.miss{background:#fff2c2;border-style:dashed}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.baskets{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:14px}
+.basket{border:3px dashed var(--grape);border-radius:22px;padding:10px;min-height:130px;background:#f8f6ff;cursor:pointer;text-align:center}
+.basket h3{font-family:var(--math);font-size:24px;margin-bottom:6px}
+.basket small{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+.basket .chip{font-size:22px;min-width:0;padding:4px 10px;margin:3px;cursor:default;box-shadow:0 3px 0 #1c9a63}
+.basket.hot{background:#ebe7ff;border-style:solid}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:14px}
+.opts .chip{font-size:24px;text-align:center}
+.q{font-family:var(--math);font-size:34px;font-weight:700;text-align:center;padding:14px;background:#f0f7ff;border-radius:20px;margin:10px 0}
+.msg{min-height:30px;font-weight:800;font-size:18px;margin-top:10px}
+.msg.good{color:#1c9a63}.msg.bad{color:var(--bad)}
+.tip{background:#fff8dc;border-radius:16px;padding:10px 14px;font-size:15.5px;line-height:1.6;margin-top:10px}
+.bar{height:12px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:var(--pink);border-radius:99px;transition:width .3s}
+.stars{font-size:46px;letter-spacing:6px;text-align:center;margin:8px 0}
+@media (max-width:520px){h1{font-size:26px}.target{font-size:34px}.chip{font-size:24px;min-width:62px}.steps .step{font-size:12.5px}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="logo"><i>3x</i>認識同類項</div><div class="score" id="score">⭐ 0</div></div>
+  <div class="steps" id="steps"></div>
+  <div class="card" id="stage"></div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const MINUS = "−";
+const vp = t => t.replace(/^[−-]?\d*/, "");               // 字母部分；常數項為 ""
+const label = v => v === "" ? "常數項" : v;
+
+/* ===== 題目資料 ===== */
+const L1 = [
+  { target:"3x",  chips:["5x","−2x","y","x²","4","x","7y","2xy"] },
+  { target:"4y",  chips:["−y","2x","6y","y²","3","9y","xy","−5x"] },
+  { target:"5",   chips:["7","−3","x","2x","10","y","x²","8y"] },
+  { target:"−2x²",chips:["x²","4x²","x","3x","−x²","6","2xy","5x²"] },
+  { target:"3xy", chips:["xy","−4xy","x","y","2xy","5x","xy²","−xy"] }
+];
+const L2 = [
+  { baskets:["x","y","x²","常數項"], chips:["4x","−2y","3x²","5","x","6y","−x²","−7"] },
+  { baskets:["x","xy","常數項"],     chips:["2xy","−3x","8","−xy","5x","−4","x","3xy"] }
+];
+const L3 = [
+  { q:"3x + 5x",              a:"8x",        w:["8x²","15x","2x"] },
+  { q:"7y − 3y",              a:"4y",        w:["4","10y","4y²"] },
+  { q:"2x + 3y + 4x",         a:"6x + 3y",   w:["9xy","9x","5x + 4y"] },
+  { q:"4x + 3 − x + 2",       a:"3x + 5",    w:["8x","3x + 1","5x + 5"] },
+  { q:"3x² + 2x − x²",        a:"2x² + 2x",  w:["4x² + 2x","2x³","2x² + x"] },
+  { q:"5xy − 2y + xy + 4y",   a:"6xy + 2y",  w:["6xy + 6y","4xy + 2y","8xy"] }
+];
+const NAMES = ["① 找朋友","② 分類籃子","③ 合併"];
+
+/* ===== 狀態 ===== */
+let S = { screen:"intro", pts:0, r:0, sel:null, locked:false, mistakes:0 };
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const best = () => { try { return +localStorage.getItem("m1-like-terms-best") || 0; } catch(e){ return 0; } };
+const saveBest = n => { try { if (n > best()) localStorage.setItem("m1-like-terms-best", n); } catch(e){} };
+
+function setSteps(i){
+  $("#steps").innerHTML = NAMES.map((n,k)=>`<div class="step ${k<i?'done':k===i?'on':''}">${n}</div>`).join("");
+}
+function setScore(){ $("#score").textContent = "⭐ " + S.pts; }
+function msg(t, cls){ const m=$("#msg"); if(m){ m.textContent=t; m.className="msg "+(cls||""); } }
+
+/* ===== 畫面 ===== */
+function intro(){
+  S = { screen:"intro", pts:0, r:0, sel:null, locked:false, mistakes:0 }; setScore(); setSteps(-1);
+  $("#stage").innerHTML = `
+    <h1>認識同類項 🧩</h1>
+    <p>看看這條式：</p>
+    <div class="demo"><b class="t-a">3x</b>+<b class="t-b">2y</b>+<b class="t-a">5x</b>+<b class="t-c">4</b></div>
+    <p><b>同類項</b>就是「<b>字母部分完全相同</b>」的項。<span class="m">3x</span> 和 <span class="m">5x</span> 都是 <span class="m">x</span>，所以是同類項，可以合併成 <span class="m">8x</span>。</p>
+    <p>沒有字母的數字叫<b>常數項</b>，它們之間也是同類項。<span class="m">x</span> 和 <span class="m">x²</span> 字母部分不同，<b>不是</b>同類項。</p>
+    <div class="row"><button class="btn" data-go="l1">開始闖關 ▶</button>${best()?`<span class="score">🏆 最佳 ${best()} 分</span>`:""}</div>`;
+}
+
+function level1(){
+  const d = L1[S.r]; S.screen="l1"; S.sel=new Set(); S.locked=false; setSteps(0);
+  $("#stage").innerHTML = `
+    <h2>① 找朋友（${S.r+1}/${L1.length}）</h2>
+    <div class="bar"><i style="width:${S.r/L1.length*100}%"></i></div>
+    <p>找出所有和 <span class="target">${d.target}</span> 是<b>同類項</b>的項，按一下選取，然後按「檢查」。</p>
+    <div class="chips" id="chips">${shuffle(d.chips).map(c=>`<button class="chip" data-c="${c}">${c}</button>`).join("")}</div>
+    <div class="row"><button class="btn" data-go="check1">檢查</button></div>
+    <div class="msg" id="msg"></div>`;
+}
+function check1(){
+  if (S.locked) return;
+  const d = L1[S.r], tv = vp(d.target); let wrong = 0, miss = 0, right = 0;
+  document.querySelectorAll("#chips .chip").forEach(b=>{
+    const like = vp(b.dataset.c) === tv, on = S.sel.has(b.dataset.c);
+    b.classList.remove("sel");
+    if (like && on){ b.classList.add("ok"); right++; }
+    else if (!like && on){ b.classList.add("no"); wrong++; }
+    else if (like && !on){ b.classList.add("miss"); miss++; }
+  });
+  S.locked = true;
+  if (!wrong && !miss){
+    S.pts += 10; setScore(); msg("全對！字母部分都是「"+label(tv)+"」 🎉","good");
+  } else {
+    S.pts += Math.max(0, right*2 - wrong*2); setScore();
+    msg(wrong ? "有項不是同類項（紅色）。" : "還有同類項漏了（黃色虛線）。","bad");
+    $("#msg").insertAdjacentHTML("afterend",`<div class="tip">想法：同類項要看<b>字母部分</b>——<span class="m">${label(tv)}</span>。係數（前面的數字）不同也沒關係。</div>`);
+  }
+  $("#stage .row").innerHTML = `<button class="btn alt" data-go="next1">${S.r+1<L1.length?"下一題 ▶":"進入第二關 ▶"}</button>`;
+}
+
+function level2(){
+  const d = L2[S.r]; S.screen="l2"; S.sel=null; S.mistakes=0; setSteps(1);
+  $("#stage").innerHTML = `
+    <h2>② 分類籃子（${S.r+1}/${L2.length}）</h2>
+    <p>先按一個項，再按它屬於的籃子。同類項放同一個籃子。</p>
+    <div class="chips" id="tray">${shuffle(d.chips).map(c=>`<button class="chip" data-c="${c}">${c}</button>`).join("")}</div>
+    <div class="baskets">${d.baskets.map(b=>`<div class="basket" data-b="${b}" role="button" tabindex="0"><h3>${b==="常數項"?"常數項":"含 "+b}</h3><small>字母部分：${b==="常數項"?"沒有":b}</small><div class="in"></div></div>`).join("")}</div>
+    <div class="msg" id="msg">先選一個項 👆</div>`;
+}
+function dropTo(bk){
+  if (!S.sel) { msg("先選一個項，再按籃子。","bad"); return; }
+  const c = S.sel.dataset.c, want = vp(c) === "" ? "常數項" : vp(c);
+  if (bk.dataset.b === want){
+    S.sel.classList.remove("sel"); S.sel.classList.add("ok"); S.sel.disabled = true;
+    bk.querySelector(".in").appendChild(S.sel); S.sel = null; msg("放對了 ✔","good");
+    if (!document.querySelector("#tray .chip")){
+      S.pts += Math.max(4, 14 - S.mistakes*3); setScore();
+      msg(S.mistakes ? "完成！錯了 "+S.mistakes+" 次。" : "完美分類！","good");
+      $("#msg").insertAdjacentHTML("afterend",`<div class="row"><button class="btn alt" data-go="next2">${S.r+1<L2.length?"下一題 ▶":"進入第三關 ▶"}</button></div>`);
+    }
+  } else {
+    S.mistakes++; bk.classList.add("shake"); setTimeout(()=>bk.classList.remove("shake"),400);
+    msg("不對喔：「"+c+"」的字母部分是「"+label(vp(c))+"」。","bad");
+  }
+}
+
+function level3(){
+  const d = L3[S.r]; S.screen="l3"; S.locked=false; setSteps(2);
+  $("#stage").innerHTML = `
+    <h2>③ 合併（${S.r+1}/${L3.length}）</h2>
+    <div class="bar"><i style="width:${S.r/L3.length*100}%"></i></div>
+    <p>把同類項合併，化簡下面的式：</p>
+    <div class="q">${d.q}</div>
+    <div class="opts">${shuffle([d.a,...d.w]).map(o=>`<button class="chip" data-o="${o}">${o}</button>`).join("")}</div>
+    <div class="msg" id="msg"></div>`;
+}
+function pick3(btn){
+  if (S.locked) return; const d = L3[S.r], ok = btn.dataset.o === d.a;
+  if (ok){
+    S.locked = true; btn.classList.add("ok"); S.pts += S.mistakes ? 5 : 10; setScore(); msg("答對了！","good");
+    $("#msg").insertAdjacentHTML("afterend",`<div class="tip">同類項的<b>係數相加減</b>，字母部分不變；不同類的項不能合併。</div><div class="row"><button class="btn alt" data-go="next3">${S.r+1<L3.length?"下一題 ▶":"看成績 ▶"}</button></div>`);
+    S.mistakes = 0;
+  } else {
+    S.mistakes = 1; btn.classList.add("no"); btn.disabled = true; msg("再想想：先找出同類項，再把係數相加減。","bad");
+  }
+}
+
+function finish(){
+  S.screen="end"; setSteps(3); saveBest(S.pts);
+  const max = L1.length*10 + L2.length*14 + L3.length*10, r = S.pts/max;
+  const n = r>.85?3:r>.6?2:1;
+  $("#stage").innerHTML = `
+    <h1>闖關完成！🎉</h1>
+    <div class="stars">${"⭐".repeat(n)}${"☆".repeat(3-n)}</div>
+    <p style="text-align:center">你得到 <b>${S.pts}</b> 分（滿分約 ${max}）。${best()===S.pts?"這是你的最佳成績！":"最佳成績："+best()+" 分。"}</p>
+    <p>記住：<b>字母部分相同</b>才是同類項，同類項合併時<b>係數相加減</b>。</p>
+    <div class="row" style="justify-content:center"><button class="btn" data-go="intro">再玩一次</button></div>`;
+}
+
+/* ===== 事件 ===== */
+document.addEventListener("click", e=>{
+  const g = e.target.closest("[data-go]");
+  if (g){
+    const a = g.dataset.go;
+    if (a==="l1"){ S.r=0; level1(); }
+    else if (a==="check1") check1();
+    else if (a==="next1"){ S.r++; S.r<L1.length ? level1() : (S.r=0, level2()); }
+    else if (a==="next2"){ S.r++; S.r<L2.length ? level2() : (S.r=0, S.mistakes=0, level3()); }
+    else if (a==="next3"){ S.r++; S.r<L3.length ? level3() : finish(); }
+    else if (a==="intro") intro();
+    return;
+  }
+  const c = e.target.closest(".chip");
+  if (c && S.screen==="l1" && !S.locked){
+    const k = c.dataset.c; S.sel.has(k) ? S.sel.delete(k) : S.sel.add(k); c.classList.toggle("sel"); return;
+  }
+  if (c && S.screen==="l2" && c.closest("#tray")){
+    if (S.sel) S.sel.classList.remove("sel"); S.sel = c; c.classList.add("sel"); msg("再按它屬於的籃子 👇",""); return;
+  }
+  if (c && S.screen==="l3" && c.dataset.o){ pick3(c); return; }
+  const b = e.target.closest(".basket");
+  if (b && S.screen==="l2") dropTo(b);
+});
+document.addEventListener("keydown", e=>{
+  if ((e.key==="Enter"||e.key===" ") && e.target.classList && e.target.classList.contains("basket")){ e.preventDefault(); dropTo(e.target); }
+});
+intro();
+</script>
+</body>
+</html>

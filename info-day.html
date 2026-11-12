@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>資訊日 Demo · 數學 × AI</title>
+<style>
+  :root{
+    --paper:#FFF6E5; --ink:#1B1B1F; --tomato:#FF5A3C; --sun:#FFC83D;
+    --teal:#2BB3A3; --sky:#7FB2FF; --lilac:#C9B6FF; --white:#fff;
+    --r:22px; --bw:3px; --shadow:6px;
+    --font:"Noto Sans HK","Noto Sans TC","PingFang HK","Microsoft JhengHei",sans-serif;
+    --math:"Times New Roman",Times,serif;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{min-height:100%}
+  body{font-family:var(--font);background:var(--paper);color:var(--ink);
+    background-image:radial-gradient(#1b1b1f22 1.2px,transparent 1.2px);background-size:22px 22px;
+    -webkit-tap-highlight-color:transparent}
+  .page{min-height:100vh;padding:28px 40px 36px;display:grid;grid-template-rows:auto auto auto;gap:22px;max-width:1680px;margin:0 auto}
+
+  /* header */
+  header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:14px;font-weight:800;font-size:18px}
+  .badge{background:var(--ink);color:var(--sun);padding:6px 14px;border-radius:99px;font-size:15px;letter-spacing:.08em;white-space:nowrap}
+  .exit{border:var(--bw) solid var(--ink);background:var(--white);border-radius:99px;padding:8px 18px;font-weight:700;font-size:15px;
+    color:var(--ink);text-decoration:none;box-shadow:3px 3px 0 var(--ink);white-space:nowrap;transition:transform .12s,box-shadow .12s}
+  .exit:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .exit:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+
+  /* grid */
+  .grid{display:grid;grid-template-columns:1.35fr 1fr 1fr 1fr;grid-template-rows:repeat(3,minmax(190px,1fr));gap:18px}
+  .tile{position:relative;border:var(--bw) solid var(--ink);border-radius:var(--r);padding:20px 22px;
+    box-shadow:var(--shadow) var(--shadow) 0 var(--ink);text-decoration:none;color:var(--ink);overflow:hidden;
+    display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    transition:transform .14s ease, box-shadow .14s ease}
+  a.tile:hover{transform:translate(-3px,-3px);box-shadow:calc(var(--shadow) + 3px) calc(var(--shadow) + 3px) 0 var(--ink)}
+  a.tile:active{transform:translate(var(--shadow),var(--shadow));box-shadow:0 0 0 var(--ink);transition-duration:.06s}
+  a.tile:focus-visible,.exit:focus-visible{outline:4px solid var(--tomato);outline-offset:4px}
+
+  .hero{grid-row:1 / span 2;background:var(--sun);padding:34px}
+  .hero h1{font-size:clamp(56px,5.4vw,84px);line-height:1.04;font-weight:900;letter-spacing:-.01em}
+  .hero h1 em{font-style:normal;background:var(--ink);color:var(--paper);padding:0 .14em;border-radius:12px;display:inline-block;transform-origin:50% 60%}
+  .hero p{font-size:21px;line-height:1.6;font-weight:500;max-width:18em;margin-top:18px}
+  .count{display:flex;gap:10px;flex-wrap:wrap}
+  .chip{border:2px solid var(--ink);border-radius:99px;padding:5px 13px;font-size:15px;font-weight:700;background:var(--white)}
+
+  .lv{align-self:flex-start;font-size:14px;font-weight:800;letter-spacing:.06em;border:2px solid var(--ink);border-radius:99px;padding:3px 11px;background:var(--white)}
+  .glyph{font-family:var(--math);font-size:64px;line-height:1;font-weight:700;position:absolute;right:18px;top:12px;transition:transform .25s ease}
+  a.tile:hover .glyph,a.tile:hover .locus{transform:rotate(-6deg) scale(1.08)}
+  .locus{position:absolute;right:14px;top:10px;transition:transform .25s ease}
+  .locus .mover{transform-origin:39px 39px;animation:orbit 6s linear infinite}
+  @keyframes orbit{to{transform:rotate(360deg)}}
+  .name{font-size:28px;font-weight:900;line-height:1.2}
+  .sub{font-size:16px;font-weight:500;line-height:1.5;margin-top:4px}
+  .m{font-family:var(--math);font-size:1.12em}
+
+  .t1{background:var(--white)} .t2{background:var(--sky)} .t3{background:var(--white)}
+  .t4{background:var(--teal)} .t5{background:var(--lilac)} .t6{background:var(--tomato)}
+
+  .ai{grid-column:span 2;background:var(--ink);color:var(--paper);box-shadow:var(--shadow) var(--shadow) 0 var(--tomato);
+    flex-direction:row;align-items:flex-end;justify-content:space-between}
+  a.ai:hover{box-shadow:calc(var(--shadow) + 3px) calc(var(--shadow) + 3px) 0 var(--tomato)}
+  a.ai:active{box-shadow:0 0 0 var(--tomato)}
+  .ai .lv{position:absolute;left:22px;top:20px;background:var(--sun);color:var(--ink);border-color:var(--sun)}
+  .ai .name{font-size:32px;color:var(--paper)}
+  .ai .sub{font-size:17px;color:#E9E1D0}
+  .go{flex:none;display:inline-flex;align-items:center;gap:10px;font-weight:800;font-size:17px;
+    background:var(--sun);color:var(--ink);border-radius:99px;padding:10px 18px;transition:gap .15s}
+  a.ai:hover .go{gap:16px}
+  .ai-art{position:absolute;right:24px;top:18px;font-family:var(--math);font-size:22px;color:#FFF6E570;text-align:right;line-height:1.7;pointer-events:none}
+
+
+  /* courseware list */
+  .lib{padding:8px 0 0}
+  .lib h2{font-size:32px;font-weight:900;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .lib h2 .lv{font-size:14px}
+  .lib>p{font-size:17px;line-height:1.6;margin:8px 0 18px;font-weight:500}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+  .card{display:flex;flex-direction:column;gap:6px;border:var(--bw) solid var(--ink);border-radius:var(--r);padding:16px 18px;background:var(--white);
+    text-decoration:none;color:var(--ink);box-shadow:5px 5px 0 var(--ink);transition:transform .14s,box-shadow .14s}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+  .card:focus-visible{outline:4px solid var(--tomato);outline-offset:4px}
+  .card .lv{font-size:13px}
+  .card b{font-size:19px;font-weight:900;line-height:1.3}
+  .card span.d{font-size:14.5px;line-height:1.5;color:#44444c}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  /* entrance */
+  @media (prefers-reduced-motion:no-preference){
+    .tile{animation:pop .55s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i,0) * 70ms + 80ms)}
+    .hero h1 em{animation:wiggle .7s ease .9s both}
+    header{animation:drop .45s ease both}
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(26px) scale(.94)}to{opacity:1;transform:none}}
+  @keyframes wiggle{0%{transform:rotate(0)}30%{transform:rotate(-7deg) scale(1.08)}60%{transform:rotate(5deg)}100%{transform:none}}
+  @keyframes drop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.locus .mover{animation:none}}
+
+  /* tablet */
+  @media (max-width:1100px){
+    .page{padding:24px 28px 32px}
+    .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:minmax(180px,auto)}
+    .hero{grid-row:auto;grid-column:span 2;min-height:300px}
+    .hero p{max-width:none}
+    .ai{grid-column:span 2}
+  }
+  /* phone */
+  @media (max-width:640px){
+    :root{--shadow:5px}
+    .page{padding:16px 16px 28px;gap:16px}
+    .brand{font-size:0;gap:0}
+    .brand .badge{font-size:14px}
+    .grid{grid-template-columns:1fr;gap:16px;grid-auto-rows:auto}
+    .hero,.ai{grid-column:auto}
+    .hero{padding:26px 24px;min-height:0;gap:28px}
+    .hero h1{font-size:52px}
+    .hero p{font-size:18px}
+    .tile{min-height:150px}
+    .glyph{font-size:52px}
+    .name{font-size:25px}
+    .ai{flex-direction:column;align-items:flex-start;min-height:190px;padding-top:62px}
+    .ai .name{font-size:27px}
+    .ai-art{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="brand"><span class="badge">資訊日 DEMO</span>瑪利諾中學 · 數學科</div>
+    <a class="exit" href="index.html">✕ 返回課件庫</a>
+  </header>
+
+  <main class="grid">
+    <section class="tile hero" style="--i:0">
+      <div class="count"><span class="chip">6 個數學小遊戲</span><span class="chip">2 個 AI 體驗</span></div>
+      <div>
+        <h1>一起來<br><em>玩</em>數學！</h1>
+        <p>揀一格，動手玩！<br>由中一同類項玩到中四複數。</p>
+      </div>
+    </section>
+
+    <a class="tile t1" style="--i:1" href="Math/F1/認識同類項.html"><span class="lv">中一</span><span class="glyph">3x+5x</span>
+      <div><div class="name">認識同類項</div><div class="sub">哪些項可以合併？</div></div></a>
+    <a class="tile t2" style="--i:2" href="https://sqaureroot.my.canva.site/directed-number" target="_blank" rel="noopener"><span class="lv">中一</span><span class="glyph">−3</span>
+      <div><div class="name">有向數</div><div class="sub">數軸上的正與負</div></div></a>
+    <a class="tile t3" style="--i:3" href="https://sqaureroot.my.canva.site/rationalvairrational" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph">√2</span>
+      <div><div class="name">有理數與無理數</div><div class="sub"><span class="m">√2</span> 能寫成分數嗎？</div></div></a>
+
+    <a class="tile t4" style="--i:4" href="https://sqaureroot.my.canva.site/locus" target="_blank" rel="noopener"><span class="lv">中三</span>
+      <svg class="locus" width="78" height="78" viewBox="0 0 78 78" fill="none" stroke="#1B1B1F" stroke-width="3" aria-hidden="true">
+        <circle cx="39" cy="39" r="28" stroke-dasharray="6 6"/><circle cx="39" cy="39" r="4" fill="#1B1B1F"/>
+        <g class="mover"><circle cx="67" cy="39" r="6" fill="#FFF6E5"/></g></svg>
+      <div><div class="name">軌跡</div><div class="sub">動點會走出甚麼圖形？</div></div></a>
+    <a class="tile t5" style="--i:5" href="https://sqaureroot.my.canva.site/discriminant" target="_blank" rel="noopener"><span class="lv">中四</span><span class="glyph">Δ</span>
+      <div><div class="name">判別式</div><div class="sub"><span class="m">Δ</span> 決定根有幾個</div></div></a>
+    <a class="tile t6" style="--i:6" href="https://gemini.google.com/share/f4135d1f6b25" target="_blank" rel="noopener"><span class="lv">中四</span><span class="glyph"><i>i</i>²</span>
+      <div><div class="name">複數</div><div class="sub"><span class="m"><i>i</i>² = −1</span> 的世界</div></div></a>
+
+    <a class="tile ai" style="--i:7" href="#ai-courseware"><span class="lv">AI 體驗</span>
+      <span class="ai-art" aria-hidden="true">prompt → 課件<br>3x + 5x = 8x</span>
+      <div><div class="name">AI 上堂課件</div><div class="sub">看看老師怎樣用 AI 做出這些互動課件</div></div>
+      <span class="go">去看看 →</span></a>
+    <a class="tile ai" style="--i:8" href="https://m365.cloud.microsoft/chat/?titleId=T_21d2408c-3990-2e5d-26fc-314be9395297&source=embedded-builder" target="_blank" rel="noopener"><span class="lv">AI 助教</span>
+      <span class="ai-art" aria-hidden="true">「Miss Tang，<br>點樣因式分解？」</span>
+      <div><div class="name">Miss Tang 學數學</div><div class="sub">問 AI 助教一條數學題</div></div>
+      <span class="go">開始對話 →</span></a>
+  </main>
+  <section class="lib" id="ai-courseware">
+    <h2>AI 上堂課件 <span class="lv">老師用 AI 製作</span></h2>
+    <p>這些互動課件都是老師用 AI 協助製作，已經在課堂使用。揀一個打開看看！</p>
+    <div class="cards">
+      <a class="card" href="Math/F1/認識同類項.html" target="_blank" rel="noopener"><span class="lv">中一</span><b>認識同類項</b><span class="d">揀同類項、分類、合併，三關小遊戲。</span></a>
+      <a class="card" href="Math/F1/中一數學探險島.html" target="_blank" rel="noopener"><span class="lv">中一</span><b>中一數學探險島</b><span class="d">升中體驗活動用的闖關遊戲，完成可印證書。</span></a>
+      <a class="card" href="Math/F2/恆等式-完整課件.html" target="_blank" rel="noopener"><span class="lv">中二</span><b>呂 Sir 的數學冒險｜恆等式</b><span class="d">闖關形式：天秤、密碼鎖、方塊工場、切割實驗室。</span></a>
+      <a class="card" href="Math/F2/恆等式.html" target="_blank" rel="noopener"><span class="lv">中二</span><b>恆等式 · 互動課堂</b><span class="d">六個環節，由引入、證明到總結，附挑戰區。</span></a>
+      <a class="card" href="Math/F2/恆等式-模擬試卷2.html" target="_blank" rel="noopener"><span class="lv">中二</span><b>恆等式 模擬試卷 2</b><span class="d">第 3 章模擬試卷的互動練習。</span></a>
+      <a class="card" href="Math/F2/三角形及多邊形的角.html" target="_blank" rel="noopener"><span class="lv">中二</span><b>與三角形及多邊形相關的角</b><span class="d">相交線、平行線、三角形及多邊形的角，互動試答。</span></a>
+      <a class="card" href="Math/F2/第2章練習卷-逐步練習.html" target="_blank" rel="noopener"><span class="lv">中二</span><b>第2章練習卷 · 逐步練習</b><span class="d">卡住按提示，逐步填數值和理由。</span></a>
+    </div>
+  </section>
+</div>
+</body>
+</html>
