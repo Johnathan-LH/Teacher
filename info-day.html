@@ -71,6 +71,16 @@
   .ai-art{position:absolute;right:24px;top:18px;font-family:var(--math);font-size:22px;color:#FFF6E570;text-align:right;line-height:1.7;pointer-events:none}
 
 
+  .grid{grid-template-rows:repeat(2,minmax(190px,1fr))}
+  .feat{grid-column:span 2;background:var(--tomato);flex-direction:row;align-items:flex-end;justify-content:space-between}
+  .feat .lv{position:absolute;left:22px;top:20px;background:var(--sun)}
+  .feat .glyph{font-size:96px;right:24px;top:14px}
+  .feat .name{font-size:36px}.feat .sub{font-size:18px}
+  .feat .go{flex:none;align-self:flex-end;position:relative;z-index:1;display:inline-flex;font-weight:800;font-size:17px;border-radius:99px;padding:10px 18px;background:var(--ink);color:var(--sun)}
+  .grid.g2{grid-template-columns:repeat(4,1fr);grid-template-rows:none;grid-auto-rows:minmax(170px,auto)}
+  .grid.g3{grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:minmax(190px,auto)}
+  .grid.g3 .ai{grid-column:auto}
+  .sect h2{font-size:28px;font-weight:900;margin-top:6px}
   /* courseware list */
   .lib{padding:8px 0 0}
   .lib h2{font-size:32px;font-weight:900;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -104,7 +114,9 @@
     .grid{grid-template-columns:repeat(2,1fr);grid-template-rows:none;grid-auto-rows:minmax(180px,auto)}
     .hero{grid-row:auto;grid-column:span 2;min-height:300px}
     .hero p{max-width:none}
-    .ai{grid-column:span 2}
+    .ai{grid-column:auto}
+    .grid,.grid.g2{grid-template-columns:repeat(2,1fr);grid-template-rows:none}
+    .grid.g3{grid-template-columns:1fr}
   }
   /* phone */
   @media (max-width:640px){
@@ -113,7 +125,11 @@
     .brand{font-size:0;gap:0}
     .brand .badge{font-size:14px}
     .grid{grid-template-columns:1fr;gap:16px;grid-auto-rows:auto}
-    .hero,.ai{grid-column:auto}
+    .hero,.ai,.feat{grid-column:auto}
+    .grid.g2,.grid.g3{grid-template-columns:1fr}
+    .feat{flex-direction:column;align-items:flex-start;min-height:200px;padding-top:62px}
+    .feat .glyph{font-size:40px;top:14px;right:16px}
+    .feat .name{font-size:28px}
     .hero{padding:26px 24px;min-height:0;gap:28px}
     .hero h1{font-size:52px}
     .hero p{font-size:18px}
@@ -135,39 +151,58 @@
 
   <main class="grid">
     <section class="tile hero" style="--i:0">
-      <div class="count"><span class="chip">6 個數學小遊戲</span><span class="chip">2 個 AI 體驗</span></div>
+      <div class="count"><span class="chip">8 個數學小遊戲</span><span class="chip">2 個 AI 體驗</span></div>
       <div>
         <h1>一起來<br><em>玩</em>數學！</h1>
         <p>揀一格，動手玩！<br>由中一同類項玩到中四複數。</p>
       </div>
     </section>
-
-    <a class="tile t1" style="--i:1" href="Math/F1/認識同類項.html"><span class="lv">中一</span><span class="glyph">3x+5x</span>
+    <a class="tile feat" style="--i:1" href="Math/F1/中一數學探險島.html" target="_blank" rel="noopener"><span class="lv">中一 · 主打</span><span class="glyph">🏝️</span>
+      <div><div class="name">呂 Sir 的數學探險島</div><div class="sub">跟著呂 Sir 闖關探險，完成可以列印證書！</div></div><span class="go">開始冒險 →</span></a>
+    <a class="tile t4" style="--i:2" href="https://meadow-cabin-apple-brush.grok.me/" target="_blank" rel="noopener"><span class="lv">中三</span>
+      <svg class="locus" width="84" height="78" viewBox="0 0 84 78" fill="none" stroke="#1B1B1F" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M30 14 L8 58 M54 14 L76 58"/><path d="M8 58 A34 9 0 0 0 76 58" fill="#FFF6E5"/><ellipse cx="42" cy="58" rx="34" ry="9" fill="#FFF6E5"/><ellipse cx="42" cy="14" rx="12" ry="4" fill="#FFF6E5"/></svg>
+      <div><div class="name">平截頭體</div><div class="sub">切走錐體的頂部，體積怎樣算？</div></div></a>
+    <a class="tile t3" style="--i:3" href="Math/F2/恆等式-完整課件.html" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph" style="font-size:38px;top:20px">(a+b)²</span>
+      <div><div class="name">呂 Sir 數學冒險</div><div class="sub">恆等式闖關：天秤、密碼鎖、方塊工場</div></div></a>
+    <a class="tile t2" style="--i:4" href="Math/F1/認識同類項.html"><span class="lv">中一</span><span class="glyph">3x+5x</span>
       <div><div class="name">認識同類項</div><div class="sub">哪些項可以合併？</div></div></a>
-    <a class="tile t2" style="--i:2" href="https://sqaureroot.my.canva.site/directed-number" target="_blank" rel="noopener"><span class="lv">中一</span><span class="glyph">−3</span>
-      <div><div class="name">有向數</div><div class="sub">數軸上的正與負</div></div></a>
-    <a class="tile t3" style="--i:3" href="https://sqaureroot.my.canva.site/rationalvairrational" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph">√2</span>
-      <div><div class="name">有理數與無理數</div><div class="sub"><span class="m">√2</span> 能寫成分數嗎？</div></div></a>
+    <a class="tile t5" style="--i:5" href="Math/F2/三角形及多邊形的角.html" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph">△</span>
+      <div><div class="name">三角形的角</div><div class="sub">內角和、外角，一步步試答</div></div></a>
+  </main>
 
-    <a class="tile t4" style="--i:4" href="https://sqaureroot.my.canva.site/locus" target="_blank" rel="noopener"><span class="lv">中三</span>
+  <div class="sect"><h2>更多數學小遊戲</h2></div>
+  <div class="grid g2">
+    <a class="tile t2" style="--i:1" href="https://sqaureroot.my.canva.site/directed-number" target="_blank" rel="noopener"><span class="lv">中一</span><span class="glyph">−3</span>
+      <div><div class="name">有向數</div><div class="sub">數軸上的正與負</div></div></a>
+    <a class="tile t3" style="--i:2" href="https://sqaureroot.my.canva.site/rationalvairrational" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph">√2</span>
+      <div><div class="name">有理數與無理數</div><div class="sub"><span class="m">√2</span> 能寫成分數嗎？</div></div></a>
+    <a class="tile t4" style="--i:3" href="https://sqaureroot.my.canva.site/locus" target="_blank" rel="noopener"><span class="lv">中三</span>
       <svg class="locus" width="78" height="78" viewBox="0 0 78 78" fill="none" stroke="#1B1B1F" stroke-width="3" aria-hidden="true">
         <circle cx="39" cy="39" r="28" stroke-dasharray="6 6"/><circle cx="39" cy="39" r="4" fill="#1B1B1F"/>
         <g class="mover"><circle cx="67" cy="39" r="6" fill="#FFF6E5"/></g></svg>
       <div><div class="name">軌跡</div><div class="sub">動點會走出甚麼圖形？</div></div></a>
-    <a class="tile t5" style="--i:5" href="https://sqaureroot.my.canva.site/discriminant" target="_blank" rel="noopener"><span class="lv">中四</span><span class="glyph">Δ</span>
+    <a class="tile t5" style="--i:4" href="https://sqaureroot.my.canva.site/discriminant" target="_blank" rel="noopener"><span class="lv">中四</span><span class="glyph">Δ</span>
       <div><div class="name">判別式</div><div class="sub"><span class="m">Δ</span> 決定根有幾個</div></div></a>
-    <a class="tile t6" style="--i:6" href="https://gemini.google.com/share/f4135d1f6b25" target="_blank" rel="noopener"><span class="lv">中四</span><span class="glyph"><i>i</i>²</span>
+    <a class="tile t6" style="--i:5" href="https://gemini.google.com/share/f4135d1f6b25" target="_blank" rel="noopener"><span class="lv">中四</span><span class="glyph"><i>i</i>²</span>
       <div><div class="name">複數</div><div class="sub"><span class="m"><i>i</i>² = −1</span> 的世界</div></div></a>
+    <a class="tile t1" style="--i:6" href="Math/F2/恆等式.html" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph">≡</span>
+      <div><div class="name">恆等式互動課堂</div><div class="sub">六個環節，由引入到證明</div></div></a>
+    <a class="tile t2" style="--i:7" href="Math/F2/恆等式-模擬試卷2.html" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph" style="font-size:44px">Mock</span>
+      <div><div class="name">恆等式模擬試卷 2</div><div class="sub">第 3 章模擬試卷互動練習</div></div></a>
+    <a class="tile t3" style="--i:8" href="Math/F2/第2章練習卷-逐步練習.html" target="_blank" rel="noopener"><span class="lv">中二</span><span class="glyph" style="font-size:52px">20</span>
+      <div><div class="name">第2章練習卷</div><div class="sub">逐步練習，卡住有提示</div></div></a>
+  </div>
 
-    <a class="tile ai" style="--i:7" href="#ai-courseware"><span class="lv">AI 體驗</span>
+  <div class="grid g3">
+    <a class="tile ai" style="--i:1" href="#ai-courseware"><span class="lv">AI 體驗</span>
       <span class="ai-art" aria-hidden="true">prompt → 課件<br>3x + 5x = 8x</span>
       <div><div class="name">AI 上堂課件</div><div class="sub">看看老師怎樣用 AI 做出這些互動課件</div></div>
       <span class="go">去看看 →</span></a>
-    <a class="tile ai" style="--i:8" href="https://m365.cloud.microsoft/chat/?titleId=T_21d2408c-3990-2e5d-26fc-314be9395297&source=embedded-builder" target="_blank" rel="noopener"><span class="lv">AI 助教</span>
+    <a class="tile ai" style="--i:2" href="https://m365.cloud.microsoft/chat/?titleId=T_21d2408c-3990-2e5d-26fc-314be9395297&source=embedded-builder" target="_blank" rel="noopener"><span class="lv">AI 助教</span>
       <span class="ai-art" aria-hidden="true">「Miss Tang，<br>點樣因式分解？」</span>
       <div><div class="name">Miss Tang 學數學</div><div class="sub">問 AI 助教一條數學題</div></div>
       <span class="go">開始對話 →</span></a>
-  </main>
+  </div>
   <section class="lib" id="ai-courseware">
     <h2>AI 上堂課件 <span class="lv">老師用 AI 製作</span></h2>
     <p>這些互動課件都是老師用 AI 協助製作，已經在課堂使用。揀一個打開看看！</p>

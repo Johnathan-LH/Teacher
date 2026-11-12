@@ -9,6 +9,7 @@
 ## 2026-11-12
 - 上架：數學 中一「代數式」— 認識同類項 · 互動小遊戲（Math/F1/認識同類項.html）。三關：找朋友、分類籃子、合併；只用 localStorage（最佳分數）。
 - 新增：資訊日 Demo 頁面（info-day.html，臨時）。內有 6 個數學小遊戲（認識同類項為本倉庫檔案；有向數、有理數與無理數、軌跡、判別式為 Canva 網站，複數為 Gemini 分享連結）、「AI 上堂課件」（連到本倉庫現有數學課件）及「Miss Tang 學數學」（Microsoft Copilot 助教連結）。此頁不在試算表內。
+- 修改：info-day.html 重新排版：頂部主打「呂 Sir 的數學探險島」（中一，Math/F1/中一數學探險島.html）及新增「平截頭體」（中三，外部連結 https://meadow-cabin-apple-brush.grok.me/），旁邊加入呂 Sir 數學冒險（恆等式）、認識同類項、三角形的角；其餘小遊戲及課件放在「更多數學小遊戲」，並修正 AI 格子排版。
 - 修改：index.html 目錄頁頂部加入臨時按鈕「🎪 資訊日 Demo（臨時）」，在新分頁開啟 info-day.html。資訊日結束後可刪除該按鈕及 info-day.html。
 
 ## 2026-11-05
