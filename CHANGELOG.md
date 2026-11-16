@@ -6,6 +6,9 @@
 - 上架：數學 中一「其他」（示範用，不屬於特定課題）— 中一數學探險島（Math/F1/中一數學探險島.html）。專為升中體驗活動／中學開放日設計的互動闖關遊戲；只用 localStorage，沒有後端。
 - 修改：數學 中一「其他」— 中一數學探險島（Math/F1/中一數學探險島.html）以新版本取代：新增列印證書（可填姓名及日期）及新的介面區塊。
 
+## 2026-11-16（第二次）
+- 修改（已同步）：ICT 中一「micro:bit」— micro:bit 小實驗室（ICT/F1/microbit 小實驗室.html）第 2 課挑戰 1「越暗越亮」改用英文變數 brightness，程式先以 ? 空格顯示，學生從供詞選答案，提示加入「建立一個變數」步驟。與 Maryknoll-ICT-Courseware 內容一致。
+
 ## 2026-11-16
 - 修改（已同步）：ICT 中一「micro:bit」— micro:bit 小實驗室（ICT/F1/microbit 小實驗室.html）更新為最新版：第 2 課重排為 35 分鐘並與工作紙逐題對應、「當開始」預設展開、夜燈程式加入按鈕 A 讀數、組裝 Robotbit 可看成品效果、積木顏色跟官方 MakeCode、總結改用情景題、第 2、3 課「加入 neopixel 擴展」步驟更正。與 Maryknoll-ICT-Courseware 內容一致（該倉庫已先行更新）。
 
