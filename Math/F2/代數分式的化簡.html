@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>代數分式約簡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=STIX+Two+Text:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+/* VOICE: lively classroom, 呂Sir talking students through it
+   IDEA: magnetic algebra tiles stuck on a blackboard fraction
+   PICTURE: the board itself — tiles above and below a chalk bar that collide and cancel
+   COLOUR and TYPE: blackboard slate, chalk white, yellow/sky/coral magnets, hot pink for selection; Noto Sans TC + STIX italic maths
+   LAYOUT: chips on top, board left + 呂Sir and worksheet working right, warm-up below */
+:root{color-scheme:light dark;--bg:light-dark(#eef2f0,#0f1513);--ink:light-dark(#15201c,#e8efec);--card:light-dark(#fff,#18211e);--line:light-dark(#d5ddd9,#2b3833);--mute:light-dark(#5b6a64,#9fb0a9);--board:#1c2b26;--chalk:#f3f6ef;--hot:#ff3d7f;--y:#ffd84d;--s:#86ccff;--o:#ffa27c}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Sans TC",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3vw,40px) max(4vw,14px)}
+.wrap{max-width:1240px;margin:0 auto}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0 0 6px;font-weight:900;text-wrap:balance}
+.sub{color:var(--mute);margin:0 0 16px}
+.m{font-family:"STIX Two Text","Times New Roman",serif}
+i{font-family:"STIX Two Text","Times New Roman",serif;font-style:italic}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{min-height:44px;padding:0 16px;border-radius:22px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 16px "Noto Sans TC",sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,.btn:focus-visible,.tile:focus-visible,.lock:focus-visible{outline:3px solid var(--hot);outline-offset:3px}
+.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.boardbox{background:var(--board);border-radius:22px;padding:18px clamp(12px,2.5vw,28px) 20px;color:var(--chalk);position:relative;box-shadow:inset 0 0 0 10px #5b3f28,inset 0 0 0 12px #3d2a1a,0 10px 30px rgba(0,0,0,.25);background-image:radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.07),transparent 60%),radial-gradient(ellipse at 90% 90%,rgba(255,255,255,.05),transparent 50%)}
+.top{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:6px 6px 0}
+.qlabel{font-weight:900;font-size:20px}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps span{font-size:13px;padding:4px 10px;border-radius:12px;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.6)}
+.steps span.on{background:var(--chalk);color:var(--board);border-color:var(--chalk);font-weight:700}
+.steps span.ok{color:var(--chalk);border-color:var(--chalk)}
+.stage{min-height:330px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:28px 6px;position:relative}
+.row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 6px;min-height:76px;padding:8px 0}
+.bar{height:5px;width:min(100%,640px);background:var(--chalk);border-radius:3px;margin:6px 0;box-shadow:0 0 8px rgba(255,255,255,.25)}
+.x{font-size:22px;color:rgba(255,255,255,.55);padding:0 2px}
+.tile{position:relative;min-width:54px;height:60px;padding:0 12px;border-radius:12px;border:0;background:var(--c);color:#14201c;font:500 30px "STIX Two Text","Times New Roman",serif;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.4),inset 0 2px 0 rgba(255,255,255,.55);transition:transform .15s,opacity .3s,max-width .5s,padding .5s,margin .5s;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.tile sup{font-size:.55em;margin-left:1px}
+.num{--c:var(--y)}.var{--c:var(--s)}.grp{--c:var(--o);font-size:26px}
+.tile:hover{transform:translateY(-3px)}
+.chunk{outline:3px dashed rgba(255,255,255,.75);outline-offset:3px}
+.chunk::after{content:"拆";position:absolute;top:-12px;right:-12px;font:700 12px "Noto Sans TC",sans-serif;background:var(--chalk);color:var(--board);border-radius:50%;width:24px;height:24px;display:grid;place-items:center}
+.sel{transform:translateY(-8px)!important;box-shadow:0 0 0 4px var(--hot),0 10px 18px rgba(255,61,127,.45)}
+.gone{opacity:.38;filter:grayscale(.7);cursor:default}
+.gone::before{content:"";position:absolute;left:6%;right:6%;top:50%;height:4px;background:#fff;border-radius:2px;transform:rotate(-28deg);box-shadow:0 0 0 1px rgba(0,0,0,.3)}
+.gone.new::before{animation:slash .35s ease-out}
+.bd{position:absolute;top:-12px;right:-10px;min-width:24px;height:24px;border-radius:12px;background:var(--pc);color:#111;font:700 13px "Noto Sans TC",sans-serif;display:grid;place-items:center;border:2px solid #fff;opacity:1}
+.one{opacity:.9}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1) backwards;animation-delay:var(--d,0ms)}
+.hint{animation:pulse .9s ease-in-out 3}
+.merging .gone{max-width:0;padding:0;margin:0 -3px;opacity:0;overflow:hidden}
+.merging .x{opacity:.2}
+.res .tile{box-shadow:0 5px 0 rgba(0,0,0,.4),0 0 0 4px #fff,0 0 26px rgba(255,255,255,.5)}
+@keyframes pop{from{transform:scale(.2);opacity:0}}
+@keyframes slash{from{right:94%}}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--hot),0 0 24px var(--hot)}}
+.float{position:absolute;pointer-events:none;font:700 18px "Noto Sans TC",sans-serif;background:#fff;color:var(--board);padding:4px 12px;border-radius:14px;white-space:nowrap;transform:translate(-50%,-50%);z-index:5}
+.lock{min-height:68px;padding:8px 18px;border-radius:14px;border:3px dashed var(--o);background:rgba(255,162,124,.12);color:var(--chalk);font:500 28px "STIX Two Text",serif;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.lock small{font:700 13px "Noto Sans TC",sans-serif;color:var(--o)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding-top:6px}
+.btn{min-height:44px;padding:0 16px;border-radius:12px;border:2px solid rgba(255,255,255,.4);background:transparent;color:var(--chalk);font:700 15px "Noto Sans TC",sans-serif;cursor:pointer}
+.btn.main{background:var(--chalk);color:var(--board);border-color:var(--chalk)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.fp{position:absolute;inset:10px;background:rgba(18,30,26,.97);border-radius:16px;z-index:8;display:none;flex-direction:column;justify-content:center;align-items:center;gap:14px;padding:18px;text-align:center}
+.fp.open{display:flex}
+.fp h3{margin:0;font-size:20px}
+.trow{font:500 24px "STIX Two Text",serif;display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
+.at{display:inline-block;padding:0 8px;border-radius:8px;background:rgba(255,255,255,.1)}
+.at.com{background:var(--y);color:#14201c;animation:pop .4s backwards;animation-delay:var(--d)}
+.fres{font:500 26px "STIX Two Text",serif;background:#fff;color:var(--board);padding:6px 16px;border-radius:12px}
+.side{display:flex;flex-direction:column;gap:16px}
+.sir{display:flex;gap:12px;align-items:flex-start}
+.sir svg{flex:none;width:76px;height:86px}
+.bub{position:relative;background:var(--card);border:2px solid var(--ink);border-radius:18px;padding:12px 16px;font-size:16px;min-height:76px;flex:1}
+.bub::before{content:"";position:absolute;left:-11px;top:24px;border:10px solid transparent;border-right-color:var(--ink);border-left:0}
+.bub b{display:block;font-size:13px;color:var(--mute)}
+.paper{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 18px;background-image:repeating-linear-gradient(transparent 0 37px,var(--line) 37px 38px)}
+.paper h2{font-size:17px;margin:0 0 8px}
+.ln{font:500 22px/1.2 "STIX Two Text",serif;display:flex;align-items:center;gap:8px;padding:6px 0;flex-wrap:wrap;animation:pop .4s backwards}
+.ln .eq{font:400 15px "Noto Sans TC",sans-serif;color:var(--mute);min-width:2.5em}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;text-align:center}
+.fr>span{padding:0 .25em;white-space:nowrap}.fr>span:first-child{border-bottom:2px solid currentColor}
+.st{position:relative;opacity:.55}
+.st::after{content:"";position:absolute;left:-2px;right:-2px;top:52%;border-top:2px solid currentColor;transform:rotate(-25deg)}
+.st sup.pn{position:absolute;top:-.9em;left:50%;transform:translateX(-50%);font-size:.55em;opacity:1}
+.ans{font-weight:700}
+.ans .fr,.ans>span:last-child{background:var(--y);color:#14201c;border-radius:8px;padding:2px 8px}
+.custom{display:none;flex-wrap:wrap;gap:10px;align-items:end;margin:-6px 0 18px;padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.custom.open{display:flex}
+.custom label{display:flex;flex-direction:column;font-size:14px;color:var(--mute);gap:4px}
+.custom input{font:16px "STIX Two Text",serif;min-height:44px;padding:0 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:180px}
+.custom .btn{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.custom p{flex-basis:100%;margin:0;font-size:14px;color:var(--mute)}
+.warm{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px clamp(14px,3vw,28px)}
+.warm h2{margin:0 0 4px;font-size:22px}
+.wq{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:12px 0;border-top:1px solid var(--line)}
+.wq .fr{font:500 24px "STIX Two Text",serif;margin-right:8px}
+.opt{min-width:60px;min-height:48px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:500 22px "STIX Two Text",serif;cursor:pointer}
+.opt[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink);background:var(--y);color:#14201c}
+.opt.r::after{content:" ✓";font-family:"Noto Sans TC";font-weight:700}
+.opt.w{text-decoration:line-through}.opt.w::after{content:" ✗";font-family:"Noto Sans TC";font-weight:700}
+.wx{flex-basis:100%;font:500 19px "STIX Two Text",serif;color:var(--mute);min-height:0}
+.foot{font-size:13px;color:var(--mute);margin-top:18px}
+@media(max-width:600px){.tile{min-width:44px;height:52px;font-size:24px;padding:0 9px}.grp{font-size:20px}.stage{min-height:260px;padding:22px 0}.ln{font-size:19px}.sir svg{width:60px;height:68px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="band"><div class="wrap">
+  <h1>分子分母，一對一對約走佢！</h1>
+  <p class="sub">課堂工作紙 5.1（第一套）· 代數分式的化簡 —— 先拆開，再配對，最後合併。</p>
+  <div class="chips" id="chips"></div>
+  <div class="custom" id="custom">
+    <label>分子<input id="cn" value="12a^3b" autocomplete="off" spellcheck="false"></label>
+    <label>分母<input id="cd" value="18ab^2" autocomplete="off" spellcheck="false"></label>
+    <button class="btn" id="cgo" type="button">開始化簡</button>
+    <p>寫法：次方用 ^，例如 12a^3b、m(m-1)、10p(q+3)^2、4x+2y（每個變數只用一個英文字母）。</p>
+  </div>
+  <div class="grid">
+    <section class="boardbox" aria-label="分式黑板">
+      <div class="top"><span class="qlabel" id="ql"></span><div class="steps" id="steps"><span>① 拆開</span><span>② 配對約簡</span><span>③ 合併答案</span></div></div>
+      <div class="stage" id="stage">
+        <div class="row" id="rn"></div><div class="bar" id="bar"></div><div class="row" id="rd"></div>
+      </div>
+      <div class="tools">
+        <button class="btn main" id="bSplit" type="button">全部拆開</button>
+        <button class="btn" id="bHint" type="button">提示</button>
+        <button class="btn main" id="bMerge" type="button">合併答案</button>
+        <button class="btn" id="bAuto" type="button">自動示範</button>
+        <button class="btn" id="bReset" type="button">重來</button>
+        <button class="btn main" id="bNext" type="button" hidden>下一題 →</button>
+      </div>
+      <div class="fp" id="fp" role="dialog" aria-label="因式分解"></div>
+    </section>
+    <aside class="side">
+      <div class="sir">
+        <svg viewBox="0 0 76 86" aria-hidden="true"><ellipse cx="38" cy="82" rx="26" ry="4" fill="#000" opacity=".12"/><path d="M12 86c0-16 12-24 26-24s26 8 26 24z" fill="#2f5d8a"/><path d="M32 62l6 10 6-10z" fill="#fff"/><circle cx="38" cy="36" r="22" fill="#f4c9a0"/><path d="M16 32c0-14 10-20 22-20s22 6 22 18c-6-6-14-8-22-7-8 0-16 3-22 9z" fill="#2a2a2a"/><circle cx="30" cy="38" r="6.5" fill="none" stroke="#222" stroke-width="2.4"/><circle cx="46" cy="38" r="6.5" fill="none" stroke="#222" stroke-width="2.4"/><path d="M36.5 38h3" stroke="#222" stroke-width="2.4"/><circle cx="30" cy="38.5" r="2" fill="#222"/><circle cx="46" cy="38.5" r="2" fill="#222"/><path d="M31 49q7 6 14 0" fill="none" stroke="#8a4b2d" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <div class="bub" aria-live="polite"><b>呂Sir</b><span id="say"></span></div>
+      </div>
+      <div class="paper"><h2>工作紙寫法</h2><div id="work"></div></div>
+    </aside>
+  </div>
+  <section class="warm" aria-label="熱身">
+    <h2>熱身（第 2 題）：邊啲係分子同分母的公因式？</h2>
+    <p class="sub" style="margin:0 0 6px">撳選所有公因式，再撳「核對」。</p>
+    <div id="wq"></div>
+    <button class="chip" id="wchk" type="button" style="margin-top:8px">核對</button>
+  </section>
+  <p class="foot">題目取自《中學數學新思維（第二版）》2A 課堂工作紙 5.1（第一套）第 2–8 題。</p>
+</div></div>
+<script>
+{
+const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,RM?1:ms));
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const primes=n=>{const r=[];for(let p=2;p*p<=n;p++)while(n%p==0){r.push(p);n/=p}if(n>1)r.push(n);return r};
+const PC=['#ff8fb3','#ffd84d','#8fe3b0','#b6a6ff','#ffb27a','#86ccff'];
+const PROBS=[
+ {id:'例題',n:'6a^2b',d:'2ab^3'},{id:'3(a)',n:'4a',d:'8b'},{id:'3(b)',n:'7pr',d:'pq'},
+ {id:'4(a)',n:'3a',d:'12a^3'},{id:'4(b)',n:'15h^5',d:'25h^2'},{id:'5(a)',n:'16pq',d:'4p^2q'},
+ {id:'5(b)',n:'6x^3y^6',d:'21x^4y'},{id:'6(a)',n:'m(m-1)',d:'m^2(m-1)'},{id:'6(b)',n:'10p(q+3)^2',d:'5(q+3)'},
+ {id:'7(a)',n:'4x+2y',d:'2x'},{id:'7(b)',n:'2p-3',d:'6pq-9q'},{id:'8(a)',n:'6m-2mn',d:'9-3n'},{id:'8(b)',n:'5x^2+10x',d:'7x^3+14x^2'}];
+
+/* ---------- parsing ---------- */
+const norm=s=>s.replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/[×*·]/g,'');
+function splitTop(s){const t=[];let d=0,c='';for(const ch of s){if(ch=='(')d++;if(ch==')')d--;if(!d&&(ch=='+'||ch=='-')&&c!==''){t.push(c);c=ch}else c+=ch}t.push(c);return t}
+function parseMono(s){const m=s.match(/^([+-]?)(\d*)([a-zA-Z^0-9]*)$/);if(!m)throw 0;const coef=m[2]?parseInt(m[2],10):1;if(!coef)throw 0;const vars=[];const re=/([a-zA-Z])(?:\^(\d+))?/y;let i=0,r=m[3];while(i<r.length){re.lastIndex=i;const x=re.exec(r);if(!x)throw 0;const p=x[2]?+x[2]:1;if(!p)throw 0;const f=vars.find(v=>v[0]==x[1]);f?f[1]+=p:vars.push([x[1],p]);i=re.lastIndex}return{sign:m[1]=='-'?-1:1,coef,vars}}
+function parseTerms(s){const t=splitTop(s);if(t.length<2)throw 0;return t.map(parseMono)}
+function parseProduct(s){const k=s.indexOf('(');const mono=parseMono(k<0?s:s.slice(0,k));if(mono.sign<0)throw 0;const groups=[];let i=k<0?s.length:k;
+ while(i<s.length){if(s[i]!='(')throw 0;let d=0,j=i;for(;j<s.length;j++){if(s[j]=='(')d++;if(s[j]==')'&&!--d)break}if(j>=s.length)throw 0;const terms=parseTerms(s.slice(i+1,j));j++;let p=1;const mm=s.slice(j).match(/^\^(\d+)/);if(mm){p=+mm[1];j+=mm[0].length}if(!p)throw 0;groups.push({terms,p});i=j}
+ return{mono,groups}}
+function factorPoly(terms){const g=terms.map(t=>t.coef).reduce(gcd);const vars=[];for(const[v,p]of terms[0].vars){let m=p;for(const t of terms){const f=t.vars.find(x=>x[0]==v);m=Math.min(m,f?f[1]:0)}if(m>0)vars.push([v,m])}
+ const inner=terms.map(t=>({sign:t.sign,coef:t.coef/g,vars:t.vars.map(([v,p])=>{const f=vars.find(x=>x[0]==v);return[v,p-(f?f[1]:0)]}).filter(x=>x[1]>0)}));return{mono:{coef:g,vars},inner}}
+
+/* ---------- formatting ---------- */
+const vH=(v,p)=>`<i>${v}</i>`+(p>1?`<sup>${p}</sup>`:'');
+const monoH=t=>(t.coef!=1||!t.vars.length?t.coef:'')+t.vars.map(([v,p])=>vH(v,p)).join('');
+const termsH=ts=>ts.map((t,i)=>(i?(t.sign<0?' − ':' + '):(t.sign<0?'−':''))+monoH(t)).join('');
+const termsK=ts=>ts.map((t,i)=>(t.sign<0?'-':i?'+':'')+t.coef+t.vars.map(([v,p])=>v+p).join('')).join('');
+function prodH(mono,groups){let s=(mono.coef!=1||(!mono.vars.length&&!groups.length))?String(mono.coef):'';s+=mono.vars.map(([v,p])=>vH(v,p)).join('');s+=groups.map(g=>`(${termsH(g.terms)})`+(g.p>1?`<sup>${g.p}</sup>`:'')).join('');return s}
+
+/* ---------- items ---------- */
+let UID=0;
+const atom=(type,key,label,txt)=>({id:++UID,kind:'atom',type,key,label,txt});
+function itemsFrom(mono,groups){const it=[];
+ if(mono.coef>1){const ps=primes(mono.coef);it.push(ps.length>1?{id:++UID,kind:'chunk',type:'num',label:String(mono.coef),kids:()=>ps.map(p=>atom('num','n'+p,String(p),String(p)))}:atom('num','n'+mono.coef,String(mono.coef),String(mono.coef)))}
+ for(const[v,p]of mono.vars){const a=()=>atom('var','v'+v,`<i>${v}</i>`,v);it.push(p>1?{id:++UID,kind:'chunk',type:'var',label:vH(v,p),kids:()=>Array.from({length:p},a)}:a())}
+ for(const g of groups){const k='g'+termsK(g.terms),h=`(${termsH(g.terms)})`,a=()=>Object.assign(atom('grp',k,h,'('+termsH(g.terms).replace(/<[^>]+>/g,'')+')'),{inner:termsH(g.terms)});it.push(g.p>1?{id:++UID,kind:'chunk',type:'grp',label:h+`<sup>${g.p}</sup>`,kids:()=>Array.from({length:g.p},a)}:a())}
+ return it}
+function parseSide(raw){const s=norm(raw);if(!s||!/^[0-9a-zA-Z^()+\-]+$/.test(s))throw 0;const t=splitTop(s);
+ if(t.length>1){const terms=t.map(parseMono),f=factorPoly(terms);
+  if(f.mono.coef==1&&!f.mono.vars.length)return{items:itemsFrom({coef:1,vars:[]},[{terms,p:1}]),orig:termsH(terms),fact:`(${termsH(terms)})`,lock:false};
+  return{items:[{id:++UID,kind:'lock',terms,f}],orig:termsH(terms),fact:prodH(f.mono,[{terms:f.inner,p:1}]),lock:true}}
+ const{mono,groups}=parseProduct(s);return{items:itemsFrom(mono,groups),orig:prodH(mono,groups),fact:prodH(mono,groups),lock:false}}
+
+/* ---------- state ---------- */
+let S=null,sel=null,busy=false,cur=0;
+const all=()=>[...S.num,...S.den];
+const hasLock=()=>all().some(i=>i.kind=='lock');
+const hasChunk=()=>all().some(i=>i.kind=='chunk');
+const live=arr=>arr.flatMap(i=>i.kind=='atom'?(i.gone?[]:[i]):i.kind=='chunk'?i.kids():[]);
+function findPair(){for(const a of S.num)if(a.kind=='atom'&&!a.gone){const b=S.den.find(d=>d.kind=='atom'&&!d.gone&&d.key==a.key);if(b)return[a,b]}return null}
+function commonLeft(){const d=live(S.den);for(const a of live(S.num)){const b=d.find(x=>x.key==a.key);if(b)return a}return null}
+const say=h=>{$('#say').innerHTML=h};
+
+function load(p){const num=parseSide(p.n),den=parseSide(p.d);
+ S={id:p.id,num:num.items,den:den.items,oN:num.orig,oD:den.orig,fN:num.fact,fD:den.fact,hadLock:num.lock||den.lock,pairs:0,done:false};
+ sel=null;busy=false;$('#fp').classList.remove('open');$('#stage').classList.remove('merging','res');
+ $('#ql').textContent=p.id=='自訂'?'自訂題目':p.id=='例題'?'例題（工作紙示例）':'第 '+p.id+' 題';
+ $('#bNext').hidden=true;render();
+ say(S.hadLock?'分子或分母係<strong>加減式</strong>，唔可以直接約！先撳一下個虛線框，做<strong>因式分解</strong>。':hasChunk()?'第一步：撳有「拆」字嘅磁貼（或者「全部拆開」），拆到最細，例如 6 = 2 × 3、<i>a</i><sup>2</sup> = <i>a</i> × <i>a</i>。':'撳一個分子嘅因子，再撳分母入面<strong>一模一樣</strong>嘅因子，佢哋就會互相約簡！')}
+
+/* ---------- render ---------- */
+function tileH(it,i){if(it.kind=='lock')return`<button class="lock" type="button" data-id="${it.id}"><span>${termsH(it.terms)}</span><small>加減式・撳我因式分解</small></button>`;
+ const cls=['tile',it.type];if(it.kind=='chunk')cls.push('chunk');if(it.gone)cls.push('gone');if(it.newGone)cls.push('new');if(it.fresh)cls.push('pop');if(sel&&sel.it===it)cls.push('sel');
+ return`<button class="${cls.join(' ')}" type="button" data-id="${it.id}" style="--d:${(it.fresh||0)-1}ms;--pc:${PC[(it.pair-1)%6]||'#fff'}" aria-label="${it.kind=='chunk'?'拆開 ':''}${it.txt||''}"><span>${it.label}</span>${it.gone?`<b class="bd">${it.pair}</b>`:''}</button>`}
+const rowH=arr=>arr.map((it,i)=>(i?'<span class="x">×</span>':'')+tileH(it,i)).join('');
+function render(){$('#rn').innerHTML=rowH(S.num);$('#rd').innerHTML=S.den.length?rowH(S.den):'';$('#bar').hidden=!S.den.length;
+ all().forEach(i=>{i.fresh=0;i.newGone=0});
+ const st=$('#steps').children,s1=!hasLock()&&!hasChunk();[...st].forEach(e=>e.className='');
+ if(S.done){st[0].className=st[1].className='ok';st[2].className='on'}else if(s1){st[0].className='ok';st[1].className='on'}else st[0].className='on';
+ $('#bSplit').disabled=!hasChunk()||S.done;$('#bMerge').disabled=S.done;$('#bHint').disabled=S.done;$('#bAuto').disabled=S.done;
+ work()}
+const fr=(n,d)=>d==null?`<span>${n}</span>`:`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const ln=(body,eq='=',c='')=>`<div class="ln ${c}"><span class="eq">${eq}</span>${body}</div>`;
+const atomsLine=arr=>arr.map(a=>a.gone?`<span class="st">${a.label}<sup class="pn">1</sup></span>`:a.label).join(' × ')||'1';
+function result(arr){let c=1;const v=[],g=[];for(const a of arr){if(a.type=='num')c*=+a.txt;else{const L=a.type=='var'?v:g;const f=L.find(x=>x.k==a.key);f?f.n++:L.push({k:a.key,a,n:1})}}return{c,v,g}}
+function resH(r){if(r.c==1&&!r.v.length&&!r.g.length)return null;if(r.c==1&&!r.v.length&&r.g.length==1&&r.g[0].n==1)return r.g[0].a.inner;
+ return(r.c!=1||(!r.v.length&&!r.g.length)?r.c:'')+r.v.map(x=>x.a.label+(x.n>1?`<sup>${x.n}</sup>`:'')).join('')+r.g.map(x=>x.a.label+(x.n>1?`<sup>${x.n}</sup>`:'')).join('')}
+function work(){let h=ln(fr(S.oN,S.oD),'原式');
+ if(S.hadLock&&!hasLock())h+=ln(fr(S.fN,S.fD),'= ','');
+ if(!hasLock()&&!hasChunk())h+=ln(fr(atomsLine(S.num),atomsLine(S.den)));
+ if(S.done){const n=resH(result(live(S.num)))||'1',d=resH(result(live(S.den)));h+=ln(fr(n,d),'=','ans')}
+ $('#work').innerHTML=h}
+
+/* ---------- actions ---------- */
+function where(id){for(const side of['num','den']){const i=S[side].findIndex(x=>x.id==id);if(i>=0)return{side,i,it:S[side][i]}}}
+const el=it=>document.querySelector(`[data-id="${it.id}"]`);
+function split(it,side,quiet){const arr=S[side],i=arr.indexOf(it);const kids=it.kids();kids.forEach((k,j)=>k.fresh=j*90+1);arr.splice(i,1,...kids);
+ render();if(!quiet&&!hasChunk()&&!hasLock())say('拆好晒！而家逐對配對：撳分子一個、分母一個，要<strong>一模一樣</strong>先約得。')}
+async function splitAll(){busy=true;for(const side of['num','den'])for(const it of[...S[side]])if(it.kind=='chunk'){split(it,side,1);await sleep(320)}busy=false;if(!hasLock())say('拆好晒！而家逐對配對：撳分子一個、分母一個，要<strong>一模一樣</strong>先約得。')}
+function shake(...els){if(RM)return;els.forEach(e=>e&&e.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:320}))}
+async function cancel(a,b){busy=true;sel=null;render();const ea=el(a),eb=el(b),box=$('#stage').getBoundingClientRect();
+ const ra=ea.getBoundingClientRect(),rb=eb.getBoundingClientRect();const ax=ra.left+ra.width/2,ay=ra.top+ra.height/2,bx=rb.left+rb.width/2,by=rb.top+rb.height/2,mx=(ax+bx)/2,my=(ay+by)/2;
+ const go=(e,x,y)=>e.animate([{transform:'none'},{transform:`translate(${(mx-x)*.8}px,${(my-y)*.8}px) scale(1.15)`,offset:.45},{transform:`translate(${(mx-x)*.8}px,${(my-y)*.8}px) scale(1.15)`,offset:.6},{transform:'none'}],{duration:RM?1:900,easing:'ease-in-out'}).finished;
+ const f=document.createElement('div');f.className='float';f.innerHTML=`${a.label} ÷ ${b.label} = 1`;f.style.left=(mx-box.left)+'px';f.style.top=(my-box.top)+'px';
+ setTimeout(()=>{$('#stage').append(f);if(!RM)f.animate([{opacity:0,transform:'translate(-50%,-50%) scale(.6)'},{opacity:1,transform:'translate(-50%,-50%) scale(1)',offset:.2},{opacity:1,offset:.75},{opacity:0,transform:'translate(-50%,-160%)'}],{duration:1500});setTimeout(()=>f.remove(),RM?900:1500)},RM?0:380);
+ await Promise.all([go(ea,ax,ay),go(eb,bx,by)]);
+ a.gone=b.gone=a.newGone=b.newGone=true;a.pair=b.pair=++S.pairs;render();busy=false;
+ if(!commonLeft()&&!hasLock())say(`${a.label} ÷ ${b.label} = 1，約咗！<br>再冇公因式喇 —— 撳<strong>「合併答案」</strong>睇下剩低乜嘢。`);
+ else say(`${a.label} ÷ ${b.label} = 1，約咗！分子分母同時除以 ${a.label}，個分式嘅值冇變。繼續搵下一對！`)}
+function openFactor(it,side,auto){return new Promise(res=>{const fp=$('#fp'),{f,terms}=it;
+ const com=[...primes(f.mono.coef).map(p=>'n'+p),...f.mono.vars.flatMap(([v,p])=>Array(p).fill('v'+v))];
+ const rows=terms.map(t=>{const pool=[...com];const ats=[...primes(t.coef).map(p=>['n'+p,String(p)]),...t.vars.flatMap(([v,p])=>Array(p).fill(['v'+v,`<i>${v}</i>`]))];let k=0;
+  return`<div class="trow"><span>${monoH(t)} =</span>${ats.map(([key,l])=>{const j=pool.indexOf(key);if(j>=0){pool.splice(j,1);return`<span class="at com" style="--d:${400+(k++)*200}ms">${l}</span>`}return`<span class="at">${l}</span>`}).join(' × ')||'1'}</div>`}).join('');
+ fp.innerHTML=`<h3>因式分解：找出每一項都有的因子</h3>${rows}<div class="trow" style="font-size:18px;font-family:'Noto Sans TC'">黃色 = 每項都有 → 公因式是&nbsp;<span class="fres">${monoH(f.mono)}</span></div><div class="fres">${termsH(terms)} = ${monoH(f.mono)}(${termsH(f.inner)})</div><button class="btn main" type="button" id="fpOk">放回分式</button>`;
+ fp.classList.add('open');const ok=()=>{fp.classList.remove('open');const arr=S[side],i=arr.indexOf(it),nw=itemsFrom(f.mono,[{terms:f.inner,p:1}]);nw.forEach((k,j)=>k.fresh=j*120+1);arr.splice(i,1,...nw);render();
+  say(hasLock()?'做得好！仲有另一邊都要因式分解。':hasChunk()?'因式分解完成！而家將磁貼拆到最細，再配對約簡。':'因式分解完成！而家可以配對約簡喇 —— 括號 ( ) 成舊係一個因子，可以成舊約。');res()};
+ $('#fpOk').onclick=ok;$('#fpOk').focus();if(auto)setTimeout(ok,RM?300:2600)})}
+async function merge(){if(hasLock())return say('仲有加減式未因式分解！先撳虛線框。');
+ const c=commonLeft();if(c){say(`等等！仲有公因式未約 —— 分子同分母都有 ${c.label}。`);const p=findPair();if(p){[el(p[0]),el(p[1])].forEach(e=>e&&e.classList.add('hint'))}return}
+ busy=true;sel=null;$('#stage').classList.add('merging');await sleep(700);
+ const rn=result(live(S.num)),rd=result(live(S.den));const mk=r=>{const it=[];if(r.c!=1||(!r.v.length&&!r.g.length))it.push(atom('num','',String(r.c),''));r.v.forEach(x=>it.push(atom('var','',x.a.label+(x.n>1?`<sup>${x.n}</sup>`:''),'')));r.g.forEach(x=>it.push(atom('grp','',x.a.label+(x.n>1?`<sup>${x.n}</sup>`:''),'')));return it};
+ const dEmpty=rd.c==1&&!rd.v.length&&!rd.g.length;S.done=true;
+ $('#stage').classList.remove('merging');$('#stage').classList.add('res');
+ const keepN=S.num,keepD=S.den;S.num=mk(rn);S.den=dEmpty?[]:mk(rd);S.num.forEach((k,j)=>k.fresh=j*120+1);S.den.forEach((k,j)=>k.fresh=j*120+200);render();
+ S.num=keepN;S.den=keepD;work();busy=false;
+ const ans=$('#work').lastElementChild.lastElementChild.outerHTML;
+ say(`完成！答案係 ${ans}<br>${dEmpty?'分母全部約晒變成 1，所以唔使寫分母。':(rn.c==1&&!rn.v.length&&!rn.g.length?'分子全部約晒，記住係剩低 <strong>1</strong>，唔係 0！':'約簡即係分子同分母<strong>同時除以公因式</strong>。')}`);
+ $('#bNext').hidden=cur>=PROBS.length-1}
+async function auto(){if(busy||S.done)return;busy=true;$('#bAuto').disabled=true;sel=null;
+ for(const side of['num','den'])for(const it of[...S[side]])if(it.kind=='lock'){say('第一步：加減式要先<strong>因式分解</strong>，抽出公因式。');await openFactor(it,side,true);await sleep(700)}
+ if(hasChunk()){say('第二步：將每個因子<strong>拆到最細</strong>。');busy=false;await splitAll();busy=true;await sleep(600)}
+ say('第三步：分子分母一樣嘅因子，一對一對約走！');await sleep(900);
+ let p;while((p=findPair())){busy=false;await cancel(p[0],p[1]);busy=true;await sleep(450)}
+ busy=false;await merge()}
+
+/* ---------- events ---------- */
+$('#stage').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b||busy||S.done)return;const w=where(+b.dataset.id);if(!w)return;const{it,side}=w;
+ if(it.kind=='lock'){if(sel){say(`${termsH(it.terms)} 係加減式，唔可以直接同 ${sel.it.label} 約！要先因式分解。`);sel=null;render()}openFactor(it,side);return}
+ if(it.kind=='chunk'){split(it,side);return}
+ if(it.gone)return say('呢個已經約咗，變咗做 1 喇。');
+ if(!sel||sel.it===it||sel.side===side){sel=sel&&sel.it===it?null:{it,side};render();if(sel)say(`揀咗${side=='num'?'分子':'分母'}嘅 ${it.label}，而家去${side=='num'?'分母':'分子'}搵一個一樣嘅。`);return}
+ const a=side=='num'?it:sel.it,d=side=='den'?it:sel.it;
+ if(a.key==d.key){cancel(a,d);return}
+ shake(el(a),el(d));say(`${a.label} 同 ${d.label} 唔一樣，唔可以約。${hasChunk()?'有啲磁貼未拆開，拆開先再搵吓？':''}`);sel=null;setTimeout(render,330)});
+$('#bSplit').onclick=()=>{if(!busy)splitAll()};
+$('#bHint').onclick=()=>{if(busy)return;if(hasLock())return say('提示：先撳虛線框，將加減式<strong>因式分解</strong>。');const p=findPair();
+ if(p){[el(p[0]),el(p[1])].forEach(e=>e.classList.add('hint'));say(`提示：分子同分母都有 ${p[0].label}，試下約佢哋！`)}else if(commonLeft())say(`提示：${commonLeft().label} 收埋喺未拆開嘅磁貼入面，撳「拆」拆開佢。`);else say('已經冇公因式喇，撳「合併答案」！')};
+$('#bMerge').onclick=()=>{if(!busy)merge()};
+$('#bAuto').onclick=auto;
+$('#bReset').onclick=()=>{if(!busy)pick(cur)};
+$('#bNext').onclick=()=>pick(cur+1);
+
+const chips=$('#chips');chips.innerHTML=[...PROBS.map((p,i)=>`<button class="chip" type="button" data-i="${i}" aria-pressed="false">${p.id}</button>`),'<button class="chip" type="button" data-i="c" aria-pressed="false">自己出題</button>'].join('');
+chips.onclick=e=>{const b=e.target.closest('.chip');if(!b||busy)return;if(b.dataset.i=='c'){setChip('c');$('#custom').classList.add('open');runCustom()}else pick(+b.dataset.i)};
+function setChip(i){[...chips.children].forEach(c=>c.setAttribute('aria-pressed',c.dataset.i==String(i)))}
+function pick(i){if(i>=PROBS.length)i=0;cur=i;setChip(i);$('#custom').classList.remove('open');load(PROBS[i]);$('#bNext').hidden=true}
+function runCustom(){try{const n=$('#cn').value,d=$('#cd').value;const p={id:'自訂',n,d};const t=parseSide(n),u=parseSide(d);const cnt=x=>x.items.reduce((s,i)=>s+(i.kind=='chunk'?i.kids().length:1),0);if(cnt(t)+cnt(u)>26)throw 0;cur=PROBS.length;load(p);$('#bNext').hidden=true}catch(e){say('呂Sir 睇唔明呢條式，試吓咁寫：12a^3b、m(m-1)、4x+2y。')}}
+$('#cgo').onclick=runCustom;[$('#cn'),$('#cd')].forEach(x=>x.addEventListener('keydown',e=>{if(e.key=='Enter')runCustom()}));
+
+/* ---------- warm-up Q2 ---------- */
+const WU=[{l:'(a)',n:'9x',d:'3',o:['3','6','9','x'],a:['3']},{l:'(b)',n:'6m^2',d:'8m',o:['2','4','m','m^2'],a:['2','m']}];
+const optH=o=>monoH(parseMono(o));
+const atomsTxt=s=>{const p=parseProduct(norm(s));return[...primes(p.mono.coef).map(String),...p.mono.vars.flatMap(([v,k])=>Array(k).fill(`<i>${v}</i>`))].join(' × ')};
+$('#wq').innerHTML=WU.map((q,qi)=>`<div class="wq"><b>${q.l}</b><span class="fr"><span>${optH(q.n)}</span><span>${optH(q.d)}</span></span>${q.o.map((o,oi)=>`<button class="opt" type="button" data-q="${qi}" data-o="${oi}" aria-pressed="false">${optH(o)}</button>`).join('')}<div class="wx" id="wx${qi}"></div></div>`).join('');
+$('#wq').onclick=e=>{const b=e.target.closest('.opt');if(!b)return;b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!='true');b.classList.remove('r','w')};
+$('#wchk').onclick=()=>{WU.forEach((q,qi)=>{document.querySelectorAll(`.opt[data-q="${qi}"]`).forEach(b=>{const o=q.o[+b.dataset.o],on=b.getAttribute('aria-pressed')=='true',ok=q.a.includes(o);b.classList.remove('r','w');if(ok)b.classList.add('r');else if(on)b.classList.add('w')});
+ $('#wx'+qi).innerHTML=`${optH(q.n)} = ${atomsTxt(q.n)}　；　${optH(q.d)} = ${atomsTxt(q.d)}　→　公因式：${q.a.map(optH).join('、')}`})};
+
+pick(0);
+}
+</script>
+</body>
+</html>
